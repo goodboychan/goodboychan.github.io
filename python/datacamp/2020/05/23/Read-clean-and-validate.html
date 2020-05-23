@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Exploratory Data Analysis in Python - Read, clean, and validate | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Exploratory Data Analysis in Python - Read, clean, and validate" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture of Writing functions in Python, via datacamp" />
+<meta property="og:description" content="A Summary of lecture of Writing functions in Python, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/05/23/Read-clean-and-validate.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/05/23/Read-clean-and-validate.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/my_icons/fastai_logo.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-23T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"A Summary of lecture of Writing functions in Python, via datacamp","@type":"BlogPosting","headline":"Exploratory Data Analysis in Python - Read, clean, and validate","dateModified":"2020-05-23T00:00:00-05:00","datePublished":"2020-05-23T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/my_icons/fastai_logo.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/05/23/Read-clean-and-validate.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/05/23/Read-clean-and-validate.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Exploratory Data Analysis in Python - Read, clean, and validate | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Exploratory Data Analysis in Python - Read, clean, and validate" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture of Writing functions in Python, via datacamp" />
+<meta property="og:description" content="A Summary of lecture of Writing functions in Python, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/05/23/Read-clean-and-validate.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/05/23/Read-clean-and-validate.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/my_icons/fastai_logo.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-23T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"A Summary of lecture of Writing functions in Python, via datacamp","@type":"BlogPosting","headline":"Exploratory Data Analysis in Python - Read, clean, and validate","dateModified":"2020-05-23T00:00:00-05:00","datePublished":"2020-05-23T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/my_icons/fastai_logo.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/05/23/Read-clean-and-validate.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/05/23/Read-clean-and-validate.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Exploratory Data Analysis in Python - Read, clean, and validate</h1><p class="page-description">A Summary of lecture of Writing functions in Python, via datacamp</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-05-23T00:00:00-05:00" itemprop="datePublished">
+        May 23, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      2 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-05-23-Read-clean-and-validate.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-05-23-Read-clean-and-validate.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-05-23-Read-clean-and-validate.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#DataFrames-and-Series">DataFrames and Series </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Exploring-the-NSFG-data">Exploring the NSFG data </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Clean-and-Validate">Clean and Validate </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Clean-a-variable">Clean a variable </a></li>
+<li class="toc-entry toc-h3"><a href="#Compute-a-variable">Compute a variable </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Filter-and-visualize">Filter and visualize </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Make-a-histogram">Make a histogram </a></li>
+<li class="toc-entry toc-h3"><a href="#Compute-birth-weight">Compute birth weight </a></li>
+<li class="toc-entry toc-h3"><a href="#Filter">Filter </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-05-23-Read-clean-and-validate.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="DataFrames-and-Series">
+<a class="anchor" href="#DataFrames-and-Series" aria-hidden="true"><span class="octicon octicon-link"></span></a>DataFrames and Series<a class="anchor-link" href="#DataFrames-and-Series"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Exploring-the-NSFG-data">
+<a class="anchor" href="#Exploring-the-NSFG-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exploring the NSFG data<a class="anchor-link" href="#Exploring-the-NSFG-data"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nsfg</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="s1">'./dataset/nsfg.hdf5'</span><span class="p">,</span> <span class="s1">'nsfg'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Display the number of rows and columns</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nsfg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Display the names of the columns</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nsfg</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="c1"># Select columns birthwgt_oz1: ounces</span>
+<span class="n">ounces</span> <span class="o">=</span> <span class="n">nsfg</span><span class="p">[</span><span class="s1">'birthwgt_oz1'</span><span class="p">]</span>
+
+<span class="c1"># Print the first 5 elements of ounces</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ounces</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(9358, 10)
+Index(['caseid', 'outcome', 'birthwgt_lb1', 'birthwgt_oz1', 'prglngth',
+       'nbrnaliv', 'agecon', 'agepreg', 'hpagelb', 'wgt2013_2015'],
+      dtype='object')
+0     4.0
+1    12.0
+2     4.0
+3     NaN
+4    13.0
+Name: birthwgt_oz1, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Clean-and-Validate">
+<a class="anchor" href="#Clean-and-Validate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Clean and Validate<a class="anchor-link" href="#Clean-and-Validate"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Clean-a-variable">
+<a class="anchor" href="#Clean-a-variable" aria-hidden="true"><span class="octicon octicon-link"></span></a>Clean a variable<a class="anchor-link" href="#Clean-a-variable"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nsfg</span><span class="p">[</span><span class="s1">'nbrnaliv'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1.0    6379
+2.0     100
+3.0       5
+8.0       1
+Name: nbrnaliv, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># replace the value 8 with NaN</span>
+<span class="n">nsfg</span><span class="p">[</span><span class="s1">'nbrnaliv'</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="mi">8</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Print the values and their frequencies</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nsfg</span><span class="p">[</span><span class="s1">'nbrnaliv'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1.0    6379
+2.0     100
+3.0       5
+Name: nbrnaliv, dtype: int64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Compute-a-variable">
+<a class="anchor" href="#Compute-a-variable" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compute a variable<a class="anchor-link" href="#Compute-a-variable"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nsfg</span><span class="p">[</span><span class="s1">'agecon'</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>count    9358.000000
+mean     2446.330199
+std       579.392363
+min       750.000000
+25%      1983.000000
+50%      2366.000000
+75%      2850.000000
+max      4350.000000
+Name: agecon, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nsfg</span><span class="p">[</span><span class="s1">'agepreg'</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>count    9109.000000
+mean     2494.934570
+std       578.099231
+min       825.000000
+25%      2041.000000
+50%      2416.000000
+75%      2900.000000
+max      4350.000000
+Name: agepreg, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select the columns and divide by 100</span>
+<span class="n">agecon</span> <span class="o">=</span> <span class="n">nsfg</span><span class="p">[</span><span class="s1">'agecon'</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
+<span class="n">agepreg</span> <span class="o">=</span> <span class="n">nsfg</span><span class="p">[</span><span class="s1">'agepreg'</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
+
+<span class="c1"># Compute the difference</span>
+<span class="n">preg_length</span> <span class="o">=</span> <span class="n">agepreg</span> <span class="o">-</span> <span class="n">agecon</span>
+
+<span class="c1"># Compute summary statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">preg_length</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>count    9109.000000
+mean        0.552069
+std         0.271479
+min         0.000000
+25%         0.250000
+50%         0.670000
+75%         0.750000
+max         0.920000
+dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Filter-and-visualize">
+<a class="anchor" href="#Filter-and-visualize" aria-hidden="true"><span class="octicon octicon-link"></span></a>Filter and visualize<a class="anchor-link" href="#Filter-and-visualize"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Make-a-histogram">
+<a class="anchor" href="#Make-a-histogram" aria-hidden="true"><span class="octicon octicon-link"></span></a>Make a histogram<a class="anchor-link" href="#Make-a-histogram"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Plot the histogram</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">agecon</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="c1"># Label the axes</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Age at conception"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Number of pregnancies'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Text(0, 0.5, 'Number of pregnancies')</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Plot the histogram</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">agecon</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">'step'</span><span class="p">)</span>
+
+<span class="c1"># Label the axes</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Age at conception"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Number of pregnancies'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Text(0, 0.5, 'Number of pregnancies')</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAY8AAAEGCAYAAACdJRn3AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjMsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy+AADFEAAAb2klEQVR4nO3de7RV1Xn38e9PvIR4O6JHBjmgkJQ3jdFWkXgpqRJNUm8RNfhGXqPEYomtaU2bNkKahrTqGxx9o4kZiYaqEVsrXpIoURuleEscrxfwjsRIDdWDRjAK3ogGefrHmlu2h30Oa+1z1r6c8/uMscdea+659npYA/bDmnOuORURmJmZFbFVswMwM7P24+RhZmaFOXmYmVlhTh5mZlaYk4eZmRW2dbMDKMNuu+0WY8eObXYYZmZtZenSpS9GRGeeuoMyeYwdO5YlS5Y0Owwzs7Yi6b/z1nWzlZmZFebkYWZmhTl5mJlZYU4eZmZWmJOHmZkV5uRhZmaFOXmYmVlhpSUPSZdLWi3p8aqyf5b0C0mPSvqxpI6qz2ZLWiHpSUl/UlV+RCpbIWlWWfGamVl+Zd55XAEc0aNsEbB3RPwB8EtgNoCkvYCTgA+nY74naZikYcB3gSOBvYBpqa6ZmTVRaU+YR8Tdksb2KLutavdeYGrangIsiIg3gV9JWgEckD5bERFPA0hakOo+UVbc1liT5t7OqrXr6zq2q2M498w6bIAjMrM8mjk9yZ8C16TtLrJkUtGdygCe7VF+YK0vkzQTmAmwxx57DGigVp5Va9ezcu7RdR07dtbNAxyNmeXVlA5zSX8PbACuqhTVqBZ9lG9eGDEvIiZGxMTOzlzzepmZWZ0afuchaTpwDHB4bFpAvRsYU1VtNPBc2u6t3MzMmqShdx6SjgDOBo6NiDeqPloInCRpO0njgPHA/cADwHhJ4yRtS9apvrCRMZuZ2eZKu/OQdDUwGdhNUjcwh2x01XbAIkkA90bEGRGxTNK1ZB3hG4AzI+Lt9D1fAG4FhgGXR8SysmI2M7N8yhxtNa1G8WV91D8POK9G+S3ALQMYmpmZ9ZOfMDczs8KcPMzMrDAnDzMzK8zJw8zMCnPyMDOzwpw8zMysMCcPMzMrzMnDzMwKc/IwM7PCnDzMzKywZq7nYdYvXR3D617TwwtJmfWPk4e1rf78+HshKbP+cbOVmZkV5uRhZmaFOXmYmVlhTh5mZlaYk4eZmRXm5GFmZoU5eZiZWWFOHmZmVpgfErQhqT9Pp1eO9xPqNpQ5ediQ1N8ffj+hbkOdm63MzKwwJw8zMyvMycPMzAorLXlIulzSakmPV5WNkLRI0lPpfZdULkkXSVoh6VFJE6qOmZ7qPyVpelnxmplZfmXeeVwBHNGjbBawOCLGA4vTPsCRwPj0mglcDFmyAeYABwIHAHMqCcfMzJqntOQREXcDL/UongLMT9vzgeOqyq+MzL1Ah6RRwJ8AiyLipYh4GVjE5gnJzMwarNF9HiMj4nmA9L57Ku8Cnq2q153KeivfjKSZkpZIWrJmzZoBD9zMzDZplQ5z1SiLPso3L4yYFxETI2JiZ2fngAZnZmbv1ujk8UJqjiK9r07l3cCYqnqjgef6KDczsyZqdPJYCFRGTE0HbqwqPzWNujoIWJeatW4FPilpl9RR/slUZmZmTVTa9CSSrgYmA7tJ6iYbNTUXuFbSDOAZ4MRU/RbgKGAF8AZwGkBEvCTpHOCBVO+fIqJnJ7yZmTVYackjIqb18tHhNeoGcGYv33M5cPkAhmZmZv3UKh3mZmbWRraYPCSdJWmn1B9xmaQHJX2yEcGZmVlrynPn8acR8QpZZ3UnWX/E3FKjMjOzlpYneVSetTgK+EFEPELt5y/MzGyIyNNhvlTSbcA4YLakHYGN5YZl1tr6sxKhVyG0wSBP8pgB7As8HRFvSNqVNJTWbKjqz4+/VyG0wSBPs1UAewF/lfa3B95TWkRmZtby8iSP7wEHA5XnNl4FvltaRGZm1vLyNFsdGBETJD0EEBEvS9q25LjMzKyF5bnz+J2kYaTZbCV14g5zM7MhLU/yuAj4MbC7pPOAnwP/t9SozMyspW2x2SoirpK0lGxOKgHHRcTy0iMzM7OW1WvykLRTRLyS1hFfDVxd9dkIz25rVh8/I2KDQV93Hv8OHAMs5d2r9yntv7/EuMwGLT8jYoNBr8kjIo5J7+MaF46ZmbWDPLPqHi9p56r9DknHlRuWmZm1sjyjreZExLrKTkSsJVsV0MzMhqg8yaNWndJWIDQzs9aXJ3kskXSBpA9Ier+kC8k60c3MbIjKkzz+EngLuAa4Dvgtvaw3bmZmQ0OehwRfB2Y1IBYzM2sTW0wekv4X8LfA2Or6EeEnlczMhqg8Hd/XAZcAlwJvlxuOmZm1gzzJY0NEXFx6JGZm1jbyJI+fSPoLspl136wUem4rq5g093ZWrV1f17FdHcMHOBoza4Q8yWN6ev+7qrJ+zW0l6a+B09P3PEa2JvooYAEwAngQOCUi3pK0HXAlsD/wG+AzEbGy3nPbwFu1dj0r5x7d7DDMrIG2OFQ3IsbVePUncXSRrYc+MSL2BoYBJwHnAxdGxHjgZWBGOmQG8HJE/B5wYapnZmZNlOc5DyTtLel/Szq18urnebcGhkvaGngv8DxwGHB9+nw+UJk/a0raJ31+uCT18/xmZtYPeYbqzgEmA3sBtwBHkq0meGU9J4yIVZL+H/AMsB64jeyJ9bURsSFV6wa60nYX8Gw6doOkdcCuwIv1nN/MzPovz53HVLJVBH8dEacBfwhsV+8JJe1CdjcxDngfsD1ZQuqpsoZIrbuM6FkgaaakJZKWrFmzpt7wzMwshzzJY31EbAQ2SNqJbFXB/iwE9XHgVxGxJiJ+B/wI+COgIzVjAYwGnkvb3cAYgPT5zsBmI70iYl5ETIyIiZ2dnf0Iz8zMtiTvxIgdwL+QNS89CNzfj3M+Axwk6b2p7+Jw4AngDrK7HMhGeN2YtheyacTXVOD2iNjszsPMzBonz9xWf5E2L5H0U2CniHi03hNGxH2SridLQhuAh4B5wM3AAknnprLL0iGXAf8qaQXZHcdJ9Z7bzMwGRq51OdLw2j0r9SUdEhF313vSiJjD5gtKPQ0cUKPub4ET6z2XmZkNvDyjrc4HPkPWtFSZ2yqAupOHmZm1tzx3HscBH4yIN7dY08zMhoQ8HeZPA9uUHYiZmbWPPHcebwAPS1rMuydG/KvSojIzs5aWJ3ksTC8zMzMg31Dd+VuqY2ZmQ0ue0VaPsfl0IOuAJcC5EfGbMgIzM7PWlafZ6j/Ihuj+e9o/iWy+qXXAFcCnSonMzDbT1TGcsbNurvvYe2YdNsAR2VCVJ3lMiohJVfuPSbonIiZJ+mxZgZnZ5vrz419v0jGrJc9Q3R0kHVjZkXQAsEPa3VD7EDMzG8zy3HmcDlwuqZIwXgVOl7Q98I3SIjMzs5aVZ7TVA8A+knYGFBFrqz6+trTIzMysZW2x2UrSSEmXAQsiYq2kvSTN2NJxZmY2eOXp87gCuJVs1T+AXwJfLCsgMzNrfXmSx24RcS2wEbJ1xNk0u66ZmQ1BeZLH65J2JT0oKOkgsmc8zMxsiMoz2upvyOa2+oCke4BONi0Xa2ZmQ1CfyUPSVsB7gEOBD5I9Wf5kRPyuAbGZmVmL6jN5RMRGSd+MiIOBZQ2KyczMWlyePo/bJH1akkqPxszM2kLePo/tgbclrSdruoqI2KnUyMzMrGXlecJ8x0YEYmbl6s+MvJXjPSuvVeS580DSCcBHyYbr/iwibig1KjMbcP394fesvFYtz/Qk3wPOAB4DHgfOkPTdsgMzM7PWlefO41Bg74ioPCQ4nyyRmJnZEJVntNWTwB5V+2OAR8sJx8zM2kGe5LErsFzSnZLuBJ4AOiUtlLSwnpNK6pB0vaRfSFou6WBJIyQtkvRUet8l1ZWkiyStkPSopAn1nNPMzAZOnmarr5Vw3m8DP42IqZK2Bd4LfAVYHBFzJc0CZgFnA0cC49PrQODi9G5mZk2SZ6juXQN5Qkk7AYcAn0vf/xbwlqQpwORUbT5wJ1nymAJcmfpc7k13LaMi4vmBjMvMzPLL02w10N4PrAF+IOkhSZemJW1HVhJCet891e8Cnq06vjuVvYukmZKWSFqyZs2acv8EZmZDXDOSx9bABODiiNgPeJ2siao3taZFic0KIuZFxMSImNjZ2TkwkZqZWU29Jg9Ji9P7+QN8zm6gOyLuS/vXkyWTFySNSuccBayuqj+m6vjRwHMDHJOZmRXQ153HKEmHAsdK2k/ShOpXvSeMiF8Dz0r6YCo6nGwE10JgeiqbDtyYthcCp6ZRVwcB69zfYWbWXH11mH+NrDlpNHBBj88C6M9cB38JXJVGWj0NnEaWyK6VNAN4Bjgx1b0FOApYAbyR6pqZWRP1mjwi4nrgekn/EBHnDORJI+JhYGKNjw6vUTeAMwfy/GZm1j95huqeI+lYsuG1AHdGxE3lhmVmZq0sz8SI3wDOIuuXeAI4K5WZmdkQlecJ86OBfSNiI7wzMeJDwOwyAzMzs9aVaz0PoAN4KW3vXFIsZtbC+rOYlBeSGnzyJI9vAA9JuoPsgb1D8F2H2ZDTnx9/LyQ1+OTpML86zab7EbLkcXZ6VsPMzIaoXM1W6aG8uqZfNzOzwacZc1uZmVmbc/IwM7PC+kwekraS9HijgjEzs/bQZ/JIz3Y8ImmPvuqZmdnQkqfDfBSwTNL9ZGtvABARx5YWlZmZtbQ8yeMfS4/CzMzaSq41zCXtCYyPiP+U9F5gWPmhmZlZq8ozMeKfka329/1U1AXcUGZQZmbW2vIM1T0TmAS8AhARTwG7lxmUmZm1tjzJ482IeKuyI2lrspUEzcxsiMqTPO6S9BVguKRPANcBPyk3LDMza2V5kscsYA3wGPB5sjXFv1pmUGZm1tryjLbamBaAuo+suerJtK64mZkNUVtMHpKOBi4B/otsSvZxkj4fEf9RdnBmZtaa8jwk+E3gYxGxAkDSB4CbAScPM7MhKk+fx+pK4kieBlaXFI+ZmbWBXu88JJ2QNpdJugW4lqzP40TggQbEZmZmLaqvZqtPVW2/AByattcAu5QWkZmZtbxek0dEnFbmiSUNA5YAqyLiGEnjgAXACOBB4JSIeEvSdsCVwP7Ab4DPRMTKMmMzM7O+5ZnbapykCyT9SNLCymsAzn0WsLxq/3zgwogYD7wMzEjlM4CXI+L3gAtTPTMza6I8HeY3ACuB75CNvKq86iZpNHA0cGnaF3AY2QSMAPOB49L2lLRP+vzwVN/MzJokz1Dd30bERQN83m8BXwZ2TPu7AmsjYkPa7yabvZf0/ixARGyQtC7Vf7H6CyXNBGYC7LGHFz40MytTnjuPb0uaI+lgSRMqr3pPKOkYsuG/S6uLa1SNHJ9tKoiYFxETI2JiZ2dnveGZmVkOee489gFOIWtW2pjKIu3XYxJwrKSjgPcAO5HdiXRI2jrdfYwGnkv1u4ExQHea0Xdn4KU6z21mZgMgT/I4Hnh/9bTs/RERs4HZAJImA38bESdLug6YSjbiajpwYzpkYdr//+nz2z23lplZc+VJHo8AHZT/VPnZwAJJ5wIPAZel8suAf5W0guyO46SS4xiSJs29nVVr19d1bFfH8AGOxsxaXZ7kMRL4haQHgDcrhRFxbH9PHhF3Anem7aeBA2rU+S3ZU+1WolVr17Ny7tHNDsPM2kSe5DGn9CjMbFDr6hjO2Fk3133sPbPq7WK1suRZz+OuRgRiZoNXf3786006Vq4863m8yqahsdsC2wCvR8ROZQZmZmatK8+dx47V+5KOo0bfhJmZDR15HhJ8l4i4gfqf8TAzs0EgT7PVCVW7WwETqfGEt5mZDR15RltVr+uxgWySxCmlRGNmZm0hT59Hqet6mJlZ++lrGdqv9XFcRMQ5JcRjZmZtoK87j9drlG1PtjjTroCTh5nZENXXMrTvLPgkaUeylf9OI5u4sF+LQZmZWXvrs89D0gjgb4CTyVbzmxARLzciMDMza1199Xn8M3ACMA/YJyJea1hUZmbW0vp6SPBLwPuArwLPSXolvV6V9EpjwjMzs1bUV59H4afPzcxsaHCCMDOzwpw8zMysMCcPMzMrzMnDzMwKyzMxoplZ03gJ29bk5GFmLc1L2LYmN1uZmVlhTh5mZlaYk4eZmRXm5GFmZoU1PHlIGiPpDknLJS2TdFYqHyFpkaSn0vsuqVySLpK0QtKjkiY0OmYzM3u3Ztx5bAC+FBEfAg4CzpS0FzALWBwR44HFaR/gSGB8es0ELm58yGZmVq3hySMino+IB9P2q8ByoAuYQrZmCOn9uLQ9BbgyMvcCHZJGNThsMzOr0tQ+D0ljgf2A+4CREfE8ZAkG2D1V6wKerTqsO5X1/K6ZkpZIWrJmzZoywzYzG/Kaljwk7QD8EPhiRPS1PohqlMVmBRHzImJiREzs7OwcqDDNzKyGpiQPSduQJY6rIuJHqfiFSnNUel+dyruBMVWHjwaea1SsZma2uWaMthJwGbA8Ii6o+mghMD1tTwdurCo/NY26OghYV2neMjOz5mjG3FaTgFOAxyQ9nMq+AswFrpU0A3gGODF9dgtwFLACeAM4rbHhmplZTw1PHhHxc2r3YwAcXqN+AGeWGpSZmRXiJ8zNzKwwJw8zMyvM63mY2aDlhaTK4+RhZoOWF5Iqj5utzMysMCcPMzMrzMnDzMwKc/IwM7PCnDzMzKwwJw8zMyvMycPMzApz8jAzs8KcPMzMrDA/YT5ITJp7O6vWrq/7+K6O4QMYjZkNdk4eg8SqtetZOffoZodhZkOEk4eZWQ39mVSxcvxgnljRycPMrIb+/vAP9okV3WFuZmaFOXmYmVlhTh5mZlaYk4eZmRXm5GFmZoV5tJWZWQkG+/rpTh5mZiUY7Ounu9nKzMwKc/IwM7PC2qbZStIRwLeBYcClETG3ySGZmZWiHfpL2iJ5SBoGfBf4BNANPCBpYUQ80dzIBlZ/Zsb1rLhmg0c79Je0RfIADgBWRMTTAJIWAFOAUpJHf6c3r1dXx3DPjGtmbaFdkkcX8GzVfjdwYHUFSTOBmWn3NUlPNii2vHYDXuyrwn8Dmt2YYPqwxThbRLvECe0Tq+McWE2LU+cXPqQS6555D2iX5KEaZfGunYh5wLzGhFOcpCURMbHZcWyJ4xx47RKr4xxY7RIn1Bdru4y26gbGVO2PBp5rUixmZkNeuySPB4DxksZJ2hY4CVjY5JjMzIastmi2iogNkr4A3Eo2VPfyiFjW5LCKatkmtR4c58Brl1gd58BqlzihjlgVEVuuZWZmVqVdmq3MzKyFOHmYmVlhTh4lkHS5pNWSHq8qGyFpkaSn0vsuzYwxxVQrzq9LWiXp4fQ6qpkxppjGSLpD0nJJyySdlcpb6pr2EWdLXVNJ75F0v6RHUpz/mMrHSbovXc9r0uCUpuoj1isk/arqmu7b7Fghmw1D0kOSbkr7LXdNoWacha+nk0c5rgCO6FE2C1gcEeOBxWm/2a5g8zgBLoyIfdPrlgbHVMsG4EsR8SHgIOBMSXvRete0tzihta7pm8BhEfGHwL7AEZIOAs4ni3M88DIwo4kxVvQWK8DfVV3Th5sX4rucBSyv2m/FawqbxwkFr6eTRwki4m7gpR7FU4D5aXs+cFxDg6qhlzhbTkQ8HxEPpu1Xyf7Sd9Fi17SPOFtKZF5Lu9ukVwCHAden8qZfT+gz1pYjaTRwNHBp2hcteE17xlkvJ4/GGRkRz0P2IwPs3uR4+vIFSY+mZq2mN69VkzQW2A+4jxa+pj3ihBa7pqnZ4mFgNbAI+C9gbURsSFW6aZHE1zPWiKhc0/PSNb1Q0nZNDLHiW8CXgY1pf1da85r2jLOi0PV08rCeLgY+QNZE8DzwzeaGs4mkHYAfAl+MiFeaHU9vasTZctc0It6OiH3JZms4APhQrWqNjaq2nrFK2huYDfw+8BFgBHB2E0NE0jHA6ohYWl1co2pTr2kvcUId19PJo3FekDQKIL2vbnI8NUXEC+kf60bgX8h+WJpO0jZkP8hXRcSPUnHLXdNacbbqNQWIiLXAnWR9NB2SKg8Ot9wUQFWxHpGaCCMi3gR+QPOv6STgWEkrgQVkzVXfovWu6WZxSvq3eq6nk0fjLASmp+3pwI1NjKVXlR/j5Hjg8d7qNkpqO74MWB4RF1R91FLXtLc4W+2aSuqU1JG2hwMfJ+ufuQOYmqo1/XpCr7H+ouo/DSLrR2jqNY2I2RExOiLGkk2fdHtEnEyLXdNe4vxsPdezLaYnaTeSrgYmA7tJ6gbmAHOBayXNAJ4BTmxehJle4pychukFsBL4fNMC3GQScArwWGr7BvgKrXdNe4tzWotd01HAfGWLrG0FXBsRN0l6Algg6VzgIbJE2Gy9xXq7pE6ypqGHgTOaGWQfzqb1rmktVxW9np6exMzMCnOzlZmZFebkYWZmhTl5mJlZYU4eZmZWmJOHmZkV5uRhg4Kk4yWFpN9vwLkmS/qjss8zECR9TtL7qvYvrZqs0axuTh42WEwDfk724FPZJgNtkTyAzwHvJI+IOD0inmheODZYOHlY20tzSU0im+76pKryrSR9L60DcZOkWyRNTZ/tL+kuSUsl3drjKfDK8Z9KazE8JOk/JY1MEx6eAfx1Wvfgj3vGIukHkh5Lk8x9OpVPS2WPSzq/qv5rks5Ttl7FvZJGpvKRkn6cyh+p3OlI+qyy9S0elvT99PBc5Xu+KelBSYvTk9lTgYlkD4A9LGm4pDslTawnJrNqTh42GBwH/DQifgm8JGlCKj8BGAvsA5wOHAzvzD/1HWBqROwPXA6cV+N7fw4cFBH7kc0D9OWIWAlcwqb1OX7W45h/ANZFxD4R8QfA7anZ6Hyy+Y72BT4iqTI19/bAvWm9iruBP0vlFwF3pfIJwDJJHwI+A0xKEwW+DZxc9T0PRsQE4C5gTkRcDywBTk6xrq8EWWdMZu/w9CQ2GEwjm4QOsh/5acCDwEeB69KEhL+WdEeq80Fgb2BRNpUPw8hmu+1pNHBNuivZFvhVjlg+TtXdT0S8LOkQ4M6IWAMg6SrgEOAG4C3gplR9KfCJtH0YcGr6jreBdZJOAfYHHkhxD2fTZJAbgWvS9r8Blckje/OROmIye4eTh7U1SbuS/dDuLSnIEkFI+jK1p8QmlS+LiIO38PXfAS6IiIWSJgNfzxMSm0+73VscAL+LTXMEvU3f/yYFzI+I2Tni2NK8QwMVkw1RbraydjcVuDIi9oyIsRExhuwO4aNkzU6fTn0fI8k6ugGeBDolvdOMJenDNb57Z2BV2p5eVf4qsGMv8dwGfKGyo2zhp/uAQyXtlvooppE1LfVlMfDn6TuGSdoplU2VtHsqHyFpz1R/KzbN3vp/0p+9r1jricnsHU4e1u6mAT/uUfZDsh/QH5Kt3vY48H2yH8x1EfEW2Q/t+ZIeIZtFtNboqa8D10n6GfBiVflPgONrdZgD5wK7pE7oR4CPpVUOZ5NNz/0IWd/ElqbmPgv4mKTHyJqOPpxGSX0VuE3So2QrAFY6+l8HPixpKdmd2D+l8iuASyod5pUvrzMms3d4Vl0b1CTtEBGvpeat+8k6m3/d7LgGmqTXImKHZsdhQ4fbMm2wu0nZYkLbAucMxsRh1gy+8zAzs8Lc52FmZoU5eZiZWWFOHmZmVpiTh5mZFebkYWZmhf0Pmga/Fj739S4AAAAASUVORK5CYII=%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Compute-birth-weight">
+<a class="anchor" href="#Compute-birth-weight" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compute birth weight<a class="anchor-link" href="#Compute-birth-weight"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">resample_rows_weighted</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s1">'wgt2013_2015'</span><span class="p">):</span>
+    <span class="sd">"""Resamples a DataFrame using probabilities proportional to given column.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: DataFrame</span>
+<span class="sd">        column: string column name to use as weights</span>
+<span class="sd">    returns: </span>
+<span class="sd">        DataFrame</span>
+<span class="sd">    """</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">weights</span> <span class="o">/=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">sample</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Resample the data</span>
+<span class="n">nsfg</span> <span class="o">=</span> <span class="n">resample_rows_weighted</span><span class="p">(</span><span class="n">nsfg</span><span class="p">,</span> <span class="s1">'wgt2013_2015'</span><span class="p">)</span>
+
+<span class="c1"># Clean the weight variables</span>
+<span class="n">pounds</span> <span class="o">=</span> <span class="n">nsfg</span><span class="p">[</span><span class="s1">'birthwgt_lb1'</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="mi">98</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<span class="n">ounces</span> <span class="o">=</span> <span class="n">nsfg</span><span class="p">[</span><span class="s1">'birthwgt_oz1'</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="mi">98</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="c1"># Compute total birth weight</span>
+<span class="n">birth_weight</span> <span class="o">=</span> <span class="n">pounds</span> <span class="o">+</span> <span class="n">ounces</span><span class="o">/</span><span class="mi">16</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a Boolean Series for full-term babies</span>
+<span class="n">full_term</span> <span class="o">=</span> <span class="n">nsfg</span><span class="p">[</span><span class="s1">'prglngth'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">37</span>
+
+<span class="c1"># Select the weights of full-term babies</span>
+<span class="n">full_term_weight</span> <span class="o">=</span> <span class="n">birth_weight</span><span class="p">[</span><span class="n">full_term</span><span class="p">]</span>
+
+<span class="c1"># Compute the mean weight of full-term babies</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">full_term_weight</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>7.409452970741339
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Filter">
+<a class="anchor" href="#Filter" aria-hidden="true"><span class="octicon octicon-link"></span></a>Filter<a class="anchor-link" href="#Filter"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Filter full-term babies</span>
+<span class="n">full_term</span> <span class="o">=</span> <span class="n">nsfg</span><span class="p">[</span><span class="s1">'prglngth'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">37</span>
+
+<span class="c1"># Filter single birth</span>
+<span class="n">single</span> <span class="o">=</span> <span class="n">nsfg</span><span class="p">[</span><span class="s1">'nbrnaliv'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+
+<span class="c1"># Compute birth weight for single full-term babies</span>
+<span class="n">single_full_term_weight</span> <span class="o">=</span> <span class="n">birth_weight</span><span class="p">[</span><span class="n">single</span> <span class="o">&amp;</span> <span class="n">full_term</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Single full-term mean:'</span><span class="p">,</span> <span class="n">single_full_term_weight</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="c1"># Compute birth weight for multiple full-term babies</span>
+<span class="n">mult_full_term_weight</span> <span class="o">=</span> <span class="n">birth_weight</span><span class="p">[</span><span class="o">~</span><span class="n">single</span> <span class="o">&amp;</span> <span class="n">full_term</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Multiple full-term mean:'</span><span class="p">,</span> <span class="n">mult_full_term_weight</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Single full-term mean: 7.421643309222423
+Multiple full-term mean: 5.765243902439025
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/2020/05/23/Read-clean-and-validate.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
