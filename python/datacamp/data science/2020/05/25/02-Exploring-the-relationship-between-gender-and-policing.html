@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Analyzing Police Activity with pandas - Exploring the relationship between gender and policing | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Analyzing Police Activity with pandas - Exploring the relationship between gender and policing" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture of Analyzing Police Activity with pandas, via datacamp" />
+<meta property="og:description" content="A Summary of lecture of Analyzing Police Activity with pandas, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/data%20science/2020/05/25/02-Exploring-the-relationship-between-gender-and-policing.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/data%20science/2020/05/25/02-Exploring-the-relationship-between-gender-and-policing.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/my_icons/fastai_logo.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-25T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"A Summary of lecture of Analyzing Police Activity with pandas, via datacamp","@type":"BlogPosting","headline":"Analyzing Police Activity with pandas - Exploring the relationship between gender and policing","dateModified":"2020-05-25T00:00:00-05:00","datePublished":"2020-05-25T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/my_icons/fastai_logo.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/data%20science/2020/05/25/02-Exploring-the-relationship-between-gender-and-policing.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/data%20science/2020/05/25/02-Exploring-the-relationship-between-gender-and-policing.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Analyzing Police Activity with pandas - Exploring the relationship between gender and policing | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Analyzing Police Activity with pandas - Exploring the relationship between gender and policing" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture of Analyzing Police Activity with pandas, via datacamp" />
+<meta property="og:description" content="A Summary of lecture of Analyzing Police Activity with pandas, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/data%20science/2020/05/25/02-Exploring-the-relationship-between-gender-and-policing.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/data%20science/2020/05/25/02-Exploring-the-relationship-between-gender-and-policing.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/my_icons/fastai_logo.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-25T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"A Summary of lecture of Analyzing Police Activity with pandas, via datacamp","@type":"BlogPosting","headline":"Analyzing Police Activity with pandas - Exploring the relationship between gender and policing","dateModified":"2020-05-25T00:00:00-05:00","datePublished":"2020-05-25T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/my_icons/fastai_logo.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/data%20science/2020/05/25/02-Exploring-the-relationship-between-gender-and-policing.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/data%20science/2020/05/25/02-Exploring-the-relationship-between-gender-and-policing.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Analyzing Police Activity with pandas - Exploring the relationship between gender and policing</h1><p class="page-description">A Summary of lecture of Analyzing Police Activity with pandas, via datacamp</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-05-25T00:00:00-05:00" itemprop="datePublished">
+        May 25, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      4 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Data Science">Data Science</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-05-25-02-Exploring-the-relationship-between-gender-and-policing.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-05-25-02-Exploring-the-relationship-between-gender-and-policing.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-05-25-02-Exploring-the-relationship-between-gender-and-policing.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Do-the-genders-commit-different-violations?">Do the genders commit different violations? </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Examining-traffic-violations">Examining traffic violations </a></li>
+<li class="toc-entry toc-h3"><a href="#Comparing-violations-by-gender">Comparing violations by gender </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Does-gender-affect-who-gets-a-ticket-for-speeding?">Does gender affect who gets a ticket for speeding? </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Comparing-speeding-outcomes-by-gender">Comparing speeding outcomes by gender </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Does-gender-affect-whose-vehicle-is-searched?">Does gender affect whose vehicle is searched? </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Calculating-the-search-rate">Calculating the search rate </a></li>
+<li class="toc-entry toc-h3"><a href="#Comparing-search-rates-by-gender">Comparing search rates by gender </a></li>
+<li class="toc-entry toc-h3"><a href="#Adding-a-second-factor-to-the-analysis">Adding a second factor to the analysis </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Does-gender-affect-who-is-frisked-during-a-search?">Does gender affect who is frisked during a search? </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Counting-protective-frisks">Counting protective frisks </a></li>
+<li class="toc-entry toc-h3"><a href="#Comparing-frisk-rates-by-gender">Comparing frisk rates by gender </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-05-25-02-Exploring-the-relationship-between-gender-and-policing.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import the pandas library as pd</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># Read 'police.csv' into a DataFrame named ri</span>
+<span class="n">ri</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/police.csv'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Do-the-genders-commit-different-violations?">
+<a class="anchor" href="#Do-the-genders-commit-different-violations?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Do the genders commit different violations?<a class="anchor-link" href="#Do-the-genders-commit-different-violations?"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Examining-traffic-violations">
+<a class="anchor" href="#Examining-traffic-violations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examining traffic violations<a class="anchor-link" href="#Examining-traffic-violations"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Count the unique values in 'violation'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'violation'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+
+<span class="c1"># Express the counts as proportions</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'violation'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Speeding               48424
+Moving violation       16224
+Equipment              10922
+Other                   4410
+Registration/plates     3703
+Seat belt               2856
+Name: violation, dtype: int64
+Speeding               0.559563
+Moving violation       0.187476
+Equipment              0.126209
+Other                  0.050960
+Registration/plates    0.042790
+Seat belt              0.033002
+Name: violation, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Comparing-violations-by-gender">
+<a class="anchor" href="#Comparing-violations-by-gender" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparing violations by gender<a class="anchor-link" href="#Comparing-violations-by-gender"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a DataFrame of female drivers</span>
+<span class="n">female</span> <span class="o">=</span> <span class="n">ri</span><span class="p">[</span><span class="n">ri</span><span class="p">[</span><span class="s1">'driver_gender'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'F'</span><span class="p">]</span>
+
+<span class="c1"># Create a DataFrame of male drivers</span>
+<span class="n">male</span> <span class="o">=</span> <span class="n">ri</span><span class="p">[</span><span class="n">ri</span><span class="p">[</span><span class="s1">'driver_gender'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'M'</span><span class="p">]</span>
+
+<span class="c1"># Compute the violations by female drivers (as proportions)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">female</span><span class="p">[</span><span class="s1">'violation'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="c1"># Compute the violations by male drivers (as proportions)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">male</span><span class="p">[</span><span class="s1">'violation'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Speeding               0.658114
+Moving violation       0.138218
+Equipment              0.105199
+Registration/plates    0.044418
+Other                  0.029738
+Seat belt              0.024312
+Name: violation, dtype: float64
+Speeding               0.522243
+Moving violation       0.206144
+Equipment              0.134158
+Other                  0.058985
+Registration/plates    0.042175
+Seat belt              0.036296
+Name: violation, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Does-gender-affect-who-gets-a-ticket-for-speeding?">
+<a class="anchor" href="#Does-gender-affect-who-gets-a-ticket-for-speeding?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does gender affect who gets a ticket for speeding?<a class="anchor-link" href="#Does-gender-affect-who-gets-a-ticket-for-speeding?"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Comparing-speeding-outcomes-by-gender">
+<a class="anchor" href="#Comparing-speeding-outcomes-by-gender" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparing speeding outcomes by gender<a class="anchor-link" href="#Comparing-speeding-outcomes-by-gender"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a DataFrame of female drivers stopped for speeding</span>
+<span class="n">female_and_speeding</span> <span class="o">=</span> <span class="n">ri</span><span class="p">[(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'driver_gender'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'F'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'violation'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Speeding'</span><span class="p">)]</span>
+
+<span class="c1"># Create a DataFrame of male drivers stopped for speeding</span>
+<span class="n">male_and_speeding</span> <span class="o">=</span> <span class="n">ri</span><span class="p">[(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'driver_gender'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'M'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'violation'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Speeding'</span><span class="p">)]</span>
+
+<span class="c1"># Compute the stop outcomes for female drivers (as proportions)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">female_and_speeding</span><span class="o">.</span><span class="n">stop_outcome</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="c1"># Compute the stop outcomes for male drivers (as proportions)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">male_and_speeding</span><span class="o">.</span><span class="n">stop_outcome</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Citation            0.952192
+Warning             0.040074
+Arrest Driver       0.005752
+N/D                 0.000959
+Arrest Passenger    0.000639
+No Action           0.000383
+Name: stop_outcome, dtype: float64
+Citation            0.944595
+Warning             0.036184
+Arrest Driver       0.015895
+Arrest Passenger    0.001281
+No Action           0.001068
+N/D                 0.000976
+Name: stop_outcome, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Does-gender-affect-whose-vehicle-is-searched?">
+<a class="anchor" href="#Does-gender-affect-whose-vehicle-is-searched?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does gender affect whose vehicle is searched?<a class="anchor-link" href="#Does-gender-affect-whose-vehicle-is-searched?"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Calculating-the-search-rate">
+<a class="anchor" href="#Calculating-the-search-rate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calculating the search rate<a class="anchor-link" href="#Calculating-the-search-rate"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check the data type of 'search_conducted'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'search_conducted'</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+
+<span class="c1"># Calculate the search rate by counting the values</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'search_conducted'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="c1"># Calculate the search rate by taking the mean</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'search_conducted'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>bool
+False    0.963953
+True     0.036047
+Name: search_conducted, dtype: float64
+0.03604713268876511
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Comparing-search-rates-by-gender">
+<a class="anchor" href="#Comparing-search-rates-by-gender" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparing search rates by gender<a class="anchor-link" href="#Comparing-search-rates-by-gender"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculating the search rate for female drivers</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="n">ri</span><span class="p">[</span><span class="s1">'driver_gender'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'F'</span><span class="p">]</span><span class="o">.</span><span class="n">search_conducted</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="c1"># Calculating the search rate for male drivers</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="n">ri</span><span class="p">[</span><span class="s1">'driver_gender'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'M'</span><span class="p">]</span><span class="o">.</span><span class="n">search_conducted</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="c1"># Calculate the search rate for both groups simultaneously</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'driver_gender'</span><span class="p">)</span><span class="o">.</span><span class="n">search_conducted</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.019180617481282074
+0.04542557598546892
+driver_gender
+F    0.019181
+M    0.045426
+Name: search_conducted, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Adding-a-second-factor-to-the-analysis">
+<a class="anchor" href="#Adding-a-second-factor-to-the-analysis" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding a second factor to the analysis<a class="anchor-link" href="#Adding-a-second-factor-to-the-analysis"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate the search rate for each combination of gender and violation</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'driver_gender'</span><span class="p">,</span> <span class="s1">'violation'</span><span class="p">])</span><span class="o">.</span><span class="n">search_conducted</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="c1"># Reverse the ordering to group by violation before gender</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'violation'</span><span class="p">,</span> <span class="s1">'driver_gender'</span><span class="p">])</span><span class="o">.</span><span class="n">search_conducted</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>driver_gender  violation          
+F              Equipment              0.039984
+               Moving violation       0.039257
+               Other                  0.041018
+               Registration/plates    0.054924
+               Seat belt              0.017301
+               Speeding               0.008309
+M              Equipment              0.071496
+               Moving violation       0.061524
+               Other                  0.046191
+               Registration/plates    0.108802
+               Seat belt              0.035119
+               Speeding               0.027885
+Name: search_conducted, dtype: float64
+violation            driver_gender
+Equipment            F                0.039984
+                     M                0.071496
+Moving violation     F                0.039257
+                     M                0.061524
+Other                F                0.041018
+                     M                0.046191
+Registration/plates  F                0.054924
+                     M                0.108802
+Seat belt            F                0.017301
+                     M                0.035119
+Speeding             F                0.008309
+                     M                0.027885
+Name: search_conducted, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Does-gender-affect-who-is-frisked-during-a-search?">
+<a class="anchor" href="#Does-gender-affect-who-is-frisked-during-a-search?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does gender affect who is frisked during a search?<a class="anchor-link" href="#Does-gender-affect-who-is-frisked-during-a-search?"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Counting-protective-frisks">
+<a class="anchor" href="#Counting-protective-frisks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Counting protective frisks<a class="anchor-link" href="#Counting-protective-frisks"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>During a vehicle search, the police officer may pat down the driver to check if they have a weapon. This is known as a "protective frisk."</p>
+<p>In this exercise, you'll first check to see how many times "Protective Frisk" was the only search type. Then, you'll use a string method to locate all instances in which the driver was frisked.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Count the 'search_type' values</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'search_type'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+
+<span class="c1"># Check if 'search_type' contains the string 'Protective Frisk'</span>
+<span class="n">ri</span><span class="p">[</span><span class="s1">'frisk'</span><span class="p">]</span> <span class="o">=</span> <span class="n">ri</span><span class="o">.</span><span class="n">search_type</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'Protective Frisk'</span><span class="p">,</span> <span class="n">na</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Check the data type of 'frisk'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'frisk'</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+
+<span class="c1"># Take the sum of frisk</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="s1">'frisk'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Incident to Arrest                                          1290
+Probable Cause                                               924
+Inventory                                                    219
+Reasonable Suspicion                                         214
+Protective Frisk                                             164
+Incident to Arrest,Inventory                                 123
+Incident to Arrest,Probable Cause                            100
+Probable Cause,Reasonable Suspicion                           54
+Probable Cause,Protective Frisk                               35
+Incident to Arrest,Inventory,Probable Cause                   35
+Incident to Arrest,Protective Frisk                           33
+Inventory,Probable Cause                                      25
+Protective Frisk,Reasonable Suspicion                         19
+Incident to Arrest,Inventory,Protective Frisk                 18
+Incident to Arrest,Probable Cause,Protective Frisk            13
+Inventory,Protective Frisk                                    12
+Incident to Arrest,Reasonable Suspicion                        8
+Incident to Arrest,Probable Cause,Reasonable Suspicion         5
+Probable Cause,Protective Frisk,Reasonable Suspicion           5
+Incident to Arrest,Inventory,Reasonable Suspicion              4
+Inventory,Reasonable Suspicion                                 2
+Incident to Arrest,Protective Frisk,Reasonable Suspicion       2
+Inventory,Probable Cause,Protective Frisk                      1
+Inventory,Protective Frisk,Reasonable Suspicion                1
+Inventory,Probable Cause,Reasonable Suspicion                  1
+Name: search_type, dtype: int64
+bool
+303
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Comparing-frisk-rates-by-gender">
+<a class="anchor" href="#Comparing-frisk-rates-by-gender" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparing frisk rates by gender<a class="anchor-link" href="#Comparing-frisk-rates-by-gender"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this exercise, you'll compare the rates at which female and male drivers are frisked during a search. Are males frisked more often than females, perhaps because police officers consider them to be higher risk?</p>
+<p>Before doing any calculations, it's important to filter the DataFrame to only include the relevant subset of data, namely stops in which a search was conducted.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a DataFrame of stops in which a search was conducted</span>
+<span class="n">searched</span> <span class="o">=</span> <span class="n">ri</span><span class="p">[</span><span class="n">ri</span><span class="o">.</span><span class="n">search_conducted</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span>
+
+<span class="c1"># Calculate the overall frisk rate by taking the mean of 'frisk'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">searched</span><span class="o">.</span><span class="n">frisk</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="c1"># Calculate the frisk rate for each gender</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">searched</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'driver_gender'</span><span class="p">)</span><span class="o">.</span><span class="n">frisk</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.09162382824312065
+driver_gender
+F    0.074561
+M    0.094353
+Name: frisk, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/data%20science/2020/05/25/02-Exploring-the-relationship-between-gender-and-policing.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
