@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Preprocessing and pipelines | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Preprocessing and pipelines" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Supervised Learning with scikit-learn”, via datacamp" />
+<meta property="og:description" content="A Summary of lecture “Supervised Learning with scikit-learn”, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/05/31/01-Preprocessing-and-pipelines.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/05/31/01-Preprocessing-and-pipelines.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/gm-boxplot.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-31T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"A Summary of lecture “Supervised Learning with scikit-learn”, via datacamp","@type":"BlogPosting","headline":"Preprocessing and pipelines","dateModified":"2020-05-31T00:00:00-05:00","datePublished":"2020-05-31T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/gm-boxplot.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/05/31/01-Preprocessing-and-pipelines.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/05/31/01-Preprocessing-and-pipelines.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Preprocessing and pipelines | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Preprocessing and pipelines" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Supervised Learning with scikit-learn”, via datacamp" />
+<meta property="og:description" content="A Summary of lecture “Supervised Learning with scikit-learn”, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/05/31/01-Preprocessing-and-pipelines.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/05/31/01-Preprocessing-and-pipelines.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/gm-boxplot.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-31T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"A Summary of lecture “Supervised Learning with scikit-learn”, via datacamp","@type":"BlogPosting","headline":"Preprocessing and pipelines","dateModified":"2020-05-31T00:00:00-05:00","datePublished":"2020-05-31T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/gm-boxplot.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/05/31/01-Preprocessing-and-pipelines.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/05/31/01-Preprocessing-and-pipelines.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Preprocessing and pipelines</h1><p class="page-description">A Summary of lecture "Supervised Learning with scikit-learn", via datacamp</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-05-31T00:00:00-05:00" itemprop="datePublished">
+        May 31, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      13 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine Learning">Machine Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-05-31-01-Preprocessing-and-pipelines.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-05-31-01-Preprocessing-and-pipelines.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-05-31-01-Preprocessing-and-pipelines.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Preprocessing-data">Preprocessing data </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Exploring-categorical-features">Exploring categorical features </a></li>
+<li class="toc-entry toc-h3"><a href="#Creating-dummy-variables">Creating dummy variables </a></li>
+<li class="toc-entry toc-h3"><a href="#Regression-with-categorical-features">Regression with categorical features </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Preprocess">Preprocess </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Handling-missing-data">Handling missing data </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Dropping-missing-data">Dropping missing data </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Preprocess">Preprocess </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Imputing-missing-data-in-a-ML-Pipeline-I">Imputing missing data in a ML Pipeline I </a></li>
+<li class="toc-entry toc-h3"><a href="#Imputing-missing-data-in-a-ML-Pipeline-II">Imputing missing data in a ML Pipeline II </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Preprocess">Preprocess </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Centering-and-scaling">Centering and scaling </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Centering-and-scaling-your-data">Centering and scaling your data </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Preprocess">Preprocess </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Centering-and-scaling-in-a-pipeline">Centering and scaling in a pipeline </a></li>
+<li class="toc-entry toc-h3"><a href="#Bringing-it-all-together-I:-Pipeline-for-classification">Bringing it all together I: Pipeline for classification </a></li>
+<li class="toc-entry toc-h3"><a href="#Bringing-it-all-together-II:-Pipeline-for-regression">Bringing it all together II: Pipeline for regression </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Preprocess">Preprocess </a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-05-31-01-Preprocessing-and-pipelines.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Preprocessing-data">
+<a class="anchor" href="#Preprocessing-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocessing data<a class="anchor-link" href="#Preprocessing-data"> </a>
+</h2>
+<ul>
+<li>Dealing with categorical features<ul>
+<li>Scikit-learn will note accept categorical features by default</li>
+<li>Need to encode categorical features numerically</li>
+<li>Convert to 'dummy variables'<ul>
+<li>0 : Obsevation was NOT that in category</li>
+<li>1 : Observation was that category</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Exploring-categorical-features">
+<a class="anchor" href="#Exploring-categorical-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exploring categorical features<a class="anchor-link" href="#Exploring-categorical-features"> </a>
+</h3>
+<p>The Gapminder dataset that you worked with in previous chapters also contained a categorical <code>'Region'</code> feature, which we dropped in previous exercises since you did not have the tools to deal with it. Now however, you do, so we have added it back in!</p>
+<p>Your job in this exercise is to explore this feature. Boxplots are particularly useful for visualizing categorical features such as this.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/gm_2008_region.csv'</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>population</th>
+      <th>fertility</th>
+      <th>HIV</th>
+      <th>CO2</th>
+      <th>BMI_male</th>
+      <th>GDP</th>
+      <th>BMI_female</th>
+      <th>life</th>
+      <th>child_mortality</th>
+      <th>Region</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>34811059.0</td>
+      <td>2.73</td>
+      <td>0.1</td>
+      <td>3.328945</td>
+      <td>24.59620</td>
+      <td>12314.0</td>
+      <td>129.9049</td>
+      <td>75.3</td>
+      <td>29.5</td>
+      <td>Middle East &amp; North Africa</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>19842251.0</td>
+      <td>6.43</td>
+      <td>2.0</td>
+      <td>1.474353</td>
+      <td>22.25083</td>
+      <td>7103.0</td>
+      <td>130.1247</td>
+      <td>58.3</td>
+      <td>192.0</td>
+      <td>Sub-Saharan Africa</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>40381860.0</td>
+      <td>2.24</td>
+      <td>0.5</td>
+      <td>4.785170</td>
+      <td>27.50170</td>
+      <td>14646.0</td>
+      <td>118.8915</td>
+      <td>75.5</td>
+      <td>15.4</td>
+      <td>America</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2975029.0</td>
+      <td>1.40</td>
+      <td>0.1</td>
+      <td>1.804106</td>
+      <td>25.35542</td>
+      <td>7383.0</td>
+      <td>132.8108</td>
+      <td>72.5</td>
+      <td>20.0</td>
+      <td>Europe &amp; Central Asia</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>21370348.0</td>
+      <td>1.96</td>
+      <td>0.1</td>
+      <td>18.016313</td>
+      <td>27.56373</td>
+      <td>41312.0</td>
+      <td>117.3755</td>
+      <td>81.5</td>
+      <td>5.2</td>
+      <td>East Asia &amp; Pacific</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a boxplot of life expectancy per region</span>
+<span class="n">df</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="s1">'life'</span><span class="p">,</span> <span class="s1">'Region'</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'../images/gm-boxplot.png'</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Creating-dummy-variables">
+<a class="anchor" href="#Creating-dummy-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating dummy variables<a class="anchor-link" href="#Creating-dummy-variables"> </a>
+</h3>
+<p>Scikit-learn does not accept non-numerical features. You saw in the previous exercise that the <code>'Region'</code> feature contains very useful information that can predict life expectancy. For example, Sub-Saharan Africa has a lower life expectancy compared to Europe and Central Asia. Therefore, if you are trying to predict life expectancy, it would be preferable to retain the <code>'Region'</code> feature. To do this, you need to binarize it by creating dummy variables, which is what you will do in this exercise.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Index(['population', 'fertility', 'HIV', 'CO2', 'BMI_male', 'GDP',
+       'BMI_female', 'life', 'child_mortality', 'Region'],
+      dtype='object')</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create dummy variables: df_region</span>
+<span class="n">df_region</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># Print the columns of df_regions</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_region</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="c1"># Create dummy variables with drop_first=True: df_region</span>
+<span class="n">df_region</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Print the new columns of df_region</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_region</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Index(['population', 'fertility', 'HIV', 'CO2', 'BMI_male', 'GDP',
+       'BMI_female', 'life', 'child_mortality', 'Region_America',
+       'Region_East Asia &amp; Pacific', 'Region_Europe &amp; Central Asia',
+       'Region_Middle East &amp; North Africa', 'Region_South Asia',
+       'Region_Sub-Saharan Africa'],
+      dtype='object')
+Index(['population', 'fertility', 'HIV', 'CO2', 'BMI_male', 'GDP',
+       'BMI_female', 'life', 'child_mortality', 'Region_East Asia &amp; Pacific',
+       'Region_Europe &amp; Central Asia', 'Region_Middle East &amp; North Africa',
+       'Region_South Asia', 'Region_Sub-Saharan Africa'],
+      dtype='object')
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Regression-with-categorical-features">
+<a class="anchor" href="#Regression-with-categorical-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Regression with categorical features<a class="anchor-link" href="#Regression-with-categorical-features"> </a>
+</h3>
+<p>Having created the dummy variables from the 'Region' feature, you can build regression models as you did before. Here, you'll use ridge regression to perform 5-fold cross-validation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Preprocess">
+<a class="anchor" href="#Preprocess" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocess<a class="anchor-link" href="#Preprocess"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">df_region</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'life'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df_region</span><span class="p">[</span><span class="s1">'life'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Ridge</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="c1"># Instantiate a ridge regressor: ridge</span>
+<span class="n">ridge</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Perform 5-fold cross-validation: ridge_cv</span>
+<span class="n">ridge_cv</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">ridge</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Print the cross-validated scores</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ridge_cv</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0.86808336 0.80623545 0.84004203 0.7754344  0.87503712]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Handling-missing-data">
+<a class="anchor" href="#Handling-missing-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Handling missing data<a class="anchor-link" href="#Handling-missing-data"> </a>
+</h2>
+<ul>
+<li>Dropping missing data<ul>
+<li>It can remove most of datas, we need a more robust method.</li>
+</ul>
+</li>
+<li>Imputing missing data<ul>
+<li>Making an educated guess about the missing values</li>
+<li>Example : Using the mean of the non-missing entries</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dropping-missing-data">
+<a class="anchor" href="#Dropping-missing-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dropping missing data<a class="anchor-link" href="#Dropping-missing-data"> </a>
+</h3>
+<p>You will see that there are certain data points labeled with a <code>'?'</code>. These denote missing values. As you saw in the video, different datasets encode missing values in different ways. Sometimes it may be a <code>'9999'</code>, other times a <code>0</code> - real-world data can be very messy! If you're lucky, the missing values will already be encoded as <code>NaN</code>. We use <code>NaN</code> because it is an efficient and simplified way of internally representing missing data, and it lets us take advantage of pandas methods such as <code>.dropna()</code> and <code>.fillna()</code>, as well as scikit-learn's Imputation transformer <code>Imputer()</code>.</p>
+<p>In this exercise, your job is to convert the <code>'?'</code>s to NaNs, and then drop the rows that contain them from the DataFrame.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Preprocess">
+<a class="anchor" href="#Preprocess" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocess<a class="anchor-link" href="#Preprocess"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/house-votes-84.csv'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'party'</span><span class="p">,</span> <span class="s1">'infants'</span><span class="p">,</span> <span class="s1">'water'</span><span class="p">,</span> <span class="s1">'budget'</span><span class="p">,</span> <span class="s1">'physician'</span><span class="p">,</span> <span class="s1">'salvador'</span><span class="p">,</span>
+       <span class="s1">'religious'</span><span class="p">,</span> <span class="s1">'satellite'</span><span class="p">,</span> <span class="s1">'aid'</span><span class="p">,</span> <span class="s1">'missile'</span><span class="p">,</span> <span class="s1">'immigration'</span><span class="p">,</span> <span class="s1">'synfuels'</span><span class="p">,</span>
+       <span class="s1">'education'</span><span class="p">,</span> <span class="s1">'superfund'</span><span class="p">,</span> <span class="s1">'crime'</span><span class="p">,</span> <span class="s1">'duty_free_exports'</span><span class="p">,</span> <span class="s1">'eaa_rsa'</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="s1">'n'</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>party</th>
+      <th>infants</th>
+      <th>water</th>
+      <th>budget</th>
+      <th>physician</th>
+      <th>salvador</th>
+      <th>religious</th>
+      <th>satellite</th>
+      <th>aid</th>
+      <th>missile</th>
+      <th>immigration</th>
+      <th>synfuels</th>
+      <th>education</th>
+      <th>superfund</th>
+      <th>crime</th>
+      <th>duty_free_exports</th>
+      <th>eaa_rsa</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>republican</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>?</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>republican</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>?</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>democrat</td>
+      <td>?</td>
+      <td>1</td>
+      <td>1</td>
+      <td>?</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>democrat</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>?</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>democrat</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>?</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert '?' to NaN</span>
+<span class="n">df</span><span class="p">[</span><span class="n">df</span> <span class="o">==</span> <span class="s1">'?'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+<span class="c1"># Print the number of NaNs</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+<span class="c1"># Print shape of original DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Shape of Original DataFrame: </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+<span class="c1"># Drop missing values and print shape fo new DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="c1"># Print shape of new DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Shape of DataFrame After Dropping All Rows with Missing Values: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>party                  0
+infants               12
+water                 48
+budget                11
+physician             11
+salvador              15
+religious             11
+satellite             14
+aid                   15
+missile               22
+immigration            7
+synfuels              21
+education             31
+superfund             25
+crime                 17
+duty_free_exports     28
+eaa_rsa              104
+dtype: int64
+Shape of Original DataFrame: (435, 17)
+Shape of DataFrame After Dropping All Rows with Missing Values: (232, 17)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Imputing-missing-data-in-a-ML-Pipeline-I">
+<a class="anchor" href="#Imputing-missing-data-in-a-ML-Pipeline-I" aria-hidden="true"><span class="octicon octicon-link"></span></a>Imputing missing data in a ML Pipeline I<a class="anchor-link" href="#Imputing-missing-data-in-a-ML-Pipeline-I"> </a>
+</h3>
+<p>As you've come to appreciate, there are many steps to building a model, from creating training and test sets, to fitting a classifier or regressor, to tuning its parameters, to evaluating its performance on new data. Imputation can be seen as the first step of this machine learning process, the entirety of which can be viewed within the context of a pipeline. Scikit-learn provides a pipeline constructor that allows you to piece together these steps into one process and thereby simplify your workflow.</p>
+<p>You'll now practice setting up a pipeline with two steps: the imputation step, followed by the instantiation of a classifier. You've seen three classifiers in this course so far: k-NN, logistic regression, and the decision tree. You will now be introduced to a fourth one - the Support Vector Machine, or <a href="http://scikit-learn.org/stable/modules/svm.html">SVM</a>. For now, do not worry about how it works under the hood. It works exactly as you would expect of the scikit-learn estimators that you have worked with previously, in that it has the same <code>.fit()</code> and <code>.predict()</code> methods as before.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong><code>sklearn.preprocessing.Imputer</code> is replaced with <code>sklearn.imputer.SimpleImputer</code> from version 0.20
+</div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.impute</span> <span class="kn">import</span> <span class="n">SimpleImputer</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
+
+<span class="c1"># Setup the Imputation transformer: imp</span>
+<span class="n">imp</span> <span class="o">=</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">missing_values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'most_frequent'</span><span class="p">)</span>
+
+<span class="c1"># Instantiate the SVC classifier: clf</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">()</span>
+
+<span class="c1"># Setup the pipeline with the required steps: steps</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">'imputation'</span><span class="p">,</span> <span class="n">imp</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'SVM'</span><span class="p">,</span> <span class="n">clf</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Imputing-missing-data-in-a-ML-Pipeline-II">
+<a class="anchor" href="#Imputing-missing-data-in-a-ML-Pipeline-II" aria-hidden="true"><span class="octicon octicon-link"></span></a>Imputing missing data in a ML Pipeline II<a class="anchor-link" href="#Imputing-missing-data-in-a-ML-Pipeline-II"> </a>
+</h3>
+<p>Having setup the steps of the pipeline in the previous exercise, you will now use it on the voting dataset to classify a Congressman's party affiliation. What makes pipelines so incredibly useful is the simple interface that they provide. You can use the <code>.fit()</code> and <code>.predict()</code> methods on pipelines just as you did with your classifiers and regressors!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Preprocess">
+<a class="anchor" href="#Preprocess" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocess<a class="anchor-link" href="#Preprocess"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'party'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'party'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">classification_report</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="c1"># Setup the pipeline steps: steps</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">'imputation'</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">missing_values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'most_frequent'</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s1">'SVM'</span><span class="p">,</span> <span class="n">SVC</span><span class="p">())]</span>
+
+<span class="c1"># Create the pipeline: pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+<span class="c1"># Create training and test sets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Fit the pipeline to the train set</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Predict the labels of the test set</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Compute metrics</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>              precision    recall  f1-score   support
+
+    democrat       0.97      0.97      0.97        36
+  republican       0.97      0.97      0.97        34
+
+    accuracy                           0.97        70
+   macro avg       0.97      0.97      0.97        70
+weighted avg       0.97      0.97      0.97        70
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Centering-and-scaling">
+<a class="anchor" href="#Centering-and-scaling" aria-hidden="true"><span class="octicon octicon-link"></span></a>Centering and scaling<a class="anchor-link" href="#Centering-and-scaling"> </a>
+</h2>
+<ul>
+<li>Why scale your data?<ul>
+<li>Many models use some form of distance to inform them</li>
+<li>Features on larger scales can unduly influence the model</li>
+<li>Example: k-NN uses distance explicitly when making predictions</li>
+<li>Want features to be on a similar scale</li>
+<li>Normalizing (or scaling and centering)</li>
+</ul>
+</li>
+<li>Ways to normalize your data<ul>
+<li>Standardization: Subtract the mean and divide by variance</li>
+<li>All features are centered around zero and have variance one</li>
+<li>Can also subtract the minimum and divide by the range</li>
+<li>Minimum zero and maximum one</li>
+<li>Can also normalize so the data ranges from -1 to +1</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Centering-and-scaling-your-data">
+<a class="anchor" href="#Centering-and-scaling-your-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Centering and scaling your data<a class="anchor-link" href="#Centering-and-scaling-your-data"> </a>
+</h3>
+<p>You will now explore scaling for yourself on a new dataset - <a href="https://archive.ics.uci.edu/ml/datasets/Wine+Quality">White Wine Quality</a>! Hugo used the Red Wine Quality dataset in the video. We have used the <code>'quality'</code> feature of the wine to create a binary target variable: If <code>'quality'</code> is less than 5, the target variable is 1, and otherwise, it is 0.</p>
+<p>Notice how some features seem to have different units of measurement. <code>'density'</code>, for instance, takes values between 0.98 and 1.04, while <code>'total sulfur dioxide'</code> ranges from 9 to 440. As a result, it may be worth scaling the features here. Your job in this exercise is to scale the features and compute the mean and standard deviation of the unscaled features compared to the scaled features.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Preprocess">
+<a class="anchor" href="#Preprocess" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocess<a class="anchor-link" href="#Preprocess"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/white-wine.csv'</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>fixed acidity</th>
+      <th>volatile acidity</th>
+      <th>citric acid</th>
+      <th>residual sugar</th>
+      <th>chlorides</th>
+      <th>free sulfur dioxide</th>
+      <th>total sulfur dioxide</th>
+      <th>density</th>
+      <th>pH</th>
+      <th>sulphates</th>
+      <th>alcohol</th>
+      <th>quality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7.0</td>
+      <td>0.27</td>
+      <td>0.36</td>
+      <td>20.7</td>
+      <td>0.045</td>
+      <td>45.0</td>
+      <td>170.0</td>
+      <td>1.0010</td>
+      <td>3.00</td>
+      <td>0.45</td>
+      <td>8.8</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>6.3</td>
+      <td>0.30</td>
+      <td>0.34</td>
+      <td>1.6</td>
+      <td>0.049</td>
+      <td>14.0</td>
+      <td>132.0</td>
+      <td>0.9940</td>
+      <td>3.30</td>
+      <td>0.49</td>
+      <td>9.5</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>8.1</td>
+      <td>0.28</td>
+      <td>0.40</td>
+      <td>6.9</td>
+      <td>0.050</td>
+      <td>30.0</td>
+      <td>97.0</td>
+      <td>0.9951</td>
+      <td>3.26</td>
+      <td>0.44</td>
+      <td>10.1</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>7.2</td>
+      <td>0.23</td>
+      <td>0.32</td>
+      <td>8.5</td>
+      <td>0.058</td>
+      <td>47.0</td>
+      <td>186.0</td>
+      <td>0.9956</td>
+      <td>3.19</td>
+      <td>0.40</td>
+      <td>9.9</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>7.2</td>
+      <td>0.23</td>
+      <td>0.32</td>
+      <td>8.5</td>
+      <td>0.058</td>
+      <td>47.0</td>
+      <td>186.0</td>
+      <td>0.9956</td>
+      <td>3.19</td>
+      <td>0.40</td>
+      <td>9.9</td>
+      <td>6</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'quality'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'quality'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">5</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'quality'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'quality'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>fixed acidity</th>
+      <th>volatile acidity</th>
+      <th>citric acid</th>
+      <th>residual sugar</th>
+      <th>chlorides</th>
+      <th>free sulfur dioxide</th>
+      <th>total sulfur dioxide</th>
+      <th>density</th>
+      <th>pH</th>
+      <th>sulphates</th>
+      <th>alcohol</th>
+      <th>quality</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7.0</td>
+      <td>0.27</td>
+      <td>0.36</td>
+      <td>20.7</td>
+      <td>0.045</td>
+      <td>45.0</td>
+      <td>170.0</td>
+      <td>1.0010</td>
+      <td>3.00</td>
+      <td>0.45</td>
+      <td>8.8</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>6.3</td>
+      <td>0.30</td>
+      <td>0.34</td>
+      <td>1.6</td>
+      <td>0.049</td>
+      <td>14.0</td>
+      <td>132.0</td>
+      <td>0.9940</td>
+      <td>3.30</td>
+      <td>0.49</td>
+      <td>9.5</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>8.1</td>
+      <td>0.28</td>
+      <td>0.40</td>
+      <td>6.9</td>
+      <td>0.050</td>
+      <td>30.0</td>
+      <td>97.0</td>
+      <td>0.9951</td>
+      <td>3.26</td>
+      <td>0.44</td>
+      <td>10.1</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>7.2</td>
+      <td>0.23</td>
+      <td>0.32</td>
+      <td>8.5</td>
+      <td>0.058</td>
+      <td>47.0</td>
+      <td>186.0</td>
+      <td>0.9956</td>
+      <td>3.19</td>
+      <td>0.40</td>
+      <td>9.9</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>7.2</td>
+      <td>0.23</td>
+      <td>0.32</td>
+      <td>8.5</td>
+      <td>0.058</td>
+      <td>47.0</td>
+      <td>186.0</td>
+      <td>0.9956</td>
+      <td>3.19</td>
+      <td>0.40</td>
+      <td>9.9</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">scale</span>
+
+<span class="c1"># Scale the features: X_scaled</span>
+<span class="n">X_scaled</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># Print the mean and standard deviation of the unscaled features</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Mean of Unscaled Features: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Standard Deviation of Unscaled Features: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
+
+<span class="c1"># Print the mean and standard deviation of the scaled features</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Mean of Scaled Features: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X_scaled</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Standard Deviation of Scaled Features: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X_scaled</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Mean of Unscaled Features: 18.432687072460002
+Standard Deviation of Unscaled Features: 41.54494764094571
+Mean of Scaled Features: 2.7314972981668206e-15
+Standard Deviation of Scaled Features: 0.9999999999999999
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Centering-and-scaling-in-a-pipeline">
+<a class="anchor" href="#Centering-and-scaling-in-a-pipeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>Centering and scaling in a pipeline<a class="anchor-link" href="#Centering-and-scaling-in-a-pipeline"> </a>
+</h3>
+<p>With regard to whether or not scaling is effective, the proof is in the pudding! See for yourself whether or not scaling the features of the White Wine Quality dataset has any impact on its performance. You will use a k-NN classifier as part of a pipeline that includes scaling, and for the purposes of comparison, a k-NN classifier trained on the unscaled data has been provided.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+
+<span class="c1"># Setup the pipeline steps: steps</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">'scaler'</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s1">'knn'</span><span class="p">,</span> <span class="n">KNeighborsClassifier</span><span class="p">())]</span>
+
+<span class="c1"># Create the pipeline: pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+<span class="c1"># Create train and test sets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Fit the pipeline to the training set: knn_scaled</span>
+<span class="n">knn_scaled</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Instantiate and fit a k-NN classifier to the unscaled data</span>
+<span class="n">knn_unscaled</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Compute and print metrics</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Accuracy with Scaling: </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">knn_scaled</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Accuracy without Scaling: </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">knn_unscaled</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Accuracy with Scaling: 0.964625850340136
+Accuracy without Scaling: 0.9666666666666667
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Bringing-it-all-together-I:-Pipeline-for-classification">
+<a class="anchor" href="#Bringing-it-all-together-I:-Pipeline-for-classification" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bringing it all together I: Pipeline for classification<a class="anchor-link" href="#Bringing-it-all-together-I:-Pipeline-for-classification"> </a>
+</h3>
+<p>It is time now to piece together everything you have learned so far into a pipeline for classification! Your job in this exercise is to build a pipeline that includes scaling and hyperparameter tuning to classify wine quality.</p>
+<p>You'll return to using the SVM classifier you were briefly introduced to earlier in this chapter. The hyperparameters you will tune are <code>C</code> and <code>gamma</code>. <code>C</code> controls the regularization strength. It is analogous to the <code>C</code> you tuned for logistic regression in Chapter 3, while <code>gamma</code> controls the kernel coefficient: Do not worry about this now as it is beyond the scope of this course.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">classification_report</span><span class="p">,</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span><span class="p">,</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+
+<span class="c1"># Setup the pipeline</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">'scaler'</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s1">'SVM'</span><span class="p">,</span> <span class="n">SVC</span><span class="p">())]</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+<span class="c1"># Specify the hyperparameter space</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'SVM__C'</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+             <span class="s1">'SVM__gamma'</span><span class="p">:[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]}</span>
+
+<span class="c1"># Create train and test sets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+
+<span class="c1"># Instantiate the GridSearchCV object: cv</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Fit to the training set</span>
+<span class="n">cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Predict the labels of the test set: y_pred</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Compute and print metrics</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Accuracy: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Tuned Model Parameters: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">best_params_</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Accuracy: 0.9693877551020408
+              precision    recall  f1-score   support
+
+       False       0.97      1.00      0.98       951
+        True       0.43      0.10      0.17        29
+
+    accuracy                           0.97       980
+   macro avg       0.70      0.55      0.58       980
+weighted avg       0.96      0.97      0.96       980
+
+Tuned Model Parameters: {'SVM__C': 100, 'SVM__gamma': 0.01}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Bringing-it-all-together-II:-Pipeline-for-regression">
+<a class="anchor" href="#Bringing-it-all-together-II:-Pipeline-for-regression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bringing it all together II: Pipeline for regression<a class="anchor-link" href="#Bringing-it-all-together-II:-Pipeline-for-regression"> </a>
+</h3>
+<p>For this final exercise, you will return to the Gapminder dataset. Guess what? Even this dataset has missing values that we dealt with for you in earlier chapters! Now, you have all the tools to take care of them yourself!</p>
+<p>Your job is to build a pipeline that imputes the missing data, scales the features, and fits an ElasticNet to the Gapminder data. You will then tune the <code>l1_ratio</code> of your ElasticNet using <code>GridSearchCV</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Preprocess">
+<a class="anchor" href="#Preprocess" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocess<a class="anchor-link" href="#Preprocess"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/gm_2008_region.csv'</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>population</th>
+      <th>fertility</th>
+      <th>HIV</th>
+      <th>CO2</th>
+      <th>BMI_male</th>
+      <th>GDP</th>
+      <th>BMI_female</th>
+      <th>life</th>
+      <th>child_mortality</th>
+      <th>Region</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>34811059.0</td>
+      <td>2.73</td>
+      <td>0.1</td>
+      <td>3.328945</td>
+      <td>24.59620</td>
+      <td>12314.0</td>
+      <td>129.9049</td>
+      <td>75.3</td>
+      <td>29.5</td>
+      <td>Middle East &amp; North Africa</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>19842251.0</td>
+      <td>6.43</td>
+      <td>2.0</td>
+      <td>1.474353</td>
+      <td>22.25083</td>
+      <td>7103.0</td>
+      <td>130.1247</td>
+      <td>58.3</td>
+      <td>192.0</td>
+      <td>Sub-Saharan Africa</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>40381860.0</td>
+      <td>2.24</td>
+      <td>0.5</td>
+      <td>4.785170</td>
+      <td>27.50170</td>
+      <td>14646.0</td>
+      <td>118.8915</td>
+      <td>75.5</td>
+      <td>15.4</td>
+      <td>America</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2975029.0</td>
+      <td>1.40</td>
+      <td>0.1</td>
+      <td>1.804106</td>
+      <td>25.35542</td>
+      <td>7383.0</td>
+      <td>132.8108</td>
+      <td>72.5</td>
+      <td>20.0</td>
+      <td>Europe &amp; Central Asia</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>21370348.0</td>
+      <td>1.96</td>
+      <td>0.1</td>
+      <td>18.016313</td>
+      <td>27.56373</td>
+      <td>41312.0</td>
+      <td>117.3755</td>
+      <td>81.5</td>
+      <td>5.2</td>
+      <td>East Asia &amp; Pacific</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">'Region'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'life'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'life'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.impute</span> <span class="kn">import</span> <span class="n">SimpleImputer</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">ElasticNet</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="c1"># Setup the pipeline steps: steps</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">'imputation'</span><span class="p">,</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">missing_values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s1">'scaler'</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s1">'elasticnet'</span><span class="p">,</span> <span class="n">ElasticNet</span><span class="p">(</span><span class="n">tol</span><span class="o">=</span><span class="mf">0.6</span><span class="p">))]</span>
+
+<span class="c1"># Create the pipeline: pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+<span class="c1"># Specify the hyperparameter space</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'elasticnet__l1_ratio'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">)}</span>
+
+<span class="c1"># Create train and test sets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Create the GridSearchCV object: gm_cv</span>
+<span class="n">gm_cv</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Fit to the training set</span>
+<span class="n">gm_cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Compute and print the metrics</span>
+<span class="n">r2</span> <span class="o">=</span> <span class="n">gm_cv</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Tuned ElasticNet Alpha: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gm_cv</span><span class="o">.</span><span class="n">best_params_</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Tuned ElasticNet R squared: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r2</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Tuned ElasticNet Alpha: {'elasticnet__l1_ratio': 0.6206896551724138}
+Tuned ElasticNet R squared: 0.855644773878311
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine%20learning/2020/05/31/01-Preprocessing-and-pipelines.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
