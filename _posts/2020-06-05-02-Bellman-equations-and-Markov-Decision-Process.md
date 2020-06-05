@@ -29,6 +29,8 @@ And the transition model $T$ can be represented by a matrix:
 
 
 $$ T = \begin{bmatrix} P(s_1 \vert s_1) & P(s_2 \vert s_1) & \cdots & P(s_N \vert s_1) \\ P(s_1 \vert s_2) & P(s_2 \vert s_2) & \cdots & P(s_N \vert s_2) \\ \vdots & \vdots & \ddots & \vdots \\  P(s_1 \vert s_N) & P(s_2 \vert s_N) & \cdots & P(s_N \vert s_N)\end{bmatrix}  $$
+
+
 Also, the reward function $R$ can be represented by a vector:
 $$ R = \big( R(s_1), R(s_2, \cdots, R(s_N) \big)^T $$
 
