@@ -19,7 +19,7 @@ Markov Reward Process is Markov Chain with rewards. it is a tuple of $(S, T, R, 
 > Note: 
 > - There is no actions
 > - If $S$ is finite, then $R$ can be represented by a vector
-> - By Markov property, the transition model is independent of $t$ so that it can be expresed by $T(t, s_1, s_2) = T(s_1, s_2) = P(s_{t+1} = s_2 | s_t = s_1)$
+> - By Markov property, the transition model is independent of $t$ so that it can be expresed by $T(t, s_1, s_2) = T(s_1, s_2) = P(s_{t+1} = s_2 \vert s_t = s_1)$
 > - Also same as $R(s_t = s) = R(s)$
 
 ## Markov Reward Process for Finite State
@@ -47,3 +47,16 @@ $$\begin{aligned} G_t &= r_t + \gamma * r_{t+1} + \gamma^2 * r_{t+2} + \cdots \\
 - State-value function $V$: expected discounted sum of future rewards from initial state $s$
 $$ \begin{aligned} V(s_t = s) &= E[G_t \vert s_t = s] \\
 &= E[r_t + \gamma r_{t+1} + \gamma^2r_{t+2} + \gamma^3 r_{t+3} + \cdots \vert s_t = s] \end{aligned} $$
+- By Markov property, $V(s_t = s)$ is independent of the initial step $t$ so that we can use simpler notation $V(s)$ instead of $V(s_t = s)$.
+
+## Bellman Equation for MRP
+The value function can be decomposed by:
+- Immediate reward ($r_t$)
+- Discounterd value of subsequent states ($\gamma G_{t+1}$)
+
+The Bellman equation for MRP is:
+$$\begin{aligned} V(s) &= E[G_t \vert s_t = s] \\
+&= E[r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \gamma^3 r_{t+3} + \cdots \vert s_t = s] \\
+&= E[r_t + \gamma G_{t+1} \vert s_t = s] \\
+&= E[r_t | s_t = s] + \gamma E[ E[G_{t+1} \vert s_{t+1}] \vert s_t = s] \\
+&= R(s) + \gamma E[V(s_{t+1}) \vert s_t = s]  \end{aligned}$$
