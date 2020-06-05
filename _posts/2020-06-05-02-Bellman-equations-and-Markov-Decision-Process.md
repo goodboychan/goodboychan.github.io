@@ -26,6 +26,8 @@ Markov Reward Process is Markov Chain with rewards. it is a tuple of $(S, T, R, 
 If $S$ is finite, $S$ can be represented by a vector: 
 $$S=\{s_1, s_2, \dots, s_N \}$$
 And the transition model $T$ can be represented by a matrix:
+
+
 $$ T = \begin{bmatrix} P(s_1 \vert s_1) & P(s_2 \vert s_1) & \cdots & P(s_N \vert s_1) \\ P(s_1 \vert s_2) & P(s_2 \vert s_2) & \cdots & P(s_N \vert s_2) \\ \vdots & \vdots & \ddots & \vdots \\  P(s_1 \vert s_N) & P(s_2 \vert s_N) & \cdots & P(s_N \vert s_N)\end{bmatrix}  $$
 Also, the reward function $R$ can be represented by a vector:
 $$ R = \big( R(s_1), R(s_2, \cdots, R(s_N) \big)^T $$
@@ -62,6 +64,8 @@ $$\begin{aligned} V(s) &= E[G_t \vert s_t = s] \\
 &= R(s) + \gamma E[V(s_{t+1}) \vert s_t = s]  \end{aligned}$$
 
 If we have finite state, the Bellman equation of state-value function for MRP can be represented by vectors and the transition matrix:
+
+
 $$ \begin{bmatrix} V(s_1) \\ \vdots \\ V(s_N) \end{bmatrix} = \begin{bmatrix} R(s_1) \\ \vdots \\ R(s_N) \end{bmatrix} + \gamma 
 \begin{bmatrix} T_{11} & \cdots & T_{1N} \\ T_{21} & \cdots & T_{2N} \\ \vdots & \ddots & \vdots \\ T_{N1} & \cdots & T_{NN} \end{bmatrix} 
 \begin{bmatrix} V(s_1) \\ \vdots \\ V(s_N) \end{bmatrix} $$
