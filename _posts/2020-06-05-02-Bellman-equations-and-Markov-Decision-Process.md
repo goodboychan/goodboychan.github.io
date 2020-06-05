@@ -60,3 +60,22 @@ $$\begin{aligned} V(s) &= E[G_t \vert s_t = s] \\
 &= E[r_t + \gamma G_{t+1} \vert s_t = s] \\
 &= E[r_t | s_t = s] + \gamma E[ E[G_{t+1} \vert s_{t+1}] \vert s_t = s] \\
 &= R(s) + \gamma E[V(s_{t+1}) \vert s_t = s]  \end{aligned}$$
+
+If we have finite state, the Bellman equation of state-value function for MRP can be represented by vectors and the transition matrix:
+$$ \begin{bmatrix} V(s_1) \\ \vdots \\ V(s_N) \end{bmatrix} = \begin{bmatrix} R(s_1) \\ \vdots \\ R(s_N) \end{bmatrix} + \gamma 
+\begin{bmatrix} T_{11} & \cdots & T_{1N} \\ T_{21} & \cdots & T_{2N} \\ \vdots & \ddots & \vdots \\ T_{N1} & \cdots & T_{NN} \end{bmatrix} 
+\begin{bmatrix} V(s_1) \\ \vdots \\ V(s_N) \end{bmatrix} $$
+
+> Note : $T_{ij} = P(s_{t+1} = s_j \vert s_t = s_i)$
+
+It can simplified by:
+$$ V = R + \gamma T V $$
+
+## How to solve Bellman Equation
+
+Solving the linear system by using linear solvers:
+$$ V = R + \gamma T V \\ (\mathbb{I}- \gamma T) V = R \\ V = (\mathbb{I} - \gamma T)^{-1} R $$
+
+> Note: If $\gamma < 1$, then $\mathbb{I}- \gamma T$ is invertible
+
+Computation Complexity is $O(n^3)$ where $n$ is the number of states. If $n$ is huge, then it is not proper to solve the linear system directly. Instead, we can use iterative methods like **Dynamic Programming**.
