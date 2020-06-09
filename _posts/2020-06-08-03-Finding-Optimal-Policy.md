@@ -8,16 +8,16 @@ image:
 ---
 
 ## Optimal Value Function
-The optimal state-value function $V^{*}(s)$ is the maximum state-value function over all policies:
-$$ V^{*}(s) = \max_{\pi}V^{\pi}(s) $$
-And optimal state action-value function $Q^{*}(s, a)$ is the maximum action-value function over all policies:
-$$ Q^{*}(s, a) = \max_{\pi} Q^{\pi}(s,a)$$
-The difference between them is that $Q^{*}(s, a)$ takes the inital action $a$ based on policy $\pi$, but $V^{*}(s)$ is not.
+The optimal state-value function $V^{\ast}(s)$ is the maximum state-value function over all policies:
+$$ V^{\ast}(s) = \max_{\pi}V^{\pi}(s) $$
+And optimal state action-value function $Q^{\ast}(s, a)$ is the maximum action-value function over all policies:
+$$ Q^{\ast}(s, a) = \max_{\pi} Q^{\pi}(s,a)$$
+The difference between them is that $Q^{\ast}(s, a)$ takes the inital action $a$ based on policy $\pi$, but $V^{\ast}(s)$ is not.
 
 ## Optimal Policy
 
-Find the optimal policy $\pi^*$ which maximize the state-value at each state:
-$$ \pi^*(s) = \argmax_{\pi}V^{\pi}(s) $$
+Find the optimal policy $\pi^{\ast}$ which maximize the state-value at each state:
+$$ \pi^{\ast}(s) = \argmax_{\pi}V^{\pi}(s) $$
 
 For the optimal policy $\pi^*$, we have
 - $V^{\pi^*} \gt V^{\pi}(s)$ for any policy $\pi$ and state $s$
