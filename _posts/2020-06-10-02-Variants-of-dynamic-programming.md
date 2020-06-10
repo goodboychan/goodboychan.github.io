@@ -18,11 +18,11 @@ Dynamic Programming mentioned before used synchronous backups which updates all 
 
 ## In-Place Dynamic Programming
 - Synchronous value iteration stores two copies of value function
-1.  For all states $s$:
+ 1.  For all states $s$:
+   
+   $V_{new}(s) = \max_{a \in A} (R(s, a) + \gamma \sum_{s' \in S} P(s' \vert s, a) V_{old}(s'))$
 
-$$ V_{new}(s) = \max_{a \in A} (R(s, a) + \gamma \sum_{s' \in S} P(s' \vert s, a) V_{old}(s')) $$
-
-2. $V_{old}(s) = V_{new}(s)$
+  2. $V_{old}(s) = V_{new}(s)$
 
 - In-place value iteration only use **one memory space** of value function
 
