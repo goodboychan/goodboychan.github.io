@@ -3,7 +3,7 @@ toc: true
 layout: post
 description: A summary of "Understanding deep reinforcement learning"
 categories: [Reinforcement Learning]
-title: Variants of Dynamic Programming
+title: Monte Carlo method - Intro
 image: 
 ---
 
