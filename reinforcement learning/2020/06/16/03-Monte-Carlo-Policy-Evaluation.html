@@ -119,7 +119,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      1 min read
+      5 min read
     
 </span></p>
 
@@ -140,6 +140,12 @@ window.onload = wrap_img;
 <ul>
 <li class="toc-entry toc-h2"><a href="#monte-carlo-policy-evaluation">Monte Carlo Policy Evaluation</a></li>
 <li class="toc-entry toc-h2"><a href="#first-visit-monte-carlo-mc-policy-evaluation">First-Visit Monte Carlo (MC) Policy Evaluation</a></li>
+<li class="toc-entry toc-h2"><a href="#every-visit-monte-carlo-mc-policy-evaluation">Every-Visit Monte Carlo (MC) Policy Evaluation</a></li>
+<li class="toc-entry toc-h2"><a href="#incremental-monte-carlo-mc-policy-evaluation">Incremental Monte Carlo (MC) Policy Evaluation</a></li>
+<li class="toc-entry toc-h2"><a href="#incremental-monte-carlo-mc-policy-evaluation-with-learning-rate">Incremental Monte Carlo (MC) Policy Evaluation with learning-rate</a></li>
+<li class="toc-entry toc-h2"><a href="#bias-variance-and-mean-squared-error">Bias, Variance and Mean Squared Error</a></li>
+<li class="toc-entry toc-h2"><a href="#bias-and-variance-of-mc-policy-evaluation">Bias and Variance of MC Policy Evaluation</a></li>
+<li class="toc-entry toc-h2"><a href="#limitation-of-mc-policy-evaluation">Limitation of MC Policy Evaluation</a></li>
 </ul>
 </li>
 </ul><h1 id="monte-carlo-methods-and-temporal-difference-learning-in-policy-evaluation">
@@ -204,6 +210,130 @@ $G_{i,t} = r_{i,t} + \gamma r_{i, t+1}, \gamma^2r_{i,t+2} + \cdots + \gamma^{T_i
   </li>
 </ol>
 
+<h2 id="every-visit-monte-carlo-mc-policy-evaluation">
+<a class="anchor" href="#every-visit-monte-carlo-mc-policy-evaluation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Every-Visit Monte Carlo (MC) Policy Evaluation</h2>
+<p>When we update value function $V^{\pi}(s)$, we select the <strong>all visit</strong> state value.</p>
+
+<ol>
+  <li>Initialize $N(s) = 0 = G(s),\forall_s \in S$ <br>
+($N(s)$: number of visitation, $G(s)$: total expected return in state $s$)</li>
+  <li>Loop
+    <ol>
+      <li>Generate Episode $i = s_{i,1}, a_{i,1}, r_{i,1}, s_{i,2}, a_{i,2}, r_{i,2}, \dots, s_{i,T_i}$</li>
+      <li>Define return of $i$-th episode from time step $t$:<br>
+$G_{i,t} = r_{i,t} + \gamma r_{i, t+1}, \gamma^2r_{i,t+2} + \cdots + \gamma^{T_i-1} r_{i, T_i}$</li>
+      <li>For each state $s$ visited in $i$-th episode <br>
+-For <strong>every</strong> time $t$ that state $s$ is visited in $i$-th episode,
+        <ul>
+          <li>Increment counter of total first visits: $N(s) = N(s) + 1$</li>
+          <li>Increment total return: $G(s) = G(s) + G_{i, t}$</li>
+          <li>Update estimate: $V^{\pi}(s) = \dfrac{G(s)}{N(s)}$</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+</ol>
+
+<h2 id="incremental-monte-carlo-mc-policy-evaluation">
+<a class="anchor" href="#incremental-monte-carlo-mc-policy-evaluation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Incremental Monte Carlo (MC) Policy Evaluation</h2>
+<p>Nonetheless we choose first-visit or every-visit MC, we incrementally update state value function $V^{\pi}(s)$</p>
+
+<ol>
+  <li>Initialize $N(s) = 0,\forall_s \in S$ <br>
+($N(s)$: number of visitation, $G(s)$: total expected return in state $s$)</li>
+  <li>Loop
+    <ol>
+      <li>Generate Episode $i = s_{i,1}, a_{i,1}, r_{i,1}, s_{i,2}, a_{i,2}, r_{i,2}, \dots, s_{i,T_i}$</li>
+      <li>Define return of $i$-th episode from time step $t$:<br>
+$G_{i,t} = r_{i,t} + \gamma r_{i, t+1}, \gamma^2r_{i,t+2} + \cdots + \gamma^{T_i-1} r_{i, T_i}$</li>
+      <li>For each state $s$ visited in $i$-th episode <br>
+-For <strong>every (or first)</strong> time $t$ that state $s$ is visited in $i$-th episode,
+        <ul>
+          <li>Increment counter of total first visits: $N(s) = N(s) + 1$</li>
+          <li>
+            <p>Assume that, <br>
+   $V_{old} = \dfrac{G_{old}}{N} \rarr G_{old} = N * V_{old}$ <br>
+   if we gather new expected return $G_{i, t}$,<br>
+   $\begin{aligned} V_{new} &amp;= \dfrac{N * V_{old} + G_{i, t}}{N + 1} \ &amp;= \frac{N}{N+1} V_{old} + \frac{1}{N+1} G_{i, t} \end{aligned}$ <br>
+   We can replace: $N+1 \rarr N(s)$</p>
+          </li>
+          <li>Update estimate: <br>
+   $\begin{aligned}V^{\pi}(s) &amp;= V^{\pi}(s)\dfrac{N(s)-1}{N(s)} + G_{i, t} \frac{1}{N(s)} \ &amp;= V^{\pi}(s) + \frac{1}{N(s)}\big(G_{i, t} - V^{\pi}(s)\big) \end{aligned}$ <br>
+   (Here, we can consider to replace the weight value $\frac{1}{N(s)}$)</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+</ol>
+
+<h2 id="incremental-monte-carlo-mc-policy-evaluation-with-learning-rate">
+<a class="anchor" href="#incremental-monte-carlo-mc-policy-evaluation-with-learning-rate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Incremental Monte Carlo (MC) Policy Evaluation with learning-rate</h2>
+<p>Nonetheless we choose first-visit or every-visit MC, we incrementally update state value function $V^{\pi}(s)$</p>
+
+<ol>
+  <li>Initialize $N(s) = 0,\forall_s \in S$ <br>
+($N(s)$: number of visitation, $G(s)$: total expected return in state $s$)</li>
+  <li>Loop
+    <ol>
+      <li>Generate Episode $i = s_{i,1}, a_{i,1}, r_{i,1}, s_{i,2}, a_{i,2}, r_{i,2}, \dots, s_{i,T_i}$</li>
+      <li>Define return of $i$-th episode from time step $t$:<br>
+$G_{i,t} = r_{i,t} + \gamma r_{i, t+1}, \gamma^2r_{i,t+2} + \cdots + \gamma^{T_i-1} r_{i, T_i}$</li>
+      <li>For each state $s$ visited in $i$-th episode <br>
+-For <strong>every (or first)</strong> time $t$ that state $s$ is visited in $i$-th episode,
+        <ul>
+          <li>Increment counter of total first visits: $N(s) = N(s) + 1$</li>
+          <li>Update estimate using <strong>learning rate $\alpha$</strong>: <br>
+   $V^{\pi}(s) = V^{\pi}(s) + \alpha\big(G_{i, t} - V^{\pi}(s)\big)$
+            <blockquote>
+              <p>Note: if $\alpha &gt; \frac{1}{N(s)}$, then we choose more weight for newer data. This is helpful for non-stationary domains.</p>
+            </blockquote>
+          </li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+</ol>
+
+<h2 id="bias-variance-and-mean-squared-error">
+<a class="anchor" href="#bias-variance-and-mean-squared-error" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bias, Variance and Mean Squared Error</h2>
+
+<p>Consider a statistical model that is parameterized by $\theta$ and that determins a probability distribution over observed data $P(x \vert \theta)$. And this model generates the statistics $\hat{\theta}$ that provides an estimate of $\theta$ using observed data $x$.</p>
+
+<p>Then Bias of an estimator $\hat{\theta}$ is defined by,
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>bias</mtext><mo stretchy="false">(</mo><mover accent="true"><mi>θ</mi><mo>^</mo></mover><mo stretchy="false">)</mo><mo>=</mo><msub><mi>E</mi><mrow><mi>x</mi><mi mathvariant="normal">∣</mi><mi>θ</mi></mrow></msub><mo stretchy="false">[</mo><mover accent="true"><mi>θ</mi><mo>^</mo></mover><mo stretchy="false">]</mo><mo>−</mo><mi>θ</mi></mrow><annotation encoding="application/x-tex">\text{bias}(\hat{\theta}) = E_{x \vert \theta}[\hat{\theta}] - \theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2078799999999998em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">bias</span></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9578799999999998em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span><span style="top:-3.26344em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">^</span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.3130799999999998em;vertical-align:-0.3551999999999999em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="mord mtight">∣</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9578799999999998em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span><span style="top:-3.26344em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">^</span></span></span></span></span></span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span></span></p>
+
+<p>And Variance of an estimator $\hat{\theta}$ is defined by,
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>Var</mtext><mo stretchy="false">(</mo><mover accent="true"><mi>θ</mi><mo>^</mo></mover><mo stretchy="false">)</mo><mo>=</mo><msub><mi>E</mi><mrow><mi>x</mi><mi mathvariant="normal">∣</mi><mi>θ</mi></mrow></msub><mo stretchy="false">[</mo><mo stretchy="false">(</mo><mover accent="true"><mi>θ</mi><mo>^</mo></mover><mo>−</mo><msub><mi>E</mi><mrow><mi>x</mi><mi mathvariant="normal">∣</mi><mi>θ</mi></mrow></msub><mo stretchy="false">[</mo><mover accent="true"><mi>θ</mi><mo>^</mo></mover><mo stretchy="false">]</mo><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\text{Var}(\hat{\theta}) = E_{x \vert \theta}[(\hat{\theta} - E_{x \vert \theta}[\hat{\theta}])^2]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2078799999999998em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">Var</span></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9578799999999998em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span><span style="top:-3.26344em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">^</span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.3130799999999998em;vertical-align:-0.3551999999999999em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="mord mtight">∣</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9578799999999998em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span><span style="top:-3.26344em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">^</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.3130799999999998em;vertical-align:-0.3551999999999999em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="mord mtight">∣</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9578799999999998em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span><span style="top:-3.26344em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">^</span></span></span></span></span></span><span class="mclose">]</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span></p>
+
+<p>MSE (Mean Squared Error) of an estimator $\hat{\theta}$ is defined:
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable rowspacing="0.24999999999999992em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mtext>MSE</mtext><mo stretchy="false">(</mo><mover accent="true"><mi>θ</mi><mo>^</mo></mover><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><msub><mi>E</mi><mrow><mi>x</mi><mi mathvariant="normal">∣</mi><mi>θ</mi></mrow></msub><mo stretchy="false">[</mo><mo stretchy="false">(</mo><mover accent="true"><mi>θ</mi><mo>^</mo></mover><mo>−</mo><mi>θ</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo stretchy="false">]</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mtext>Var</mtext><mo stretchy="false">(</mo><mover accent="true"><mi>θ</mi><mo>^</mo></mover><mo stretchy="false">)</mo><mo>+</mo><mtext>bias</mtext><mo stretchy="false">(</mo><mover accent="true"><mi>θ</mi><mo>^</mo></mover><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned} \text{MSE}(\hat{\theta}) &amp;= E_{x \vert \theta}[(\hat{\theta} - \theta)^2] \\ &amp;= \text{Var}(\hat{\theta}) + \text{bias}(\hat{\theta})^2 \end{aligned}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3.23576em;vertical-align:-1.36788em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.86788em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">MSE</span></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9578799999999998em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span><span style="top:-3.26344em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">^</span></span></span></span></span></span><span class="mclose">)</span></span></span><span style="top:-2.29212em;"><span class="pstrut" style="height:3em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.36788em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.86788em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="mord mtight">∣</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9578799999999998em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span><span style="top:-3.26344em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">^</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">]</span></span></span><span style="top:-2.29212em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord text"><span class="mord">Var</span></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9578799999999998em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span><span style="top:-3.26344em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">^</span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord text"><span class="mord">bias</span></span><span class="mopen">(</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9578799999999998em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span><span style="top:-3.26344em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">^</span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.36788em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+
+<p>And it is called the bias-variance decomposition of MSE.</p>
+
+<h2 id="bias-and-variance-of-mc-policy-evaluation">
+<a class="anchor" href="#bias-and-variance-of-mc-policy-evaluation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bias and Variance of MC Policy Evaluation</h2>
+
+<p>In First-visit MC policy evaluation,</p>
+<ul>
+  <li>$V^{\pi}$ estimator is an unbiased estimator of true $E_{\pi}[G_t \vert s_t = s]$ <br>
+(value unchanged during episode)</li>
+  <li>By law of large numbers, we have 
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>V</mi><mi>π</mi></msup><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo>→</mo><msub><mi>E</mi><mi>π</mi></msub><mo stretchy="false">[</mo><msub><mi>G</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>s</mi><mi>t</mi></msub><mo>=</mo><mi>s</mi><mo stretchy="false">]</mo><mtext> as </mtext><mi>N</mi><mo stretchy="false">(</mo><mi>s</mi><mo stretchy="false">)</mo><mo>→</mo><mi mathvariant="normal">∞</mi></mrow><annotation encoding="application/x-tex">V^{\pi}(s) \rarr E_{\pi}[G_t \vert s_t = s] \text{   as   } N(s) \rarr \infty</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">π</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">π</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mord"><span class="mord mathdefault">G</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mclose">]</span><span class="mord text"><span class="mord"> as </span></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mopen">(</span><span class="mord mathdefault">s</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord">∞</span></span></span></span>
+</li>
+</ul>
+
+<p>In Every-visit MC policy evaluation,</p>
+<ul>
+  <li>$V^{\pi}$ estimator is a biased estimator of true $E_{\pi}[G_t \vert s_t = s]$ <br>
+(value changed in every visitation)</li>
+  <li>But consistent estimator and often has better MSE</li>
+</ul>
+
+<p>Generally, MC policy Evaluation rely on the experience we gather. So its estimator has high variance, and requires lots of data to reduce variance.</p>
+
+<h2 id="limitation-of-mc-policy-evaluation">
+<a class="anchor" href="#limitation-of-mc-policy-evaluation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitation of MC Policy Evaluation</h2>
+<p>To estimate expectation, it requires episodic settings. Episode must end before we use data of that episode for updating the value function. And we cannot make sure when the estimated value is converged in true value.(it requires some assumption..)</p>
 
   </div><a class="u-url" href="/chans_jupyter/reinforcement%20learning/2020/06/16/03-Monte-Carlo-Policy-Evaluation.html" hidden></a>
 </article>
