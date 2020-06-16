@@ -4,6 +4,7 @@ layout: post
 description: A summary of "Understanding Deep Reinforcement Learning"
 categories: [Reinforcement Learning]
 title: Monte Carlo Policy Evaluation
+classes: wide
 image: 
 ---
 
