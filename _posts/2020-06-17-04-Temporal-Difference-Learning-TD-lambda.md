@@ -47,6 +47,7 @@ Accumulated error is:
 $$ \begin{aligned} \delta_t + r \delta_{t+1} + \gamma^2 \delta_{t+2} + \cdots + \gamma^{T-1-t} \delta_{T-1} &= R_{t+1} + \gamma V(s_{t+1}) - V(s_t) \\ &+ \gamma R_{t+2} + \gamma^2 V(s_{t+2}) - \gamma V(s_{t+1}) \\ &+ \gamma^2 R_{t+3} + \gamma^3 V(s_{t+3}) - \gamma^2 V(s_{t+2}) \\ \vdots \\ &= r^{T-1-t} R_T + \gamma^{T-t}V(S_T) - \gamma^{T-1-t}V(s_{T-1}) \\ &= R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots + \gamma^{T-1-t} R_T - V(s_t) \\ &= G_t - V(s_t)   \end{aligned} $$
 
 ## Unified View of Reinforcement Learning
+
 ![backup diagram](image/unified_rl.png) [^1]
 
 [^1]: Figure from David Silver lecture
