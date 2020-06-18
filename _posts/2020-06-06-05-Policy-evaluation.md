@@ -49,5 +49,5 @@ This is called a **Bellman (synchronous) backup** for a policy $\pi$. And this r
 
 $$ V^{\pi}(s) = R^{\pi}(s) + \gamma \sum_{s' \in S} P(s' \vert s, a) V^{\pi}(s') $$
 
-![backup diagram](image/backup_diagram_for_v.png) 
+![backup diagram]({{site.baseurl}}/images/backup_diagram_for_v.png "backup diagram")
 

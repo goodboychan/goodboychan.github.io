@@ -4,7 +4,7 @@ layout: post
 description: A summary of "Understanding Deep Reinforcement Learning"
 categories: [Reinforcement Learning]
 title: Temporal Difference Learning TD($\lambda$)
-image: 
+image: images/unified_rl.png
 ---
 
 # Temporal Difference Learning 
@@ -48,6 +48,6 @@ $$ \begin{aligned} \delta_t + r \delta_{t+1} + \gamma^2 \delta_{t+2} + \cdots + 
 
 ## Unified View of Reinforcement Learning
 
-![backup diagram](image/unified_rl.png) [^1]
+![unified rl]({{site.baseurl}}/images/unified_rl.png "unified rl") [^1]
 
 [^1]: Figure from David Silver lecture
