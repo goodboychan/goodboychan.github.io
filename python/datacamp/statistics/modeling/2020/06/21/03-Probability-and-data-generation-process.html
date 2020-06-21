@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Probability and data generation process | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Probability and data generation process" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter provides a basic introduction to probability concepts and a hands-on understanding of the data generating process. We’ll look at a number of examples of modeling the data generating process and will conclude with modeling an eCommerce advertising simulation. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp." />
+<meta property="og:description" content="This chapter provides a basic introduction to probability concepts and a hands-on understanding of the data generating process. We’ll look at a number of examples of modeling the data generating process and will conclude with modeling an eCommerce advertising simulation. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/21/03-Probability-and-data-generation-process.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/21/03-Probability-and-data-generation-process.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/dgp.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-21T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter provides a basic introduction to probability concepts and a hands-on understanding of the data generating process. We’ll look at a number of examples of modeling the data generating process and will conclude with modeling an eCommerce advertising simulation. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp.","@type":"BlogPosting","headline":"Probability and data generation process","dateModified":"2020-06-21T00:00:00-05:00","datePublished":"2020-06-21T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/dgp.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/21/03-Probability-and-data-generation-process.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/21/03-Probability-and-data-generation-process.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Probability and data generation process | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Probability and data generation process" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter provides a basic introduction to probability concepts and a hands-on understanding of the data generating process. We’ll look at a number of examples of modeling the data generating process and will conclude with modeling an eCommerce advertising simulation. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp." />
+<meta property="og:description" content="This chapter provides a basic introduction to probability concepts and a hands-on understanding of the data generating process. We’ll look at a number of examples of modeling the data generating process and will conclude with modeling an eCommerce advertising simulation. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/21/03-Probability-and-data-generation-process.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/21/03-Probability-and-data-generation-process.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/dgp.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-21T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter provides a basic introduction to probability concepts and a hands-on understanding of the data generating process. We’ll look at a number of examples of modeling the data generating process and will conclude with modeling an eCommerce advertising simulation. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp.","@type":"BlogPosting","headline":"Probability and data generation process","dateModified":"2020-06-21T00:00:00-05:00","datePublished":"2020-06-21T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/dgp.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/21/03-Probability-and-data-generation-process.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/21/03-Probability-and-data-generation-process.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Probability and data generation process</h1><p class="page-description">This chapter provides a basic introduction to probability concepts and a hands-on understanding of the data generating process. We'll look at a number of examples of modeling the data generating process and will conclude with modeling an eCommerce advertising simulation. This is the Summary of lecture "Statistical Simulation in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-06-21T00:00:00-05:00" itemprop="datePublished">
+        Jun 21, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      13 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Statistics">Statistics</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Modeling">Modeling</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-06-21-03-Probability-and-data-generation-process.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-06-21-03-Probability-and-data-generation-process.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-06-21-03-Probability-and-data-generation-process.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Probability-basics">Probability basics </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Two-of-a-kind">Two of a kind </a></li>
+<li class="toc-entry toc-h3"><a href="#Game-of-thirteen">Game of thirteen </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#More-probability-concepts">More probability concepts </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#The-conditional-urn">The conditional urn </a></li>
+<li class="toc-entry toc-h3"><a href="#Birthday-problem">Birthday problem </a></li>
+<li class="toc-entry toc-h3"><a href="#Full-house">Full house </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Data-generating-process">Data generating process </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Driving-test">Driving test </a></li>
+<li class="toc-entry toc-h3"><a href="#National-elections">National elections </a></li>
+<li class="toc-entry toc-h3"><a href="#Fitness-goals">Fitness goals </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#eCommerce-Ad-Simulation">eCommerce Ad Simulation </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Sign-up-Flow">Sign up Flow </a></li>
+<li class="toc-entry toc-h3"><a href="#Purchase-Flow">Purchase Flow </a></li>
+<li class="toc-entry toc-h3"><a href="#Probability-of-losing-money">Probability of losing money </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-06-21-03-Probability-and-data-generation-process.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Probability-basics">
+<a class="anchor" href="#Probability-basics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Probability basics<a class="anchor-link" href="#Probability-basics"> </a>
+</h2>
+<ul>
+<li>Probability<ul>
+<li>Sample space $S$: Set of all possible outcomes</li>
+<li>Probability $P(A)$: Likelihood of event $A$<ul>
+<li>$0\leq P(A) \leq 1$</li>
+<li>$P(S) = 1$ e.g., $P(H) + P(T) = 1$</li>
+</ul>
+</li>
+<li>For mutually exclusive events $A$ and $B$:<ul>
+<li>$P(A \cap B) = 0$</li>
+<li>$P(A \cup B) = P(A) + P(B)$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Using Simulation for probability Estimation<ul>
+<li>Steps for Estimating Probability<ol>
+<li>Construct sample space or population</li>
+<li>Determine how to simulate one outcome</li>
+<li>Determine rule for success.</li>
+<li>Sample repeatly and count successes.</li>
+<li>Calculate frequency of successes as an estimate of probability</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Two-of-a-kind">
+<a class="anchor" href="#Two-of-a-kind" aria-hidden="true"><span class="octicon octicon-link"></span></a>Two of a kind<a class="anchor-link" href="#Two-of-a-kind"> </a>
+</h3>
+<p>Now let's use simulation to estimate probabilities. Suppose you've been invited to a game of poker at your friend's home. In this variation of the game, you are dealt five cards and the player with the better hand wins. You will use a simulation to estimate the probabilities of getting certain hands. Let's work on estimating the probability of getting at least two of a kind. Two of a kind is when you get two cards of different suites but having the same numeric value (e.g., 2 of hearts, 2 of spades, and 3 other cards).</p>
+<p>By the end of this exercise, you will know how to use simulation to calculate probabilities for card games.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Shuffle deck &amp; count card occurrences in the hand</span>
+<span class="n">n_sims</span><span class="p">,</span> <span class="n">two_kind</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sims</span><span class="p">):</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">deck_of_cards</span><span class="p">)</span>
+    <span class="n">hand</span><span class="p">,</span> <span class="n">cards_in_hand</span> <span class="o">=</span> <span class="n">deck_of_cards</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">card</span> <span class="ow">in</span> <span class="n">hand</span><span class="p">:</span>
+        <span class="c1"># Use .get() method on cards_in_hand</span>
+        <span class="n">cards_in_hand</span><span class="p">[</span><span class="n">card</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cards_in_hand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    
+    <span class="c1"># Condition for getting at least 2 of a kind</span>
+    <span class="n">highest_card</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cards_in_hand</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">highest_card</span><span class="o">&gt;=</span><span class="mi">2</span><span class="p">:</span> 
+        <span class="n">two_kind</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Probability of seeing at least two of a kind = </span><span class="si">{}</span><span class="s2"> "</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">two_kind</span><span class="o">/</span><span class="n">n_sims</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability of seeing at least two of a kind = 0.4952 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Game-of-thirteen">
+<a class="anchor" href="#Game-of-thirteen" aria-hidden="true"><span class="octicon octicon-link"></span></a>Game of thirteen<a class="anchor-link" href="#Game-of-thirteen"> </a>
+</h3>
+<p>A famous French mathematician Pierre Raymond De Montmart, who was known for his work in combinatorics, proposed a simple game called as Game of Thirteen. You have a deck of 13 cards, each numbered from 1 through 13. Shuffle this deck and draw cards one by one. A coincidence is when the number on the card matches the order in which the card is drawn. For instance, if the 5th card you draw happens to be a 5, it's a coincidence. You win the game if you get through all the cards without any coincidences. Let's calculate the probability of winning at this game using simulation.</p>
+<p>By completing this exercise, you will further strengthen your ability to cast abstract problems into the simulation framework for estimating probabilities.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+<span class="c1"># Pre-set constant variables</span>
+<span class="n">deck</span><span class="p">,</span> <span class="n">sims</span><span class="p">,</span> <span class="n">coincidences</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+    <span class="c1"># Draw all the cards without replacement to simulate one game</span>
+    <span class="n">draw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">deck</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Check if there are any coincidences</span>
+    <span class="n">coincidence</span> <span class="o">=</span> <span class="p">(</span><span class="n">draw</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">14</span><span class="p">)))</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">coincidence</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="n">coincidences</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="c1"># Calculate probability of winning</span>
+<span class="n">prob_of_winning</span> <span class="o">=</span> <span class="n">coincidences</span> <span class="o">/</span> <span class="n">sims</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Probability of winning = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prob_of_winning</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability of winning = 0.3695
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="More-probability-concepts">
+<a class="anchor" href="#More-probability-concepts" aria-hidden="true"><span class="octicon octicon-link"></span></a>More probability concepts<a class="anchor-link" href="#More-probability-concepts"> </a>
+</h2>
+<ul>
+<li>Conditional Probability<ul>
+<li>$P(A \vert B) = \frac{P(A \cap B)}{P(B)}$</li>
+<li>$P(B \vert A) = \frac{P(B \cap A)}{P(A)}$</li>
+<li>$P(A \cap B) = P(B \cap A)$</li>
+</ul>
+</li>
+<li>Bayes Rule<ul>
+<li>$P(A \vert B) = \frac{P(B \vert A)P(A)}{P(B)}$</li>
+</ul>
+</li>
+<li>Independent Events<ul>
+<li>$P(A \cap B) = P(A)P(B)$</li>
+<li>$P(A \vert B) = \frac{P(A \cap B)}{P(B)} = \frac{P(A)P(B)}{P(B)} = P(A)$</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-conditional-urn">
+<a class="anchor" href="#The-conditional-urn" aria-hidden="true"><span class="octicon octicon-link"></span></a>The conditional urn<a class="anchor-link" href="#The-conditional-urn"> </a>
+</h3>
+<p>As we've learned, conditional probability is defined as the probability of an event given another event. To illustrate this concept, let's turn to an urn problem.</p>
+<p>We have an urn that contains 7 white and 6 black balls. Four balls are drawn at random. We'd like to know the probability that the first and third balls are white, while the second and the fourth balls are black.</p>
+<p>Upon completion, you will learn to manipulate simulations to calculate simple conditional probabilities.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Initialize success, sims and urn</span>
+<span class="n">success</span><span class="p">,</span> <span class="n">sims</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5000</span>
+<span class="n">urn</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'w'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+    <span class="c1"># Draw 4 balls without replacement</span>
+    <span class="n">draw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">urn</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="c1"># Count the number of successes</span>
+    <span class="k">if</span> <span class="n">draw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'w'</span> <span class="ow">and</span> <span class="n">draw</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'b'</span> <span class="ow">and</span> <span class="n">draw</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'w'</span> <span class="ow">and</span> <span class="n">draw</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'b'</span><span class="p">:</span> 
+        <span class="n">success</span> <span class="o">+=</span><span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Probability of success = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">success</span><span class="o">/</span><span class="n">sims</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability of success = 0.0722
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Birthday-problem">
+<a class="anchor" href="#Birthday-problem" aria-hidden="true"><span class="octicon octicon-link"></span></a>Birthday problem<a class="anchor-link" href="#Birthday-problem"> </a>
+</h3>
+<p>Now we'll use simulation to solve a famous probability puzzle - the birthday problem. It sounds quite straightforward - How many people do you need in a room to ensure at least a 50% chance that two of them share the same birthday?</p>
+<p>With 366 people in a 365-day year, we are 100% sure that at least two have the same birthday, but we only need to be 50% sure. Simulation gives us an elegant way of solving this problem.</p>
+<p>Upon completion of this exercise, you will begin to understand how to cast problems in a simulation framework.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+<span class="c1"># Draw a sample of birthdays &amp; check if each birthday is unique</span>
+<span class="n">days</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">366</span><span class="p">)</span>
+<span class="n">people</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="k">def</span> <span class="nf">birthday_sim</span><span class="p">(</span><span class="n">people</span><span class="p">):</span>
+    <span class="n">sims</span><span class="p">,</span> <span class="n">unique_birthdays</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">0</span> 
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+        <span class="n">draw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">people</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">draw</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">draw</span><span class="p">)):</span> 
+            <span class="n">unique_birthdays</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">unique_birthdays</span> <span class="o">/</span> <span class="n">sims</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="c1"># Break out of the loop if probability greater than 0.5</span>
+<span class="k">while</span> <span class="p">(</span><span class="n">people</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">prop_bds</span> <span class="o">=</span> <span class="n">birthday_sim</span><span class="p">(</span><span class="n">people</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">prop_bds</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span> 
+        <span class="k">break</span>
+    <span class="n">people</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"With </span><span class="si">{}</span><span class="s2"> people, there's a 50</span><span class="si">% c</span><span class="s2">hance that two share a birthday."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">people</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>With 23 people, there's a 50% chance that two share a birthday.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Full-house">
+<a class="anchor" href="#Full-house" aria-hidden="true"><span class="octicon octicon-link"></span></a>Full house<a class="anchor-link" href="#Full-house"> </a>
+</h3>
+<p>Let's return to our poker game. Last time, we calculated the probability of getting at least two of a kind. This time we are interested in a full house. A full house is when you get two cards of different suits that share the same numeric value and three other cards that have the same numeric value (e.g., 2 of hearts &amp; spades, jacks of clubs, diamonds, &amp; spades).</p>
+<p>Thus, a full house is the probability of getting exactly three of a kind conditional on getting exactly two of a kind of another value. Using the same code as before, modify the success condition to get the desired output. This exercise will teach you to estimate conditional probabilities in card games and build your foundation in framing abstract problems for simulation.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1">#Shuffle deck &amp; count card occurrences in the hand</span>
+<span class="n">n_sims</span><span class="p">,</span> <span class="n">full_house</span><span class="p">,</span> <span class="n">deck_of_cards</span> <span class="o">=</span> <span class="mi">50000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">deck</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sims</span><span class="p">):</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">deck_of_cards</span><span class="p">)</span>
+    <span class="n">hand</span><span class="p">,</span> <span class="n">cards_in_hand</span> <span class="o">=</span> <span class="n">deck_of_cards</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">card</span> <span class="ow">in</span> <span class="n">hand</span><span class="p">:</span>
+        <span class="c1"># Use .get() method to count occurrences of each card</span>
+        <span class="n">cards_in_hand</span><span class="p">[</span><span class="n">card</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cards_in_hand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        
+    <span class="c1"># Condition for getting full house</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">cards_in_hand</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">==</span><span class="mi">3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">cards_in_hand</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">==</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span>  <span class="n">condition</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+        <span class="n">full_house</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Probability of seeing a full house = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">full_house</span><span class="o">/</span><span class="n">n_sims</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability of seeing a full house = 0.0014
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-generating-process">
+<a class="anchor" href="#Data-generating-process" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data generating process<a class="anchor-link" href="#Data-generating-process"> </a>
+</h2>
+<ul>
+<li>Simulation steps<ol>
+<li>Define Possible Outcomes for random variables</li>
+<li>Assign Probabilities</li>
+<li>Define Relationships between random variables</li>
+</ol>
+</li>
+<li>Data Generating Process
+<img src="/chans_jupyter/images/copied_from_nb/image/dgp.png" alt="dgp">
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Driving-test">
+<a class="anchor" href="#Driving-test" aria-hidden="true"><span class="octicon octicon-link"></span></a>Driving test<a class="anchor-link" href="#Driving-test"> </a>
+</h3>
+<p>Through the next exercises, we will learn how to build a data generating process (DGP) through progressively complex examples.</p>
+<p>In this exercise, you will simulate a very simple DGP. Suppose that you are about to take a driving test tomorrow. Based on your own practice and based on data you have gathered, you know that the probability of you passing the test is 90% when it's sunny and only 30% when it's raining. Your local weather station forecasts that there's a 40% chance of rain tomorrow. Based on this information, you want to know what is the probability of you passing the driving test tomorrow.</p>
+<p>This is a simple problem and can be solved analytically. Here, you will learn how to model a simple DGP and see how it can be used for simulation.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">sims</span><span class="p">,</span> <span class="n">outcomes</span><span class="p">,</span> <span class="n">p_rain</span><span class="p">,</span> <span class="n">p_pass</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="p">[],</span> <span class="mf">0.40</span><span class="p">,</span> <span class="p">{</span><span class="s1">'sun'</span><span class="p">:</span><span class="mf">0.9</span><span class="p">,</span> <span class="s1">'rain'</span><span class="p">:</span><span class="mf">0.3</span><span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">test_outcome</span><span class="p">(</span><span class="n">p_rain</span><span class="p">):</span>
+    <span class="c1"># Simulate whether it will rain or not</span>
+    <span class="n">weather</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s1">'rain'</span><span class="p">,</span> <span class="s1">'sun'</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="n">p_rain</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p_rain</span><span class="p">])</span>
+    <span class="c1"># Simulate and return whether you will pass or fail</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s1">'pass'</span><span class="p">,</span> <span class="s1">'fail'</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="n">p_pass</span><span class="p">[</span><span class="n">weather</span><span class="p">],</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p_pass</span><span class="p">[</span><span class="n">weather</span><span class="p">]])</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+    <span class="n">outcomes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_outcome</span><span class="p">(</span><span class="n">p_rain</span><span class="p">))</span>
+
+<span class="c1"># Calculate fraction of outcomes where you pass</span>
+<span class="n">pass_outcomes_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'pass'</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Probability of Passing the driving test = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pass_outcomes_frac</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability of Passing the driving test = 0.654
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="National-elections">
+<a class="anchor" href="#National-elections" aria-hidden="true"><span class="octicon octicon-link"></span></a>National elections<a class="anchor-link" href="#National-elections"> </a>
+</h3>
+<p>This exercise will give you a taste of how you can model a DGP at different levels of complexity.</p>
+<p>Consider national elections in a country with two political parties - Red and Blue. This country has 50 states and the party that wins the most states wins the elections. You have the probability p of Red winning in each individual state and want to know the probability of Red winning nationally.</p>
+<p>Let's model the DGP to understand the distribution. Suppose the election outcome in each state follows a binomial distribution with probability p such that 0 indicates a loss for Red and 1 indicates a win. We then simulate a number of election outcomes. Finally, we can ask rich questions like what is the probability of Red winning less than 45% of the states?</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.52076814</span><span class="p">,</span> <span class="mf">0.67846401</span><span class="p">,</span> <span class="mf">0.82731745</span><span class="p">,</span> <span class="mf">0.64722761</span><span class="p">,</span> <span class="mf">0.03665174</span><span class="p">,</span>
+       <span class="mf">0.17835411</span><span class="p">,</span> <span class="mf">0.75296372</span><span class="p">,</span> <span class="mf">0.22206157</span><span class="p">,</span> <span class="mf">0.72778372</span><span class="p">,</span> <span class="mf">0.28461556</span><span class="p">,</span>
+       <span class="mf">0.72545221</span><span class="p">,</span> <span class="mf">0.106571</span>  <span class="p">,</span> <span class="mf">0.09291364</span><span class="p">,</span> <span class="mf">0.77535718</span><span class="p">,</span> <span class="mf">0.51440142</span><span class="p">,</span>
+       <span class="mf">0.89604586</span><span class="p">,</span> <span class="mf">0.39376099</span><span class="p">,</span> <span class="mf">0.24910244</span><span class="p">,</span> <span class="mf">0.92518253</span><span class="p">,</span> <span class="mf">0.08165597</span><span class="p">,</span>
+       <span class="mf">0.4212476</span> <span class="p">,</span> <span class="mf">0.74123879</span><span class="p">,</span> <span class="mf">0.2479099</span> <span class="p">,</span> <span class="mf">0.46125805</span><span class="p">,</span> <span class="mf">0.19584491</span><span class="p">,</span>
+       <span class="mf">0.24440482</span><span class="p">,</span> <span class="mf">0.349916</span>  <span class="p">,</span> <span class="mf">0.80224624</span><span class="p">,</span> <span class="mf">0.80186664</span><span class="p">,</span> <span class="mf">0.82968251</span><span class="p">,</span>
+       <span class="mf">0.91178779</span><span class="p">,</span> <span class="mf">0.51739059</span><span class="p">,</span> <span class="mf">0.67338858</span><span class="p">,</span> <span class="mf">0.15675863</span><span class="p">,</span> <span class="mf">0.37772308</span><span class="p">,</span>
+       <span class="mf">0.77134621</span><span class="p">,</span> <span class="mf">0.71727114</span><span class="p">,</span> <span class="mf">0.92700912</span><span class="p">,</span> <span class="mf">0.28386132</span><span class="p">,</span> <span class="mf">0.25502498</span><span class="p">,</span>
+       <span class="mf">0.30081506</span><span class="p">,</span> <span class="mf">0.19724585</span><span class="p">,</span> <span class="mf">0.29129564</span><span class="p">,</span> <span class="mf">0.56623386</span><span class="p">,</span> <span class="mf">0.97681039</span><span class="p">,</span>
+       <span class="mf">0.96263926</span><span class="p">,</span> <span class="mf">0.0548948</span> <span class="p">,</span> <span class="mf">0.14092758</span><span class="p">,</span> <span class="mf">0.54739446</span><span class="p">,</span> <span class="mf">0.54555576</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+<span class="n">outcomes</span><span class="p">,</span> <span class="n">sims</span><span class="p">,</span> <span class="n">probs</span> <span class="o">=</span> <span class="p">[],</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">p</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+    <span class="c1"># Simulate elections in the 50 states</span>
+    <span class="n">election</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">probs</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Get average of Red wins and add to `outcomes`</span>
+    <span class="n">outcomes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">election</span><span class="p">))</span>
+
+<span class="c1"># Calculate probability of Red winning in less than 45% of the states</span>
+<span class="n">prob_red_wins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.45</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Probability of Red winning in less than 45</span><span class="si">% o</span><span class="s2">f the states = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prob_red_wins</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability of Red winning in less than 45% of the states = 0.196
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Fitness-goals">
+<a class="anchor" href="#Fitness-goals" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fitness goals<a class="anchor-link" href="#Fitness-goals"> </a>
+</h3>
+<p>Let's model how activity levels impact weight loss using modern fitness trackers. On days when you go to the gym, you average around 15k steps, and around 5k steps otherwise. You go to the gym 40% of the time. Let's model the step counts in a day as a Poisson random variable with a mean $\lambda$ dependent on whether or not you go to the gym.</p>
+<p>For simplicity, let’s say you have an 80% chance of losing 1lb and a 20% chance of gaining 1lb when you get more than 10k steps. The probabilities are reversed when you get less than 8k steps. Otherwise, there's an even chance of gaining or losing 1lb. Given all this information, find the probability of losing weight in a month.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">days</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="c1"># Simulate steps &amp; choose prob </span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">days</span><span class="p">):</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">15000</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">steps</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">:</span> 
+            <span class="n">prob</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">steps</span> <span class="o">&lt;</span> <span class="mi">8000</span><span class="p">:</span> 
+            <span class="n">prob</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">prob</span><span class="p">))</span>
+    <span class="n">outcomes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+
+<span class="c1"># Calculate fraction of outcomes where there was a weight loss</span>
+<span class="n">weight_loss_outcomes_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Probability of Weight Loss = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">weight_loss_outcomes_frac</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability of Weight Loss = 0.1075
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="eCommerce-Ad-Simulation">
+<a class="anchor" href="#eCommerce-Ad-Simulation" aria-hidden="true"><span class="octicon octicon-link"></span></a>eCommerce Ad Simulation<a class="anchor-link" href="#eCommerce-Ad-Simulation"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Sign-up-Flow">
+<a class="anchor" href="#Sign-up-Flow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sign up Flow<a class="anchor-link" href="#Sign-up-Flow"> </a>
+</h3>
+<p>We will now model the DGP of an eCommerce ad flow starting with sign-ups.</p>
+<p>On any day, we get many ad impressions, which can be modeled as Poisson random variables (RV). You are told that λ is normally distributed with a mean of 100k visitors and standard deviation 2000.</p>
+<p>During the signup journey, the customer sees an ad, decides whether or not to click, and then whether or not to signup. Thus both clicks and signups are binary, modeled using binomial RVs. What about probability p of success? Our current low-cost option gives us a click-through rate of 1% and a sign-up rate of 20%. A higher cost option could increase the clickthrough and signup rate by up to 20%, but we are unsure of the level of improvement, so we model it as a uniform RV.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Initialize click-through rate and signup rate dictionaries</span>
+<span class="n">ct_rate</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'low'</span><span class="p">:</span><span class="mf">0.01</span><span class="p">,</span> <span class="s1">'high'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">1.2</span><span class="o">*</span><span class="mf">0.01</span><span class="p">)}</span>
+<span class="n">su_rate</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'low'</span><span class="p">:</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">'high'</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">1.2</span><span class="o">*</span><span class="mf">0.2</span><span class="p">)}</span>
+
+<span class="k">def</span> <span class="nf">get_signups</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">ct_rate</span><span class="p">,</span> <span class="n">su_rate</span><span class="p">,</span> <span class="n">sims</span><span class="p">):</span>
+    <span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">sims</span><span class="p">)</span>
+    <span class="c1"># Simulate impressions(poisson), clicks(binomial) and signups(binomial)</span>
+    <span class="n">impressions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">sims</span><span class="p">)</span>
+    <span class="n">clicks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">impressions</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">ct_rate</span><span class="p">[</span><span class="n">cost</span><span class="p">])</span>
+    <span class="n">signups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">clicks</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">su_rate</span><span class="p">[</span><span class="n">cost</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">signups</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Simulated Signups = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">get_signups</span><span class="p">(</span><span class="s1">'high'</span><span class="p">,</span> <span class="n">ct_rate</span><span class="p">,</span> <span class="n">su_rate</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Simulated Signups = [268]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Purchase-Flow">
+<a class="anchor" href="#Purchase-Flow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Purchase Flow<a class="anchor-link" href="#Purchase-Flow"> </a>
+</h3>
+<p>After signups, let's model the revenue generation process. Once the customer has signed up, they decide whether or not to purchase - a natural candidate for a binomial RV. Let's assume that 10% of signups result in a purchase.</p>
+<p>Although customers can make many purchases, let's assume one purchase. The purchase value could be modeled by any continuous RV, but one nice candidate is the exponential RV. Suppose we know that purchase value per customer has averaged around \$1000. We use this information to create the purchase_values RV. The revenue, then, is simply the sum of all purchase values.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_signups</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">ct_rate</span><span class="p">,</span> <span class="n">su_rate</span><span class="p">,</span> <span class="n">sims</span><span class="p">):</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+    <span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">sims</span><span class="p">)</span>
+    <span class="n">impressions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">)</span>
+    <span class="n">clicks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="n">impressions</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">ct_rate</span><span class="p">[</span><span class="n">cost</span><span class="p">])</span>
+    <span class="n">signups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="n">clicks</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">su_rate</span><span class="p">[</span><span class="n">cost</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">signups</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_revenue</span><span class="p">(</span><span class="n">signups</span><span class="p">):</span>
+    <span class="n">rev</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">signups</span><span class="p">:</span>
+        <span class="c1"># Model purchases as binomial, purchase_values as exponential</span>
+        <span class="n">purchases</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">purchase_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">purchases</span><span class="p">)</span>
+        
+        <span class="c1"># Append to revenue the sum of all purchase values.</span>
+        <span class="n">rev</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">purchase_values</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">rev</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Simulated Revenue = $</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">get_revenue</span><span class="p">(</span><span class="n">get_signups</span><span class="p">(</span><span class="s1">'low'</span><span class="p">,</span> <span class="n">ct_rate</span><span class="p">,</span> <span class="n">su_rate</span><span class="p">,</span> <span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Simulated Revenue = $22404.217742298042
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Probability-of-losing-money">
+<a class="anchor" href="#Probability-of-losing-money" aria-hidden="true"><span class="octicon octicon-link"></span></a>Probability of losing money<a class="anchor-link" href="#Probability-of-losing-money"> </a>
+</h3>
+<p>In this exercise, we will use the DGP model to estimate probability.</p>
+<p>As seen earlier, this company has the option of spending extra money, let's say \$3000, to redesign the ad. This could potentially get them higher clickthrough and signup rates, but this is not guaranteed. We would like to know whether or not to spend this extra \\$3000 by calculating the probability of losing money. In other words, the probability that the revenue from the high-cost option minus the revenue from the low-cost option is lesser than the cost.</p>
+<p>Once we have simulated revenue outcomes, we can ask a rich set of questions that might not have been accessible using traditional analytical methods.</p>
+<p>This simple yet powerful framework forms the basis of Bayesian methods for getting probabilities.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize cost_diff</span>
+<span class="n">sims</span><span class="p">,</span> <span class="n">cost_diff</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">3000</span>
+
+<span class="c1"># Get revenue when the cost is 'low' and when the cost is 'high'</span>
+<span class="n">rev_low</span> <span class="o">=</span> <span class="n">get_revenue</span><span class="p">(</span><span class="n">get_signups</span><span class="p">(</span><span class="s1">'low'</span><span class="p">,</span> <span class="n">ct_rate</span><span class="p">,</span> <span class="n">su_rate</span><span class="p">,</span> <span class="n">sims</span><span class="p">))</span>
+<span class="n">rev_high</span> <span class="o">=</span> <span class="n">get_revenue</span><span class="p">(</span><span class="n">get_signups</span><span class="p">(</span><span class="s1">'high'</span><span class="p">,</span> <span class="n">ct_rate</span><span class="p">,</span> <span class="n">su_rate</span><span class="p">,</span> <span class="n">sims</span><span class="p">))</span>
+
+<span class="c1"># calculate fraction of times rev_high - rev_low is less than cost_diff</span>
+<span class="n">frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rev_high</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rev_low</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">cost_diff</span><span class="p">)</span> <span class="o">/</span> <span class="n">sims</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Probability of losing money = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frac</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability of losing money = 0.4524
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/statistics/modeling/2020/06/21/03-Probability-and-data-generation-process.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
