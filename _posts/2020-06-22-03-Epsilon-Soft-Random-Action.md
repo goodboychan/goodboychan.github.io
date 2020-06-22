@@ -30,5 +30,8 @@ where $\vert A \vert$ is the number of possible actions.
     - Probability of selection action $a_k$ : \
     $P(a_k) = (1 - \epsilon) + \frac{\epsilon}{\vert A \vert}$
     - Sum probabilities of all action : \
-    $\begin{aligned} P(a_k) + \sum_{i \neq k} P(a_i) &= (1-\epsilon) + \frac{\epsilon}{\vert A \vert} + \sum_{i \neq k} \frac{\epsilon}{\vert A \vert} \\ &= (1 - \epsilon) + \frac{\epsilon}{\vert A \vert} + \frac{\epsilon \vert A - 1 \vert}{\vert A \vert} \\ &= (1 - \epsilon) + \epsilon \\ &= 1\end{aligned}$
+    $\begin{aligned} P(a_k) + \sum_{i \neq k} P(a_i) &= (1-\epsilon) + \frac{\epsilon}{\vert A \vert} + \sum_{i \neq k} \frac{\epsilon}{\vert A \vert} \\ 
+    &= (1 - \epsilon) + \frac{\epsilon}{\vert A \vert} + \frac{\epsilon \vert A - 1 \vert}{\vert A \vert} \\
+     &= (1 - \epsilon) + \epsilon \\ 
+     &= 1 \end{aligned}$
     - Thus, minimum probability of selection action $a$ is $\frac{\epsilon}{\vert A \vert}$
