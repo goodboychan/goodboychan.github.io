@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Resampling methods | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Resampling methods" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, we will get a brief introduction to resampling methods and their applications. We will get a taste of bootstrap resampling, jackknife resampling, and permutation testing. After completing this chapter, students will be able to start applying simple resampling methods for data analysis. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp." />
+<meta property="og:description" content="In this chapter, we will get a brief introduction to resampling methods and their applications. We will get a taste of bootstrap resampling, jackknife resampling, and permutation testing. After completing this chapter, students will be able to start applying simple resampling methods for data analysis. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/22/01-Resampling-methods.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/22/01-Resampling-methods.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/resampling_2.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-22T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, we will get a brief introduction to resampling methods and their applications. We will get a taste of bootstrap resampling, jackknife resampling, and permutation testing. After completing this chapter, students will be able to start applying simple resampling methods for data analysis. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp.","@type":"BlogPosting","headline":"Resampling methods","dateModified":"2020-06-22T00:00:00-05:00","datePublished":"2020-06-22T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/resampling_2.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/22/01-Resampling-methods.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/22/01-Resampling-methods.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Resampling methods | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Resampling methods" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, we will get a brief introduction to resampling methods and their applications. We will get a taste of bootstrap resampling, jackknife resampling, and permutation testing. After completing this chapter, students will be able to start applying simple resampling methods for data analysis. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp." />
+<meta property="og:description" content="In this chapter, we will get a brief introduction to resampling methods and their applications. We will get a taste of bootstrap resampling, jackknife resampling, and permutation testing. After completing this chapter, students will be able to start applying simple resampling methods for data analysis. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/22/01-Resampling-methods.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/22/01-Resampling-methods.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/resampling_2.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-22T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, we will get a brief introduction to resampling methods and their applications. We will get a taste of bootstrap resampling, jackknife resampling, and permutation testing. After completing this chapter, students will be able to start applying simple resampling methods for data analysis. This is the Summary of lecture “Statistical Simulation in Python”, via datacamp.","@type":"BlogPosting","headline":"Resampling methods","dateModified":"2020-06-22T00:00:00-05:00","datePublished":"2020-06-22T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/resampling_2.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/22/01-Resampling-methods.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/modeling/2020/06/22/01-Resampling-methods.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Resampling methods</h1><p class="page-description">In this chapter, we will get a brief introduction to resampling methods and their applications. We will get a taste of bootstrap resampling, jackknife resampling, and permutation testing. After completing this chapter, students will be able to start applying simple resampling methods for data analysis. This is the Summary of lecture "Statistical Simulation in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-06-22T00:00:00-05:00" itemprop="datePublished">
+        Jun 22, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      18 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Statistics">Statistics</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Modeling">Modeling</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-06-22-01-Resampling-methods.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-06-22-01-Resampling-methods.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-06-22-01-Resampling-methods.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h3"><a href="#Introduction-to-resampling-method">Introduction to resampling method </a></li>
+<li class="toc-entry toc-h3"><a href="#Probability-example">Probability example </a></li>
+<li class="toc-entry toc-h2"><a href="#Bootstrapping">Bootstrapping </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Running-a-simple-bootstrap">Running a simple bootstrap </a></li>
+<li class="toc-entry toc-h3"><a href="#Non-standard-estimators">Non-standard estimators </a></li>
+<li class="toc-entry toc-h3"><a href="#Bootstrapping-regression">Bootstrapping regression </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Jackknife-resampling">Jackknife resampling </a></li>
+<li class="toc-entry toc-h2"><a href="#Basic-jackknife-estimation---mean">Basic jackknife estimation - mean </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Jackknife-confidence-interval-for-the-median">Jackknife confidence interval for the median </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Permutation-testing">Permutation testing </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Generating-a-single-permutation">Generating a single permutation </a></li>
+<li class="toc-entry toc-h3"><a href="#Hypothesis-testing---Difference-of-means">Hypothesis testing - Difference of means </a></li>
+<li class="toc-entry toc-h3"><a href="#Hypothesis-testing---Non-standard-statistics">Hypothesis testing - Non-standard statistics </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-06-22-01-Resampling-methods.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Introduction-to-resampling-method">
+<a class="anchor" href="#Introduction-to-resampling-method" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction to resampling method<a class="anchor-link" href="#Introduction-to-resampling-method"> </a>
+</h3>
+<ul>
+<li>Resampling workflow
+<img src="/chans_jupyter/images/copied_from_nb/image/resampling_2.png" alt="resampling">
+</li>
+<li>Why resample?<ul>
+<li>Advantage<ul>
+<li>Simple implementation procedure</li>
+<li>Applicable to complex estimators</li>
+<li>No strict assumptions</li>
+</ul>
+</li>
+<li>Drawbacks<ul>
+<li>Computationally expensive</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Types of resampling methods<ul>
+<li>Bootstrapping : Sampling with replacement</li>
+<li>Jackknife : Leave out one or more data points (similar to bootstrapping except no random sampling)<ul>
+<li>Usefult for estimating bias and variance of estimators</li>
+</ul>
+</li>
+<li>Permutation testing : Label switching</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Probability-example">
+<a class="anchor" href="#Probability-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Probability example<a class="anchor-link" href="#Probability-example"> </a>
+</h3>
+<p>In this exercise, we will review the difference between sampling with and without replacement. We will calculate the probability of an event using simulation, but vary our sampling method to see how it impacts probability.</p>
+<p>Consider a bowl filled with colored candies - three blue, two green, and five yellow. Draw three candies at random, with replacement and without replacement. You want to know the probability of drawing a yellow candy on the third draw given that the first candy was blue and the second candy was green.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Set up the bowl</span>
+<span class="n">success_rep</span><span class="p">,</span> <span class="n">success_no_rep</span><span class="p">,</span> <span class="n">sims</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span>
+<span class="n">bowl</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'b'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'g'</span><span class="p">,</span> <span class="s1">'g'</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+    <span class="c1"># Sample with and without replacement &amp; increment success counters</span>
+    <span class="n">sample_rep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">bowl</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sample_no_rep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">bowl</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sample_rep</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'b'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sample_rep</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'g'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sample_rep</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'y'</span><span class="p">):</span> 
+        <span class="n">success_rep</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sample_no_rep</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'b'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sample_no_rep</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'g'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sample_no_rep</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'y'</span><span class="p">):</span> 
+        <span class="n">success_no_rep</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="c1"># Calculate probabilities</span>
+<span class="n">prob_with_replacement</span> <span class="o">=</span> <span class="n">success_rep</span> <span class="o">/</span> <span class="n">sims</span>
+<span class="n">prob_without_replacement</span> <span class="o">=</span> <span class="n">success_no_rep</span> <span class="o">/</span> <span class="n">sims</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Probability with replacement = </span><span class="si">{}</span><span class="s2">, without replacement = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prob_with_replacement</span><span class="p">,</span>
+                                                                           <span class="n">prob_without_replacement</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability with replacement = 0.0266, without replacement = 0.0415
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Bootstrapping">
+<a class="anchor" href="#Bootstrapping" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bootstrapping<a class="anchor-link" href="#Bootstrapping"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Running-a-simple-bootstrap">
+<a class="anchor" href="#Running-a-simple-bootstrap" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running a simple bootstrap<a class="anchor-link" href="#Running-a-simple-bootstrap"> </a>
+</h3>
+<p>Welcome to the first exercise in the bootstrapping section. We will work through an example where we learn to run a simple bootstrap. As we saw in the video, the main idea behind bootstrapping is sampling with replacement.</p>
+<p>Suppose you own a factory that produces wrenches. You want to be able to characterize the average length of the wrenches and ensure that they meet some specifications. Your factory produces thousands of wrenches every day, but it's infeasible to measure the length of each wrench. However, you have access to a representative sample of 100 wrenches. Let's use bootstrapping to get the 95% confidence interval (CI) for the average lengths.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wrench_lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">8.9143694</span> <span class="p">,</span> <span class="mf">10.99734545</span><span class="p">,</span> <span class="mf">10.2829785</span> <span class="p">,</span>  <span class="mf">8.49370529</span><span class="p">,</span>  <span class="mf">9.42139975</span><span class="p">,</span>
+       <span class="mf">11.65143654</span><span class="p">,</span>  <span class="mf">7.57332076</span><span class="p">,</span>  <span class="mf">9.57108737</span><span class="p">,</span> <span class="mf">11.26593626</span><span class="p">,</span>  <span class="mf">9.1332596</span> <span class="p">,</span>
+        <span class="mf">9.32111385</span><span class="p">,</span>  <span class="mf">9.90529103</span><span class="p">,</span> <span class="mf">11.49138963</span><span class="p">,</span>  <span class="mf">9.361098</span>  <span class="p">,</span>  <span class="mf">9.55601804</span><span class="p">,</span>
+        <span class="mf">9.56564872</span><span class="p">,</span> <span class="mf">12.20593008</span><span class="p">,</span> <span class="mf">12.18678609</span><span class="p">,</span> <span class="mf">11.0040539</span> <span class="p">,</span> <span class="mf">10.3861864</span> <span class="p">,</span>
+       <span class="mf">10.73736858</span><span class="p">,</span> <span class="mf">11.49073203</span><span class="p">,</span>  <span class="mf">9.06416613</span><span class="p">,</span> <span class="mf">11.17582904</span><span class="p">,</span>  <span class="mf">8.74611933</span><span class="p">,</span>
+        <span class="mf">9.3622485</span> <span class="p">,</span> <span class="mf">10.9071052</span> <span class="p">,</span>  <span class="mf">8.5713193</span> <span class="p">,</span>  <span class="mf">9.85993128</span><span class="p">,</span>  <span class="mf">9.1382451</span> <span class="p">,</span>
+        <span class="mf">9.74438063</span><span class="p">,</span>  <span class="mf">7.20141089</span><span class="p">,</span>  <span class="mf">8.2284669</span> <span class="p">,</span>  <span class="mf">9.30012277</span><span class="p">,</span> <span class="mf">10.92746243</span><span class="p">,</span>
+        <span class="mf">9.82636432</span><span class="p">,</span> <span class="mf">10.00284592</span><span class="p">,</span> <span class="mf">10.68822271</span><span class="p">,</span>  <span class="mf">9.12046366</span><span class="p">,</span> <span class="mf">10.28362732</span><span class="p">,</span>
+        <span class="mf">9.19463348</span><span class="p">,</span>  <span class="mf">8.27233051</span><span class="p">,</span>  <span class="mf">9.60910021</span><span class="p">,</span> <span class="mf">10.57380586</span><span class="p">,</span> <span class="mf">10.33858905</span><span class="p">,</span>
+        <span class="mf">9.98816951</span><span class="p">,</span> <span class="mf">12.39236527</span><span class="p">,</span> <span class="mf">10.41291216</span><span class="p">,</span> <span class="mf">10.97873601</span><span class="p">,</span> <span class="mf">12.23814334</span><span class="p">,</span>
+        <span class="mf">8.70591468</span><span class="p">,</span>  <span class="mf">8.96121179</span><span class="p">,</span> <span class="mf">11.74371223</span><span class="p">,</span>  <span class="mf">9.20193726</span><span class="p">,</span> <span class="mf">10.02968323</span><span class="p">,</span>
+       <span class="mf">11.06931597</span><span class="p">,</span> <span class="mf">10.89070639</span><span class="p">,</span> <span class="mf">11.75488618</span><span class="p">,</span> <span class="mf">11.49564414</span><span class="p">,</span> <span class="mf">11.06939267</span><span class="p">,</span>
+        <span class="mf">9.22729129</span><span class="p">,</span> <span class="mf">10.79486267</span><span class="p">,</span> <span class="mf">10.31427199</span><span class="p">,</span>  <span class="mf">8.67373454</span><span class="p">,</span> <span class="mf">11.41729905</span><span class="p">,</span>
+       <span class="mf">10.80723653</span><span class="p">,</span> <span class="mf">10.04549008</span><span class="p">,</span>  <span class="mf">9.76690794</span><span class="p">,</span>  <span class="mf">8.80169886</span><span class="p">,</span> <span class="mf">10.19952407</span><span class="p">,</span>
+       <span class="mf">10.46843912</span><span class="p">,</span>  <span class="mf">9.16884502</span><span class="p">,</span> <span class="mf">11.16220405</span><span class="p">,</span>  <span class="mf">8.90279695</span><span class="p">,</span>  <span class="mf">7.87689965</span><span class="p">,</span>
+       <span class="mf">11.03972709</span><span class="p">,</span>  <span class="mf">9.59663396</span><span class="p">,</span>  <span class="mf">9.87397041</span><span class="p">,</span>  <span class="mf">9.16248328</span><span class="p">,</span>  <span class="mf">8.39403724</span><span class="p">,</span>
+       <span class="mf">11.25523737</span><span class="p">,</span>  <span class="mf">9.31113102</span><span class="p">,</span> <span class="mf">11.66095249</span><span class="p">,</span> <span class="mf">10.80730819</span><span class="p">,</span>  <span class="mf">9.68524185</span><span class="p">,</span>
+        <span class="mf">8.9140976</span> <span class="p">,</span>  <span class="mf">9.26753801</span><span class="p">,</span>  <span class="mf">8.78747687</span><span class="p">,</span> <span class="mf">12.08711336</span><span class="p">,</span> <span class="mf">10.16444123</span><span class="p">,</span>
+       <span class="mf">11.15020554</span><span class="p">,</span>  <span class="mf">8.73264795</span><span class="p">,</span> <span class="mf">10.18103513</span><span class="p">,</span> <span class="mf">11.17786194</span><span class="p">,</span>  <span class="mf">9.66498924</span><span class="p">,</span>
+       <span class="mf">11.03111446</span><span class="p">,</span>  <span class="mf">8.91543209</span><span class="p">,</span>  <span class="mf">8.63652846</span><span class="p">,</span> <span class="mf">10.37940061</span><span class="p">,</span>  <span class="mf">9.62082357</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Draw some random sample with replacement and append mean to mean_lengths.</span>
+<span class="n">mean_lengths</span><span class="p">,</span> <span class="n">sims</span> <span class="o">=</span> <span class="p">[],</span> <span class="mi">1000</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+    <span class="n">temp_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">wrench_lengths</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">wrench_lengths</span><span class="p">))</span>
+    <span class="n">sample_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">temp_sample</span><span class="p">)</span>
+    <span class="n">mean_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample_mean</span><span class="p">)</span>
+    
+<span class="c1"># Calculate bootstrapped mean and 95% confidence interval.</span>
+<span class="n">boot_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mean_lengths</span><span class="p">)</span>
+<span class="n">boot_95_ci</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">mean_lengths</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Bootstrapped Mean Length = </span><span class="si">{}</span><span class="s2">, 95% CI = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">boot_mean</span><span class="p">,</span> <span class="n">boot_95_ci</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bootstrapped Mean Length = 10.0270443060217, 95% CI = [ 9.80453269 10.257679  ]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Non-standard-estimators">
+<a class="anchor" href="#Non-standard-estimators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Non-standard estimators<a class="anchor-link" href="#Non-standard-estimators"> </a>
+</h3>
+<p>In the last exercise, you ran a simple bootstrap that we will now modify for more complicated estimators.</p>
+<p>Suppose you are studying the health of students. You are given the height and weight of 1000 students and are interested in the median height as well as the correlation between height and weight and the associated 95% CI for these quantities. Let's use bootstrapping.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/height_weight.csv'</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>heights</th>
+      <th>weights</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3.328739</td>
+      <td>97.785171</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7.494691</td>
+      <td>276.504049</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>6.065957</td>
+      <td>230.262258</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2.487411</td>
+      <td>62.074851</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4.342799</td>
+      <td>163.870440</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Sample with replacement and calculate quantities of interest</span>
+<span class="n">sims</span><span class="p">,</span> <span class="n">data_size</span><span class="p">,</span> <span class="n">height_medians</span><span class="p">,</span> <span class="n">hw_corr</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+    <span class="n">tmp_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">data_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">height_medians</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_df</span><span class="p">[</span><span class="s1">'heights'</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">())</span>
+    <span class="n">hw_corr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_df</span><span class="p">[</span><span class="s1">'weights'</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="n">tmp_df</span><span class="p">[</span><span class="s1">'heights'</span><span class="p">]))</span>
+
+<span class="c1"># Calculate confidence intervals</span>
+<span class="n">height_median_ci</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">height_medians</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">])</span>
+<span class="n">height_weight_corr_ci</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">hw_corr</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Height Median CI = </span><span class="si">{}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">Height Weight Correlation CI = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">height_median_ci</span><span class="p">,</span> <span class="n">height_weight_corr_ci</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Height Median CI = [5.25262253 5.55928686] 
+Height Weight Correlation CI = [0.93892136 0.95103152]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Bootstrapping-regression">
+<a class="anchor" href="#Bootstrapping-regression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bootstrapping regression<a class="anchor-link" href="#Bootstrapping-regression"> </a>
+</h3>
+<p>Now let's see how bootstrapping works with regression. Bootstrapping helps estimate the uncertainty of non-standard estimators. Consider the $R^2$ statistic associated with a regression. When you run a simple least squares regression, you get a value for $R^2$. But let's see how can we get a 95% CI for $R^2$.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/regression_test.csv'</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>y</th>
+      <th>Intercept</th>
+      <th>X1</th>
+      <th>X2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.217851</td>
+      <td>1.0</td>
+      <td>0.696469</td>
+      <td>0.286139</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.555250</td>
+      <td>1.0</td>
+      <td>0.226851</td>
+      <td>0.551315</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.888520</td>
+      <td>1.0</td>
+      <td>0.719469</td>
+      <td>0.423106</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1.736052</td>
+      <td>1.0</td>
+      <td>0.980764</td>
+      <td>0.684830</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.632073</td>
+      <td>1.0</td>
+      <td>0.480932</td>
+      <td>0.392118</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="n">reg_fit</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'y'</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">reg_fit</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>            <td>y</td>        <th>  R-squared:         </th> <td>   0.359</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.357</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   278.9</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Mon, 22 Jun 2020</td> <th>  Prob (F-statistic):</th> <td>6.33e-97</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>15:03:39</td>     <th>  Log-Likelihood:    </th> <td> -173.11</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>  1000</td>      <th>  AIC:               </th> <td>   352.2</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>   997</td>      <th>  BIC:               </th> <td>   366.9</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     2</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+      <td></td>         <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P&gt;|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>Intercept</th> <td>    1.4802</td> <td>    0.024</td> <td>   61.379</td> <td> 0.000</td> <td>    1.433</td> <td>    1.528</td>
+</tr>
+<tr>
+  <th>X1</th>        <td>   -0.5006</td> <td>    0.032</td> <td>  -15.818</td> <td> 0.000</td> <td>   -0.563</td> <td>   -0.438</td>
+</tr>
+<tr>
+  <th>X2</th>        <td>    0.5251</td> <td>    0.031</td> <td>   17.097</td> <td> 0.000</td> <td>    0.465</td> <td>    0.585</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td>858.078</td> <th>  Durbin-Watson:     </th> <td>   2.122</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.000</td>  <th>  Jarque-Bera (JB):  </th> <td>  61.982</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td>-0.025</td>  <th>  Prob(JB):          </th> <td>3.47e-14</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 1.781</td>  <th>  Cond. No.          </th> <td>    5.30</td>
+</tr>
+</table>
+<br><br>Warnings:<br>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rsquared_boot</span><span class="p">,</span> <span class="n">coefs_boot</span><span class="p">,</span> <span class="n">sims</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mi">1000</span>
+
+<span class="c1"># Run 1K iterations</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sims</span><span class="p">):</span>
+    <span class="c1"># First create a bootstrap sample with replacement with n=df.shape[0]</span>
+    <span class="n">bootstrap</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Fit the regression and append the r square to rsquared_boot</span>
+    <span class="n">rsquared_boot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">bootstrap</span><span class="p">[</span><span class="s1">'y'</span><span class="p">],</span><span class="n">bootstrap</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">rsquared</span><span class="p">)</span>
+
+<span class="c1"># Calculate 95% CI on rsquared_boot</span>
+<span class="n">r_sq_95_ci</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">rsquared_boot</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"R Squared 95% CI = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r_sq_95_ci</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>R Squared 95% CI = [0.31089312 0.40543591]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Jackknife-resampling">
+<a class="anchor" href="#Jackknife-resampling" aria-hidden="true"><span class="octicon octicon-link"></span></a>Jackknife resampling<a class="anchor-link" href="#Jackknife-resampling"> </a>
+</h2>
+<ul>
+<li>Jackknife Estimate
+$$ \hat{\theta}_{\text{jackknife}} = \frac{1}{n} \sum_{i=1}^{n} \hat{\theta}_i \\
+\hat{\theta}_{\text{jackknife}} : \text{Jackknife Estimate, } \hat{\theta}_i : \text{Estimate for each Jackknife Sample} $$</li>
+<li>Variance of Jackknife Estimate
+$$ Var(\hat{\theta}_{\text{jackknife}}) = \frac{n-1}{n} \sum (\hat{\theta}_i - \hat{\theta}_{\text{jackknife}})^2 \\ 
+\hat{\theta}_{\text{jackknife}} : \text{Jackknife Estimate,  } \hat{\theta}_i : \text{Estimate for each Jackknife Sample} $$
+($n-1$ means leave one datapoint from sample)</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Basic-jackknife-estimation---mean">
+<a class="anchor" href="#Basic-jackknife-estimation---mean" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic jackknife estimation - mean<a class="anchor-link" href="#Basic-jackknife-estimation---mean"> </a>
+</h2>
+<p>Jackknife resampling is an older procedure, which isn't used as often compared as bootstrapping. However, it's still useful to know how to run a basic jackknife estimation procedure. In this first exercise, we will calculate the jackknife estimate for the mean. Let's return to the wrench factory.</p>
+<p>You own a wrench factory and want to measure the average length of the wrenches to ensure that they meet some specifications. Your factory produces thousands of wrenches every day, but it's infeasible to measure the length of each wrench. However, you have access to a representative sample of 100 wrenches. Let's use jackknife estimation to get the average lengths.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Leave one observation out from wrench_lengths to get the jackknife sample and store the mean length</span>
+<span class="n">mean_lengths</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="p">[],</span> <span class="nb">len</span><span class="p">(</span><span class="n">wrench_lengths</span><span class="p">)</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">jk_sample</span> <span class="o">=</span> <span class="n">wrench_lengths</span><span class="p">[</span><span class="n">index</span> <span class="o">!=</span> <span class="n">i</span><span class="p">]</span>
+    <span class="n">mean_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">jk_sample</span><span class="p">))</span>
+
+<span class="c1"># The jackknife estimate is the mean of the mean lengths from each sample</span>
+<span class="n">mean_lengths_jk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mean_lengths</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Jackknife estimate of the mean = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mean_lengths_jk</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Jackknife estimate of the mean = 10.027109074099998
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Jackknife-confidence-interval-for-the-median">
+<a class="anchor" href="#Jackknife-confidence-interval-for-the-median" aria-hidden="true"><span class="octicon octicon-link"></span></a>Jackknife confidence interval for the median<a class="anchor-link" href="#Jackknife-confidence-interval-for-the-median"> </a>
+</h3>
+<p>In this exercise, we will calculate the jackknife 95% CI for a non-standard estimator. Here, we will look at the median. Keep in mind that the variance of a jackknife estimator is <code>n-1</code> times the variance of the individual jackknife sample estimates where <code>n</code> is the number of observations in the original sample.</p>
+<p>Returning to the wrench factory, you are now interested in estimating the median length of the wrenches along with a 95% CI to ensure that the wrenches are within tolerance.</p>
+<p>Let's revisit the code from the previous exercise, but this time in the context of median lengths. By the end of this exercise, you will have a much better idea of how to use jackknife resampling to calculate confidence intervals for non-standard estimators.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Leave one observation out to get the jackknife sample and store the median length</span>
+<span class="n">median_lengths</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">jk_sample</span> <span class="o">=</span> <span class="n">wrench_lengths</span><span class="p">[</span><span class="n">index</span> <span class="o">!=</span> <span class="n">i</span><span class="p">]</span>
+    <span class="n">median_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">jk_sample</span><span class="p">))</span>
+
+<span class="n">median_lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">median_lengths</span><span class="p">)</span>
+
+<span class="c1"># Calculate jackknife estimate and it's variance</span>
+<span class="n">jk_median_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">median_lengths</span><span class="p">)</span>
+<span class="n">jk_var</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">median_lengths</span><span class="p">)</span>
+
+<span class="c1"># Assuming normality, calculate lower and upper 95% confidence intervals</span>
+<span class="n">jk_lower_ci</span> <span class="o">=</span> <span class="n">jk_median_length</span> <span class="o">-</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jk_var</span><span class="p">)</span>
+<span class="n">jk_upper_ci</span> <span class="o">=</span> <span class="n">jk_median_length</span> <span class="o">+</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jk_var</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Jackknife 95% CI lower = </span><span class="si">{}</span><span class="s2">, upper = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jk_lower_ci</span><span class="p">,</span> <span class="n">jk_upper_ci</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Jackknife 95% CI lower = 9.138592415216381, upper = 10.754868124783625
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Permutation-testing">
+<a class="anchor" href="#Permutation-testing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Permutation testing<a class="anchor-link" href="#Permutation-testing"> </a>
+</h2>
+<ul>
+<li>Steps involved
+<img src="/chans_jupyter/images/copied_from_nb/image/permutation_test.png" alt="permutation_test"><ul>
+<li>Determinte the test statistics</li>
+<li>Observation is pooled, and new dataset is generated for every possible permutation of labels from groups</li>
+<li>Calculate the difference in means for each of these datasets</li>
+<li>Check where our test statistics falls in this distribution</li>
+</ul>
+</li>
+<li>Advantage<ul>
+<li>Very flexible</li>
+<li>No strict assumptions</li>
+<li>Widely applicable</li>
+</ul>
+</li>
+<li>Drawbacks<ul>
+<li>Computationally Expensive</li>
+<li>Custom coding required</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Generating-a-single-permutation">
+<a class="anchor" href="#Generating-a-single-permutation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generating a single permutation<a class="anchor-link" href="#Generating-a-single-permutation"> </a>
+</h3>
+<p>In the next few exercises, we will run a significance test using permutation testing. As discussed in the video, we want to see if there's any difference in the donations generated by the two designs - A and B. Suppose that you have been running both the versions for a few days and have generated 500 donations on A and 700 donations on B, stored in the variables donations_A and donations_B.</p>
+<p>We first need to generate a null distribution for the difference in means. We will achieve this by generating multiple permutations of the dataset and calculating the difference in means for each case.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">donations_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">7.15363286e+00</span><span class="p">,</span> <span class="mf">2.02240490e+00</span><span class="p">,</span> <span class="mf">1.54370448e+00</span><span class="p">,</span> <span class="mf">4.80860209e+00</span><span class="p">,</span>
+       <span class="mf">7.62642561e+00</span><span class="p">,</span> <span class="mf">3.30058521e+00</span><span class="p">,</span> <span class="mf">2.37058924e+01</span><span class="p">,</span> <span class="mf">6.92785364e+00</span><span class="p">,</span>
+       <span class="mf">3.93432116e+00</span><span class="p">,</span> <span class="mf">2.98664221e+00</span><span class="p">,</span> <span class="mf">2.52205350e+00</span><span class="p">,</span> <span class="mf">7.83491938e+00</span><span class="p">,</span>
+       <span class="mf">3.46363306e+00</span><span class="p">,</span> <span class="mf">3.69196795e-01</span><span class="p">,</span> <span class="mf">3.04542810e+00</span><span class="p">,</span> <span class="mf">8.03635944e+00</span><span class="p">,</span>
+       <span class="mf">1.20896556e+00</span><span class="p">,</span> <span class="mf">1.15751776e+00</span><span class="p">,</span> <span class="mf">4.54997304e+00</span><span class="p">,</span> <span class="mf">4.55351188e+00</span><span class="p">,</span>
+       <span class="mf">6.03730837e+00</span><span class="p">,</span> <span class="mf">1.13600346e+01</span><span class="p">,</span> <span class="mf">7.73403302e+00</span><span class="p">,</span> <span class="mf">5.66541826e+00</span><span class="p">,</span>
+       <span class="mf">7.69038204e+00</span><span class="p">,</span> <span class="mf">2.34013992e+00</span><span class="p">,</span> <span class="mf">2.69451474e+00</span><span class="p">,</span> <span class="mf">1.55467056e+00</span><span class="p">,</span>
+       <span class="mf">2.08641054e+00</span><span class="p">,</span> <span class="mf">5.98136359e+00</span><span class="p">,</span> <span class="mf">5.79758878e-01</span><span class="p">,</span> <span class="mf">3.41180026e+00</span><span class="p">,</span>
+       <span class="mf">3.38180211e+00</span><span class="p">,</span> <span class="mf">4.08357880e+00</span><span class="p">,</span> <span class="mf">3.32898159e+00</span><span class="p">,</span> <span class="mf">2.24607719e+00</span><span class="p">,</span>
+       <span class="mf">3.33442862e+00</span><span class="p">,</span> <span class="mf">1.34314207e+01</span><span class="p">,</span> <span class="mf">1.73115909e+01</span><span class="p">,</span> <span class="mf">4.18096377e+00</span><span class="p">,</span>
+       <span class="mf">5.86824609e+00</span><span class="p">,</span> <span class="mf">7.37199778e-01</span><span class="p">,</span> <span class="mf">2.29007093e+00</span><span class="p">,</span> <span class="mf">3.21507841e+00</span><span class="p">,</span>
+       <span class="mf">1.20733518e+01</span><span class="p">,</span> <span class="mf">1.72973646e+00</span><span class="p">,</span> <span class="mf">3.95867209e+00</span><span class="p">,</span> <span class="mf">2.54264298e+01</span><span class="p">,</span>
+       <span class="mf">4.39738249e+00</span><span class="p">,</span> <span class="mf">5.69434848e+00</span><span class="p">,</span> <span class="mf">7.71288120e-01</span><span class="p">,</span> <span class="mf">1.05039631e+01</span><span class="p">,</span>
+       <span class="mf">5.54382280e+00</span><span class="p">,</span> <span class="mf">4.72564402e+00</span><span class="p">,</span> <span class="mf">2.51827118e+00</span><span class="p">,</span> <span class="mf">2.17547509e+00</span><span class="p">,</span>
+       <span class="mf">3.23763715e+00</span><span class="p">,</span> <span class="mf">6.86104476e+00</span><span class="p">,</span> <span class="mf">1.24986178e+01</span><span class="p">,</span> <span class="mf">4.28527304e+00</span><span class="p">,</span>
+       <span class="mf">6.63951203e+00</span><span class="p">,</span> <span class="mf">5.29041637e+00</span><span class="p">,</span> <span class="mf">5.88343175e+00</span><span class="p">,</span> <span class="mf">6.73784273e+00</span><span class="p">,</span>
+       <span class="mf">1.10839795e+01</span><span class="p">,</span> <span class="mf">5.21162799e-01</span><span class="p">,</span> <span class="mf">8.65548290e+00</span><span class="p">,</span> <span class="mf">1.67563618e+00</span><span class="p">,</span>
+       <span class="mf">1.29568920e+00</span><span class="p">,</span> <span class="mf">5.09820187e+00</span><span class="p">,</span> <span class="mf">6.03647739e-01</span><span class="p">,</span> <span class="mf">1.29940150e+01</span><span class="p">,</span>
+       <span class="mf">5.92106741e+00</span><span class="p">,</span> <span class="mf">7.71145201e+00</span><span class="p">,</span> <span class="mf">9.75641890e-02</span><span class="p">,</span> <span class="mf">5.41479857e+00</span><span class="p">,</span>
+       <span class="mf">4.88220440e+00</span><span class="p">,</span> <span class="mf">1.03869381e+00</span><span class="p">,</span> <span class="mf">9.96827044e-01</span><span class="p">,</span> <span class="mf">7.13508703e+00</span><span class="p">,</span>
+       <span class="mf">2.30310027e+00</span><span class="p">,</span> <span class="mf">7.06535435e+00</span><span class="p">,</span> <span class="mf">4.84977600e+00</span><span class="p">,</span> <span class="mf">2.95546458e+00</span><span class="p">,</span>
+       <span class="mf">1.55522115e+01</span><span class="p">,</span> <span class="mf">1.10584428e+01</span><span class="p">,</span> <span class="mf">2.65337427e+00</span><span class="p">,</span> <span class="mf">2.67420709e-01</span><span class="p">,</span>
+       <span class="mf">2.18105869e+00</span><span class="p">,</span> <span class="mf">3.04683794e+00</span><span class="p">,</span> <span class="mf">7.32384225e+00</span><span class="p">,</span> <span class="mf">3.22362829e+01</span><span class="p">,</span>
+       <span class="mf">2.63954619e+00</span><span class="p">,</span> <span class="mf">8.62673398e+00</span><span class="p">,</span> <span class="mf">5.39626123e+00</span><span class="p">,</span> <span class="mf">7.06012667e+00</span><span class="p">,</span>
+       <span class="mf">9.83077347e-01</span><span class="p">,</span> <span class="mf">3.05372718e+00</span><span class="p">,</span> <span class="mf">1.65338197e+00</span><span class="p">,</span> <span class="mf">2.52459352e+00</span><span class="p">,</span>
+       <span class="mf">4.31852605e+00</span><span class="p">,</span> <span class="mf">6.59091568e+00</span><span class="p">,</span> <span class="mf">6.71682860e-01</span><span class="p">,</span> <span class="mf">8.41747654e-01</span><span class="p">,</span>
+       <span class="mf">2.33147632e+00</span><span class="p">,</span> <span class="mf">6.50052761e+00</span><span class="p">,</span> <span class="mf">1.12445716e+01</span><span class="p">,</span> <span class="mf">4.83463539e+00</span><span class="p">,</span>
+       <span class="mf">1.15635162e+01</span><span class="p">,</span> <span class="mf">2.91521595e+00</span><span class="p">,</span> <span class="mf">2.28569953e+00</span><span class="p">,</span> <span class="mf">2.62419344e+00</span><span class="p">,</span>
+       <span class="mf">1.12580302e+00</span><span class="p">,</span> <span class="mf">1.06005037e+01</span><span class="p">,</span> <span class="mf">2.48102160e+00</span><span class="p">,</span> <span class="mf">4.82273069e+00</span><span class="p">,</span>
+       <span class="mf">5.18434570e+00</span><span class="p">,</span> <span class="mf">4.42300896e+00</span><span class="p">,</span> <span class="mf">1.61501034e-02</span><span class="p">,</span> <span class="mf">2.67123359e+01</span><span class="p">,</span>
+       <span class="mf">1.41448824e+01</span><span class="p">,</span> <span class="mf">1.39640533e+00</span><span class="p">,</span> <span class="mf">2.07601611e+00</span><span class="p">,</span> <span class="mf">4.40394197e+00</span><span class="p">,</span>
+       <span class="mf">1.39313031e+01</span><span class="p">,</span> <span class="mf">2.46741537e+01</span><span class="p">,</span> <span class="mf">1.78673437e+00</span><span class="p">,</span> <span class="mf">4.98562121e+00</span><span class="p">,</span>
+       <span class="mf">9.86941707e+00</span><span class="p">,</span> <span class="mf">3.00891678e+00</span><span class="p">,</span> <span class="mf">7.87989267e+00</span><span class="p">,</span> <span class="mf">1.05376100e+00</span><span class="p">,</span>
+       <span class="mf">5.50823207e+00</span><span class="p">,</span> <span class="mf">1.20534269e+01</span><span class="p">,</span> <span class="mf">2.46342324e+01</span><span class="p">,</span> <span class="mf">4.96154929e-01</span><span class="p">,</span>
+       <span class="mf">3.35534157e+00</span><span class="p">,</span> <span class="mf">1.37302986e+00</span><span class="p">,</span> <span class="mf">3.59396956e+00</span><span class="p">,</span> <span class="mf">4.76130100e+00</span><span class="p">,</span>
+       <span class="mf">5.87838622e-01</span><span class="p">,</span> <span class="mf">2.11320218e+00</span><span class="p">,</span> <span class="mf">1.57519880e+01</span><span class="p">,</span> <span class="mf">5.04993508e+00</span><span class="p">,</span>
+       <span class="mf">3.66842994e+00</span><span class="p">,</span> <span class="mf">8.40299238e+00</span><span class="p">,</span> <span class="mf">8.12556925e+00</span><span class="p">,</span> <span class="mf">2.98791942e-01</span><span class="p">,</span>
+       <span class="mf">7.40035604e+00</span><span class="p">,</span> <span class="mf">1.09671812e+01</span><span class="p">,</span> <span class="mf">1.08868440e+00</span><span class="p">,</span> <span class="mf">9.11204480e+00</span><span class="p">,</span>
+       <span class="mf">2.02574498e+00</span><span class="p">,</span> <span class="mf">2.19576255e+00</span><span class="p">,</span> <span class="mf">6.56643327e+00</span><span class="p">,</span> <span class="mf">7.08595672e-01</span><span class="p">,</span>
+       <span class="mf">6.55946442e+00</span><span class="p">,</span> <span class="mf">1.31278715e+01</span><span class="p">,</span> <span class="mf">7.15051206e+00</span><span class="p">,</span> <span class="mf">3.48242496e+00</span><span class="p">,</span>
+       <span class="mf">3.45980981e+00</span><span class="p">,</span> <span class="mf">8.69147259e+00</span><span class="p">,</span> <span class="mf">5.00331722e+00</span><span class="p">,</span> <span class="mf">5.32358877e-01</span><span class="p">,</span>
+       <span class="mf">5.24328366e+00</span><span class="p">,</span> <span class="mf">1.01193298e+01</span><span class="p">,</span> <span class="mf">2.46648252e+00</span><span class="p">,</span> <span class="mf">1.57513533e+01</span><span class="p">,</span>
+       <span class="mf">8.33499890e+00</span><span class="p">,</span> <span class="mf">5.12079461e+00</span><span class="p">,</span> <span class="mf">8.35735220e+00</span><span class="p">,</span> <span class="mf">4.94741963e-01</span><span class="p">,</span>
+       <span class="mf">1.17705516e+01</span><span class="p">,</span> <span class="mf">1.03391383e+01</span><span class="p">,</span> <span class="mf">1.44391237e+01</span><span class="p">,</span> <span class="mf">8.26139805e-01</span><span class="p">,</span>
+       <span class="mf">5.11910163e-01</span><span class="p">,</span> <span class="mf">8.93893365e-01</span><span class="p">,</span> <span class="mf">3.05874406e+00</span><span class="p">,</span> <span class="mf">3.31308303e+00</span><span class="p">,</span>
+       <span class="mf">4.95621045e+00</span><span class="p">,</span> <span class="mf">7.82316691e-01</span><span class="p">,</span> <span class="mf">1.34936676e+00</span><span class="p">,</span> <span class="mf">1.00165400e+01</span><span class="p">,</span>
+       <span class="mf">3.78653060e+00</span><span class="p">,</span> <span class="mf">9.89962880e+00</span><span class="p">,</span> <span class="mf">4.47245483e-02</span><span class="p">,</span> <span class="mf">4.81232019e+00</span><span class="p">,</span>
+       <span class="mf">1.61235015e+01</span><span class="p">,</span> <span class="mf">5.23616216e+00</span><span class="p">,</span> <span class="mf">1.38475433e+00</span><span class="p">,</span> <span class="mf">7.58993321e+00</span><span class="p">,</span>
+       <span class="mf">2.85840847e+00</span><span class="p">,</span> <span class="mf">6.62266468e+00</span><span class="p">,</span> <span class="mf">1.78548820e-01</span><span class="p">,</span> <span class="mf">6.06196626e+00</span><span class="p">,</span>
+       <span class="mf">1.96366145e-01</span><span class="p">,</span> <span class="mf">8.19379157e+00</span><span class="p">,</span> <span class="mf">3.84233798e+00</span><span class="p">,</span> <span class="mf">7.78973683e-01</span><span class="p">,</span>
+       <span class="mf">4.69365326e+00</span><span class="p">,</span> <span class="mf">4.14650118e-01</span><span class="p">,</span> <span class="mf">6.35689533e+00</span><span class="p">,</span> <span class="mf">3.32596743e+01</span><span class="p">,</span>
+       <span class="mf">8.80235474e+00</span><span class="p">,</span> <span class="mf">5.11671494e+00</span><span class="p">,</span> <span class="mf">6.49757260e-01</span><span class="p">,</span> <span class="mf">7.22051924e+00</span><span class="p">,</span>
+       <span class="mf">6.49350287e+00</span><span class="p">,</span> <span class="mf">3.02060141e-01</span><span class="p">,</span> <span class="mf">9.42994312e+00</span><span class="p">,</span> <span class="mf">4.38779385e+00</span><span class="p">,</span>
+       <span class="mf">3.32937247e+00</span><span class="p">,</span> <span class="mf">9.31231373e+00</span><span class="p">,</span> <span class="mf">3.18177591e+00</span><span class="p">,</span> <span class="mf">3.93541215e+00</span><span class="p">,</span>
+       <span class="mf">1.20263585e+00</span><span class="p">,</span> <span class="mf">2.32562353e+00</span><span class="p">,</span> <span class="mf">1.12066487e+01</span><span class="p">,</span> <span class="mf">1.24143472e+00</span><span class="p">,</span>
+       <span class="mf">3.24040478e+00</span><span class="p">,</span> <span class="mf">2.70780118e+01</span><span class="p">,</span> <span class="mf">1.61983735e+00</span><span class="p">,</span> <span class="mf">1.49213797e+01</span><span class="p">,</span>
+       <span class="mf">1.50353699e+01</span><span class="p">,</span> <span class="mf">5.74417482e-01</span><span class="p">,</span> <span class="mf">3.73784056e+00</span><span class="p">,</span> <span class="mf">4.18553823e+00</span><span class="p">,</span>
+       <span class="mf">2.25837113e+00</span><span class="p">,</span> <span class="mf">2.90980328e-01</span><span class="p">,</span> <span class="mf">1.65994352e+00</span><span class="p">,</span> <span class="mf">6.02434475e-01</span><span class="p">,</span>
+       <span class="mf">1.63282042e+00</span><span class="p">,</span> <span class="mf">9.89503444e+00</span><span class="p">,</span> <span class="mf">1.35215290e+01</span><span class="p">,</span> <span class="mf">2.65108930e-01</span><span class="p">,</span>
+       <span class="mf">2.15676008e+00</span><span class="p">,</span> <span class="mf">2.36493902e+01</span><span class="p">,</span> <span class="mf">4.65271737e+00</span><span class="p">,</span> <span class="mf">5.90596197e+00</span><span class="p">,</span>
+       <span class="mf">3.33650476e-02</span><span class="p">,</span> <span class="mf">3.98047533e+00</span><span class="p">,</span> <span class="mf">2.67036496e+01</span><span class="p">,</span> <span class="mf">2.82180310e+00</span><span class="p">,</span>
+       <span class="mf">6.12449905e-01</span><span class="p">,</span> <span class="mf">3.71836287e+00</span><span class="p">,</span> <span class="mf">1.97817485e+01</span><span class="p">,</span> <span class="mf">2.50975773e+00</span><span class="p">,</span>
+       <span class="mf">9.62439620e+00</span><span class="p">,</span> <span class="mf">9.62211685e+00</span><span class="p">,</span> <span class="mf">1.40104465e+00</span><span class="p">,</span> <span class="mf">3.51510242e+00</span><span class="p">,</span>
+       <span class="mf">7.54426839e+00</span><span class="p">,</span> <span class="mf">3.17108474e+00</span><span class="p">,</span> <span class="mf">1.27178976e+00</span><span class="p">,</span> <span class="mf">2.05580402e+01</span><span class="p">,</span>
+       <span class="mf">6.31180998e+00</span><span class="p">,</span> <span class="mf">1.20353557e+01</span><span class="p">,</span> <span class="mf">1.53398466e-01</span><span class="p">,</span> <span class="mf">1.86288656e+00</span><span class="p">,</span>
+       <span class="mf">4.18378790e+00</span><span class="p">,</span> <span class="mf">4.18986276e-01</span><span class="p">,</span> <span class="mf">2.97996482e+01</span><span class="p">,</span> <span class="mf">1.61875742e+00</span><span class="p">,</span>
+       <span class="mf">2.81323057e+00</span><span class="p">,</span> <span class="mf">1.44488187e+00</span><span class="p">,</span> <span class="mf">6.68579156e-01</span><span class="p">,</span> <span class="mf">1.58754277e+00</span><span class="p">,</span>
+       <span class="mf">2.14528168e+00</span><span class="p">,</span> <span class="mf">6.03798635e+00</span><span class="p">,</span> <span class="mf">1.98132308e+00</span><span class="p">,</span> <span class="mf">2.69910531e+00</span><span class="p">,</span>
+       <span class="mf">3.57634362e-02</span><span class="p">,</span> <span class="mf">2.73158042e+00</span><span class="p">,</span> <span class="mf">4.57995000e+00</span><span class="p">,</span> <span class="mf">1.06053646e+00</span><span class="p">,</span>
+       <span class="mf">5.45936403e+00</span><span class="p">,</span> <span class="mf">2.08164175e+00</span><span class="p">,</span> <span class="mf">5.99885739e+00</span><span class="p">,</span> <span class="mf">1.59275095e-01</span><span class="p">,</span>
+       <span class="mf">1.31137990e+01</span><span class="p">,</span> <span class="mf">9.74996914e-02</span><span class="p">,</span> <span class="mf">8.14629899e-01</span><span class="p">,</span> <span class="mf">9.00787380e+00</span><span class="p">,</span>
+       <span class="mf">2.81890764e-01</span><span class="p">,</span> <span class="mf">7.44794442e+00</span><span class="p">,</span> <span class="mf">2.12523106e+01</span><span class="p">,</span> <span class="mf">1.23195060e+01</span><span class="p">,</span>
+       <span class="mf">7.43059158e+00</span><span class="p">,</span> <span class="mf">1.90937799e+01</span><span class="p">,</span> <span class="mf">3.37074897e+00</span><span class="p">,</span> <span class="mf">1.23756913e+01</span><span class="p">,</span>
+       <span class="mf">2.63994493e+00</span><span class="p">,</span> <span class="mf">1.59353360e+01</span><span class="p">,</span> <span class="mf">9.66491466e-01</span><span class="p">,</span> <span class="mf">1.68833665e+01</span><span class="p">,</span>
+       <span class="mf">1.07283809e+01</span><span class="p">,</span> <span class="mf">1.12269530e+01</span><span class="p">,</span> <span class="mf">7.93807822e-01</span><span class="p">,</span> <span class="mf">5.44527793e+00</span><span class="p">,</span>
+       <span class="mf">9.91699451e-02</span><span class="p">,</span> <span class="mf">7.66322715e+00</span><span class="p">,</span> <span class="mf">4.66056240e-02</span><span class="p">,</span> <span class="mf">5.31822002e-01</span><span class="p">,</span>
+       <span class="mf">1.53321340e+00</span><span class="p">,</span> <span class="mf">1.24826299e+01</span><span class="p">,</span> <span class="mf">2.71134462e+00</span><span class="p">,</span> <span class="mf">4.65865018e+00</span><span class="p">,</span>
+       <span class="mf">5.03741184e+00</span><span class="p">,</span> <span class="mf">1.53294188e+00</span><span class="p">,</span> <span class="mf">5.09385035e+00</span><span class="p">,</span> <span class="mf">6.48967790e+00</span><span class="p">,</span>
+       <span class="mf">2.12502900e+00</span><span class="p">,</span> <span class="mf">3.25417493e+00</span><span class="p">,</span> <span class="mf">3.62081435e+00</span><span class="p">,</span> <span class="mf">1.61605062e+01</span><span class="p">,</span>
+       <span class="mf">5.31302349e+00</span><span class="p">,</span> <span class="mf">1.77682601e+01</span><span class="p">,</span> <span class="mf">4.87205396e+00</span><span class="p">,</span> <span class="mf">4.16562392e+00</span><span class="p">,</span>
+       <span class="mf">2.12307837e-02</span><span class="p">,</span> <span class="mf">3.93382578e+00</span><span class="p">,</span> <span class="mf">1.57412892e+01</span><span class="p">,</span> <span class="mf">1.32661648e+00</span><span class="p">,</span>
+       <span class="mf">3.20981488e-01</span><span class="p">,</span> <span class="mf">3.13312853e+00</span><span class="p">,</span> <span class="mf">2.79507990e+00</span><span class="p">,</span> <span class="mf">1.16758893e+01</span><span class="p">,</span>
+       <span class="mf">1.61829606e-01</span><span class="p">,</span> <span class="mf">1.51655745e+01</span><span class="p">,</span> <span class="mf">6.85356086e+00</span><span class="p">,</span> <span class="mf">1.40745838e+01</span><span class="p">,</span>
+       <span class="mf">5.61175686e+00</span><span class="p">,</span> <span class="mf">1.00263901e+01</span><span class="p">,</span> <span class="mf">2.45271857e+00</span><span class="p">,</span> <span class="mf">2.58069478e+00</span><span class="p">,</span>
+       <span class="mf">2.96454098e+00</span><span class="p">,</span> <span class="mf">8.43401504e+00</span><span class="p">,</span> <span class="mf">2.76546583e+00</span><span class="p">,</span> <span class="mf">1.66417151e+00</span><span class="p">,</span>
+       <span class="mf">1.66517164e+01</span><span class="p">,</span> <span class="mf">1.43165231e+01</span><span class="p">,</span> <span class="mf">2.57360606e+00</span><span class="p">,</span> <span class="mf">6.04120097e+00</span><span class="p">,</span>
+       <span class="mf">1.91992769e+00</span><span class="p">,</span> <span class="mf">1.38490096e+00</span><span class="p">,</span> <span class="mf">2.45990759e+00</span><span class="p">,</span> <span class="mf">2.37695034e+00</span><span class="p">,</span>
+       <span class="mf">1.28364794e+01</span><span class="p">,</span> <span class="mf">1.03660801e+01</span><span class="p">,</span> <span class="mf">7.41945592e+00</span><span class="p">,</span> <span class="mf">1.92158339e+01</span><span class="p">,</span>
+       <span class="mf">3.29473146e+00</span><span class="p">,</span> <span class="mf">1.68648774e+00</span><span class="p">,</span> <span class="mf">7.49288469e-01</span><span class="p">,</span> <span class="mf">2.14908525e+00</span><span class="p">,</span>
+       <span class="mf">9.41773910e-01</span><span class="p">,</span> <span class="mf">5.80295247e-01</span><span class="p">,</span> <span class="mf">5.54188934e+00</span><span class="p">,</span> <span class="mf">2.71710895e+00</span><span class="p">,</span>
+       <span class="mf">4.98853210e+00</span><span class="p">,</span> <span class="mf">1.27422858e+00</span><span class="p">,</span> <span class="mf">6.77886925e+00</span><span class="p">,</span> <span class="mf">1.45629390e+00</span><span class="p">,</span>
+       <span class="mf">1.95457691e+00</span><span class="p">,</span> <span class="mf">8.12320517e+00</span><span class="p">,</span> <span class="mf">4.92231023e+00</span><span class="p">,</span> <span class="mf">2.44633364e+00</span><span class="p">,</span>
+       <span class="mf">4.69828406e+00</span><span class="p">,</span> <span class="mf">7.10472113e+00</span><span class="p">,</span> <span class="mf">1.45915258e+01</span><span class="p">,</span> <span class="mf">5.21520083e+00</span><span class="p">,</span>
+       <span class="mf">1.58915801e+00</span><span class="p">,</span> <span class="mf">8.23902821e+00</span><span class="p">,</span> <span class="mf">9.02422786e+00</span><span class="p">,</span> <span class="mf">1.34187193e+00</span><span class="p">,</span>
+       <span class="mf">1.03079618e+01</span><span class="p">,</span> <span class="mf">3.75220064e+00</span><span class="p">,</span> <span class="mf">9.07840601e+00</span><span class="p">,</span> <span class="mf">1.62674524e+00</span><span class="p">,</span>
+       <span class="mf">2.42601690e+00</span><span class="p">,</span> <span class="mf">1.84353066e+01</span><span class="p">,</span> <span class="mf">6.43442380e+00</span><span class="p">,</span> <span class="mf">8.89360329e+00</span><span class="p">,</span>
+       <span class="mf">6.99571578e+00</span><span class="p">,</span> <span class="mf">1.37122934e+00</span><span class="p">,</span> <span class="mf">3.81707186e+00</span><span class="p">,</span> <span class="mf">9.93175632e+00</span><span class="p">,</span>
+       <span class="mf">6.74422911e+00</span><span class="p">,</span> <span class="mf">3.62767602e-02</span><span class="p">,</span> <span class="mf">5.48796568e-01</span><span class="p">,</span> <span class="mf">2.55518301e+00</span><span class="p">,</span>
+       <span class="mf">1.73337149e+01</span><span class="p">,</span> <span class="mf">4.05408935e+00</span><span class="p">,</span> <span class="mf">1.88971342e+00</span><span class="p">,</span> <span class="mf">2.68169630e+00</span><span class="p">,</span>
+       <span class="mf">1.41929271e+00</span><span class="p">,</span> <span class="mf">3.28079030e+00</span><span class="p">,</span> <span class="mf">1.47567515e+00</span><span class="p">,</span> <span class="mf">1.12151812e+01</span><span class="p">,</span>
+       <span class="mf">3.65582148e+00</span><span class="p">,</span> <span class="mf">1.96937478e+00</span><span class="p">,</span> <span class="mf">1.62086806e+01</span><span class="p">,</span> <span class="mf">2.26433976e+00</span><span class="p">,</span>
+       <span class="mf">1.44286812e+01</span><span class="p">,</span> <span class="mf">2.66333158e-01</span><span class="p">,</span> <span class="mf">7.36785267e+00</span><span class="p">,</span> <span class="mf">3.96860098e+00</span><span class="p">,</span>
+       <span class="mf">3.52430794e+00</span><span class="p">,</span> <span class="mf">2.21996761e-01</span><span class="p">,</span> <span class="mf">2.49203428e-01</span><span class="p">,</span> <span class="mf">2.42757547e+00</span><span class="p">,</span>
+       <span class="mf">1.76383283e+01</span><span class="p">,</span> <span class="mf">5.76866972e+00</span><span class="p">,</span> <span class="mf">2.76150652e+00</span><span class="p">,</span> <span class="mf">5.68014458e+00</span><span class="p">,</span>
+       <span class="mf">1.38502497e+00</span><span class="p">,</span> <span class="mf">1.08241878e+00</span><span class="p">,</span> <span class="mf">2.69478371e+00</span><span class="p">,</span> <span class="mf">1.19421414e+01</span><span class="p">,</span>
+       <span class="mf">4.27277801e+00</span><span class="p">,</span> <span class="mf">2.11354984e+00</span><span class="p">,</span> <span class="mf">1.80046649e+01</span><span class="p">,</span> <span class="mf">1.01558115e+01</span><span class="p">,</span>
+       <span class="mf">2.34027311e+00</span><span class="p">,</span> <span class="mf">2.14743942e+01</span><span class="p">,</span> <span class="mf">2.62211091e+01</span><span class="p">,</span> <span class="mf">3.15218614e+00</span><span class="p">,</span>
+       <span class="mf">6.40134065e+00</span><span class="p">,</span> <span class="mf">3.12175373e+00</span><span class="p">,</span> <span class="mf">1.78516715e+00</span><span class="p">,</span> <span class="mf">5.17614704e-01</span><span class="p">,</span>
+       <span class="mf">1.83597528e+00</span><span class="p">,</span> <span class="mf">1.90043999e+00</span><span class="p">,</span> <span class="mf">3.05135995e+00</span><span class="p">,</span> <span class="mf">1.22656402e+00</span><span class="p">,</span>
+       <span class="mf">1.84510434e+01</span><span class="p">,</span> <span class="mf">6.51393113e-01</span><span class="p">,</span> <span class="mf">5.88831298e+00</span><span class="p">,</span> <span class="mf">3.49712489e+00</span><span class="p">,</span>
+       <span class="mf">3.30486749e+00</span><span class="p">,</span> <span class="mf">2.79121217e+00</span><span class="p">,</span> <span class="mf">1.21640422e+01</span><span class="p">,</span> <span class="mf">1.97500056e+00</span><span class="p">,</span>
+       <span class="mf">1.24744775e-01</span><span class="p">,</span> <span class="mf">1.50133191e+01</span><span class="p">,</span> <span class="mf">1.19918286e+01</span><span class="p">,</span> <span class="mf">1.94526138e+00</span><span class="p">,</span>
+       <span class="mf">4.44756855e+00</span><span class="p">,</span> <span class="mf">6.93059059e-01</span><span class="p">,</span> <span class="mf">5.88502790e-01</span><span class="p">,</span> <span class="mf">1.09012124e+01</span><span class="p">,</span>
+       <span class="mf">3.16849927e+00</span><span class="p">,</span> <span class="mf">6.50322658e+00</span><span class="p">,</span> <span class="mf">1.72093727e+01</span><span class="p">,</span> <span class="mf">1.68726308e+00</span><span class="p">,</span>
+       <span class="mf">7.94831348e-02</span><span class="p">,</span> <span class="mf">1.46668555e-01</span><span class="p">,</span> <span class="mf">7.41454977e+00</span><span class="p">,</span> <span class="mf">1.55058604e+01</span><span class="p">,</span>
+       <span class="mf">3.77912218e+00</span><span class="p">,</span> <span class="mf">2.82106969e+00</span><span class="p">,</span> <span class="mf">4.69659911e+00</span><span class="p">,</span> <span class="mf">1.17504345e+01</span><span class="p">,</span>
+       <span class="mf">6.33597038e+00</span><span class="p">,</span> <span class="mf">1.59145361e+00</span><span class="p">,</span> <span class="mf">8.93874514e+00</span><span class="p">,</span> <span class="mf">8.67474288e-01</span><span class="p">,</span>
+       <span class="mf">1.08596642e+00</span><span class="p">,</span> <span class="mf">5.69105969e+00</span><span class="p">,</span> <span class="mf">1.63702407e+00</span><span class="p">,</span> <span class="mf">7.32017711e+00</span><span class="p">,</span>
+       <span class="mf">2.58025478e+00</span><span class="p">,</span> <span class="mf">1.94959571e+00</span><span class="p">,</span> <span class="mf">4.09759162e+01</span><span class="p">,</span> <span class="mf">2.48783982e-01</span><span class="p">,</span>
+       <span class="mf">6.22774284e+00</span><span class="p">,</span> <span class="mf">2.36809873e-01</span><span class="p">,</span> <span class="mf">8.56795689e+00</span><span class="p">,</span> <span class="mf">1.56888959e+00</span><span class="p">,</span>
+       <span class="mf">5.64755610e-01</span><span class="p">,</span> <span class="mf">6.27241507e+00</span><span class="p">,</span> <span class="mf">7.91408500e+00</span><span class="p">,</span> <span class="mf">6.80099872e+00</span><span class="p">,</span>
+       <span class="mf">3.19777776e-01</span><span class="p">,</span> <span class="mf">2.09144942e+00</span><span class="p">,</span> <span class="mf">3.59890663e+00</span><span class="p">,</span> <span class="mf">2.03051241e+00</span><span class="p">,</span>
+       <span class="mf">9.98062360e+00</span><span class="p">,</span> <span class="mf">8.43267717e-01</span><span class="p">,</span> <span class="mf">5.68327391e+00</span><span class="p">,</span> <span class="mf">2.66455378e+01</span><span class="p">,</span>
+       <span class="mf">1.39708977e+01</span><span class="p">,</span> <span class="mf">1.50738393e+00</span><span class="p">,</span> <span class="mf">4.91345800e-04</span><span class="p">,</span> <span class="mf">2.36540713e+01</span><span class="p">,</span>
+       <span class="mf">1.28587874e+01</span><span class="p">,</span> <span class="mf">1.51149367e+01</span><span class="p">,</span> <span class="mf">3.22202744e+00</span><span class="p">,</span> <span class="mf">8.18990927e+00</span><span class="p">])</span>
+
+<span class="n">donations_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.19656474e+00</span><span class="p">,</span> <span class="mf">2.49040320e+00</span><span class="p">,</span> <span class="mf">9.53746976e+00</span><span class="p">,</span> <span class="mf">6.82606285e-01</span><span class="p">,</span>
+       <span class="mf">1.12152344e+01</span><span class="p">,</span> <span class="mf">3.43093700e+00</span><span class="p">,</span> <span class="mf">2.77646272e+00</span><span class="p">,</span> <span class="mf">1.82386960e+00</span><span class="p">,</span>
+       <span class="mf">1.24354723e+01</span><span class="p">,</span> <span class="mf">3.64515134e+00</span><span class="p">,</span> <span class="mf">8.14887581e+00</span><span class="p">,</span> <span class="mf">9.74739510e+00</span><span class="p">,</span>
+       <span class="mf">1.27798024e+01</span><span class="p">,</span> <span class="mf">1.80758132e+00</span><span class="p">,</span> <span class="mf">2.07614450e+00</span><span class="p">,</span> <span class="mf">4.52025320e+00</span><span class="p">,</span>
+       <span class="mf">2.91092911e+00</span><span class="p">,</span> <span class="mf">1.35035758e+01</span><span class="p">,</span> <span class="mf">2.53386965e+00</span><span class="p">,</span> <span class="mf">3.24831293e+00</span><span class="p">,</span>
+       <span class="mf">4.80103139e+00</span><span class="p">,</span> <span class="mf">2.59378065e+00</span><span class="p">,</span> <span class="mf">2.44499059e+01</span><span class="p">,</span> <span class="mf">5.20424895e-01</span><span class="p">,</span>
+       <span class="mf">1.24617571e+00</span><span class="p">,</span> <span class="mf">1.94787364e+00</span><span class="p">,</span> <span class="mf">7.99217521e-01</span><span class="p">,</span> <span class="mf">1.67190676e+00</span><span class="p">,</span>
+       <span class="mf">7.55351558e+00</span><span class="p">,</span> <span class="mf">3.70006200e+00</span><span class="p">,</span> <span class="mf">1.72717251e-01</span><span class="p">,</span> <span class="mf">2.02629196e+01</span><span class="p">,</span>
+       <span class="mf">4.78564798e+00</span><span class="p">,</span> <span class="mf">3.03739127e-01</span><span class="p">,</span> <span class="mf">5.41126574e+00</span><span class="p">,</span> <span class="mf">2.37704603e+00</span><span class="p">,</span>
+       <span class="mf">7.29022267e-01</span><span class="p">,</span> <span class="mf">4.14672025e+00</span><span class="p">,</span> <span class="mf">6.49288193e+00</span><span class="p">,</span> <span class="mf">5.56041209e+00</span><span class="p">,</span>
+       <span class="mf">1.42185881e+00</span><span class="p">,</span> <span class="mf">3.72079438e+00</span><span class="p">,</span> <span class="mf">3.85731089e+00</span><span class="p">,</span> <span class="mf">6.30806898e+00</span><span class="p">,</span>
+       <span class="mf">2.23039928e+00</span><span class="p">,</span> <span class="mf">7.99082335e+00</span><span class="p">,</span> <span class="mf">4.94325682e+00</span><span class="p">,</span> <span class="mf">1.95427968e-01</span><span class="p">,</span>
+       <span class="mf">3.95356876e+00</span><span class="p">,</span> <span class="mf">9.89932403e+00</span><span class="p">,</span> <span class="mf">4.19172221e+00</span><span class="p">,</span> <span class="mf">9.66881775e-01</span><span class="p">,</span>
+       <span class="mf">3.57059143e+00</span><span class="p">,</span> <span class="mf">7.07235483e+00</span><span class="p">,</span> <span class="mf">5.83260107e-01</span><span class="p">,</span> <span class="mf">8.49405343e+00</span><span class="p">,</span>
+       <span class="mf">9.16500024e-01</span><span class="p">,</span> <span class="mf">3.81866902e+00</span><span class="p">,</span> <span class="mf">2.43671329e+00</span><span class="p">,</span> <span class="mf">1.42924389e+00</span><span class="p">,</span>
+       <span class="mf">5.21256611e+00</span><span class="p">,</span> <span class="mf">1.90545622e-01</span><span class="p">,</span> <span class="mf">7.13653618e+00</span><span class="p">,</span> <span class="mf">3.74267199e+00</span><span class="p">,</span>
+       <span class="mf">1.04281517e+01</span><span class="p">,</span> <span class="mf">3.67733398e+00</span><span class="p">,</span> <span class="mf">1.78307749e-01</span><span class="p">,</span> <span class="mf">7.75094268e-01</span><span class="p">,</span>
+       <span class="mf">7.93849435e+00</span><span class="p">,</span> <span class="mf">3.38613342e+00</span><span class="p">,</span> <span class="mf">2.91589990e+00</span><span class="p">,</span> <span class="mf">1.91681667e+00</span><span class="p">,</span>
+       <span class="mf">1.67421222e+00</span><span class="p">,</span> <span class="mf">1.68902829e+01</span><span class="p">,</span> <span class="mf">2.83670943e+00</span><span class="p">,</span> <span class="mf">1.07709562e+01</span><span class="p">,</span>
+       <span class="mf">5.22293814e+00</span><span class="p">,</span> <span class="mf">9.77472179e+00</span><span class="p">,</span> <span class="mf">9.56792546e+00</span><span class="p">,</span> <span class="mf">1.56534123e+01</span><span class="p">,</span>
+       <span class="mf">5.98568505e+00</span><span class="p">,</span> <span class="mf">8.18396681e+00</span><span class="p">,</span> <span class="mf">6.60492872e+00</span><span class="p">,</span> <span class="mf">4.64721974e+00</span><span class="p">,</span>
+       <span class="mf">6.31780261e+00</span><span class="p">,</span> <span class="mf">6.28951297e+00</span><span class="p">,</span> <span class="mf">2.08840298e-01</span><span class="p">,</span> <span class="mf">3.62949699e+00</span><span class="p">,</span>
+       <span class="mf">7.86676827e+00</span><span class="p">,</span> <span class="mf">1.39171038e+00</span><span class="p">,</span> <span class="mf">3.12882590e+00</span><span class="p">,</span> <span class="mf">2.85452129e+00</span><span class="p">,</span>
+       <span class="mf">2.57740864e+00</span><span class="p">,</span> <span class="mf">6.49629659e-01</span><span class="p">,</span> <span class="mf">3.72969790e+00</span><span class="p">,</span> <span class="mf">2.95519503e+00</span><span class="p">,</span>
+       <span class="mf">5.44419240e+00</span><span class="p">,</span> <span class="mf">3.98602116e+00</span><span class="p">,</span> <span class="mf">1.39646740e-01</span><span class="p">,</span> <span class="mf">1.62192359e-01</span><span class="p">,</span>
+       <span class="mf">6.04257889e+00</span><span class="p">,</span> <span class="mf">6.14783990e+00</span><span class="p">,</span> <span class="mf">1.60867766e+01</span><span class="p">,</span> <span class="mf">1.04658642e+01</span><span class="p">,</span>
+       <span class="mf">3.15611976e+00</span><span class="p">,</span> <span class="mf">4.91624772e+00</span><span class="p">,</span> <span class="mf">3.05490344e+00</span><span class="p">,</span> <span class="mf">1.26122869e+00</span><span class="p">,</span>
+       <span class="mf">2.36345216e+00</span><span class="p">,</span> <span class="mf">5.48428348e-01</span><span class="p">,</span> <span class="mf">5.49096867e+00</span><span class="p">,</span> <span class="mf">1.06615264e+00</span><span class="p">,</span>
+       <span class="mf">3.22624219e+00</span><span class="p">,</span> <span class="mf">1.71228321e+01</span><span class="p">,</span> <span class="mf">1.60906182e-01</span><span class="p">,</span> <span class="mf">8.22781194e-01</span><span class="p">,</span>
+       <span class="mf">1.77323632e+00</span><span class="p">,</span> <span class="mf">1.42199480e+01</span><span class="p">,</span> <span class="mf">1.19757939e+01</span><span class="p">,</span> <span class="mf">8.83690909e-01</span><span class="p">,</span>
+       <span class="mf">1.98476709e+01</span><span class="p">,</span> <span class="mf">6.94644470e+00</span><span class="p">,</span> <span class="mf">3.88239486e+00</span><span class="p">,</span> <span class="mf">1.34194386e+01</span><span class="p">,</span>
+       <span class="mf">1.06266795e+01</span><span class="p">,</span> <span class="mf">2.48228419e+00</span><span class="p">,</span> <span class="mf">5.34055891e+00</span><span class="p">,</span> <span class="mf">5.21189441e+00</span><span class="p">,</span>
+       <span class="mf">1.97981339e+00</span><span class="p">,</span> <span class="mf">9.88537628e-01</span><span class="p">,</span> <span class="mf">3.14438608e+00</span><span class="p">,</span> <span class="mf">1.52774392e+00</span><span class="p">,</span>
+       <span class="mf">2.19302969e+00</span><span class="p">,</span> <span class="mf">1.54112427e+01</span><span class="p">,</span> <span class="mf">3.09147765e+00</span><span class="p">,</span> <span class="mf">5.77419073e+00</span><span class="p">,</span>
+       <span class="mf">2.04909708e+00</span><span class="p">,</span> <span class="mf">2.74366001e+01</span><span class="p">,</span> <span class="mf">5.37595763e+00</span><span class="p">,</span> <span class="mf">1.09083892e+00</span><span class="p">,</span>
+       <span class="mf">5.16723847e-01</span><span class="p">,</span> <span class="mf">1.43393848e+01</span><span class="p">,</span> <span class="mf">1.44819541e+01</span><span class="p">,</span> <span class="mf">4.85542938e+00</span><span class="p">,</span>
+       <span class="mf">8.56875560e-02</span><span class="p">,</span> <span class="mf">1.27791331e+00</span><span class="p">,</span> <span class="mf">8.07921149e+00</span><span class="p">,</span> <span class="mf">1.04156348e+01</span><span class="p">,</span>
+       <span class="mf">3.02558824e+00</span><span class="p">,</span> <span class="mf">2.27475244e+00</span><span class="p">,</span> <span class="mf">1.60257623e+00</span><span class="p">,</span> <span class="mf">6.21983428e-01</span><span class="p">,</span>
+       <span class="mf">6.15046358e-01</span><span class="p">,</span> <span class="mf">1.52459499e+01</span><span class="p">,</span> <span class="mf">8.26763125e+00</span><span class="p">,</span> <span class="mf">9.00296751e-01</span><span class="p">,</span>
+       <span class="mf">1.15997587e+00</span><span class="p">,</span> <span class="mf">5.32905419e+00</span><span class="p">,</span> <span class="mf">7.23370957e+00</span><span class="p">,</span> <span class="mf">8.31194831e+00</span><span class="p">,</span>
+       <span class="mf">8.91673722e-01</span><span class="p">,</span> <span class="mf">2.07160844e+01</span><span class="p">,</span> <span class="mf">1.29257185e+00</span><span class="p">,</span> <span class="mf">4.45086681e+00</span><span class="p">,</span>
+       <span class="mf">4.42899866e+00</span><span class="p">,</span> <span class="mf">1.71113726e+01</span><span class="p">,</span> <span class="mf">5.35986313e+00</span><span class="p">,</span> <span class="mf">4.39623051e+00</span><span class="p">,</span>
+       <span class="mf">3.65707656e+00</span><span class="p">,</span> <span class="mf">7.23356770e+00</span><span class="p">,</span> <span class="mf">5.60556592e-01</span><span class="p">,</span> <span class="mf">1.04704613e-02</span><span class="p">,</span>
+       <span class="mf">1.52339562e+01</span><span class="p">,</span> <span class="mf">3.45233068e+00</span><span class="p">,</span> <span class="mf">1.98998069e+00</span><span class="p">,</span> <span class="mf">2.29475080e+00</span><span class="p">,</span>
+       <span class="mf">8.14420766e+00</span><span class="p">,</span> <span class="mf">2.40933025e+00</span><span class="p">,</span> <span class="mf">7.35205890e+00</span><span class="p">,</span> <span class="mf">2.90321920e+00</span><span class="p">,</span>
+       <span class="mf">9.29197976e+00</span><span class="p">,</span> <span class="mf">3.96320401e-01</span><span class="p">,</span> <span class="mf">3.28049343e+00</span><span class="p">,</span> <span class="mf">3.14475962e+00</span><span class="p">,</span>
+       <span class="mf">1.53485442e+00</span><span class="p">,</span> <span class="mf">1.43777379e+01</span><span class="p">,</span> <span class="mf">1.17708899e+01</span><span class="p">,</span> <span class="mf">2.93130586e+00</span><span class="p">,</span>
+       <span class="mf">5.11047459e-01</span><span class="p">,</span> <span class="mf">1.15829319e+00</span><span class="p">,</span> <span class="mf">1.58378224e+00</span><span class="p">,</span> <span class="mf">3.31037261e+00</span><span class="p">,</span>
+       <span class="mf">2.06529770e+00</span><span class="p">,</span> <span class="mf">7.43911270e+00</span><span class="p">,</span> <span class="mf">3.23157187e+00</span><span class="p">,</span> <span class="mf">1.02153747e+01</span><span class="p">,</span>
+       <span class="mf">2.73416748e+01</span><span class="p">,</span> <span class="mf">1.24125530e+00</span><span class="p">,</span> <span class="mf">4.72951666e+00</span><span class="p">,</span> <span class="mf">9.40302917e+00</span><span class="p">,</span>
+       <span class="mf">1.45236691e+01</span><span class="p">,</span> <span class="mf">1.71306021e+00</span><span class="p">,</span> <span class="mf">6.49220034e+00</span><span class="p">,</span> <span class="mf">7.56501614e-02</span><span class="p">,</span>
+       <span class="mf">1.05657130e+01</span><span class="p">,</span> <span class="mf">3.30370760e-01</span><span class="p">,</span> <span class="mf">6.60994306e+00</span><span class="p">,</span> <span class="mf">2.61164084e+01</span><span class="p">,</span>
+       <span class="mf">3.47764789e+00</span><span class="p">,</span> <span class="mf">1.17439819e+00</span><span class="p">,</span> <span class="mf">4.51494278e+00</span><span class="p">,</span> <span class="mf">4.89282549e+00</span><span class="p">,</span>
+       <span class="mf">5.51419711e+00</span><span class="p">,</span> <span class="mf">9.47406084e-01</span><span class="p">,</span> <span class="mf">1.14489709e+01</span><span class="p">,</span> <span class="mf">4.85098149e+00</span><span class="p">,</span>
+       <span class="mf">2.22731609e-01</span><span class="p">,</span> <span class="mf">5.76071513e+00</span><span class="p">,</span> <span class="mf">1.09130275e+00</span><span class="p">,</span> <span class="mf">1.38607479e-01</span><span class="p">,</span>
+       <span class="mf">4.00314166e+00</span><span class="p">,</span> <span class="mf">8.39162641e+00</span><span class="p">,</span> <span class="mf">9.82846288e+00</span><span class="p">,</span> <span class="mf">5.46401636e-01</span><span class="p">,</span>
+       <span class="mf">5.43899659e+00</span><span class="p">,</span> <span class="mf">6.19066892e+00</span><span class="p">,</span> <span class="mf">1.74436298e+00</span><span class="p">,</span> <span class="mf">1.77654528e+01</span><span class="p">,</span>
+       <span class="mf">1.63341384e+00</span><span class="p">,</span> <span class="mf">3.62757709e-01</span><span class="p">,</span> <span class="mf">3.66235525e+00</span><span class="p">,</span> <span class="mf">5.92599873e+00</span><span class="p">,</span>
+       <span class="mf">1.40293509e+00</span><span class="p">,</span> <span class="mf">2.06684785e+00</span><span class="p">,</span> <span class="mf">4.14630075e+00</span><span class="p">,</span> <span class="mf">1.08876171e+01</span><span class="p">,</span>
+       <span class="mf">6.87827393e+00</span><span class="p">,</span> <span class="mf">1.17602980e+00</span><span class="p">,</span> <span class="mf">1.45027156e+00</span><span class="p">,</span> <span class="mf">3.71043402e+00</span><span class="p">,</span>
+       <span class="mf">7.32579387e+00</span><span class="p">,</span> <span class="mf">4.82165423e+00</span><span class="p">,</span> <span class="mf">3.47899613e+00</span><span class="p">,</span> <span class="mf">4.54564891e+00</span><span class="p">,</span>
+       <span class="mf">7.05416552e+00</span><span class="p">,</span> <span class="mf">3.85100290e+00</span><span class="p">,</span> <span class="mf">1.14018066e+01</span><span class="p">,</span> <span class="mf">1.46936879e+01</span><span class="p">,</span>
+       <span class="mf">1.23464171e+01</span><span class="p">,</span> <span class="mf">7.02266520e+00</span><span class="p">,</span> <span class="mf">1.41394368e+00</span><span class="p">,</span> <span class="mf">2.43287242e+00</span><span class="p">,</span>
+       <span class="mf">1.64252000e+00</span><span class="p">,</span> <span class="mf">5.35975794e+00</span><span class="p">,</span> <span class="mf">1.95945052e+00</span><span class="p">,</span> <span class="mf">7.02008451e+00</span><span class="p">,</span>
+       <span class="mf">6.02421971e-01</span><span class="p">,</span> <span class="mf">7.46638680e+00</span><span class="p">,</span> <span class="mf">4.40826278e+00</span><span class="p">,</span> <span class="mf">9.02084132e+00</span><span class="p">,</span>
+       <span class="mf">2.81828166e+00</span><span class="p">,</span> <span class="mf">4.90367233e+00</span><span class="p">,</span> <span class="mf">4.04180408e+00</span><span class="p">,</span> <span class="mf">1.85804859e+01</span><span class="p">,</span>
+       <span class="mf">7.04217618e+00</span><span class="p">,</span> <span class="mf">3.93523752e+00</span><span class="p">,</span> <span class="mf">9.55996784e-01</span><span class="p">,</span> <span class="mf">1.17229878e+01</span><span class="p">,</span>
+       <span class="mf">1.15233767e+00</span><span class="p">,</span> <span class="mf">5.24972861e+00</span><span class="p">,</span> <span class="mf">1.37813611e+01</span><span class="p">,</span> <span class="mf">1.26530596e+00</span><span class="p">,</span>
+       <span class="mf">1.28042313e+00</span><span class="p">,</span> <span class="mf">9.54660087e+00</span><span class="p">,</span> <span class="mf">8.79128574e+00</span><span class="p">,</span> <span class="mf">2.16703449e+00</span><span class="p">,</span>
+       <span class="mf">1.54007897e+00</span><span class="p">,</span> <span class="mf">6.81324038e-01</span><span class="p">,</span> <span class="mf">2.20876901e+01</span><span class="p">,</span> <span class="mf">9.01945685e+00</span><span class="p">,</span>
+       <span class="mf">1.14825979e+01</span><span class="p">,</span> <span class="mf">3.60443525e+00</span><span class="p">,</span> <span class="mf">6.07363853e-01</span><span class="p">,</span> <span class="mf">2.70065678e-01</span><span class="p">,</span>
+       <span class="mf">2.00673377e+00</span><span class="p">,</span> <span class="mf">1.26493381e+01</span><span class="p">,</span> <span class="mf">1.47425105e+01</span><span class="p">,</span> <span class="mf">9.19941105e+00</span><span class="p">,</span>
+       <span class="mf">8.63910869e-01</span><span class="p">,</span> <span class="mf">2.72297360e+00</span><span class="p">,</span> <span class="mf">1.41342568e+00</span><span class="p">,</span> <span class="mf">1.14926615e+00</span><span class="p">,</span>
+       <span class="mf">5.77314968e+00</span><span class="p">,</span> <span class="mf">3.32874645e+00</span><span class="p">,</span> <span class="mf">1.96454369e+00</span><span class="p">,</span> <span class="mf">5.27994178e-01</span><span class="p">,</span>
+       <span class="mf">3.93468966e+00</span><span class="p">,</span> <span class="mf">2.13108335e+00</span><span class="p">,</span> <span class="mf">2.48047170e+00</span><span class="p">,</span> <span class="mf">1.85900630e+00</span><span class="p">,</span>
+       <span class="mf">2.44854418e+00</span><span class="p">,</span> <span class="mf">4.05807258e+00</span><span class="p">,</span> <span class="mf">7.12239124e-02</span><span class="p">,</span> <span class="mf">9.40777525e+00</span><span class="p">,</span>
+       <span class="mf">1.27500978e+01</span><span class="p">,</span> <span class="mf">3.99842740e+00</span><span class="p">,</span> <span class="mf">1.56001807e+00</span><span class="p">,</span> <span class="mf">2.31468022e+01</span><span class="p">,</span>
+       <span class="mf">2.41600389e+00</span><span class="p">,</span> <span class="mf">5.91522324e+00</span><span class="p">,</span> <span class="mf">5.85514960e+00</span><span class="p">,</span> <span class="mf">2.84853700e+00</span><span class="p">,</span>
+       <span class="mf">1.11045901e+00</span><span class="p">,</span> <span class="mf">1.69929104e+01</span><span class="p">,</span> <span class="mf">3.29047893e-01</span><span class="p">,</span> <span class="mf">3.31939247e+00</span><span class="p">,</span>
+       <span class="mf">1.24699303e+00</span><span class="p">,</span> <span class="mf">1.74051701e+00</span><span class="p">,</span> <span class="mf">8.81665669e+00</span><span class="p">,</span> <span class="mf">2.28852238e+00</span><span class="p">,</span>
+       <span class="mf">4.35138357e-01</span><span class="p">,</span> <span class="mf">1.09270209e+00</span><span class="p">,</span> <span class="mf">9.84391818e+00</span><span class="p">,</span> <span class="mf">1.88675810e+01</span><span class="p">,</span>
+       <span class="mf">1.55975197e+00</span><span class="p">,</span> <span class="mf">5.62594656e+00</span><span class="p">,</span> <span class="mf">4.23428585e-01</span><span class="p">,</span> <span class="mf">6.42710012e+00</span><span class="p">,</span>
+       <span class="mf">2.69301100e+00</span><span class="p">,</span> <span class="mf">1.25149408e+01</span><span class="p">,</span> <span class="mf">1.86646248e+00</span><span class="p">,</span> <span class="mf">1.41908227e+01</span><span class="p">,</span>
+       <span class="mf">3.49831609e+00</span><span class="p">,</span> <span class="mf">2.14540586e+00</span><span class="p">,</span> <span class="mf">5.20671367e+00</span><span class="p">,</span> <span class="mf">1.43671867e+00</span><span class="p">,</span>
+       <span class="mf">1.30528897e+00</span><span class="p">,</span> <span class="mf">1.09293502e+00</span><span class="p">,</span> <span class="mf">1.60818403e+01</span><span class="p">,</span> <span class="mf">3.39537064e+00</span><span class="p">,</span>
+       <span class="mf">6.96387584e+00</span><span class="p">,</span> <span class="mf">3.21219316e+00</span><span class="p">,</span> <span class="mf">4.42808218e+00</span><span class="p">,</span> <span class="mf">4.38702082e+00</span><span class="p">,</span>
+       <span class="mf">1.95317725e+01</span><span class="p">,</span> <span class="mf">5.51962876e+00</span><span class="p">,</span> <span class="mf">1.37066782e+00</span><span class="p">,</span> <span class="mf">7.65716357e-02</span><span class="p">,</span>
+       <span class="mf">1.23386610e+00</span><span class="p">,</span> <span class="mf">3.03961706e+00</span><span class="p">,</span> <span class="mf">2.49959605e+00</span><span class="p">,</span> <span class="mf">8.36525070e+00</span><span class="p">,</span>
+       <span class="mf">7.69855084e+00</span><span class="p">,</span> <span class="mf">4.66588654e-01</span><span class="p">,</span> <span class="mf">1.51838886e+01</span><span class="p">,</span> <span class="mf">3.74812924e+00</span><span class="p">,</span>
+       <span class="mf">4.53670405e+00</span><span class="p">,</span> <span class="mf">2.59644646e+00</span><span class="p">,</span> <span class="mf">5.24198650e+00</span><span class="p">,</span> <span class="mf">1.02523778e+01</span><span class="p">,</span>
+       <span class="mf">5.60330748e+00</span><span class="p">,</span> <span class="mf">1.75492405e+01</span><span class="p">,</span> <span class="mf">6.03860325e+00</span><span class="p">,</span> <span class="mf">8.62202031e+00</span><span class="p">,</span>
+       <span class="mf">2.30426942e-01</span><span class="p">,</span> <span class="mf">5.58436779e+00</span><span class="p">,</span> <span class="mf">5.31747073e+00</span><span class="p">,</span> <span class="mf">5.36512283e-01</span><span class="p">,</span>
+       <span class="mf">9.23807883e+00</span><span class="p">,</span> <span class="mf">4.76182326e+00</span><span class="p">,</span> <span class="mf">5.17522808e-01</span><span class="p">,</span> <span class="mf">4.51276660e+00</span><span class="p">,</span>
+       <span class="mf">3.25442326e+00</span><span class="p">,</span> <span class="mf">1.32825651e+00</span><span class="p">,</span> <span class="mf">9.97692556e-02</span><span class="p">,</span> <span class="mf">2.27512018e+00</span><span class="p">,</span>
+       <span class="mf">4.83596101e+00</span><span class="p">,</span> <span class="mf">1.99701112e+00</span><span class="p">,</span> <span class="mf">1.83546406e+00</span><span class="p">,</span> <span class="mf">6.95394709e+00</span><span class="p">,</span>
+       <span class="mf">7.10701039e+00</span><span class="p">,</span> <span class="mf">6.34283815e+00</span><span class="p">,</span> <span class="mf">5.33373306e-01</span><span class="p">,</span> <span class="mf">3.63006659e+00</span><span class="p">,</span>
+       <span class="mf">4.07994991e+00</span><span class="p">,</span> <span class="mf">6.82862733e+00</span><span class="p">,</span> <span class="mf">1.16743908e+01</span><span class="p">,</span> <span class="mf">2.30255506e+00</span><span class="p">,</span>
+       <span class="mf">2.79888439e+00</span><span class="p">,</span> <span class="mf">6.59818092e+00</span><span class="p">,</span> <span class="mf">5.43297027e+00</span><span class="p">,</span> <span class="mf">4.08075549e+00</span><span class="p">,</span>
+       <span class="mf">2.15498879e+00</span><span class="p">,</span> <span class="mf">1.08675397e+00</span><span class="p">,</span> <span class="mf">1.01552444e+00</span><span class="p">,</span> <span class="mf">4.25520297e-01</span><span class="p">,</span>
+       <span class="mf">4.23438666e-01</span><span class="p">,</span> <span class="mf">9.34746649e+00</span><span class="p">,</span> <span class="mf">2.41988603e+00</span><span class="p">,</span> <span class="mf">3.13312732e-01</span><span class="p">,</span>
+       <span class="mf">1.13373289e+01</span><span class="p">,</span> <span class="mf">1.26331545e+00</span><span class="p">,</span> <span class="mf">1.56072383e+00</span><span class="p">,</span> <span class="mf">1.08144697e+00</span><span class="p">,</span>
+       <span class="mf">1.71327390e+01</span><span class="p">,</span> <span class="mf">5.96959631e-01</span><span class="p">,</span> <span class="mf">6.40360770e+00</span><span class="p">,</span> <span class="mf">1.34477674e+01</span><span class="p">,</span>
+       <span class="mf">5.51312106e+00</span><span class="p">,</span> <span class="mf">9.78529163e+00</span><span class="p">,</span> <span class="mf">1.38830956e+00</span><span class="p">,</span> <span class="mf">5.60318499e+00</span><span class="p">,</span>
+       <span class="mf">6.03440749e+00</span><span class="p">,</span> <span class="mf">3.06551479e+00</span><span class="p">,</span> <span class="mf">1.02221337e+01</span><span class="p">,</span> <span class="mf">5.92716369e+00</span><span class="p">,</span>
+       <span class="mf">1.12631586e+01</span><span class="p">,</span> <span class="mf">6.99597313e+00</span><span class="p">,</span> <span class="mf">3.67287201e+00</span><span class="p">,</span> <span class="mf">3.45263524e+00</span><span class="p">,</span>
+       <span class="mf">3.02318788e+00</span><span class="p">,</span> <span class="mf">1.09422966e-01</span><span class="p">,</span> <span class="mf">3.83011003e+00</span><span class="p">,</span> <span class="mf">2.74933312e+00</span><span class="p">,</span>
+       <span class="mf">8.57107471e-01</span><span class="p">,</span> <span class="mf">6.33883845e-01</span><span class="p">,</span> <span class="mf">2.98329646e+00</span><span class="p">,</span> <span class="mf">2.03657147e-01</span><span class="p">,</span>
+       <span class="mf">2.15550044e+01</span><span class="p">,</span> <span class="mf">2.37504814e+00</span><span class="p">,</span> <span class="mf">2.40721762e+00</span><span class="p">,</span> <span class="mf">2.62397886e-01</span><span class="p">,</span>
+       <span class="mf">2.78148941e+00</span><span class="p">,</span> <span class="mf">7.93535674e-02</span><span class="p">,</span> <span class="mf">1.52778707e-01</span><span class="p">,</span> <span class="mf">2.07075788e+00</span><span class="p">,</span>
+       <span class="mf">8.60098006e+00</span><span class="p">,</span> <span class="mf">3.07002667e+00</span><span class="p">,</span> <span class="mf">7.47590119e-02</span><span class="p">,</span> <span class="mf">8.90970622e-01</span><span class="p">,</span>
+       <span class="mf">6.73388234e+00</span><span class="p">,</span> <span class="mf">6.70266269e+00</span><span class="p">,</span> <span class="mf">7.02275821e+00</span><span class="p">,</span> <span class="mf">2.16677245e+00</span><span class="p">,</span>
+       <span class="mf">2.17146031e+00</span><span class="p">,</span> <span class="mf">8.09935239e+00</span><span class="p">,</span> <span class="mf">2.53863453e+00</span><span class="p">,</span> <span class="mf">6.49491690e+00</span><span class="p">,</span>
+       <span class="mf">4.35088990e+00</span><span class="p">,</span> <span class="mf">2.26547046e+00</span><span class="p">,</span> <span class="mf">4.16943480e-01</span><span class="p">,</span> <span class="mf">6.17200275e-01</span><span class="p">,</span>
+       <span class="mf">1.10163567e+01</span><span class="p">,</span> <span class="mf">3.01050777e+00</span><span class="p">,</span> <span class="mf">2.55837629e+01</span><span class="p">,</span> <span class="mf">2.26197349e+00</span><span class="p">,</span>
+       <span class="mf">1.43810574e+00</span><span class="p">,</span> <span class="mf">2.15806492e+00</span><span class="p">,</span> <span class="mf">2.10101157e+00</span><span class="p">,</span> <span class="mf">5.07167830e+00</span><span class="p">,</span>
+       <span class="mf">6.40969098e-02</span><span class="p">,</span> <span class="mf">7.20414636e+00</span><span class="p">,</span> <span class="mf">2.69282261e+00</span><span class="p">,</span> <span class="mf">2.83027532e+00</span><span class="p">,</span>
+       <span class="mf">3.28036515e+00</span><span class="p">,</span> <span class="mf">2.98203057e+00</span><span class="p">,</span> <span class="mf">3.44050864e+00</span><span class="p">,</span> <span class="mf">2.12250812e+00</span><span class="p">,</span>
+       <span class="mf">3.01969734e+00</span><span class="p">,</span> <span class="mf">2.59304027e+00</span><span class="p">,</span> <span class="mf">3.65157428e+00</span><span class="p">,</span> <span class="mf">4.88112050e+00</span><span class="p">,</span>
+       <span class="mf">1.37903502e+00</span><span class="p">,</span> <span class="mf">3.55082736e+00</span><span class="p">,</span> <span class="mf">4.51467557e+00</span><span class="p">,</span> <span class="mf">8.54679048e-02</span><span class="p">,</span>
+       <span class="mf">3.67499163e+00</span><span class="p">,</span> <span class="mf">1.36753669e+00</span><span class="p">,</span> <span class="mf">2.59209312e+00</span><span class="p">,</span> <span class="mf">8.75875771e+00</span><span class="p">,</span>
+       <span class="mf">1.97437390e+00</span><span class="p">,</span> <span class="mf">3.30066037e+00</span><span class="p">,</span> <span class="mf">1.25261799e-01</span><span class="p">,</span> <span class="mf">1.84627498e+00</span><span class="p">,</span>
+       <span class="mf">5.10438403e+00</span><span class="p">,</span> <span class="mf">1.89286318e+00</span><span class="p">,</span> <span class="mf">1.15208410e+00</span><span class="p">,</span> <span class="mf">1.71707114e+00</span><span class="p">,</span>
+       <span class="mf">1.54368597e+01</span><span class="p">,</span> <span class="mf">4.54011799e-01</span><span class="p">,</span> <span class="mf">3.11211816e+00</span><span class="p">,</span> <span class="mf">3.00804073e-01</span><span class="p">,</span>
+       <span class="mf">3.86808084e+00</span><span class="p">,</span> <span class="mf">7.89329663e-01</span><span class="p">,</span> <span class="mf">5.02676840e+00</span><span class="p">,</span> <span class="mf">1.53532668e+00</span><span class="p">,</span>
+       <span class="mf">5.87070109e+00</span><span class="p">,</span> <span class="mf">2.13200925e+00</span><span class="p">,</span> <span class="mf">2.08860049e-02</span><span class="p">,</span> <span class="mf">1.74704069e+00</span><span class="p">,</span>
+       <span class="mf">4.27214524e-01</span><span class="p">,</span> <span class="mf">3.41637666e+00</span><span class="p">,</span> <span class="mf">1.70464123e+00</span><span class="p">,</span> <span class="mf">5.10814331e+00</span><span class="p">,</span>
+       <span class="mf">3.46509542e+00</span><span class="p">,</span> <span class="mf">1.83552565e-01</span><span class="p">,</span> <span class="mf">1.91827763e+00</span><span class="p">,</span> <span class="mf">3.35750764e+00</span><span class="p">,</span>
+       <span class="mf">4.24554232e+00</span><span class="p">,</span> <span class="mf">5.53938827e-01</span><span class="p">,</span> <span class="mf">5.24870050e+00</span><span class="p">,</span> <span class="mf">2.10566870e+00</span><span class="p">,</span>
+       <span class="mf">1.01009927e+00</span><span class="p">,</span> <span class="mf">8.18216225e+00</span><span class="p">,</span> <span class="mf">3.55457791e-01</span><span class="p">,</span> <span class="mf">1.32798881e+01</span><span class="p">,</span>
+       <span class="mf">6.12540614e+00</span><span class="p">,</span> <span class="mf">3.22741702e+00</span><span class="p">,</span> <span class="mf">5.61181745e-02</span><span class="p">,</span> <span class="mf">2.47250885e+00</span><span class="p">,</span>
+       <span class="mf">5.18944537e+00</span><span class="p">,</span> <span class="mf">9.79189626e+00</span><span class="p">,</span> <span class="mf">4.80858522e+00</span><span class="p">,</span> <span class="mf">2.53505970e+00</span><span class="p">,</span>
+       <span class="mf">2.96523687e+00</span><span class="p">,</span> <span class="mf">1.03294815e+01</span><span class="p">,</span> <span class="mf">2.16436634e+00</span><span class="p">,</span> <span class="mf">3.36886593e-01</span><span class="p">,</span>
+       <span class="mf">2.92301171e+00</span><span class="p">,</span> <span class="mf">3.23770275e+01</span><span class="p">,</span> <span class="mf">2.38834759e+00</span><span class="p">,</span> <span class="mf">1.07249708e+00</span><span class="p">,</span>
+       <span class="mf">2.30901082e-01</span><span class="p">,</span> <span class="mf">9.37487942e-01</span><span class="p">,</span> <span class="mf">1.95828740e+00</span><span class="p">,</span> <span class="mf">4.26984758e+00</span><span class="p">,</span>
+       <span class="mf">5.47691378e+00</span><span class="p">,</span> <span class="mf">2.18813468e-01</span><span class="p">,</span> <span class="mf">1.37584514e+01</span><span class="p">,</span> <span class="mf">1.34357116e+00</span><span class="p">,</span>
+       <span class="mf">8.07080088e-01</span><span class="p">,</span> <span class="mf">3.78394448e+00</span><span class="p">,</span> <span class="mf">5.65959142e+00</span><span class="p">,</span> <span class="mf">1.83545061e+00</span><span class="p">,</span>
+       <span class="mf">5.53485390e+00</span><span class="p">,</span> <span class="mf">1.74278175e+00</span><span class="p">,</span> <span class="mf">1.16226977e+01</span><span class="p">,</span> <span class="mf">1.06303492e+01</span><span class="p">,</span>
+       <span class="mf">3.69278971e-01</span><span class="p">,</span> <span class="mf">8.14962974e-01</span><span class="p">,</span> <span class="mf">5.98761303e+00</span><span class="p">,</span> <span class="mf">6.00543509e-04</span><span class="p">,</span>
+       <span class="mf">8.62462585e+00</span><span class="p">,</span> <span class="mf">2.20214501e+00</span><span class="p">,</span> <span class="mf">6.82501117e+00</span><span class="p">,</span> <span class="mf">2.26227605e-01</span><span class="p">,</span>
+       <span class="mf">1.17395832e+00</span><span class="p">,</span> <span class="mf">3.67184262e-01</span><span class="p">,</span> <span class="mf">9.91180389e-01</span><span class="p">,</span> <span class="mf">2.42596184e+00</span><span class="p">,</span>
+       <span class="mf">3.38195979e+00</span><span class="p">,</span> <span class="mf">1.23901335e+01</span><span class="p">,</span> <span class="mf">4.93321755e+00</span><span class="p">,</span> <span class="mf">6.12904433e+00</span><span class="p">,</span>
+       <span class="mf">4.28392292e-01</span><span class="p">,</span> <span class="mf">1.68987645e+00</span><span class="p">,</span> <span class="mf">2.39767605e+01</span><span class="p">,</span> <span class="mf">4.10970395e+00</span><span class="p">,</span>
+       <span class="mf">7.75154106e+00</span><span class="p">,</span> <span class="mf">1.65108656e-01</span><span class="p">,</span> <span class="mf">4.39110605e-01</span><span class="p">,</span> <span class="mf">5.78363060e-01</span><span class="p">,</span>
+       <span class="mf">7.70193861e-02</span><span class="p">,</span> <span class="mf">1.27538843e+01</span><span class="p">,</span> <span class="mf">1.46270453e+00</span><span class="p">,</span> <span class="mf">2.83747087e+01</span><span class="p">,</span>
+       <span class="mf">6.69953255e+00</span><span class="p">,</span> <span class="mf">1.44248396e+00</span><span class="p">,</span> <span class="mf">2.40209331e+01</span><span class="p">,</span> <span class="mf">1.01450297e+01</span><span class="p">,</span>
+       <span class="mf">9.01605827e-01</span><span class="p">,</span> <span class="mf">1.02481113e+00</span><span class="p">,</span> <span class="mf">5.70008072e+00</span><span class="p">,</span> <span class="mf">4.07570278e-01</span><span class="p">,</span>
+       <span class="mf">4.39166252e+00</span><span class="p">,</span> <span class="mf">3.44622894e-01</span><span class="p">,</span> <span class="mf">1.25063171e+00</span><span class="p">,</span> <span class="mf">1.48250410e+01</span><span class="p">,</span>
+       <span class="mf">3.45147264e+00</span><span class="p">,</span> <span class="mf">4.26321190e+00</span><span class="p">,</span> <span class="mf">1.57138486e+00</span><span class="p">,</span> <span class="mf">2.89964291e+00</span><span class="p">,</span>
+       <span class="mf">7.13595387e-01</span><span class="p">,</span> <span class="mf">3.63472276e+00</span><span class="p">,</span> <span class="mf">2.77329902e-01</span><span class="p">,</span> <span class="mf">2.47261101e-01</span><span class="p">,</span>
+       <span class="mf">5.69167037e+00</span><span class="p">,</span> <span class="mf">2.82754459e-01</span><span class="p">,</span> <span class="mf">3.68323718e+00</span><span class="p">,</span> <span class="mf">1.54641173e+00</span><span class="p">,</span>
+       <span class="mf">1.03939046e+00</span><span class="p">,</span> <span class="mf">4.25859180e+00</span><span class="p">,</span> <span class="mf">1.75817616e+00</span><span class="p">,</span> <span class="mf">3.04754587e+00</span><span class="p">,</span>
+       <span class="mf">7.48151951e-01</span><span class="p">,</span> <span class="mf">6.76153827e-01</span><span class="p">,</span> <span class="mf">5.63206643e-01</span><span class="p">,</span> <span class="mf">3.71248209e-01</span><span class="p">,</span>
+       <span class="mf">4.03397323e+00</span><span class="p">,</span> <span class="mf">7.05304780e+00</span><span class="p">,</span> <span class="mf">7.85991283e+00</span><span class="p">,</span> <span class="mf">1.58319871e+01</span><span class="p">,</span>
+       <span class="mf">9.21972681e-01</span><span class="p">,</span> <span class="mf">7.28707909e-01</span><span class="p">,</span> <span class="mf">3.17396477e+00</span><span class="p">,</span> <span class="mf">9.86667744e+00</span><span class="p">,</span>
+       <span class="mf">7.28507091e+00</span><span class="p">,</span> <span class="mf">4.08424219e+00</span><span class="p">,</span> <span class="mf">8.52656276e-01</span><span class="p">,</span> <span class="mf">2.48184126e+00</span><span class="p">,</span>
+       <span class="mf">6.35315945e+00</span><span class="p">,</span> <span class="mf">2.33733572e+00</span><span class="p">,</span> <span class="mf">1.99525358e-01</span><span class="p">,</span> <span class="mf">4.38395559e+00</span><span class="p">,</span>
+       <span class="mf">6.36723217e+00</span><span class="p">,</span> <span class="mf">6.27232318e+00</span><span class="p">,</span> <span class="mf">9.00814473e-01</span><span class="p">,</span> <span class="mf">2.04730232e+00</span><span class="p">,</span>
+       <span class="mf">2.63115415e+00</span><span class="p">,</span> <span class="mf">2.72778771e+00</span><span class="p">,</span> <span class="mf">6.06086132e-01</span><span class="p">,</span> <span class="mf">2.43498831e+00</span><span class="p">,</span>
+       <span class="mf">3.53250156e+00</span><span class="p">,</span> <span class="mf">6.19904790e+00</span><span class="p">,</span> <span class="mf">4.21343225e+00</span><span class="p">,</span> <span class="mf">2.59538588e+00</span><span class="p">,</span>
+       <span class="mf">1.31275628e+01</span><span class="p">,</span> <span class="mf">4.55755545e+00</span><span class="p">,</span> <span class="mf">1.84027480e+01</span><span class="p">,</span> <span class="mf">1.01011995e+01</span><span class="p">,</span>
+       <span class="mf">5.59855814e+00</span><span class="p">,</span> <span class="mf">1.14787175e+01</span><span class="p">,</span> <span class="mf">2.36876132e+01</span><span class="p">,</span> <span class="mf">1.24793347e+00</span><span class="p">,</span>
+       <span class="mf">5.87298466e+00</span><span class="p">,</span> <span class="mf">1.25529243e+01</span><span class="p">,</span> <span class="mf">8.77666105e-02</span><span class="p">,</span> <span class="mf">8.03443077e+00</span><span class="p">,</span>
+       <span class="mf">4.68273978e-01</span><span class="p">,</span> <span class="mf">1.24177956e+01</span><span class="p">,</span> <span class="mf">4.73392204e+00</span><span class="p">,</span> <span class="mf">8.84100221e-01</span><span class="p">,</span>
+       <span class="mf">2.01038872e-01</span><span class="p">,</span> <span class="mf">8.79611728e+00</span><span class="p">,</span> <span class="mf">7.51161489e-01</span><span class="p">,</span> <span class="mf">1.40289801e+01</span><span class="p">,</span>
+       <span class="mf">4.76309817e-01</span><span class="p">,</span> <span class="mf">9.10013068e+00</span><span class="p">,</span> <span class="mf">2.75418195e+00</span><span class="p">,</span> <span class="mf">1.03074324e+01</span><span class="p">,</span>
+       <span class="mf">7.31748078e+00</span><span class="p">,</span> <span class="mf">9.58261106e+00</span><span class="p">,</span> <span class="mf">3.17667577e+00</span><span class="p">,</span> <span class="mf">6.25476857e+00</span><span class="p">,</span>
+       <span class="mf">1.91852488e+00</span><span class="p">,</span> <span class="mf">2.41611024e-01</span><span class="p">,</span> <span class="mf">1.32243330e+00</span><span class="p">,</span> <span class="mf">6.81283489e-03</span><span class="p">,</span>
+       <span class="mf">2.25514913e+00</span><span class="p">,</span> <span class="mf">3.40440200e+00</span><span class="p">,</span> <span class="mf">9.79893882e-02</span><span class="p">,</span> <span class="mf">3.87992255e-02</span><span class="p">,</span>
+       <span class="mf">5.79919858e+00</span><span class="p">,</span> <span class="mf">5.29224509e-01</span><span class="p">,</span> <span class="mf">3.83571092e-01</span><span class="p">,</span> <span class="mf">3.42191029e+00</span><span class="p">,</span>
+       <span class="mf">6.33206648e+00</span><span class="p">,</span> <span class="mf">1.88973564e+01</span><span class="p">,</span> <span class="mf">1.75060591e+00</span><span class="p">,</span> <span class="mf">6.25084288e-01</span><span class="p">,</span>
+       <span class="mf">3.54991820e-01</span><span class="p">,</span> <span class="mf">1.16288135e+00</span><span class="p">,</span> <span class="mf">5.27106238e-01</span><span class="p">,</span> <span class="mf">1.69505065e-02</span><span class="p">,</span>
+       <span class="mf">1.67787904e+00</span><span class="p">,</span> <span class="mf">8.96870825e-01</span><span class="p">,</span> <span class="mf">9.20924290e-02</span><span class="p">,</span> <span class="mf">2.18967278e+00</span><span class="p">,</span>
+       <span class="mf">8.74108057e+00</span><span class="p">,</span> <span class="mf">1.80959704e+00</span><span class="p">,</span> <span class="mf">6.19109167e+00</span><span class="p">,</span> <span class="mf">6.52329442e+00</span><span class="p">,</span>
+       <span class="mf">1.29443515e-01</span><span class="p">,</span> <span class="mf">1.63226493e+01</span><span class="p">,</span> <span class="mf">7.48358420e-01</span><span class="p">,</span> <span class="mf">6.31976402e+00</span><span class="p">,</span>
+       <span class="mf">2.38569017e+00</span><span class="p">,</span> <span class="mf">1.01332035e+01</span><span class="p">,</span> <span class="mf">2.64527664e+01</span><span class="p">,</span> <span class="mf">1.07415949e+00</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Concatenate the two arrays donations_A and donations_B into data</span>
+<span class="n">len_A</span><span class="p">,</span> <span class="n">len_B</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">donations_A</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">donations_B</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">donations_A</span><span class="p">,</span> <span class="n">donations_B</span><span class="p">])</span>
+
+<span class="c1"># Get a single permutation of the concatenated length</span>
+<span class="n">perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">donations_A</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">donations_B</span><span class="p">))</span>
+
+<span class="c1"># Calculate the permutated datasets and difference in means</span>
+<span class="n">permuted_A</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">perm</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">donations_A</span><span class="p">)]]</span>
+<span class="n">permuted_B</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">donations_A</span><span class="p">):]]</span>
+<span class="n">diff_in_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">permuted_A</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">permuted_B</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Difference in the permuted mean values = </span><span class="si">{}</span><span class="s2">."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">diff_in_means</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Difference in the permuted mean values = -0.06268284866528262.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Hypothesis-testing---Difference-of-means">
+<a class="anchor" href="#Hypothesis-testing---Difference-of-means" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hypothesis testing - Difference of means<a class="anchor-link" href="#Hypothesis-testing---Difference-of-means"> </a>
+</h3>
+<p>We want to test the hypothesis that there is a difference in the average donations received from A and B. Previously, you learned how to generate one permutation of the data. Now, we will generate a null distribution of the difference in means and then calculate the p-value.</p>
+<p>For the null distribution, we first generate multiple permuted datasets and store the difference in means for each case. We then calculate the test statistic as the difference in means with the original dataset. Finally, we calculate the p-value as twice the fraction of cases where the difference is greater than or equal to the absolute value of the test statistic (2-sided hypothesis). A p-value of less than say 0.05 could then determine statistical significance.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">reps</span> <span class="o">=</span> <span class="mi">1000</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Generate permutations equal to the number of repetitions</span>
+<span class="n">perm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">donations_A</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">donations_B</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">)])</span>
+<span class="n">permuted_A_datasets</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">perm</span><span class="p">[:,</span> <span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">donations_A</span><span class="p">)]]</span>
+<span class="n">permuted_B_datasets</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">perm</span><span class="p">[:,</span> <span class="nb">len</span><span class="p">(</span><span class="n">donations_A</span><span class="p">):]]</span>
+
+<span class="c1"># Calculate the difference in means for each of the datasets</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">permuted_A_datasets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">permuted_B_datasets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Calculate the test statistic and p-value</span>
+<span class="n">test_stat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">donations_A</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">donations_B</span><span class="p">)</span>
+<span class="n">p_val</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">samples</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test_stat</span><span class="p">))</span><span class="o">/</span><span class="n">reps</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"p-value = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_val</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>p-value = 0.004
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Hypothesis-testing---Non-standard-statistics">
+<a class="anchor" href="#Hypothesis-testing---Non-standard-statistics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hypothesis testing - Non-standard statistics<a class="anchor-link" href="#Hypothesis-testing---Non-standard-statistics"> </a>
+</h3>
+<p>In the previous two exercises, we ran a permutation test for the difference in mean values. Now let's look at non-standard statistics.</p>
+<p>Suppose that you're interested in understanding the distribution of the donations received from websites A and B. For this, you want to see if there's a statistically significant difference in the median and the 80th percentile of the donations. Permutation testing gives you a wonderfully flexible framework for attacking such problems.</p>
+<p>Let's go through running a test to see if there's a difference in the median and the 80th percentile of the distribution of donations. As before, you're given the donations from the websites A and B in the variables donations_A and donations_B respectively.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Calculate the difference in 80th percentile and median for each of the permuted datasets (A and B)</span>
+<span class="n">samples_percentile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">permuted_A_datasets</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> \
+                        <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">permuted_B_datasets</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">samples_median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">permuted_A_datasets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">permuted_B_datasets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate the test statistic from the original dataset and corresponding p-values</span>
+<span class="n">test_stat_percentile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">donations_A</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span> \
+                        <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">donations_B</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+<span class="n">test_stat_median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">donations_A</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">donations_B</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">p_val_percentile</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">samples_percentile</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test_stat_percentile</span><span class="p">))</span> <span class="o">/</span> <span class="n">reps</span>
+<span class="n">p_val_median</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">samples_median</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">test_stat_median</span><span class="p">))</span> <span class="o">/</span> <span class="n">reps</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"80th Percentile: test statistic = </span><span class="si">{}</span><span class="s2">, p-value = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_stat_percentile</span><span class="p">,</span> <span class="n">p_val_percentile</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Median: test statistic = </span><span class="si">{}</span><span class="s2">, p-value = </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_stat_median</span><span class="p">,</span> <span class="n">p_val_median</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>80th Percentile: test statistic = 1.6951624520000035, p-value = 0.038
+Median: test statistic = 0.6434965699999999, p-value = 0.02
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/statistics/modeling/2020/06/22/01-Resampling-methods.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
