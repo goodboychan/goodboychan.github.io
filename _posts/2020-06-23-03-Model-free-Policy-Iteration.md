@@ -47,4 +47,4 @@ After that, value function with corrected return($G_t$) use to update as the tar
 
 $$ Q(s_t, a_t) \larr Q(s_t, a_t) + \alpha (g_t^{\frac{\pi}{\mu}} - Q(s_t, a_t)) $$
 
-But target policy cannot used the expericen gathered itself, so its action has higher variance.
+But target policy cannot used the expericen gathered itself, so its action has higher variance. 
