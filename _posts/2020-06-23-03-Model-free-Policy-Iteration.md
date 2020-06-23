@@ -30,8 +30,19 @@ Set $\epsilon=1, k=1, \pi=\epsilon-\text{greedy}(Q)$
    $\pi_{k+1} = \epsilon-\text{greedy}(Q) (\approx \pi_k)$
 
 ## GLIE Monte-Carlo Control
-- Theorem: (GLIE) Monte-Carlo control converges to the optimal state-actino value function $Q^{*}(s, a)$
+- Theorem: (GLIE) Monte-Carlo control converges to the optimal state-action value function $Q^{*}(s, a)$
 
 ## Importance Sampling for Off-policy Monte-Carlo Control
-Recall that, importance sampline is
-$$ \mathbb{E}_{X \sim}
+Recall that, importance sampling is
+$$ \mathbb{E}_{X \sim p}[f(X)] = \mathbb{E}_{X \sim Q}[\frac{P(X)}{Q(X)} f(X)] $$
+
+Off-policy means that the target policy is different with current policy (or behavior policy). In this case, the distribution is different, and experience gathered from current policy $\mu$ cannot directly use to train target policy $\pi$. Instead, Importance Sampling is used to train target policy $\pi$ from using returns generated from current policy $\mu$.
+
+Importance sampling affects the weight return $G_t$ according to similarity between policies.
+
+$$ G_t^{\frac{\pi}{\mu}} = \pi(a_t \vert s_t) \frac{ \pi(a_{t+1} \vert s_{t+1})}{\mu(a_t \vert s_t) \mu(a_{t+1} \vert s_{t+1})} \dots \frac{\pi(a_{T-1} \vert s_{T-1})}{\mu(a_{T-1} \vert s_{T-1})}G_t $$
+
+After that, value function with corrected return($G_t$) use to update as the target value:
+$$ Q(s_t, a_t) \larr Q(s_t, a_t) + \alpha (g_t^{\frac{\pi}{\mu}} - Q(s_t, a_t)) $$
+
+But target policy cannot used the expericen gathered itself, so its action has higher variance.
