@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Statistical seismology and the Parkfield region | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Statistical seismology and the Parkfield region" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Herein, you’ll use your statistical thinking skills to study the frequency and magnitudes of earthquakes. Along the way, you’ll learn some basic statistical seismology, including the Gutenberg-Richter law. This exercise exposes two key ideas about data science 1) As a data scientist, you wander into all sorts of domain specific analyses, which is very exciting. You constantly get to learn. 2) You are sometimes faced with limited data, which is also the case for many of these earthquake studies. This is the Summary of lecture “Case Studies in Statistical Thinking”, via datacamp." />
+<meta property="og:description" content="Herein, you’ll use your statistical thinking skills to study the frequency and magnitudes of earthquakes. Along the way, you’ll learn some basic statistical seismology, including the Gutenberg-Richter law. This exercise exposes two key ideas about data science 1) As a data scientist, you wander into all sorts of domain specific analyses, which is very exciting. You constantly get to learn. 2) You are sometimes faced with limited data, which is also the case for many of these earthquake studies. This is the Summary of lecture “Case Studies in Statistical Thinking”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/2020/06/24/02-Statistical-seismology-and-the-Parkfield-region.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/2020/06/24/02-Statistical-seismology-and-the-Parkfield-region.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/image/compare_exp_norm.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-24T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"Herein, you’ll use your statistical thinking skills to study the frequency and magnitudes of earthquakes. Along the way, you’ll learn some basic statistical seismology, including the Gutenberg-Richter law. This exercise exposes two key ideas about data science 1) As a data scientist, you wander into all sorts of domain specific analyses, which is very exciting. You constantly get to learn. 2) You are sometimes faced with limited data, which is also the case for many of these earthquake studies. This is the Summary of lecture “Case Studies in Statistical Thinking”, via datacamp.","@type":"BlogPosting","headline":"Statistical seismology and the Parkfield region","dateModified":"2020-06-24T00:00:00-05:00","datePublished":"2020-06-24T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/image/compare_exp_norm.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/2020/06/24/02-Statistical-seismology-and-the-Parkfield-region.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/2020/06/24/02-Statistical-seismology-and-the-Parkfield-region.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Statistical seismology and the Parkfield region | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Statistical seismology and the Parkfield region" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Herein, you’ll use your statistical thinking skills to study the frequency and magnitudes of earthquakes. Along the way, you’ll learn some basic statistical seismology, including the Gutenberg-Richter law. This exercise exposes two key ideas about data science 1) As a data scientist, you wander into all sorts of domain specific analyses, which is very exciting. You constantly get to learn. 2) You are sometimes faced with limited data, which is also the case for many of these earthquake studies. This is the Summary of lecture “Case Studies in Statistical Thinking”, via datacamp." />
+<meta property="og:description" content="Herein, you’ll use your statistical thinking skills to study the frequency and magnitudes of earthquakes. Along the way, you’ll learn some basic statistical seismology, including the Gutenberg-Richter law. This exercise exposes two key ideas about data science 1) As a data scientist, you wander into all sorts of domain specific analyses, which is very exciting. You constantly get to learn. 2) You are sometimes faced with limited data, which is also the case for many of these earthquake studies. This is the Summary of lecture “Case Studies in Statistical Thinking”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/2020/06/24/02-Statistical-seismology-and-the-Parkfield-region.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/2020/06/24/02-Statistical-seismology-and-the-Parkfield-region.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/image/compare_exp_norm.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-24T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"Herein, you’ll use your statistical thinking skills to study the frequency and magnitudes of earthquakes. Along the way, you’ll learn some basic statistical seismology, including the Gutenberg-Richter law. This exercise exposes two key ideas about data science 1) As a data scientist, you wander into all sorts of domain specific analyses, which is very exciting. You constantly get to learn. 2) You are sometimes faced with limited data, which is also the case for many of these earthquake studies. This is the Summary of lecture “Case Studies in Statistical Thinking”, via datacamp.","@type":"BlogPosting","headline":"Statistical seismology and the Parkfield region","dateModified":"2020-06-24T00:00:00-05:00","datePublished":"2020-06-24T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/image/compare_exp_norm.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/2020/06/24/02-Statistical-seismology-and-the-Parkfield-region.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/statistics/2020/06/24/02-Statistical-seismology-and-the-Parkfield-region.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Statistical seismology and the Parkfield region</h1><p class="page-description">Herein, you'll use your statistical thinking skills to study the frequency and magnitudes of earthquakes. Along the way, you'll learn some basic statistical seismology, including the Gutenberg-Richter law. This exercise exposes two key ideas about data science 1) As a data scientist, you wander into all sorts of domain specific analyses, which is very exciting. You constantly get to learn. 2) You are sometimes faced with limited data, which is also the case for many of these earthquake studies. This is the Summary of lecture "Case Studies in Statistical Thinking", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-06-24T00:00:00-05:00" itemprop="datePublished">
+        Jun 24, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      10 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Statistics">Statistics</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-06-24-02-Statistical-seismology-and-the-Parkfield-region.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-06-24-02-Statistical-seismology-and-the-Parkfield-region.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-06-24-02-Statistical-seismology-and-the-Parkfield-region.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Introduction-to-statistical-seismology-and-the-Parkfield-experiment">Introduction to statistical seismology and the Parkfield experiment </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Parkfield-earthquake-magnitudes">Parkfield earthquake magnitudes </a></li>
+<li class="toc-entry toc-h3"><a href="#Computing-the-b-value">Computing the b-value </a></li>
+<li class="toc-entry toc-h3"><a href="#The-b-value-for-Parkfield">The b-value for Parkfield </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Timing-of-major-earthquakes-and-the-Parkfield-sequence">Timing of major earthquakes and the Parkfield sequence </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Interearthquake-time-estimates-for-Parkfield">Interearthquake time estimates for Parkfield </a></li>
+<li class="toc-entry toc-h3"><a href="#When-will-the-next-big-Parkfield-quake-be?">When will the next big Parkfield quake be? </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#How-are-the-Parkfield-interearthquake-times-distributed?">How are the Parkfield interearthquake times distributed? </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Computing-the-K-S-statistic">Computing the K-S statistic </a></li>
+<li class="toc-entry toc-h3"><a href="#Drawing-K-S-replicates">Drawing K-S replicates </a></li>
+<li class="toc-entry toc-h3"><a href="#The-K-S-test-for-Exponentiality">The K-S test for Exponentiality </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-06-24-02-Statistical-seismology-and-the-Parkfield-region.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">dc_stat_think</span> <span class="k">as</span> <span class="nn">dcst</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introduction-to-statistical-seismology-and-the-Parkfield-experiment">
+<a class="anchor" href="#Introduction-to-statistical-seismology-and-the-Parkfield-experiment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction to statistical seismology and the Parkfield experiment<a class="anchor-link" href="#Introduction-to-statistical-seismology-and-the-Parkfield-experiment"> </a>
+</h2>
+<ul>
+<li>The Gutenberg-Richter Law
+The magnitudes of earthquakes in a given region over a given time period are exponentially distributed. </li>
+</ul>
+<p>One parameter, given by $\bar{m} - m_t$, describes earthquake magnitude</p>
+<ul>
+<li>Completeness threshold
+The magnitude $m_t$, above which all earthquakes in a region can be detected</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Parkfield-earthquake-magnitudes">
+<a class="anchor" href="#Parkfield-earthquake-magnitudes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parkfield earthquake magnitudes<a class="anchor-link" href="#Parkfield-earthquake-magnitudes"> </a>
+</h3>
+<p>As usual, you will start with EDA and plot the ECDF of the magnitudes of earthquakes detected in the Parkfield region from 1950 to 2016. The magnitudes of all earthquakes in the region from the ANSS ComCat are stored in the Numpy array <code>mags</code>.</p>
+<p>When you do it this time, though, take a shortcut in generating the ECDF. You may recall that putting an asterisk before an argument in a function splits what follows into separate arguments. Since <code>dcst.ecdf()</code> returns two values, we can pass them as the x, y positional arguments to <code>plt.plot()</code> as <code>plt.plot(*dcst.ecdf(data_you_want_to_plot))</code>.</p>
+<p>You will use this shortcut in this exercise and going forward.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/parkfield_earthquakes_1950-2017.csv'</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>latitude</th>
+      <th>longitude</th>
+      <th>depth</th>
+      <th>mag</th>
+      <th>magType</th>
+      <th>nst</th>
+      <th>gap</th>
+      <th>dmin</th>
+      <th>rms</th>
+      <th>net</th>
+      <th>...</th>
+      <th>depthError</th>
+      <th>magError</th>
+      <th>magNst</th>
+      <th>status</th>
+      <th>locationSource</th>
+      <th>magSource</th>
+      <th>loc_name</th>
+      <th>loc_admin1</th>
+      <th>loc_admin2</th>
+      <th>loc_cc</th>
+    </tr>
+    <tr>
+      <th>time</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1951-10-03 13:44:33.170</th>
+      <td>35.869333</td>
+      <td>-120.451000</td>
+      <td>6.0</td>
+      <td>3.67</td>
+      <td>ml</td>
+      <td>6.0</td>
+      <td>259.0</td>
+      <td>1.5480</td>
+      <td>0.43</td>
+      <td>ci</td>
+      <td>...</td>
+      <td>31.61</td>
+      <td>0.154</td>
+      <td>10.0</td>
+      <td>reviewed</td>
+      <td>ci</td>
+      <td>ci</td>
+      <td>Shandon</td>
+      <td>California</td>
+      <td>San Luis Obispo County</td>
+      <td>US</td>
+    </tr>
+    <tr>
+      <th>1953-05-28 07:58:34.510</th>
+      <td>36.004167</td>
+      <td>-120.501167</td>
+      <td>6.0</td>
+      <td>3.61</td>
+      <td>ml</td>
+      <td>7.0</td>
+      <td>296.0</td>
+      <td>0.9139</td>
+      <td>0.39</td>
+      <td>ci</td>
+      <td>...</td>
+      <td>31.61</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>reviewed</td>
+      <td>ci</td>
+      <td>ci</td>
+      <td>Coalinga</td>
+      <td>California</td>
+      <td>Fresno County</td>
+      <td>US</td>
+    </tr>
+    <tr>
+      <th>1961-12-14 11:51:15.410</th>
+      <td>35.970000</td>
+      <td>-120.470167</td>
+      <td>6.0</td>
+      <td>3.95</td>
+      <td>ml</td>
+      <td>12.0</td>
+      <td>297.0</td>
+      <td>0.8718</td>
+      <td>0.51</td>
+      <td>ci</td>
+      <td>...</td>
+      <td>31.61</td>
+      <td>0.070</td>
+      <td>11.0</td>
+      <td>reviewed</td>
+      <td>ci</td>
+      <td>ci</td>
+      <td>Coalinga</td>
+      <td>California</td>
+      <td>Fresno County</td>
+      <td>US</td>
+    </tr>
+    <tr>
+      <th>1965-02-21 18:39:24.500</th>
+      <td>35.881000</td>
+      <td>-120.383500</td>
+      <td>6.0</td>
+      <td>3.54</td>
+      <td>ml</td>
+      <td>10.0</td>
+      <td>257.0</td>
+      <td>1.5380</td>
+      <td>0.56</td>
+      <td>ci</td>
+      <td>...</td>
+      <td>31.61</td>
+      <td>0.048</td>
+      <td>11.0</td>
+      <td>reviewed</td>
+      <td>ci</td>
+      <td>ci</td>
+      <td>Shandon</td>
+      <td>California</td>
+      <td>San Luis Obispo County</td>
+      <td>US</td>
+    </tr>
+    <tr>
+      <th>1966-06-28 04:18:36.180</th>
+      <td>35.856500</td>
+      <td>-120.446167</td>
+      <td>6.0</td>
+      <td>3.15</td>
+      <td>ml</td>
+      <td>7.0</td>
+      <td>259.0</td>
+      <td>1.3120</td>
+      <td>0.32</td>
+      <td>ci</td>
+      <td>...</td>
+      <td>31.61</td>
+      <td>0.105</td>
+      <td>7.0</td>
+      <td>reviewed</td>
+      <td>ci</td>
+      <td>ci</td>
+      <td>Shandon</td>
+      <td>California</td>
+      <td>San Luis Obispo County</td>
+      <td>US</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 25 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mags</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'mag'</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Make the plot</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">dcst</span><span class="o">.</span><span class="n">ecdf</span><span class="p">(</span><span class="n">mags</span><span class="p">),</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'.'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'none'</span><span class="p">)</span>
+
+<span class="c1"># Label axes</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'magnitude'</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'ECDF'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note the distinctive roll-off at magnitudes below 1.0.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Computing-the-b-value">
+<a class="anchor" href="#Computing-the-b-value" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing the b-value<a class="anchor-link" href="#Computing-the-b-value"> </a>
+</h3>
+<p>The b-value is a common metric for the seismicity of a region. You can imagine you would like to calculate it often when working with earthquake data. For tasks like this that you will do often, it is best to write a function! So, write a function with signature <code>b_value(mags, mt, perc=[2.5, 97.5], n_reps=None)</code> that returns the b-value and (optionally, if <code>n_reps</code> is not None) its confidence interval for a set of magnitudes, <code>mags</code>. The completeness threshold is given by <code>mt</code>. The perc keyword argument gives the percentiles for the lower and upper bounds of the confidence interval, and <code>n_reps</code> is the number of bootstrap replicates to use in computing the confidence interval.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">b_value</span><span class="p">(</span><span class="n">mags</span><span class="p">,</span> <span class="n">mt</span><span class="p">,</span> <span class="n">perc</span><span class="o">=</span><span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">],</span> <span class="n">n_reps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Compute the b-value and optionally its confidence interval."""</span>
+    <span class="c1"># Extract magnitudes above completeness threshold: m</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">mags</span><span class="p">[</span><span class="n">mags</span> <span class="o">&gt;=</span> <span class="n">mt</span><span class="p">]</span>
+    
+    <span class="c1"># Compute b-value: b</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">-</span> <span class="n">mt</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    
+    <span class="c1"># Draw bootstrap replicates</span>
+    <span class="k">if</span> <span class="n">n_reps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">b</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">m_bs_reps</span> <span class="o">=</span> <span class="n">dcst</span><span class="o">.</span><span class="n">draw_bs_reps</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">n_reps</span><span class="p">)</span>
+        
+        <span class="c1"># Compute b-value from replicates: b_bs_reps</span>
+        <span class="n">b_bs_reps</span> <span class="o">=</span> <span class="p">(</span><span class="n">m_bs_reps</span> <span class="o">-</span> <span class="n">mt</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        
+        <span class="c1"># Compute confidence interval: conf_int</span>
+        <span class="n">conf_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">b_bs_reps</span><span class="p">,</span> <span class="n">perc</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">b</span><span class="p">,</span> <span class="n">conf_int</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-b-value-for-Parkfield">
+<a class="anchor" href="#The-b-value-for-Parkfield" aria-hidden="true"><span class="octicon octicon-link"></span></a>The b-value for Parkfield<a class="anchor-link" href="#The-b-value-for-Parkfield"> </a>
+</h3>
+<p>The ECDF is effective at exposing roll-off, as you could see below magnitude 1. Because there are plenty of earthquakes above magnitude 3, you can use mt = 3 as your completeness threshold. With this completeness threshold, compute the b-value for the Parkfield region from 1950 to 2016, along with the 95% confidence interval. Print the results to the screen. The variable mags with all the magnitudes is in your namespace.</p>
+<p>Overlay the theoretical Exponential CDF to verify that the Parkfield region follows the Gutenberg-Richter Law.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mt</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="c1"># Compute b-value and 95% confidence interval</span>
+<span class="n">b</span><span class="p">,</span> <span class="n">conf_int</span> <span class="o">=</span> <span class="n">b_value</span><span class="p">(</span><span class="n">mags</span><span class="p">,</span> <span class="n">mt</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">perc</span><span class="o">=</span><span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">],</span> <span class="n">n_reps</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># Generate samples to for theoretical ECDF</span>
+<span class="n">m_theor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span> <span class="o">+</span> <span class="n">mt</span>
+
+<span class="c1"># Plot the theoretical CDF</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">dcst</span><span class="o">.</span><span class="n">ecdf</span><span class="p">(</span><span class="n">m_theor</span><span class="p">))</span>
+
+<span class="c1"># Plot the ECDF (slicing mags &gt;= mt)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">dcst</span><span class="o">.</span><span class="n">ecdf</span><span class="p">(</span><span class="n">mags</span><span class="p">[</span><span class="n">mags</span> <span class="o">&gt;=</span> <span class="n">mt</span><span class="p">]),</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'.'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'none'</span><span class="p">)</span>
+
+<span class="c1"># Pretty up and show the plot</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'magnitude'</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'ECDF'</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mf">2.8</span><span class="p">,</span> <span class="mf">6.2</span><span class="p">)</span>
+
+<span class="c1"># Report the results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">b-value: </span><span class="si">{0:.2f}</span><span class="s2"></span>
+<span class="s2">95</span><span class="si">% c</span><span class="s2">onf int: [</span><span class="si">{1:.2f}</span><span class="s2">, </span><span class="si">{2:.2f}</span><span class="s2">]"""</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="n">conf_int</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+b-value: 1.08
+95% conf int: [0.94, 1.24]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Timing-of-major-earthquakes-and-the-Parkfield-sequence">
+<a class="anchor" href="#Timing-of-major-earthquakes-and-the-Parkfield-sequence" aria-hidden="true"><span class="octicon octicon-link"></span></a>Timing of major earthquakes and the Parkfield sequence<a class="anchor-link" href="#Timing-of-major-earthquakes-and-the-Parkfield-sequence"> </a>
+</h2>
+<ul>
+<li>Models for earthquake timing<ul>
+<li>Exponential: Earthquakes happen like a Poisson process</li>
+<li>Gaussian: Earthquakes happen with a well-defined period</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Interearthquake-time-estimates-for-Parkfield">
+<a class="anchor" href="#Interearthquake-time-estimates-for-Parkfield" aria-hidden="true"><span class="octicon octicon-link"></span></a>Interearthquake time estimates for Parkfield<a class="anchor-link" href="#Interearthquake-time-estimates-for-Parkfield"> </a>
+</h3>
+<p>In this exercise, you will first compute the best estimates for the parameters for the Exponential and Gaussian models for interearthquake times. You will then plot the theoretical CDFs for the respective models along with the formal ECDF of the actual Parkfield interearthquake times.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">time_gap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">24.06570842</span><span class="p">,</span> <span class="mf">20.07665982</span><span class="p">,</span> <span class="mf">21.01848049</span><span class="p">,</span> <span class="mf">12.24640657</span><span class="p">,</span> <span class="mf">32.05475702</span><span class="p">,</span>
+       <span class="mf">38.2532512</span> <span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute the mean time gap: mean_time_gap</span>
+<span class="n">mean_time_gap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">time_gap</span><span class="p">)</span>
+
+<span class="c1"># Standard deviation of the time gap: std_time_gap</span>
+<span class="n">std_time_gap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">time_gap</span><span class="p">)</span>
+
+<span class="c1"># Generate theoretical Exponential distribution of timings: time_gap_exp</span>
+<span class="n">time_gap_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">mean_time_gap</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># Generate theoretical Normal distribution of timings: time_gap_norm</span>
+<span class="n">time_gap_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mean_time_gap</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">std_time_gap</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># Plot theoretical CDFs</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">dcst</span><span class="o">.</span><span class="n">ecdf</span><span class="p">(</span><span class="n">time_gap_exp</span><span class="p">))</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">dcst</span><span class="o">.</span><span class="n">ecdf</span><span class="p">(</span><span class="n">time_gap_norm</span><span class="p">))</span>
+
+<span class="c1"># Plot Parkfield ECDF</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">dcst</span><span class="o">.</span><span class="n">ecdf</span><span class="p">(</span><span class="n">time_gap</span><span class="p">,</span> <span class="n">formal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_x</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_x</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
+
+<span class="c1"># Add legend</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="s1">'Exp.'</span><span class="p">,</span> <span class="s1">'Norm.'</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s1">'upper left'</span><span class="p">)</span>
+
+<span class="c1"># Label axes, set limits and show plot</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'time gap (years)'</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'ECDF'</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>By eye, the Gaussian model seems to describe the observed data best. We will investigate the consequences of this in the next exercise, and see if we can reject the Exponential model in coming exercises.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="When-will-the-next-big-Parkfield-quake-be?">
+<a class="anchor" href="#When-will-the-next-big-Parkfield-quake-be?" aria-hidden="true"><span class="octicon octicon-link"></span></a>When will the next big Parkfield quake be?<a class="anchor-link" href="#When-will-the-next-big-Parkfield-quake-be?"> </a>
+</h3>
+<p>The last big earthquake in the Parkfield region was on the evening of September 27, 2004 local time. Your task is to get an estimate as to when the next Parkfield quake will be, assuming the Exponential model and also the Gaussian model. In both cases, the best estimate is given by the mean time gap, which you computed in the last exercise to be 24.62 years, meaning that the next earthquake would be in 2029. Compute 95% confidence intervals on when the next earthquake will be assuming an Exponential distribution parametrized by <code>mean_time_gap</code> you computed in the last exercise. Do the same assuming a Normal distribution parametrized by <code>mean_time_gap</code> and <code>std_time_gap</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">today</span> <span class="o">=</span> <span class="mf">2020.4788213099084</span>
+<span class="n">last_quake</span> <span class="o">=</span> <span class="mf">2004.74</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Draw samples from the Exponential distribution: exp_samples</span>
+<span class="n">exp_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">mean_time_gap</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+
+<span class="c1"># Draw samples from the Normal distribution: norm_samples</span>
+<span class="n">norm_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mean_time_gap</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">std_time_gap</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+
+<span class="c1"># No earthquake as of today, so only keep samples that are long enough</span>
+<span class="n">exp_samples</span> <span class="o">=</span> <span class="n">exp_samples</span><span class="p">[</span><span class="n">exp_samples</span> <span class="o">&gt;</span> <span class="n">today</span> <span class="o">-</span> <span class="n">last_quake</span><span class="p">]</span>
+<span class="n">norm_samples</span> <span class="o">=</span> <span class="n">norm_samples</span><span class="p">[</span><span class="n">norm_samples</span> <span class="o">&gt;</span> <span class="n">today</span> <span class="o">-</span> <span class="n">last_quake</span><span class="p">]</span>
+
+<span class="c1"># Compute the confidence intervals with medians</span>
+<span class="n">conf_int_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">exp_samples</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">])</span> <span class="o">+</span> <span class="n">last_quake</span>
+<span class="n">conf_int_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">norm_samples</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">])</span> <span class="o">+</span> <span class="n">last_quake</span>
+
+<span class="c1"># Print the results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Exponential:'</span><span class="p">,</span> <span class="n">conf_int_exp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'     Normal:'</span><span class="p">,</span> <span class="n">conf_int_norm</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Exponential: [2021.0975347  2037.57861642 2111.80906838]
+     Normal: [2021.27520233 2030.97032934 2046.38291392]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The models given decidedly different predictions. The Gaussian model says the next earthquake is almost sure to be in the next few decades, but the Exponential model says we may very well have to wait longer.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="How-are-the-Parkfield-interearthquake-times-distributed?">
+<a class="anchor" href="#How-are-the-Parkfield-interearthquake-times-distributed?" aria-hidden="true"><span class="octicon octicon-link"></span></a>How are the Parkfield interearthquake times distributed?<a class="anchor-link" href="#How-are-the-Parkfield-interearthquake-times-distributed?"> </a>
+</h2>
+<ul>
+<li>Hypothesis test on the Nankai megathrust earthquakes<ul>
+<li>Hypothesis: The time between Nankai Trough earthquakes is normally distributed with a mean and standard deviation as calculated from the data</li>
+<li>Test Statistic: ??</li>
+<li>At least as extreme as: ??</li>
+</ul>
+</li>
+<li>Kolmogorov-Smirnov test (or K-S test)<ul>
+<li>Hypothesis: same as above</li>
+<li>Test statistic: Kolmogorov-Smirnov statistic</li>
+<li>At least as extreme as: $\geq$ observed K-S statistic</li>
+</ul>
+</li>
+<li>Simulating the null hypothesis<ul>
+<li>Draw lots of samples out of the theoretical distribution and store them<ul>
+<li>Draw n samples out of the theoretical distribution</li>
+<li>Compute the K-S statistic from the samples</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Computing-the-K-S-statistic">
+<a class="anchor" href="#Computing-the-K-S-statistic" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing the K-S statistic<a class="anchor-link" href="#Computing-the-K-S-statistic"> </a>
+</h3>
+<p>Write a function to compute the Kolmogorov-Smirnov statistic from two datasets, <code>data1</code> and <code>data2</code>, in which <code>data2</code> consists of samples from the theoretical distribution you are comparing your data to. Note that this means we are using hacker stats to compute the K-S statistic for a dataset and a theoretical distribution, not the K-S statistic for two empirical datasets.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ks_stat</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">):</span>
+    <span class="c1"># Compute ECDF from data: x, y</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">dcst</span><span class="o">.</span><span class="n">ecdf</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span>
+    
+    <span class="c1"># Compute corresponding values of the target CDF</span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">dcst</span><span class="o">.</span><span class="n">ecdf_formal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data2</span><span class="p">)</span>
+    
+    <span class="c1"># Compute distances between concave corners and CDF</span>
+    <span class="n">D_top</span> <span class="o">=</span>  <span class="n">y</span> <span class="o">-</span> <span class="n">cdf</span>
+    
+    <span class="c1"># Compute distance between convex corners and CDF</span>
+    <span class="n">D_bottom</span> <span class="o">=</span> <span class="n">cdf</span> <span class="o">-</span> <span class="n">y</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">((</span><span class="n">D_top</span><span class="p">,</span> <span class="n">D_bottom</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Drawing-K-S-replicates">
+<a class="anchor" href="#Drawing-K-S-replicates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Drawing K-S replicates<a class="anchor-link" href="#Drawing-K-S-replicates"> </a>
+</h3>
+<p>Now, you need a function to draw Kolmogorov-Smirnov replicates out of a target distribution, f. Construct a function with signature <code>draw_ks_reps(n, f, args=(), size=10000, n_reps=10000)</code> to do so. Here, <code>n</code> is the number of data points, and <code>f</code> is the function you will use to generate samples from the target CDF. For example, to test against an Exponential distribution, you would pass <code>np.random.exponential</code> as <code>f</code>. This function usually takes arguments, which must be passed as a tuple. So, if you wanted to take samples from an Exponential distribution with mean <code>x_mean</code>, you would use the <code>args=(x_mean,)</code> keyword. The keyword arguments <code>size</code> and <code>n_reps</code> respectively represent the number of samples to take from the target distribution and the number of replicates to draw.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">draw_ks_reps</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">n_reps</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+    <span class="c1"># Generate samples from target distribution</span>
+    <span class="n">x_f</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    
+    <span class="c1"># Initialize K-S replicates</span>
+    <span class="n">reps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">n_reps</span><span class="p">)</span>
+    
+    <span class="c1"># Draw replicates</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_reps</span><span class="p">):</span>
+        <span class="c1"># Draw samples for comparison</span>
+        <span class="n">x_samp</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+        
+        <span class="c1"># Compute K-S statistic</span>
+        <span class="n">reps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dcst</span><span class="o">.</span><span class="n">ks_stat</span><span class="p">(</span><span class="n">x_f</span><span class="p">,</span> <span class="n">x_samp</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">reps</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This will allow you to draw K-S replicates for use in K-S tests for arbitrary continuous distributions. You'll put it to use in the next exercise.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-K-S-test-for-Exponentiality">
+<a class="anchor" href="#The-K-S-test-for-Exponentiality" aria-hidden="true"><span class="octicon octicon-link"></span></a>The K-S test for Exponentiality<a class="anchor-link" href="#The-K-S-test-for-Exponentiality"> </a>
+</h3>
+<p>Test the null hypothesis that the interearthquake times of the Parkfield sequence are Exponentially distributed. That is, earthquakes happen at random with no memory of when the last one was. Note: This calculation is computationally intensive (you will draw more than 108 random numbers), so it will take about 10 seconds to complete.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Draw target distribution: x_f</span>
+<span class="n">x_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">mean_time_gap</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># Compute K-S stat: d</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">dcst</span><span class="o">.</span><span class="n">ks_stat</span><span class="p">(</span><span class="n">time_gap</span><span class="p">,</span> <span class="n">x_f</span><span class="p">)</span>
+
+<span class="c1"># Draw K-S replicates: reps</span>
+<span class="n">reps</span> <span class="o">=</span> <span class="n">dcst</span><span class="o">.</span><span class="n">draw_ks_reps</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_gap</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">,</span> 
+                         <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">mean_time_gap</span><span class="p">,),</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">n_reps</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># Compute and print p-value</span>
+<span class="n">p_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">reps</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10000</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'p ='</span><span class="p">,</span> <span class="n">p_val</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>p = 0.2581
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>That's a p-value above 0.2. This means that the Parkfield sequence is not outside the realm of possibility if earthquakes there are a Poisson process. This does not mean that they are generated by a Poisson process, but that the observed sequence is not incongruous with that model. The upshot is that it is really hard to say when the next Parkfield quake will be.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/statistics/2020/06/24/02-Statistical-seismology-and-the-Parkfield-region.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
