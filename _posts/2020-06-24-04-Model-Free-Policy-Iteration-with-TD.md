@@ -37,4 +37,15 @@ To utilize this formula (TD(0)), it is required to gather some informations ($s_
     $$ \pi(s_t) = \begin{cases} \argmax_{a} Q(s_t, a_t) & \text{with probability of } 1 - \epsilon \\ \text{random} & else \end{cases}$$
 
 ## Convergence Theorem of SARSA
-- SARSA for finite-state and finite-action MDPS
+- SARSA for finite-state and finite-action MDPs converges to the optimal action-value function $Q^{*}(s, a)$, under the following conditions:
+  - The policy sequence $\pi_t(a \vert s)$ is a GLIE sequence
+  - Learning rate $\alpha_t$ satisfy the **Robbins-Munro** sequence such that
+
+  $$ \sum_{t=1}^{\infty}a_t = \infty, \qquad  \sum_{t=1}^{\infty} a_t^2 < \infty $$
+
+  for example,
+
+  $$ \alpha_i = \frac{1}{i} \qquad \sum_{i=1}^{\infty} \frac{1}{i} = \infty \qquad \sum_{i=1}^{\infty} \frac{1}{i^2} < \infty $$
+
+## n-step SARSA
+Consider the following n-step returns for $n=1, 2, \dots \infty$:
