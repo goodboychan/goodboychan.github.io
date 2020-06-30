@@ -3,7 +3,7 @@ toc: true
 layout: post
 description: A summary of "Understanding Deep Reinforcement Learning"
 categories: [Reinforcement Learning]
-title: Temporal Difference Learning TD($\lambda$)
+title: Temporal Difference Learning TD(λ)
 image: images/unified_rl.png
 ---
 
