@@ -1,4 +1,4 @@
-Hello :wave: @{_username_}! 
+Hello :wave: @goodboychan! 
 
 This PR pulls the most recent files from [fastpages](https://github.com/fastai/fastpages), and attempts to replace relevant files in your repository, without changing the content of your blog posts.  This allows you to receive bug fixes and feature updates.
 
@@ -10,5 +10,5 @@ If you would like more fine-grained control over what changes to accept or decli
 
 ### What to Expect After Merging This PR
 
-- GitHub Actions will build your site, which will take 3-4 minutes to complete.  **This will happen anytime you push changes to the master branch of your repository.**  You can monitor the logs of this if you like on the [Actions tab of your repo](https://github.com/{_username_}/{_repo_name_}/actions).
-- You can monitor the status of your site in the GitHub Pages section of your [repository settings](https://github.com/{_username_}/{_repo_name_}/settings).
+- GitHub Actions will build your site, which will take 3-4 minutes to complete.  **This will happen anytime you push changes to the master branch of your repository.**  You can monitor the logs of this if you like on the [Actions tab of your repo](https://github.com/goodboychan/chans_jupyter/actions).
+- You can monitor the status of your site in the GitHub Pages section of your [repository settings](https://github.com/goodboychan/chans_jupyter/settings).
