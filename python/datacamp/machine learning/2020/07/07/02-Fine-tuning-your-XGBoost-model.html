@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Fine-tuning your XGBoost model | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Fine-tuning your XGBoost model" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter will teach you how to make your XGBoost models as performant as possible. You’ll learn about the variety of parameters that can be adjusted to alter the behavior of XGBoost and how to tune them efficiently so that you can supercharge the performance of your models. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp." />
+<meta property="og:description" content="This chapter will teach you how to make your XGBoost models as performant as possible. You’ll learn about the variety of parameters that can be adjusted to alter the behavior of XGBoost and how to tune them efficiently so that you can supercharge the performance of your models. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/07/02-Fine-tuning-your-XGBoost-model.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/07/02-Fine-tuning-your-XGBoost-model.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-07T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter will teach you how to make your XGBoost models as performant as possible. You’ll learn about the variety of parameters that can be adjusted to alter the behavior of XGBoost and how to tune them efficiently so that you can supercharge the performance of your models. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp.","@type":"BlogPosting","headline":"Fine-tuning your XGBoost model","dateModified":"2020-07-07T00:00:00-05:00","datePublished":"2020-07-07T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/07/02-Fine-tuning-your-XGBoost-model.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/07/02-Fine-tuning-your-XGBoost-model.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Fine-tuning your XGBoost model | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Fine-tuning your XGBoost model" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter will teach you how to make your XGBoost models as performant as possible. You’ll learn about the variety of parameters that can be adjusted to alter the behavior of XGBoost and how to tune them efficiently so that you can supercharge the performance of your models. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp." />
+<meta property="og:description" content="This chapter will teach you how to make your XGBoost models as performant as possible. You’ll learn about the variety of parameters that can be adjusted to alter the behavior of XGBoost and how to tune them efficiently so that you can supercharge the performance of your models. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/07/02-Fine-tuning-your-XGBoost-model.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/07/02-Fine-tuning-your-XGBoost-model.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-07T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter will teach you how to make your XGBoost models as performant as possible. You’ll learn about the variety of parameters that can be adjusted to alter the behavior of XGBoost and how to tune them efficiently so that you can supercharge the performance of your models. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp.","@type":"BlogPosting","headline":"Fine-tuning your XGBoost model","dateModified":"2020-07-07T00:00:00-05:00","datePublished":"2020-07-07T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/07/02-Fine-tuning-your-XGBoost-model.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/07/02-Fine-tuning-your-XGBoost-model.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Fine-tuning your XGBoost model</h1><p class="page-description">This chapter will teach you how to make your XGBoost models as performant as possible. You'll learn about the variety of parameters that can be adjusted to alter the behavior of XGBoost and how to tune them efficiently so that you can supercharge the performance of your models. This is the Summary of lecture "Extreme Gradient Boosting with XGBoost", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-07T00:00:00-05:00" itemprop="datePublished">
+        Jul 7, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      9 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine Learning">Machine Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-07-02-Fine-tuning-your-XGBoost-model.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-07-02-Fine-tuning-your-XGBoost-model.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-07-02-Fine-tuning-your-XGBoost-model.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Why-tune-your-model?">Why tune your model? </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Tuning-the-number-of-boosting-rounds">Tuning the number of boosting rounds </a></li>
+<li class="toc-entry toc-h3"><a href="#Automated-boosting-round-selection-using-early_stopping">Automated boosting round selection using early_stopping </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Overview-of-XGBoost's-hyperparameters">Overview of XGBoost&#39;s hyperparameters </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Tuning-eta">Tuning eta </a></li>
+<li class="toc-entry toc-h3"><a href="#Tuning-max_depth">Tuning max_depth </a></li>
+<li class="toc-entry toc-h3"><a href="#Tuning-colsample_bytree">Tuning colsample_bytree </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Review-of-grid-search-and-random-search">Review of grid search and random search </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Grid-search-with-XGBoost">Grid search with XGBoost </a></li>
+<li class="toc-entry toc-h3"><a href="#Random-search-with-XGBoost">Random search with XGBoost </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Limits-of-grid-search-and-random-search">Limits of grid search and random search </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-07-02-Fine-tuning-your-XGBoost-model.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Why-tune-your-model?">
+<a class="anchor" href="#Why-tune-your-model?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why tune your model?<a class="anchor-link" href="#Why-tune-your-model?"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Tuning-the-number-of-boosting-rounds">
+<a class="anchor" href="#Tuning-the-number-of-boosting-rounds" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tuning the number of boosting rounds<a class="anchor-link" href="#Tuning-the-number-of-boosting-rounds"> </a>
+</h3>
+<p>Let's start with parameter tuning by seeing how the number of boosting rounds (number of trees you build) impacts the out-of-sample performance of your XGBoost model. You'll use <code>xgb.cv()</code> inside a for loop and build one model per <code>num_boost_round</code> parameter.</p>
+<p>Here, you'll continue working with the Ames housing dataset. The features are available in the array <code>X</code>, and the target vector is contained in <code>y</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/ames_housing_trimmed_processed.csv'</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create the DMatrix: housing_dmatrix</span>
+<span class="n">housing_dmatrix</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Creata the parameter dictionary for each tree: params</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"objective"</span><span class="p">:</span><span class="s2">"reg:squarederror"</span><span class="p">,</span> <span class="s2">"max_depth"</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+
+<span class="c1"># Create list of number of boosting rounds</span>
+<span class="n">num_rounds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">]</span>
+
+<span class="c1"># Empty list to store final round rmse per XGBoost model</span>
+<span class="n">final_rmse_per_round</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Interate over num_rounds and build one model per num_boost_round parameter</span>
+<span class="k">for</span> <span class="n">curr_num_rounds</span> <span class="ow">in</span> <span class="n">num_rounds</span><span class="p">:</span>
+    <span class="c1"># Perform cross-validation: cv_results</span>
+    <span class="n">cv_results</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">cv</span><span class="p">(</span><span class="n">dtrain</span><span class="o">=</span><span class="n">housing_dmatrix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">nfold</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> 
+                        <span class="n">num_boost_round</span><span class="o">=</span><span class="n">curr_num_rounds</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="s1">'rmse'</span><span class="p">,</span> 
+                        <span class="n">as_pandas</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+    
+    <span class="c1"># Append final round RMSE</span>
+    <span class="n">final_rmse_per_round</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_results</span><span class="p">[</span><span class="s1">'test-rmse-mean'</span><span class="p">]</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    
+<span class="c1"># Print the result DataFrame</span>
+<span class="n">num_rounds_rmses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">num_rounds</span><span class="p">,</span> <span class="n">final_rmse_per_round</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">num_rounds_rmses</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'num_boosting_rounds'</span><span class="p">,</span> <span class="s1">'rmse'</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>   num_boosting_rounds          rmse
+0                    5  50903.299479
+1                   10  34774.194010
+2                   15  32895.097656
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Automated-boosting-round-selection-using-early_stopping">
+<a class="anchor" href="#Automated-boosting-round-selection-using-early_stopping" aria-hidden="true"><span class="octicon octicon-link"></span></a>Automated boosting round selection using early_stopping<a class="anchor-link" href="#Automated-boosting-round-selection-using-early_stopping"> </a>
+</h3>
+<p>Now, instead of attempting to cherry pick the best possible number of boosting rounds, you can very easily have XGBoost automatically select the number of boosting rounds for you within <code>xgb.cv()</code>. This is done using a technique called <strong>early stopping</strong>.</p>
+<p>Early stopping works by testing the XGBoost model after every boosting round against a hold-out dataset and stopping the creation of additional boosting rounds (thereby finishing training of the model early) if the hold-out metric (<code>"rmse"</code> in our case) does not improve for a given number of rounds. Here you will use the <code>early_stopping_rounds</code> parameter in <code>xgb.cv()</code> with a large possible number of boosting rounds (50). Bear in mind that if the holdout metric continuously improves up through when <code>num_boost_rounds</code> is reached, then early stopping does not occur.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create your housing DMatrix: housing_dmatrix</span>
+<span class="n">housing_dmatrix</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Create the parameter dictionary for each tree: params</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"objective"</span><span class="p">:</span><span class="s2">"reg:squarederror"</span><span class="p">,</span> <span class="s2">"max_depth"</span><span class="p">:</span><span class="mi">4</span><span class="p">}</span>
+
+<span class="c1"># Perform cross-validation with early-stopping: cv_results</span>
+<span class="n">cv_results</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">cv</span><span class="p">(</span><span class="n">dtrain</span><span class="o">=</span><span class="n">housing_dmatrix</span><span class="p">,</span> <span class="n">nfold</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="s2">"rmse"</span><span class="p">,</span> 
+                    <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num_boost_round</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">as_pandas</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="c1"># Print cv_results</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cv_results</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>    train-rmse-mean  train-rmse-std  test-rmse-mean  test-rmse-std
+0     141871.635417      403.636200   142640.651042     705.559164
+1     103057.033854       73.769960   104907.664063     111.119966
+2      75975.966146      253.726099    79262.054687     563.764349
+3      57420.529948      521.658354    61620.136719    1087.694282
+4      44552.955729      544.170190    50437.561198    1846.446330
+5      35763.947917      681.797248    43035.660156    2034.472841
+6      29861.464193      769.572153    38600.881510    2169.798065
+7      25994.675781      756.519243    36071.817708    2109.795430
+8      23306.836588      759.238254    34383.184896    1934.546688
+9      21459.770833      745.624687    33509.141276    1887.375284
+10     20148.720703      749.612103    32916.807292    1850.894702
+11     19215.382162      641.387014    32197.832682    1734.456935
+12     18627.389323      716.256596    31770.852214    1802.156241
+13     17960.694661      557.043073    31482.781901    1779.124534
+14     17559.736979      631.412969    31389.990234    1892.319927
+15     17205.712891      590.171393    31302.881511    1955.166733
+16     16876.572591      703.632148    31234.059896    1880.707172
+17     16597.663086      703.677647    31318.348308    1828.860391
+18     16330.460937      607.274494    31323.634766    1775.910706
+19     16005.972656      520.471365    31204.135417    1739.076156
+20     15814.300456      518.605216    31089.863281    1756.020773
+21     15493.405599      505.616447    31047.996094    1624.673955
+22     15270.734375      502.018453    31056.916015    1668.042812
+23     15086.382161      503.912447    31024.984375    1548.985605
+24     14917.607747      486.205730    30983.686198    1663.131107
+25     14709.589518      449.668010    30989.477865    1686.668378
+26     14457.286458      376.787206    30952.113281    1613.172049
+27     14185.567383      383.102234    31066.901042    1648.534606
+28     13934.067057      473.464991    31095.641927    1709.225000
+29     13749.645182      473.671021    31103.887370    1778.880069
+30     13549.836263      454.898488    30976.085938    1744.515079
+31     13413.485026      399.603470    30938.469401    1746.054047
+32     13275.916016      415.408786    30930.999349    1772.470428
+33     13085.878255      493.792509    30929.056641    1765.541578
+34     12947.181641      517.790106    30890.629557    1786.510976
+35     12846.027344      547.732372    30884.492839    1769.730062
+36     12702.378906      505.523126    30833.541667    1691.002487
+37     12532.244140      508.298516    30856.688151    1771.445059
+38     12384.055013      536.225042    30818.016927    1782.786053
+39     12198.444010      545.165502    30839.392578    1847.326928
+40     12054.583333      508.841412    30776.964844    1912.779587
+41     11897.036784      477.177937    30794.702474    1919.674832
+42     11756.221354      502.992395    30780.957031    1906.820066
+43     11618.846680      519.837469    30783.753906    1951.260704
+44     11484.080404      578.428621    30776.731771    1953.446772
+45     11356.552734      565.368794    30758.542969    1947.454481
+46     11193.557943      552.299272    30729.972005    1985.699338
+47     11071.315104      604.089876    30732.663411    1966.999196
+48     10950.778320      574.862779    30712.240885    1957.751118
+49     10824.865885      576.665756    30720.853516    1950.511977
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Overview-of-XGBoost's-hyperparameters">
+<a class="anchor" href="#Overview-of-XGBoost's-hyperparameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview of XGBoost's hyperparameters<a class="anchor-link" href="#Overview-of-XGBoost's-hyperparameters"> </a>
+</h2>
+<ul>
+<li>Common tree tunable parameters<ul>
+<li>learning rate: learning rate/eta</li>
+<li>gamma: min loss reduction to create new tree split</li>
+<li>lambda: L2 regularization on leaf weights</li>
+<li>alpha: L1 regularization on leaf weights</li>
+<li>max_depth: max depth per tree</li>
+<li>subsample: % samples used per tree</li>
+<li>colsample_bytree: % features used per tree</li>
+</ul>
+</li>
+<li>Linear tunable parameters<ul>
+<li>lambda: L2 reg on weights</li>
+<li>alpha: L1 reg on weights</li>
+<li>lambda_bias: L2 reg term on bias</li>
+</ul>
+</li>
+<li>You can also tune the number of estimators used for both base model types!</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Tuning-eta">
+<a class="anchor" href="#Tuning-eta" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tuning eta<a class="anchor-link" href="#Tuning-eta"> </a>
+</h3>
+<p>It's time to practice tuning other XGBoost hyperparameters in earnest and observing their effect on model performance! You'll begin by tuning the <code>"eta"</code>, also known as the learning rate.</p>
+<p>The learning rate in XGBoost is a parameter that can range between 0 and 1, with higher values of <code>"eta"</code> penalizing feature weights more strongly, causing much stronger regularization.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create your housing DMatrix: housing_dmatrix</span>
+<span class="n">housing_dmatrix</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Create the parameter dictionary for each tree (boosting round)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"objective"</span><span class="p">:</span><span class="s2">"reg:squarederror"</span><span class="p">,</span> <span class="s2">"max_depth"</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+
+<span class="c1"># Create list of eta values and empty list to store final round rmse per xgboost model</span>
+<span class="n">eta_vals</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+<span class="n">best_rmse</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Systematicallyvary the eta</span>
+<span class="k">for</span> <span class="n">curr_val</span> <span class="ow">in</span> <span class="n">eta_vals</span><span class="p">:</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">'eta'</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_val</span>
+    
+    <span class="c1"># Perform cross-validation: cv_results</span>
+    <span class="n">cv_results</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">cv</span><span class="p">(</span><span class="n">dtrain</span><span class="o">=</span><span class="n">housing_dmatrix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">nfold</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                        <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_boost_round</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="s1">'rmse'</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> 
+                       <span class="n">as_pandas</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Append the final round rmse to best_rmse</span>
+    <span class="n">best_rmse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_results</span><span class="p">[</span><span class="s1">'test-rmse-mean'</span><span class="p">]</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    
+<span class="c1"># Print the result DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">eta_vals</span><span class="p">,</span> <span class="n">best_rmse</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'eta'</span><span class="p">,</span> <span class="s1">'best_rmse'</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>     eta      best_rmse
+0  0.001  195736.401042
+1  0.010  179932.187500
+2  0.100   79759.408854
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Tuning-max_depth">
+<a class="anchor" href="#Tuning-max_depth" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tuning max_depth<a class="anchor-link" href="#Tuning-max_depth"> </a>
+</h3>
+<p>In this exercise, your job is to tune <code>max_depth</code>, which is the parameter that dictates the maximum depth that each tree in a boosting round can grow to. Smaller values will lead to shallower trees, and larger values to deeper trees.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create your housing DMatrix</span>
+<span class="n">housing_dmatrix</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Create the parameter dictionary</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"objective"</span><span class="p">:</span><span class="s2">"reg:squarederror"</span><span class="p">}</span>
+
+<span class="c1"># Create list of max_depth values</span>
+<span class="n">max_depths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>
+<span class="n">best_rmse</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">curr_val</span> <span class="ow">in</span> <span class="n">max_depths</span><span class="p">:</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">'max_depth'</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_val</span>
+    
+    <span class="c1"># Perform cross-validation</span>
+    <span class="n">cv_results</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">cv</span><span class="p">(</span><span class="n">dtrain</span><span class="o">=</span><span class="n">housing_dmatrix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">nfold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> 
+                       <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_boost_round</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="s1">'rmse'</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
+                        <span class="n">as_pandas</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Append the final round rmse to best_rmse</span>
+    <span class="n">best_rmse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_results</span><span class="p">[</span><span class="s1">'test-rmse-mean'</span><span class="p">]</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    
+<span class="c1"># Print the result DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">max_depths</span><span class="p">,</span> <span class="n">best_rmse</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'max_depth'</span><span class="p">,</span> <span class="s1">'best_rmse'</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>   max_depth     best_rmse
+0          2  37957.468750
+1          5  35596.599610
+2         10  36065.546875
+3         20  36739.576172
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Tuning-colsample_bytree">
+<a class="anchor" href="#Tuning-colsample_bytree" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tuning colsample_bytree<a class="anchor-link" href="#Tuning-colsample_bytree"> </a>
+</h3>
+<p>Now, it's time to tune <code>"colsample_bytree"</code>. You've already seen this if you've ever worked with scikit-learn's <code>RandomForestClassifier</code> or <code>RandomForestRegressor</code>, where it just was called <code>max_features</code>. In both xgboost and sklearn, this parameter (although named differently) simply specifies the fraction of features to choose from at every split in a given tree. In xgboost, <code>colsample_bytree</code> must be specified as a float between 0 and 1.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create your housing DMatrix</span>
+<span class="n">housing_dmatrix</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Create the parameter dictionary</span>
+<span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">"objective"</span><span class="p">:</span><span class="s2">"reg:squarederror"</span><span class="p">,</span> <span class="s2">"max_depth"</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+
+<span class="c1"># Create list of hyperparameter values: colsample_bytree_vals</span>
+<span class="n">colsample_bytree_vals</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">best_rmse</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Systematically vary the hyperparameter value </span>
+<span class="k">for</span> <span class="n">curr_val</span> <span class="ow">in</span> <span class="n">colsample_bytree_vals</span><span class="p">:</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">'colsample_bytree'</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_val</span>
+    
+    <span class="c1"># Perform cross-validation</span>
+    <span class="n">cv_results</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">cv</span><span class="p">(</span><span class="n">dtrain</span><span class="o">=</span><span class="n">housing_dmatrix</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">nfold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                 <span class="n">num_boost_round</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                 <span class="n">metrics</span><span class="o">=</span><span class="s2">"rmse"</span><span class="p">,</span> <span class="n">as_pandas</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+    
+    <span class="c1"># Append the final round rmse to best_rmse</span>
+    <span class="n">best_rmse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_results</span><span class="p">[</span><span class="s2">"test-rmse-mean"</span><span class="p">]</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># Print the resultant DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">colsample_bytree_vals</span><span class="p">,</span> <span class="n">best_rmse</span><span class="p">)),</span> 
+                   <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"colsample_bytree"</span><span class="p">,</span><span class="s2">"best_rmse"</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>   colsample_bytree     best_rmse
+0               0.1  48193.453125
+1               0.5  36013.544922
+2               0.8  35932.962891
+3               1.0  35836.042968
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are several other individual parameters that you can tune, such as <code>"subsample"</code>, which dictates the fraction of the training data that is used during any given boosting round. Next up: Grid Search and Random Search to tune XGBoost hyperparameters more efficiently!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Review-of-grid-search-and-random-search">
+<a class="anchor" href="#Review-of-grid-search-and-random-search" aria-hidden="true"><span class="octicon octicon-link"></span></a>Review of grid search and random search<a class="anchor-link" href="#Review-of-grid-search-and-random-search"> </a>
+</h2>
+<ul>
+<li>Grid search: review<ul>
+<li>Search exhaustively over a given set of hyperparameters, once per set of hyperparameters</li>
+<li>Number of models = number of distinct values per hyperparameter multiplied across each hyperparameter</li>
+<li>Pick final model hyperparameter values that give best cross-validated evaluation metric value</li>
+</ul>
+</li>
+<li>Random search: review<ul>
+<li>Create a (possibly infinte) range of hyperparameter values per hyperparameter that you would like to search over</li>
+<li>Set the number of iterations you would like for the random search to continue</li>
+<li>During each iteration, randomly draw a value in the range of specified values for each hyperparameter searched over and train/evaluate a model with those hyperparameters</li>
+<li>After you've reached the maximum number of iterations, select the hyperparameter configuration with the best evaluated score</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Grid-search-with-XGBoost">
+<a class="anchor" href="#Grid-search-with-XGBoost" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grid search with XGBoost<a class="anchor-link" href="#Grid-search-with-XGBoost"> </a>
+</h3>
+<p>Now that you've learned how to tune parameters individually with XGBoost, let's take your parameter tuning to the next level by using scikit-learn's <code>GridSearch</code> and <code>RandomizedSearch</code> capabilities with internal cross-validation using the GridSearchCV and RandomizedSearchCV functions. You will use these to find the best model exhaustively from a collection of possible parameter values across multiple parameters simultaneously. Let's get to work, starting with <code>GridSearchCV</code>!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="c1"># Create the parameter grid: gbm_param_grid</span>
+<span class="n">gbm_param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'colsample_bytree'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+    <span class="s1">'n_estimators'</span><span class="p">:</span> <span class="p">[</span><span class="mi">50</span><span class="p">],</span>
+    <span class="s1">'max_depth'</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># Instantiate the regressor: gbm</span>
+<span class="n">gbm</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">()</span>
+
+<span class="c1"># Perform grid search: grid_mse</span>
+<span class="n">grid_mse</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">param_grid</span><span class="o">=</span><span class="n">gbm_param_grid</span><span class="p">,</span> <span class="n">estimator</span><span class="o">=</span><span class="n">gbm</span><span class="p">,</span> 
+                        <span class="n">scoring</span><span class="o">=</span><span class="s1">'neg_mean_squared_error'</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Fit grid_mse to the data</span>
+<span class="n">grid_mse</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Print the best parameters and lowest RMSE</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Best parameters found: "</span><span class="p">,</span> <span class="n">grid_mse</span><span class="o">.</span><span class="n">best_params_</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Lowest RMSE found: "</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">grid_mse</span><span class="o">.</span><span class="n">best_score_</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting 4 folds for each of 4 candidates, totalling 16 fits
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=1)]: Using backend SequentialBackend with 1 concurrent workers.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Best parameters found:  {'colsample_bytree': 0.7, 'max_depth': 5, 'n_estimators': 50}
+Lowest RMSE found:  30744.105707685176
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=1)]: Done  16 out of  16 | elapsed:    0.4s finished
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Random-search-with-XGBoost">
+<a class="anchor" href="#Random-search-with-XGBoost" aria-hidden="true"><span class="octicon octicon-link"></span></a>Random search with XGBoost<a class="anchor-link" href="#Random-search-with-XGBoost"> </a>
+</h3>
+<p>Often, <code>GridSearchCV</code> can be really time consuming, so in practice, you may want to use <code>RandomizedSearchCV</code> instead, as you will do in this exercise. The good news is you only have to make a few modifications to your <code>GridSearchCV</code> code to do <code>RandomizedSearchCV</code>. The key difference is you have to specify a <code>param_distributions</code> parameter instead of a <code>param_grid</code> parameter.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">RandomizedSearchCV</span>
+
+<span class="c1"># Create the parameter grid: gbm_param_grid</span>
+<span class="n">gbm_param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'n_estimators'</span><span class="p">:</span> <span class="p">[</span><span class="mi">25</span><span class="p">],</span>
+    <span class="s1">'max_depth'</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># Instantiate the regressor: gbm</span>
+<span class="n">gbm</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Perform random search: randomized_mse</span>
+<span class="n">randomized_mse</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">param_distributions</span><span class="o">=</span><span class="n">gbm_param_grid</span><span class="p">,</span> <span class="n">estimator</span><span class="o">=</span><span class="n">gbm</span><span class="p">,</span> 
+                                    <span class="n">scoring</span><span class="o">=</span><span class="s1">'neg_mean_squared_error'</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> 
+                                   <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Fit randomized_mse to the data</span>
+<span class="n">randomized_mse</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Print the best parameters and lowest RMSE</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Best parameters found: "</span><span class="p">,</span> <span class="n">randomized_mse</span><span class="o">.</span><span class="n">best_params_</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Lowest RMSE found: "</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">randomized_mse</span><span class="o">.</span><span class="n">best_score_</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting 4 folds for each of 5 candidates, totalling 20 fits
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=1)]: Using backend SequentialBackend with 1 concurrent workers.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Best parameters found:  {'n_estimators': 25, 'max_depth': 4}
+Lowest RMSE found:  29998.4522530019
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=1)]: Done  20 out of  20 | elapsed:    0.5s finished
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Limits-of-grid-search-and-random-search">
+<a class="anchor" href="#Limits-of-grid-search-and-random-search" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limits of grid search and random search<a class="anchor-link" href="#Limits-of-grid-search-and-random-search"> </a>
+</h2>
+<ul>
+<li>limitations<ul>
+<li>Grid Search<ul>
+<li>Number of models you must build with every additionary new parameter grows very quickly</li>
+</ul>
+</li>
+<li>Random Search<ul>
+<li>Parameter space to explore can be massive</li>
+<li>Randomly jumping throughtout the space looking for a "best" results becomes a waiting game</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine%20learning/2020/07/07/02-Fine-tuning-your-XGBoost-model.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
