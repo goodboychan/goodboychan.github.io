@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Creating Features | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Creating Features" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will explore what feature engineering is and how to get started with applying it to real-world data. You will load, explore and visualize a survey response dataset, and in doing so you will learn about its underlying data types and why they have an influence on how you should engineer your features. Using the pandas package you will create new features from both categorical and continuous columns. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will explore what feature engineering is and how to get started with applying it to real-world data. You will load, explore and visualize a survey response dataset, and in doing so you will learn about its underlying data types and why they have an influence on how you should engineer your features. Using the pandas package you will create new features from both categorical and continuous columns. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/12/01-Creating-Features.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/12/01-Creating-Features.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-12T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will explore what feature engineering is and how to get started with applying it to real-world data. You will load, explore and visualize a survey response dataset, and in doing so you will learn about its underlying data types and why they have an influence on how you should engineer your features. Using the pandas package you will create new features from both categorical and continuous columns. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Creating Features","dateModified":"2020-07-12T00:00:00-05:00","datePublished":"2020-07-12T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/12/01-Creating-Features.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/12/01-Creating-Features.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Creating Features | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Creating Features" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will explore what feature engineering is and how to get started with applying it to real-world data. You will load, explore and visualize a survey response dataset, and in doing so you will learn about its underlying data types and why they have an influence on how you should engineer your features. Using the pandas package you will create new features from both categorical and continuous columns. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will explore what feature engineering is and how to get started with applying it to real-world data. You will load, explore and visualize a survey response dataset, and in doing so you will learn about its underlying data types and why they have an influence on how you should engineer your features. Using the pandas package you will create new features from both categorical and continuous columns. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/12/01-Creating-Features.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/12/01-Creating-Features.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-12T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will explore what feature engineering is and how to get started with applying it to real-world data. You will load, explore and visualize a survey response dataset, and in doing so you will learn about its underlying data types and why they have an influence on how you should engineer your features. Using the pandas package you will create new features from both categorical and continuous columns. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Creating Features","dateModified":"2020-07-12T00:00:00-05:00","datePublished":"2020-07-12T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/12/01-Creating-Features.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine%20learning/2020/07/12/01-Creating-Features.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Creating Features</h1><p class="page-description">In this chapter, you will explore what feature engineering is and how to get started with applying it to real-world data. You will load, explore and visualize a survey response dataset, and in doing so you will learn about its underlying data types and why they have an influence on how you should engineer your features. Using the pandas package you will create new features from both categorical and continuous columns. This is the Summary of lecture "Feature Engineering for Machine Learning in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-12T00:00:00-05:00" itemprop="datePublished">
+        Jul 12, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine Learning">Machine Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-12-01-Creating-Features.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-12-01-Creating-Features.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-12-01-Creating-Features.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Why-generate-features?">Why generate features? </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Getting-to-know-your-data">Getting to know your data </a></li>
+<li class="toc-entry toc-h3"><a href="#Selecting-specific-data-types">Selecting specific data types </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Dealing-with-categorical-features">Dealing with categorical features </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#One-hot-encoding-and-dummy-variables">One-hot encoding and dummy variables </a></li>
+<li class="toc-entry toc-h3"><a href="#Dealing-with-uncommon-categories">Dealing with uncommon categories </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Numeric-variables">Numeric variables </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Binarizing-columns">Binarizing columns </a></li>
+<li class="toc-entry toc-h3"><a href="#Binning-values">Binning values </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-12-01-Creating-Features.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Why-generate-features?">
+<a class="anchor" href="#Why-generate-features?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why generate features?<a class="anchor-link" href="#Why-generate-features?"> </a>
+</h2>
+<ul>
+<li>Different types of data<ul>
+<li>Continuous: either integers (or whole numbers) or floats (decimals)</li>
+<li>Categorical: one of a limited set of values, e.g., gender, country of birth</li>
+<li>Ordinal: ranked values often with no details of distance between them</li>
+<li>Boolean: True/False values</li>
+<li>Datetime: dates and times</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Getting-to-know-your-data">
+<a class="anchor" href="#Getting-to-know-your-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting to know your data<a class="anchor-link" href="#Getting-to-know-your-data"> </a>
+</h3>
+<p>You will be working with a modified subset of the <a href="https://insights.stackoverflow.com/survey/2018/#overview">Stackoverflow survey response data</a> in the first three chapters of this course. This data set records the details, and preferences of thousands of users of the StackOverflow website.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import the data</span>
+<span class="n">so_survey_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/Combined_DS_v10.csv'</span><span class="p">)</span>
+
+<span class="c1"># Print the first five rows of the DataFrame</span>
+<span class="n">so_survey_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>SurveyDate</th>
+      <th>FormalEducation</th>
+      <th>ConvertedSalary</th>
+      <th>Hobby</th>
+      <th>Country</th>
+      <th>StackOverflowJobsRecommend</th>
+      <th>VersionControl</th>
+      <th>Age</th>
+      <th>Years Experience</th>
+      <th>Gender</th>
+      <th>RawSalary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2/28/18 20:20</td>
+      <td>Bachelor's degree (BA. BS. B.Eng.. etc.)</td>
+      <td>NaN</td>
+      <td>Yes</td>
+      <td>South Africa</td>
+      <td>NaN</td>
+      <td>Git</td>
+      <td>21</td>
+      <td>13</td>
+      <td>Male</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>6/28/18 13:26</td>
+      <td>Bachelor's degree (BA. BS. B.Eng.. etc.)</td>
+      <td>70841.0</td>
+      <td>Yes</td>
+      <td>Sweeden</td>
+      <td>7.0</td>
+      <td>Git;Subversion</td>
+      <td>38</td>
+      <td>9</td>
+      <td>Male</td>
+      <td>70,841.00</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>6/6/18 3:37</td>
+      <td>Bachelor's degree (BA. BS. B.Eng.. etc.)</td>
+      <td>NaN</td>
+      <td>No</td>
+      <td>Sweeden</td>
+      <td>8.0</td>
+      <td>Git</td>
+      <td>45</td>
+      <td>11</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>5/9/18 1:06</td>
+      <td>Some college/university study without earning ...</td>
+      <td>21426.0</td>
+      <td>Yes</td>
+      <td>Sweeden</td>
+      <td>NaN</td>
+      <td>Zip file back-ups</td>
+      <td>46</td>
+      <td>12</td>
+      <td>Male</td>
+      <td>21,426.00</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4/12/18 22:41</td>
+      <td>Bachelor's degree (BA. BS. B.Eng.. etc.)</td>
+      <td>41671.0</td>
+      <td>Yes</td>
+      <td>UK</td>
+      <td>8.0</td>
+      <td>Git</td>
+      <td>39</td>
+      <td>7</td>
+      <td>Male</td>
+      <td>£41,671.00</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the data type of each column</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">so_survey_df</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>SurveyDate                     object
+FormalEducation                object
+ConvertedSalary               float64
+Hobby                          object
+Country                        object
+StackOverflowJobsRecommend    float64
+VersionControl                 object
+Age                             int64
+Years Experience                int64
+Gender                         object
+RawSalary                      object
+dtype: object
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Selecting-specific-data-types">
+<a class="anchor" href="#Selecting-specific-data-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>Selecting specific data types<a class="anchor-link" href="#Selecting-specific-data-types"> </a>
+</h3>
+<p>Often a data set will contain columns with several different data types (like the one you are working with). The majority of machine learning models require you to have a consistent data type across features. Similarly, most feature engineering techniques are applicable to only one type of data at a time. For these reasons among others, you will often want to be able to access just the columns of certain types when working with a DataFrame.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create subset of only the numberic columns</span>
+<span class="n">so_numeric_df</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">'int'</span><span class="p">,</span> <span class="s1">'float'</span><span class="p">])</span>
+
+<span class="c1"># Print the column names contained in so_numeric_df</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">so_numeric_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Index(['ConvertedSalary', 'StackOverflowJobsRecommend'], dtype='object')
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Dealing-with-categorical-features">
+<a class="anchor" href="#Dealing-with-categorical-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dealing with categorical features<a class="anchor-link" href="#Dealing-with-categorical-features"> </a>
+</h2>
+<ul>
+<li>Encoding categorical features<ul>
+<li>One-hot encoding</li>
+<li>Dummy encoding</li>
+</ul>
+</li>
+<li>One-hot vs. dummies<ul>
+<li>One-hot encoding: Explainable features</li>
+<li>Dummy encoding: Necessary information without duplication</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="One-hot-encoding-and-dummy-variables">
+<a class="anchor" href="#One-hot-encoding-and-dummy-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>One-hot encoding and dummy variables<a class="anchor-link" href="#One-hot-encoding-and-dummy-variables"> </a>
+</h3>
+<p>To use categorical variables in a machine learning model, you first need to represent them in a quantitative way. The two most common approaches are to one-hot encode the variables using or to use dummy variables. In this exercise, you will create both types of encoding, and compare the created column sets.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert the Country column to a one hot encoded DataFrame</span>
+<span class="n">one_hot_encoded</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Country'</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">'OH'</span><span class="p">)</span>
+
+<span class="c1"># Print the columns names</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">one_hot_encoded</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Index(['SurveyDate', 'FormalEducation', 'ConvertedSalary', 'Hobby',
+       'StackOverflowJobsRecommend', 'VersionControl', 'Age',
+       'Years Experience', 'Gender', 'RawSalary', 'OH_France', 'OH_India',
+       'OH_Ireland', 'OH_Russia', 'OH_South Africa', 'OH_Spain', 'OH_Sweeden',
+       'OH_UK', 'OH_USA', 'OH_Ukraine'],
+      dtype='object')
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert the Country column to a one hot encoded DataFrame</span>
+<span class="n">dummy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Country'</span><span class="p">],</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">'DM'</span><span class="p">)</span>
+
+<span class="c1"># Print the columns names</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dummy</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Index(['SurveyDate', 'FormalEducation', 'ConvertedSalary', 'Hobby',
+       'StackOverflowJobsRecommend', 'VersionControl', 'Age',
+       'Years Experience', 'Gender', 'RawSalary', 'DM_India', 'DM_Ireland',
+       'DM_Russia', 'DM_South Africa', 'DM_Spain', 'DM_Sweeden', 'DM_UK',
+       'DM_USA', 'DM_Ukraine'],
+      dtype='object')
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dealing-with-uncommon-categories">
+<a class="anchor" href="#Dealing-with-uncommon-categories" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dealing with uncommon categories<a class="anchor-link" href="#Dealing-with-uncommon-categories"> </a>
+</h3>
+<p>Some features can have many different categories but a very uneven distribution of their occurrences. Take for example Data Science's favorite languages to code in, some common choices are Python, R, and Julia, but there can be individuals with bespoke choices, like FORTRAN, C etc. In these cases, you may not want to create a feature for each value, but only the more common occurrences.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a series out of the Country columns</span>
+<span class="n">countries</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="o">.</span><span class="n">Country</span>
+
+<span class="c1"># Get the counts of each category</span>
+<span class="n">country_counts</span> <span class="o">=</span> <span class="n">countries</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+<span class="c1"># Print the count values for each category</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">country_counts</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>South Africa    166
+USA             164
+Spain           134
+Sweeden         119
+France          115
+Russia           97
+India            95
+UK               95
+Ukraine           9
+Ireland           5
+Name: Country, dtype: int64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a mask for only categories that occur less than 10 times</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">countries</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">country_counts</span><span class="p">[</span><span class="n">country_counts</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+<span class="c1"># Print the top 5 rows in the mask series</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0    False
+1    False
+2    False
+3    False
+4    False
+Name: Country, dtype: bool
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Label all other categories as Other</span>
+<span class="n">countries</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Other'</span>
+
+<span class="c1"># Print the updated category counts</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">countries</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>South Africa    166
+USA             164
+Spain           134
+Sweeden         119
+France          115
+Russia           97
+India            95
+UK               95
+Other            14
+Name: Country, dtype: int64
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\Users\kcsgo\anaconda3\lib\site-packages\ipykernel_launcher.py:2: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Numeric-variables">
+<a class="anchor" href="#Numeric-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Numeric variables<a class="anchor-link" href="#Numeric-variables"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Binarizing-columns">
+<a class="anchor" href="#Binarizing-columns" aria-hidden="true"><span class="octicon octicon-link"></span></a>Binarizing columns<a class="anchor-link" href="#Binarizing-columns"> </a>
+</h3>
+<p>While numeric values can often be used without any feature engineering, there will be cases when some form of manipulation can be useful. For example on some occasions, you might not care about the magnitude of a value but only care about its direction, or if it exists at all. In these situations, you will want to binarize a column. In the <code>so_survey_df</code> data, you have a large number of survey respondents that are working voluntarily (without pay). You will create a new column titled <code>Paid_Job</code> indicating whether each person is paid (their salary is greater than zero).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create the Paid_Job column filled with zeros</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'Paid_Job'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># Replace all the Paid_Job values where ConvertedSalary is &gt; 0</span>
+<span class="n">so_survey_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'ConvertedSalary'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'Paid_Job'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Print the first five rows of the columns</span>
+<span class="n">so_survey_df</span><span class="p">[[</span><span class="s1">'Paid_Job'</span><span class="p">,</span> <span class="s1">'ConvertedSalary'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Paid_Job</th>
+      <th>ConvertedSalary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>70841.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>21426.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>41671.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Binning-values">
+<a class="anchor" href="#Binning-values" aria-hidden="true"><span class="octicon octicon-link"></span></a>Binning values<a class="anchor-link" href="#Binning-values"> </a>
+</h3>
+<p>For many continuous values you will care less about the exact value of a numeric column, but instead care about the bucket it falls into. This can be useful when plotting values, or simplifying your machine learning models. It is mostly used on continuous variables where accuracy is not the biggest concern e.g. age, height, wages.</p>
+<p>Bins are created using <code>pd.cut(df['column_name'], bins)</code> where <code>bins</code> can be an integer specifying the number of evenly spaced bins, or a list of bin boundaries.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Bin the continouos variable ConvertedSalary into 5 bins</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'equal_binned'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'ConvertedSalary'</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Print the first 5 rows of the equal_binned column</span>
+<span class="n">so_survey_df</span><span class="p">[[</span><span class="s1">'equal_binned'</span><span class="p">,</span> <span class="s1">'ConvertedSalary'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>equal_binned</th>
+      <th>ConvertedSalary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>(-2000.0, 400000.0]</td>
+      <td>70841.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>(-2000.0, 400000.0]</td>
+      <td>21426.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>(-2000.0, 400000.0]</td>
+      <td>41671.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Specify the boundaries of the bins</span>
+<span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">50000</span><span class="p">,</span> <span class="mi">100000</span><span class="p">,</span> <span class="mi">150000</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span>
+
+<span class="c1"># Bin labels</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Very low'</span><span class="p">,</span> <span class="s1">'Low'</span><span class="p">,</span> <span class="s1">'Medium'</span><span class="p">,</span> <span class="s1">'High'</span><span class="p">,</span> <span class="s1">'Very high'</span><span class="p">]</span>
+
+<span class="c1"># Bin the continous variable ConvertedSalary using these boundaries</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'boundary_binned'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'ConvertedSalary'</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+
+<span class="c1"># Print the first 5 rows of the boundary_binned column</span>
+<span class="n">so_survey_df</span><span class="p">[[</span><span class="s1">'boundary_binned'</span><span class="p">,</span> <span class="s1">'ConvertedSalary'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>boundary_binned</th>
+      <th>ConvertedSalary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Medium</td>
+      <td>70841.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Low</td>
+      <td>21426.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Low</td>
+      <td>41671.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine%20learning/2020/07/12/01-Creating-Features.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
