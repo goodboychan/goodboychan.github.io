@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Simple topic identification | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Simple topic identification" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter will introduce you to topic identification, which you can apply to any text you encounter in the wild. Using basic NLP models, you will identify topics from texts based on term frequencies. You’ll experiment and compare two simple methods - bag-of-words and Tf-idf using NLTK, and a new library Gensim. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<meta property="og:description" content="This chapter will introduce you to topic identification, which you can apply to any text you encounter in the wild. Using basic NLP models, you will identify topics from texts based on term frequencies. You’ll experiment and compare two simple methods - bag-of-words and Tf-idf using NLTK, and a new library Gensim. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/02-Simple-topic-identification.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/02-Simple-topic-identification.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-15T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter will introduce you to topic identification, which you can apply to any text you encounter in the wild. Using basic NLP models, you will identify topics from texts based on term frequencies. You’ll experiment and compare two simple methods - bag-of-words and Tf-idf using NLTK, and a new library Gensim. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp.","@type":"BlogPosting","headline":"Simple topic identification","dateModified":"2020-07-15T00:00:00-05:00","datePublished":"2020-07-15T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/02-Simple-topic-identification.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/02-Simple-topic-identification.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Simple topic identification | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Simple topic identification" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter will introduce you to topic identification, which you can apply to any text you encounter in the wild. Using basic NLP models, you will identify topics from texts based on term frequencies. You’ll experiment and compare two simple methods - bag-of-words and Tf-idf using NLTK, and a new library Gensim. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<meta property="og:description" content="This chapter will introduce you to topic identification, which you can apply to any text you encounter in the wild. Using basic NLP models, you will identify topics from texts based on term frequencies. You’ll experiment and compare two simple methods - bag-of-words and Tf-idf using NLTK, and a new library Gensim. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/02-Simple-topic-identification.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/02-Simple-topic-identification.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-15T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter will introduce you to topic identification, which you can apply to any text you encounter in the wild. Using basic NLP models, you will identify topics from texts based on term frequencies. You’ll experiment and compare two simple methods - bag-of-words and Tf-idf using NLTK, and a new library Gensim. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp.","@type":"BlogPosting","headline":"Simple topic identification","dateModified":"2020-07-15T00:00:00-05:00","datePublished":"2020-07-15T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/02-Simple-topic-identification.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/02-Simple-topic-identification.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Simple topic identification</h1><p class="page-description">This chapter will introduce you to topic identification, which you can apply to any text you encounter in the wild. Using basic NLP models, you will identify topics from texts based on term frequencies. You'll experiment and compare two simple methods - bag-of-words and Tf-idf using NLTK, and a new library Gensim. This is the Summary of lecture "Introduction to Natural Language Processing in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-15T00:00:00-05:00" itemprop="datePublished">
+        Jul 15, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Natural_Language_Processing">Natural_Language_Processing</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-15-02-Simple-topic-identification.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-15-02-Simple-topic-identification.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-15-02-Simple-topic-identification.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Word-counts-with-bag-of-words">Word counts with bag-of-words </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Bag-of-words-picker">Bag-of-words picker </a></li>
+<li class="toc-entry toc-h3"><a href="#Building-a-Counter-with-bag-of-words">Building a Counter with bag-of-words </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Simple-text-preprocessing">Simple text preprocessing </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Text-preprocessing-practice">Text preprocessing practice </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Introduction-to-gensim">Introduction to gensim </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Creating-and-querying-a-corpus-with-gensim">Creating and querying a corpus with gensim </a></li>
+<li class="toc-entry toc-h3"><a href="#Gensim-bag-of-words">Gensim bag-of-words </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Tf-idf-with-gensim">Tf-idf with gensim </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Tf-idf-with-Wikipedia">Tf-idf with Wikipedia </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-15-02-Simple-topic-identification.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Word-counts-with-bag-of-words">
+<a class="anchor" href="#Word-counts-with-bag-of-words" aria-hidden="true"><span class="octicon octicon-link"></span></a>Word counts with bag-of-words<a class="anchor-link" href="#Word-counts-with-bag-of-words"> </a>
+</h2>
+<ul>
+<li>Bag-of-words<ul>
+<li>Basic method for finding topics in a text</li>
+<li>Need to first create tokens using tokenization</li>
+<li>... and then count up all the tokens</li>
+<li>The more frequent a word, the more important it might be</li>
+<li>Can be a great way to determine the significant words in a text</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Bag-of-words-picker">
+<a class="anchor" href="#Bag-of-words-picker" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bag-of-words picker<a class="anchor-link" href="#Bag-of-words-picker"> </a>
+</h3>
+<p>It's time for a quick check on your understanding of bag-of-words.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">my_string</span> <span class="o">=</span> <span class="s2">"The cat is in the box. The cat box."</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="n">Counter</span><span class="p">(</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">my_string</span><span class="p">))</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">my_string</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[('The', 2),
+ ('cat', 2),
+ ('box', 2),
+ ('.', 2),
+ ('is', 1),
+ ('in', 1),
+ ('the', 1)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Building-a-Counter-with-bag-of-words">
+<a class="anchor" href="#Building-a-Counter-with-bag-of-words" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a Counter with bag-of-words<a class="anchor-link" href="#Building-a-Counter-with-bag-of-words"> </a>
+</h3>
+<p>In this exercise, you'll build your first (in this course) bag-of-words counter using a Wikipedia article, which has been pre-loaded as <code>article</code>. Try doing the bag-of-words without looking at the full article text, and guessing what the topic is! If you'd like to peek at the title at the end, we've included it as <code>article_title</code>. Note that this article text has had very little preprocessing from the raw Wikipedia database entry.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/wikipedia_articles/wiki_text_debugging.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">article_title</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">article</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Tokenize the aricle: tokens</span>
+<span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+
+<span class="c1"># Convert the tokens into lowercase: lower_tokens</span>
+<span class="n">lower_tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
+
+<span class="c1"># Create a Counter with the lowercase tokens: bow_simple</span>
+<span class="n">bow_simple</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">lower_tokens</span><span class="p">)</span>
+
+<span class="c1"># Print the 10 most common tokens</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">bow_simple</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[(',', 151),
+ ('the', 150),
+ ('.', 89),
+ ('of', 81),
+ ("''", 66),
+ ('to', 63),
+ ('a', 60),
+ ('``', 47),
+ ('in', 44),
+ ('and', 41)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simple-text-preprocessing">
+<a class="anchor" href="#Simple-text-preprocessing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple text preprocessing<a class="anchor-link" href="#Simple-text-preprocessing"> </a>
+</h2>
+<ul>
+<li>preprocessing<ul>
+<li>Helps make for better input data<ul>
+<li>When performing machine learning or other statistical methods</li>
+</ul>
+</li>
+<li>Examples<ul>
+<li>Tokenization to create a bag of words</li>
+<li>Lowercasing words</li>
+</ul>
+</li>
+<li>Lemmatization / Stemming<ul>
+<li>Shorten words to their root stems</li>
+</ul>
+</li>
+<li>Removing stop words, punctuation, or unwanted tokens</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Text-preprocessing-practice">
+<a class="anchor" href="#Text-preprocessing-practice" aria-hidden="true"><span class="octicon octicon-link"></span></a>Text preprocessing practice<a class="anchor-link" href="#Text-preprocessing-practice"> </a>
+</h3>
+<p>Now, it's your turn to apply the techniques you've learned to help clean up text for better NLP results. You'll need to remove stop words and non-alphabetic characters, lemmatize, and perform a new bag-of-words on your cleaned text.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>Before lemmatizing token through NLTK, you must install <code>wordnet</code> package
+</div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">nltk</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'wordnet'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[nltk_data] Downloading package wordnet to /home/chanseok/nltk_data...
+[nltk_data]   Package wordnet is already up-to-date!
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/english_stopwords.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">english_stops</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">nltk.stem</span> <span class="kn">import</span> <span class="n">WordNetLemmatizer</span>
+
+<span class="c1"># Retain alphabetic words: alpha_only</span>
+<span class="n">alpha_only</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">lower_tokens</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()]</span>
+
+<span class="c1"># Remove all stop words: no_stops</span>
+<span class="n">no_stops</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">alpha_only</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">english_stops</span><span class="p">]</span>
+
+<span class="c1"># Instantiate the WordNetLemmatizer</span>
+<span class="n">wordnet_lemmatizer</span> <span class="o">=</span> <span class="n">WordNetLemmatizer</span><span class="p">()</span>
+
+<span class="c1"># Lemmatize all tokens into a new list: lemmatized</span>
+<span class="n">lemmatized</span> <span class="o">=</span> <span class="p">[</span><span class="n">wordnet_lemmatizer</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">no_stops</span><span class="p">]</span>
+
+<span class="c1"># Create the bag-of-words: bow</span>
+<span class="n">bow</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">lemmatized</span><span class="p">)</span>
+
+<span class="c1"># Print the 10 most common tokens</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">bow</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[('debugging', 40),
+ ('system', 25),
+ ('bug', 17),
+ ('software', 16),
+ ('problem', 15),
+ ('tool', 15),
+ ('computer', 14),
+ ('process', 13),
+ ('term', 13),
+ ('debugger', 13)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introduction-to-gensim">
+<a class="anchor" href="#Introduction-to-gensim" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction to gensim<a class="anchor-link" href="#Introduction-to-gensim"> </a>
+</h2>
+<ul>
+<li>gensim<ul>
+<li>Popular open-source NLP library</li>
+<li>Uses top academic models to perform complex tasks<ul>
+<li>Building document or word vectors</li>
+<li>Performing topic identification and document comparison</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Creating-and-querying-a-corpus-with-gensim">
+<a class="anchor" href="#Creating-and-querying-a-corpus-with-gensim" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating and querying a corpus with gensim<a class="anchor-link" href="#Creating-and-querying-a-corpus-with-gensim"> </a>
+</h3>
+<p>It's time to apply the methods you learned in the previous video to create your first <code>gensim</code> dictionary and corpus!</p>
+<p>You'll use these data structures to investigate word trends and potential interesting topics in your document set. To get started, we have imported a few additional messy articles from Wikipedia, which were preprocessed by lowercasing all words, tokenizing them, and removing stop words and punctuation. These were then stored in a list of document tokens called <code>articles</code>. You'll need to do some light preprocessing and then generate the <code>gensim</code> dictionary and corpus.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
+
+<span class="n">path_list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'dataset/wikipedia_articles/*.txt'</span><span class="p">)</span>
+<span class="n">articles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">article_path</span> <span class="ow">in</span> <span class="n">path_list</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">article_path</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">lower_tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
+    
+    <span class="c1"># Retain alphabetic words: alpha_only</span>
+    <span class="n">alpha_only</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">lower_tokens</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()]</span>
+
+    <span class="c1"># Remove all stop words: no_stops</span>
+    <span class="n">no_stops</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">alpha_only</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">english_stops</span><span class="p">]</span>
+    <span class="n">articles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">no_stops</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">gensim.corpora.dictionary</span> <span class="kn">import</span> <span class="n">Dictionary</span>
+
+<span class="c1"># Create a Dictionary from the articles: dictionary</span>
+<span class="n">dictionary</span> <span class="o">=</span> <span class="n">Dictionary</span><span class="p">(</span><span class="n">articles</span><span class="p">)</span>
+
+<span class="c1"># Select the id for "computer": computer_id</span>
+<span class="n">computer_id</span> <span class="o">=</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">token2id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"computer"</span><span class="p">)</span>
+
+<span class="c1"># Use computer_id with the dictionary to print the word</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dictionary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">computer_id</span><span class="p">))</span>
+
+<span class="c1"># Create a MmCorpus: corpus</span>
+<span class="n">corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">dictionary</span><span class="o">.</span><span class="n">doc2bow</span><span class="p">(</span><span class="n">article</span><span class="p">)</span> <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">]</span>
+
+<span class="c1"># Print the first 10 word ids with their frequency counts from the fifth document</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">corpus</span><span class="p">[</span><span class="mi">4</span><span class="p">][:</span><span class="mi">10</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>computer
+[(0, 1), (1, 1), (3, 4), (4, 1), (5, 2), (8, 2), (13, 2), (20, 1), (21, 1), (22, 1)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Gensim-bag-of-words">
+<a class="anchor" href="#Gensim-bag-of-words" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gensim bag-of-words<a class="anchor-link" href="#Gensim-bag-of-words"> </a>
+</h3>
+<p>Now, you'll use your new gensim corpus and dictionary to see the most common terms per document and across all documents. You can use your dictionary to look up the terms. Take a guess at what the topics are and feel free to explore more documents in the IPython Shell!</p>
+<p>You have access to the <code>dictionary</code> and <code>corpus</code> objects you created in the previous exercise, as well as the Python <code>defaultdict</code> and <code>itertools</code> to help with the creation of intermediate data structures for analysis.</p>
+<ul>
+<li>
+<p><code>defaultdict</code> allows us to initialize a dictionary that will assign a default value to non-existent keys. By supplying the argument <code>int</code>, we are able to ensure that any non-existent keys are automatically assigned a default value of 0. This makes it ideal for storing the counts of words in this exercise.</p>
+</li>
+<li>
+<p><code>itertools.chain.from_iterable()</code> allows us to iterate through a set of sequences as if they were one continuous sequence. Using this function, we can easily iterate through our <code>corpus</code> object (which is a list of lists).</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="c1"># Save the fifth document: doc</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">corpus</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="c1"># Sort the doc for frequency: bow_doc</span>
+<span class="n">bow_doc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Print the top 5 words of the document alongside the count</span>
+<span class="k">for</span> <span class="n">word_id</span><span class="p">,</span> <span class="n">word_count</span> <span class="ow">in</span> <span class="n">bow_doc</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dictionary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">word_id</span><span class="p">),</span> <span class="n">word_count</span><span class="p">)</span>
+    
+<span class="c1"># Create the defaultdict: total_word_count</span>
+<span class="n">total_word_count</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">word_id</span><span class="p">,</span> <span class="n">word_count</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">corpus</span><span class="p">):</span>
+    <span class="n">total_word_count</span><span class="p">[</span><span class="n">word_id</span><span class="p">]</span> <span class="o">+=</span> <span class="n">word_count</span>
+    
+<span class="c1"># Create a sorted list from the defaultdict: sorted_word_count</span>
+<span class="n">sorted_word_count</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">total_word_count</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Print the top 5 words across all documents alongside the count</span>
+<span class="k">for</span> <span class="n">word_id</span><span class="p">,</span> <span class="n">word_count</span> <span class="ow">in</span> <span class="n">sorted_word_count</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dictionary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">word_id</span><span class="p">),</span> <span class="n">word_count</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>engineering 91
+reverse 73
+software 51
+cite 26
+computer 22
+computer 597
+software 450
+cite 322
+ref 259
+code 235
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tf-idf-with-gensim">
+<a class="anchor" href="#Tf-idf-with-gensim" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tf-idf with gensim<a class="anchor-link" href="#Tf-idf-with-gensim"> </a>
+</h2>
+<ul>
+<li>TF-IDF<ul>
+<li>Term Frequency - Inverse Document Frequency</li>
+<li>Allows you to determine the most important words in each document</li>
+<li>Each corpus may have shared words beyond just stop words</li>
+<li>These words should be down-weighted in importance</li>
+<li>Ensures most common words don't show up as key words</li>
+<li>Keeps document specific frequent words wieghted high</li>
+</ul>
+</li>
+<li>Formula</li>
+</ul>
+<p>
+$$ w_{i, j} = \text{tf}_{i, j} * \log (\frac{N}{\text{df}_i}) $$
+</p>
+<ul>
+<li>$ w_{i, j}=$ tf-idf for token $i$ in document $j$</li>
+<li>$ \text{tf}_{i, j} =$ number of occurences of token $i$ in document $j$</li>
+<li>$ \text{df}_{i} =$ number of documents that contain token $i$</li>
+<li>$ N =$ total number of documents</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Tf-idf-with-Wikipedia">
+<a class="anchor" href="#Tf-idf-with-Wikipedia" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tf-idf with Wikipedia<a class="anchor-link" href="#Tf-idf-with-Wikipedia"> </a>
+</h3>
+<p>Now it's your turn to determine new significant terms for your corpus by applying <code>gensim</code>'s tf-idf. You will again have access to the same corpus and dictionary objects you created in the previous exercises - <code>dictionary</code>, <code>corpus</code>, and <code>doc</code>. Will tf-idf make for more interesting results on the document level?</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">gensim.models.tfidfmodel</span> <span class="kn">import</span> <span class="n">TfidfModel</span>
+
+<span class="c1"># Create a new TfidfModel using the corpus: tfidf</span>
+<span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfModel</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+
+<span class="c1"># Calculate the tfidf weights of doc: tfidf_weights</span>
+<span class="n">tfidf_weights</span> <span class="o">=</span> <span class="n">tfidf</span><span class="p">[</span><span class="n">doc</span><span class="p">]</span>
+
+<span class="c1"># Print the first five weights</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tfidf_weights</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[(0, 0.005989539479861883), (1, 0.004742182360351364), (3, 0.023958157919447533), (4, 0.005989539479861883), (5, 0.015032362425476509)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Sort the weights from highest to lowest: sorted_tfidf_weights</span>
+<span class="n">sorted_tfidf_weights</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tfidf_weights</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Print the top 5 weighted words</span>
+<span class="k">for</span> <span class="n">term_id</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">sorted_tfidf_weights</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dictionary</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">term_id</span><span class="p">),</span> <span class="n">weight</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>reverse 0.5486812285298925
+infringement 0.20400655120129182
+engineering 0.17910469922476718
+interoperability 0.13600436746752786
+missile 0.11900382153408688
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/02-Simple-topic-identification.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
