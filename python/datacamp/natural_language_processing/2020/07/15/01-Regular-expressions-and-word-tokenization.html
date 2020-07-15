@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Regular expressions and word tokenization | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Regular expressions and word tokenization" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter will introduce some basic NLP concepts, such as word tokenization and regular expressions to help parse text. You’ll also learn how to handle non-English text and more difficult tokenization you might find. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<meta property="og:description" content="This chapter will introduce some basic NLP concepts, such as word tokenization and regular expressions to help parse text. You’ll also learn how to handle non-English text and more difficult tokenization you might find. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/01-Regular-expressions-and-word-tokenization.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/01-Regular-expressions-and-word-tokenization.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/line_num_words.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-15T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter will introduce some basic NLP concepts, such as word tokenization and regular expressions to help parse text. You’ll also learn how to handle non-English text and more difficult tokenization you might find. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp.","@type":"BlogPosting","headline":"Regular expressions and word tokenization","dateModified":"2020-07-15T00:00:00-05:00","datePublished":"2020-07-15T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/line_num_words.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/01-Regular-expressions-and-word-tokenization.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/01-Regular-expressions-and-word-tokenization.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Regular expressions and word tokenization | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Regular expressions and word tokenization" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter will introduce some basic NLP concepts, such as word tokenization and regular expressions to help parse text. You’ll also learn how to handle non-English text and more difficult tokenization you might find. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<meta property="og:description" content="This chapter will introduce some basic NLP concepts, such as word tokenization and regular expressions to help parse text. You’ll also learn how to handle non-English text and more difficult tokenization you might find. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/01-Regular-expressions-and-word-tokenization.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/01-Regular-expressions-and-word-tokenization.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/line_num_words.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-15T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter will introduce some basic NLP concepts, such as word tokenization and regular expressions to help parse text. You’ll also learn how to handle non-English text and more difficult tokenization you might find. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp.","@type":"BlogPosting","headline":"Regular expressions and word tokenization","dateModified":"2020-07-15T00:00:00-05:00","datePublished":"2020-07-15T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/line_num_words.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/01-Regular-expressions-and-word-tokenization.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/01-Regular-expressions-and-word-tokenization.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Regular expressions and word tokenization</h1><p class="page-description">This chapter will introduce some basic NLP concepts, such as word tokenization and regular expressions to help parse text. You'll also learn how to handle non-English text and more difficult tokenization you might find. This is the Summary of lecture "Introduction to Natural Language Processing in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-15T00:00:00-05:00" itemprop="datePublished">
+        Jul 15, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      11 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Natural_Language_Processing">Natural_Language_Processing</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-15-01-Regular-expressions-and-word-tokenization.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-15-01-Regular-expressions-and-word-tokenization.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-15-01-Regular-expressions-and-word-tokenization.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Introduction-to-regular-expressions">Introduction to regular expressions </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Practicing-regular-expressions---re.split()-and-re.findall()">Practicing regular expressions - re.split() and re.findall() </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Introduction-to-tokenization">Introduction to tokenization </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Word-tokenization-with-NLTK">Word tokenization with NLTK </a></li>
+<li class="toc-entry toc-h3"><a href="#More-regex-with-re.search()">More regex with re.search() </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Advanced-tokenization-with-NLTK-and-regex">Advanced tokenization with NLTK and regex </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Choosing-a-tokenizer">Choosing a tokenizer </a></li>
+<li class="toc-entry toc-h3"><a href="#Regex-with-NLTK-tokenization">Regex with NLTK tokenization </a></li>
+<li class="toc-entry toc-h3"><a href="#Non-ascii-tokenization">Non-ascii tokenization </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Charting-word-length-with-NLTK">Charting word length with NLTK </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Charting-practice">Charting practice </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-15-01-Regular-expressions-and-word-tokenization.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introduction-to-regular-expressions">
+<a class="anchor" href="#Introduction-to-regular-expressions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction to regular expressions<a class="anchor-link" href="#Introduction-to-regular-expressions"> </a>
+</h2>
+<ul>
+<li>Regular expressions<ul>
+<li>Strings with a special syntax</li>
+<li>Allow us to match patterns in other strings</li>
+<li>Applications of regular expressions<ul>
+<li>Find all web links in a document</li>
+<li>Parse email addresses, remove/replace unwanted characters</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Common Regex patterns</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>pattern</th>
+<th>matches</th>
+<th>examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>\w+</td>
+<td>word</td>
+<td>'Magic'</td>
+</tr>
+<tr>
+<td>\d</td>
+<td>digit</td>
+<td>9</td>
+</tr>
+<tr>
+<td>\s</td>
+<td>space</td>
+<td>''</td>
+</tr>
+<tr>
+<td>.*</td>
+<td>wildcard</td>
+<td>'username74'</td>
+</tr>
+<tr>
+<td>+ or *</td>
+<td>greedy match</td>
+<td>'aaaaaaa'</td>
+</tr>
+<tr>
+<td>\S</td>
+<td>not space</td>
+<td>'no_spaces'</td>
+</tr>
+<tr>
+<td>[a-z]</td>
+<td>lowercase group</td>
+<td>'abcdfg'</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Python's re Module<ul>
+<li>
+<code>split</code>: split a string on regex</li>
+<li>
+<code>findall</code>: find all patterns in a string</li>
+<li>
+<code>search</code>: search for a pattern</li>
+<li>
+<code>match</code>: match an entire string or substring based on a pattern</li>
+<li>Pattern first, and the string second</li>
+<li>May return an iterator, string, or match object</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">my_string</span> <span class="o">=</span> <span class="s2">"Let's write RegEx!"</span>
+<span class="n">PATTERN</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"\w+"</span>
+<span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">PATTERN</span><span class="p">,</span> <span class="n">my_string</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>['Let', 's', 'write', 'RegEx']</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Practicing-regular-expressions---re.split()-and-re.findall()">
+<a class="anchor" href="#Practicing-regular-expressions---re.split()-and-re.findall()" aria-hidden="true"><span class="octicon octicon-link"></span></a>Practicing regular expressions - re.split() and re.findall()<a class="anchor-link" href="#Practicing-regular-expressions---re.split()-and-re.findall()"> </a>
+</h3>
+<p>Now you'll get a chance to write some regular expressions to match digits, strings and non-alphanumeric characters. Take a look at <code>my_string</code> first by printing it in the IPython Shell, to determine how you might best match the different steps.</p>
+<p>Note: It's important to prefix your regex patterns with <code>r</code> to ensure that your patterns are interpreted in the way you want them to. Else, you may encounter problems to do with escape sequences in strings. For example, <code>"\n"</code> in Python is used to indicate a new line, but if you use the <code>r</code> prefix, it will be interpreted as the raw string <code>"\n"</code> - that is, the character <code>"\"</code> followed by the character <code>"n"</code> - and not as a new line.</p>
+<p>Remember from the video that the syntax for the regex library is to always to pass the <strong>pattern first</strong>, and then the <strong>string second</strong>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">my_string</span> <span class="o">=</span> <span class="s2">"Let's write RegEx!  Won't that be fun?  I sure think so.  Can you find 4 sentences?  Or perhaps, all 19 words?"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Write a pattern to match sentence endings: sentence_endings</span>
+<span class="n">sentence_endings</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"[.?!]"</span>
+
+<span class="c1"># Split my_string on sentence endings and print the result</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sentence_endings</span><span class="p">,</span> <span class="n">my_string</span><span class="p">))</span>
+
+<span class="c1"># Find all capicalized words in my_string and print the result</span>
+<span class="n">capitalized_words</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"[A-Z]\w+"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">capitalized_words</span><span class="p">,</span> <span class="n">my_string</span><span class="p">))</span>
+
+<span class="c1"># Split my_string on spaces and print the result</span>
+<span class="n">spaces</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"\s+"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">my_string</span><span class="p">))</span>
+
+<span class="c1"># Find all digits in my_string and print the result</span>
+<span class="n">digits</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"\d+"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span> <span class="n">my_string</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>["Let's write RegEx", "  Won't that be fun", '  I sure think so', '  Can you find 4 sentences', '  Or perhaps, all 19 words', '']
+['Let', 'RegEx', 'Won', 'Can', 'Or']
+["Let's", 'write', 'RegEx!', "Won't", 'that', 'be', 'fun?', 'I', 'sure', 'think', 'so.', 'Can', 'you', 'find', '4', 'sentences?', 'Or', 'perhaps,', 'all', '19', 'words?']
+['4', '19']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introduction-to-tokenization">
+<a class="anchor" href="#Introduction-to-tokenization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction to tokenization<a class="anchor-link" href="#Introduction-to-tokenization"> </a>
+</h2>
+<ul>
+<li>Tokenization<ul>
+<li>Turning a string or document into <strong>tokens</strong> (smaller chunks)</li>
+<li>One step in preparing a text for NLP</li>
+<li>Many different theories and rules</li>
+<li>You can create your own rules using regular expressions</li>
+<li>Some examples:<ul>
+<li>Breaking out words or sentences</li>
+<li>Separating punctuation</li>
+<li>Separating all hashtags in a tweet</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Why tokenize?<ul>
+<li>Easier to map part of speech</li>
+<li>Matching common words</li>
+<li>Removing unwanted tokens</li>
+</ul>
+</li>
+<li>Other <code>nltk</code> tokenizers<ul>
+<li>
+<code>sent_tokenize</code>: tokenize a document into sentences</li>
+<li>
+<code>regexp_tokenize</code>: tokenize a string or document based on a regular expression pattern</li>
+<li>
+<code>TweetTokenizer</code>: special class just for tweet tokenization, allowing you to separate hashtags, mentions and lots of exclamation points</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Word-tokenization-with-NLTK">
+<a class="anchor" href="#Word-tokenization-with-NLTK" aria-hidden="true"><span class="octicon octicon-link"></span></a>Word tokenization with NLTK<a class="anchor-link" href="#Word-tokenization-with-NLTK"> </a>
+</h3>
+<p>Here, you'll be using the first scene of Monty Python's Holy Grail, which has been pre-loaded as <code>scene_one</code>.</p>
+<p>Your job in this exercise is to utilize <code>word_tokenize</code> and <code>sent_tokenize</code> from <code>nltk.tokenize</code> to tokenize both words and sentences from Python strings - in this case, the first scene of Monty Python's Holy Grail.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>Before using NLTK, you must install <code>punkt</code> package for tokenizer
+</div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/grail.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">holy_grail</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">scene_one</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'SCENE 2:'</span><span class="p">,</span> <span class="n">holy_grail</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scene_one</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>"SCENE 1: [wind] [clop clop clop] \nKING ARTHUR: Whoa there!  [clop clop clop] \nSOLDIER #1: Halt!  Who goes there?\nARTHUR: It is I, Arthur, son of Uther Pendragon, from the castle of Camelot.  King of the Britons, defeator of the Saxons, sovereign of all England!\nSOLDIER #1: Pull the other one!\nARTHUR: I am, ...  and this is my trusty servant Patsy.  We have ridden the length and breadth of the land in search of knights who will join me in my court at Camelot.  I must speak with your lord and master.\nSOLDIER #1: What?  Ridden on a horse?\nARTHUR: Yes!\nSOLDIER #1: You're using coconuts!\nARTHUR: What?\nSOLDIER #1: You've got two empty halves of coconut and you're bangin' 'em together.\nARTHUR: So?  We have ridden since the snows of winter covered this land, through the kingdom of Mercea, through--\nSOLDIER #1: Where'd you get the coconuts?\nARTHUR: We found them.\nSOLDIER #1: Found them?  In Mercea?  The coconut's tropical!\nARTHUR: What do you mean?\nSOLDIER #1: Well, this is a temperate zone.\nARTHUR: The swallow may fly south with the sun or the house martin or the plover may seek warmer climes in winter, yet these are not strangers to our land?\nSOLDIER #1: Are you suggesting coconuts migrate?\nARTHUR: Not at all.  They could be carried.\nSOLDIER #1: What?  A swallow carrying a coconut?\nARTHUR: It could grip it by the husk!\nSOLDIER #1: It's not a question of where he grips it!  It's a simple question of weight ratios!  A five ounce bird could not carry a one pound coconut.\nARTHUR: Well, it doesn't matter.  Will you go and tell your master that Arthur from the Court of Camelot is here.\nSOLDIER #1: Listen.  In order to maintain air-speed velocity, a swallow needs to beat its wings forty-three times every second, right?\nARTHUR: Please!\nSOLDIER #1: Am I right?\nARTHUR: I'm not interested!\nSOLDIER #2: It could be carried by an African swallow!\nSOLDIER #1: Oh, yeah, an African swallow maybe, but not a European swallow.  That's my point.\nSOLDIER #2: Oh, yeah, I agree with that.\nARTHUR: Will you ask your master if he wants to join my court at Camelot?!\nSOLDIER #1: But then of course a-- African swallows are non-migratory.\nSOLDIER #2: Oh, yeah...\nSOLDIER #1: So they couldn't bring a coconut back anyway...  [clop clop clop] \nSOLDIER #2: Wait a minute!  Supposing two swallows carried it together?\nSOLDIER #1: No, they'd have to have it on a line.\nSOLDIER #2: Well, simple!  They'd just use a strand of creeper!\nSOLDIER #1: What, held under the dorsal guiding feathers?\nSOLDIER #2: Well, why not?\n"</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span><span class="p">,</span> <span class="n">sent_tokenize</span>
+
+<span class="c1"># Split scene_one into sentences: sentences</span>
+<span class="n">sentences</span> <span class="o">=</span> <span class="n">sent_tokenize</span><span class="p">(</span><span class="n">scene_one</span><span class="p">)</span>
+
+<span class="c1"># Use word_tokenize to tokenize the fourth sentence: tokenized_sent</span>
+<span class="n">tokenized_sent</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">sentences</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+<span class="c1"># Make a set of unique tokens in the entire scene: unique_tokens</span>
+<span class="n">unique_tokens</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">scene_one</span><span class="p">))</span>
+
+<span class="c1"># Print the unique tokens result</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">unique_tokens</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{'lord', 'bangin', 'strangers', 'swallows', 'them', 'right', 'KING', '!', 'goes', 'Ridden', 'Yes', 'snows', 'I', 'weight', 'matter', 'yeah', 'they', 'Supposing', 'where', 'all', "'s", 'simple', 'So', 'seek', 'line', 'who', 'swallow', 'beat', 'land', 'with', 'Mercea', 'from', 'get', 'No', 'one', 'second', 'sovereign', 'temperate', 'Oh', 'to', 'Camelot', ']', '1', 'bird', 'tell', 'an', 'are', 'our', 'servant', 'interested', '2', 'Patsy', 'am', "n't", 'got', 'must', 'England', 'Court', 'if', 'feathers', 'anyway', 'carrying', 'use', 'does', 'climes', 'back', 'carried', 'Wait', 'air-speed', 'velocity', '#', 'pound', 'on', "'d", 'found', 'European', 'of', 'every', 'ARTHUR', 'your', 'horse', 'these', 'not', 'that', 'You', 'since', 'times', 'agree', 'winter', 'yet', 'breadth', 'speak', 'carry', 'Well', 'wings', 'King', 'Listen', 'martin', 'kingdom', 'maybe', 'there', 'ask', 'master', 'creeper', 'will', 'maintain', 'ridden', 'here', 'then', 'the', 'Please', 'through', 'together', 'why', 'using', 'a', 'non-migratory', 'clop', 'grips', 'have', 'SOLDIER', 'you', "'", 'plover', ',', 'Saxons', 'just', 'question', 'may', 'two', 'south', 'join', 'mean', 'They', 'strand', 'Halt', 'this', 'What', 'son', '[', 'search', 'bring', 'Not', 'house', 'forty-three', 'minute', 'guiding', 'other', 'wind', "'em", 'Pendragon', 'five', 'by', 'Uther', 'castle', 'order', 'is', 'but', ':', 'wants', 'under', 'Are', 'knights', 'held', 'Am', "'m", 'he', 'That', 'Arthur', 'at', 'zone', 'my', 'covered', 'It', 'We', 'coconuts', 'coconut', 'Found', 'African', 'Will', 'Whoa', 'Pull', 'trusty', 'grip', 'sun', 'Who', 'halves', 'defeator', 'and', '?', 'me', 'The', 'it', 'ounce', 'course', 'dorsal', 'its', 'point', 'But', 'husk', 'in', '...', 'court', 'empty', 'A', 'length', '--', 'go', 'migrate', 'or', 'suggesting', 'Britons', 'tropical', 'be', "'re", 'Where', '.', 'do', 'fly', 'ratios', 'SCENE', 'warmer', 'In', 'could', "'ve", 'needs'}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="More-regex-with-re.search()">
+<a class="anchor" href="#More-regex-with-re.search()" aria-hidden="true"><span class="octicon octicon-link"></span></a>More regex with re.search()<a class="anchor-link" href="#More-regex-with-re.search()"> </a>
+</h3>
+<p>In this exercise, you'll utilize <code>re.search()</code> and <code>re.match()</code> to find specific tokens. Both search and match expect regex patterns, similar to those you defined in an earlier exercise. You'll apply these regex library methods to the same Monty Python text from the <code>nltk</code> corpora.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Search for the first occurrence of "coconuts" in scene_one: match</span>
+<span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"coconuts"</span><span class="p">,</span> <span class="n">scene_one</span><span class="p">)</span>
+
+<span class="c1"># Print the start and end indexes of match</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">(),</span> <span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>580 588
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Write a regular expression to search for anything in square brackets: pattern1</span>
+<span class="n">pattern1</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"\[.*\]"</span>
+
+<span class="c1"># Use re.search to find the first text in square brackets</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern1</span><span class="p">,</span> <span class="n">scene_one</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;re.Match object; span=(9, 32), match='[wind] [clop clop clop]'&gt;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Find the script notation at the beginning of the fourth sentence and print it</span>
+<span class="n">pattern2</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"[\w\s]+:"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern2</span><span class="p">,</span> <span class="n">sentences</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;re.Match object; span=(0, 7), match='ARTHUR:'&gt;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Advanced-tokenization-with-NLTK-and-regex">
+<a class="anchor" href="#Advanced-tokenization-with-NLTK-and-regex" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced tokenization with NLTK and regex<a class="anchor-link" href="#Advanced-tokenization-with-NLTK-and-regex"> </a>
+</h2>
+<ul>
+<li>Regex groups using or <code>|</code><ul>
+<li>OR is represented using <code>|</code>
+</li>
+<li>You can define a group using <code>()</code>
+</li>
+<li>You can define explicit character ranges using <code>[]</code>
+</li>
+</ul>
+</li>
+<li>Regex ranges and groups</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>pattern</th>
+<th>matches</th>
+<th>example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[A-Za-z]+</td>
+<td>upper and lowercase English alphabet</td>
+<td>'ABCDEFghijk'</td>
+</tr>
+<tr>
+<td>[0-9]</td>
+<td>numbers from 0 to 9</td>
+<td>9</td>
+</tr>
+<tr>
+<td>[A-Za-z-.]+</td>
+<td>upper and lowercase English alphabet, - and .</td>
+<td>'My-Website.com'</td>
+</tr>
+<tr>
+<td>(a-z)</td>
+<td>a, - and z</td>
+<td>'a-z'</td>
+</tr>
+<tr>
+<td>(\s+</td>
+<td>,)</td>
+<td>spaces or a comma</td>
+<td>', '</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Choosing-a-tokenizer">
+<a class="anchor" href="#Choosing-a-tokenizer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Choosing a tokenizer<a class="anchor-link" href="#Choosing-a-tokenizer"> </a>
+</h3>
+<p>Given the following string, which of the below patterns is the best tokenizer? If possible, you want to retain sentence punctuation as separate tokens, but have <code>'#1'</code> remain a single token.</p>
+<div class="highlight"><pre><span></span><span class="n">my_string</span> <span class="o">=</span> <span class="s2">"SOLDIER #1: Found them? In Mercea? The coconut's tropical!"</span>
+</pre></div>
+<p>Additionally, <code>regexp_tokenize</code> has been imported from <code>nltk.tokenize</code>. You can use <code>regexp_tokenize(string, pattern)</code> with <code>my_string</code> and one of the patterns as arguments to experiment for yourself and see which is the best tokenizer.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">regexp_tokenize</span>
+
+<span class="n">my_string</span> <span class="o">=</span> <span class="s2">"SOLDIER #1: Found them? In Mercea? The coconut's tropical!"</span>
+
+<span class="n">pattern1</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'(</span><span class="se">\\</span><span class="s1">w+|</span><span class="se">\\</span><span class="s1">?|!)'</span>
+<span class="n">pattern2</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"(\w+|#\d|\?|!)"</span>
+<span class="n">pattern3</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'(#</span><span class="se">\\</span><span class="s1">d</span><span class="se">\\</span><span class="s1">w+</span><span class="se">\\</span><span class="s1">?!)'</span>
+<span class="n">pattern4</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">'</span><span class="se">\\</span><span class="s1">s+'</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">regexp_tokenize</span><span class="p">(</span><span class="n">my_string</span><span class="p">,</span> <span class="n">pattern2</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['SOLDIER',
+ '#1',
+ 'Found',
+ 'them',
+ '?',
+ 'In',
+ 'Mercea',
+ '?',
+ 'The',
+ 'coconut',
+ 's',
+ 'tropical',
+ '!']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Regex-with-NLTK-tokenization">
+<a class="anchor" href="#Regex-with-NLTK-tokenization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Regex with NLTK tokenization<a class="anchor-link" href="#Regex-with-NLTK-tokenization"> </a>
+</h3>
+<p>Twitter is a frequently used source for NLP text and tasks. In this exercise, you'll build a more complex tokenizer for tweets with hashtags and mentions using nltk and regex. The <code>nltk.tokenize.TweetTokenizer</code> class gives you some extra methods and attributes for parsing tweets.</p>
+<p>Here, you're given some example tweets to parse using both <code>TweetTokenizer</code> and <code>regexp_tokenize</code> from the <code>nltk.tokenize</code> module.</p>
+<p>Unlike the syntax for the regex library, with <code>nltk_tokenize()</code> you pass the pattern as the second argument.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tweets</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'This is the best #nlp exercise ive found online! #python'</span><span class="p">,</span>
+ <span class="s1">'#NLP is super fun! &lt;3 #learning'</span><span class="p">,</span>
+ <span class="s1">'Thanks @datacamp :) #nlp #python'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">regexp_tokenize</span><span class="p">,</span> <span class="n">TweetTokenizer</span>
+
+<span class="c1"># Define a regex pattern to find hashtags: pattern1</span>
+<span class="n">pattern1</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"#\w+"</span>
+
+<span class="c1"># Use the pattern on the first tweet in the tweets list</span>
+<span class="n">hashtags</span> <span class="o">=</span> <span class="n">regexp_tokenize</span><span class="p">(</span><span class="n">tweets</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pattern1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hashtags</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['#nlp', '#python']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># write a pattern that matches both mentions (@) and hashtags</span>
+<span class="n">pattern2</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"[@|#]\w+"</span>
+
+<span class="c1"># Use the pattern on the last tweet in the tweets list</span>
+<span class="n">mentions_hashtags</span> <span class="o">=</span> <span class="n">regexp_tokenize</span><span class="p">(</span><span class="n">tweets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">pattern2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mentions_hashtags</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['@datacamp', '#nlp', '#python']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Use the TweetTokenizer to tokenize all tweets into one list</span>
+<span class="n">tknzr</span> <span class="o">=</span> <span class="n">TweetTokenizer</span><span class="p">()</span>
+<span class="n">all_tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">tknzr</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tweets</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">all_tokens</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[['This', 'is', 'the', 'best', '#nlp', 'exercise', 'ive', 'found', 'online', '!', '#python'], ['#NLP', 'is', 'super', 'fun', '!', '&lt;3', '#learning'], ['Thanks', '@datacamp', ':)', '#nlp', '#python']]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Non-ascii-tokenization">
+<a class="anchor" href="#Non-ascii-tokenization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Non-ascii tokenization<a class="anchor-link" href="#Non-ascii-tokenization"> </a>
+</h3>
+<p>In this exercise, you'll practice advanced tokenization by tokenizing some non-ascii based text. You'll be using German with emoji!</p>
+<p>Here, you have access to a string called <code>german_text</code>, which has been printed for you in the Shell. Notice the emoji and the German characters!</p>
+<p>Unicode ranges for emoji are:</p>
+<p><code>('\U0001F300'-'\U0001F5FF')</code>, <code>('\U0001F600-\U0001F64F')</code>, <code>('\U0001F680-\U0001F6FF')</code>, and <code>('\u2600'-\u26FF-\u2700-\u27BF')</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">german_text</span> <span class="o">=</span> <span class="s1">'Wann gehen wir Pizza essen? 🍕 Und fährst du mit Über? 🚕'</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Tokenize and print all words in german_text</span>
+<span class="n">all_words</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">german_text</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">all_words</span><span class="p">)</span>
+
+<span class="c1"># Tokenize and print only capital words</span>
+<span class="n">capital_words</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"[A-ZÜ]\w+"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">regexp_tokenize</span><span class="p">(</span><span class="n">german_text</span><span class="p">,</span> <span class="n">capital_words</span><span class="p">))</span>
+
+<span class="c1"># Tokenize and print only emoji</span>
+<span class="n">emoji</span> <span class="o">=</span> <span class="s2">"['</span><span class="se">\U0001F300</span><span class="s2">-</span><span class="se">\U0001F5FF</span><span class="s2">'|'</span><span class="se">\U0001F600</span><span class="s2">-</span><span class="se">\U0001F64F</span><span class="s2">'|'</span><span class="se">\U0001F680</span><span class="s2">-</span><span class="se">\U0001F6FF</span><span class="s2">'|'</span><span class="se">\u2600</span><span class="s2">-</span><span class="se">\u26FF\u2700</span><span class="s2">-</span><span class="se">\u27BF</span><span class="s2">']"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">regexp_tokenize</span><span class="p">(</span><span class="n">german_text</span><span class="p">,</span> <span class="n">emoji</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['Wann', 'gehen', 'wir', 'Pizza', 'essen', '?', '🍕', 'Und', 'fährst', 'du', 'mit', 'Über', '?', '🚕']
+['Wann', 'Pizza', 'Und', 'Über']
+['🍕', '🚕']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Charting-word-length-with-NLTK">
+<a class="anchor" href="#Charting-word-length-with-NLTK" aria-hidden="true"><span class="octicon octicon-link"></span></a>Charting word length with NLTK<a class="anchor-link" href="#Charting-word-length-with-NLTK"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Charting-practice">
+<a class="anchor" href="#Charting-practice" aria-hidden="true"><span class="octicon octicon-link"></span></a>Charting practice<a class="anchor-link" href="#Charting-practice"> </a>
+</h3>
+<p>Try using your new skills to find and chart the number of words per line in the script using matplotlib. The Holy Grail script is loaded for you, and you need to use regex to find the words per line.</p>
+<p>Using list comprehensions here will speed up your computations. For example: <code>my_lines = [tokenize(l) for l in lines]</code> will call a function tokenize on each line in the list lines. The new transformed list will be saved in the <code>my_lines</code> variable.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># Split the script into lines: lines</span>
+<span class="n">lines</span> <span class="o">=</span> <span class="n">holy_grail</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="c1"># Replace all script lines for speaker</span>
+<span class="n">pattern</span> <span class="o">=</span> <span class="s2">"[A-Z]{2,}(\s)?(#\d)?([A-Z]{2,})?:"</span>
+<span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+
+<span class="c1"># Tokenize each line: tokenized_lines</span>
+<span class="n">tokenized_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">regexp_tokenize</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s1">'\w+'</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+
+<span class="c1"># Make a frequency list of lengths: line_num_words</span>
+<span class="n">line_num_words</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">t_line</span><span class="p">)</span> <span class="k">for</span> <span class="n">t_line</span> <span class="ow">in</span> <span class="n">tokenized_lines</span><span class="p">]</span>
+
+<span class="c1"># Plot a histogram of the line lengths</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">line_num_words</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'# of words per line in holy_grail'</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeYAAAHiCAYAAAA9Am/ZAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjMsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy+AADFEAAAazUlEQVR4nO3debBmd13n8c9Xmn0xZAElCXQcI4KOSowYgQGGWFNsGmoGFAc0MnHiTKGCMAXBsQqXYQxVKkuNg0MlQlBkMSBkIKNSLEFUogm4ABETISZNAmnIwr4EvvPHc5pcOre7bzrdud/cvF5Vt/o55znPc37Puaf7fc95zn26ujsAwAzftNkDAABuIMwAMIgwA8AgwgwAgwgzAAwizAAwiDCzJVXVvavq3VX1mar6rU0cxyOrasdmrX9PqupdVfUzy+2nVNWfHYR13LeqPltVt9uPx+73dquqn66q9+zPYw+Wqvp/VXXycnvc+Jhl22YPANaqqr9O8pQkX01ydncft59PdWqSTya5R/tl/b3q7lcnefVBeN7LktztQD/vrVF3P2azx8CthyNmxqiq2ye5X5JLknx/kvfdjKe7X5IP3ZJRrqqRP+juzxErGzf1+86tlzAzyXfnhpgen32EuaoeUlV/U1XXLX8+ZJn/yiQnJ3nOcir1h3d73DFVdW1VfdMyfUZVXbXm/j+oqmcut+9TVedU1dVVdUlV/ec1y/1KVZ29LP/pJD9dVXeuqldW1TVV9aEkP7Dbup9bVR9bTrF/uKpO3MNre2VV/W5VvW1Z9ryqut+a+79zue/q5Xl+bLfHvqyqzq2qzyX5t/vYjt9warWquqr+S1VdvLyO36mqWnP/f6qqi5b7/nTtuHZ73u3Lc21bpt9VVb9eVX+xvKY/q6rD9zG2Z1fVVVV1ZVU9bc38b66qV1XVzqr6l6r65V3fz90e/zu7v5VRVf931/d3L+s9rqrev4zzj6rqdVX1P5b7HllVO5bv5ceTvKKq7llVb1nGc81y+6g1z/f1tw5gn7rbl69N/UrytCTXJvl8ki8ut69P8pnl9jHrPObQJNck+cms3pL5iWX6sOX+Vyb5H3tZ52VJvn+5/eEkH0nygDX3PWi5fV6S/53kTkm+L8nOJCcu9/1Kkq8keUJWP+TeOcnpSf58Gd/RST6QZMey/P2TXJ7kPsv09iT/ag/je+Xy+h+e5I5JXpLkPct9d12e52nLaz8uq9P237Xmsdcleegyrjut8/zvSvIzy+2f3vXcy3QneUuSQ5Lcd3nNj17ue0JWZzQesKz7l5P85R5ew/blubatWec/J/mOZVu9K8npe3jsI5d94NeS3D7JY5f9457L/a9K8uYkd1/W809JTtn99SR5cJIrknzTMn348jz33su+cYck/5LkGcu6/32SL2fZn9aM7YXL9+bOSQ5L8h+S3GUZ0x8ledNGtrcvX7t/OWJm03X3K7r7kCQXJjkhyfdkFbR7dPch3f3RdR72uCQXd/fvd/f13f2aJP+Y5Ec2uNrzkjyiqr5lmT57mT4myT2S/F1VHZ3kYUme291f7O6/TXJGVj8M7PJX3f2m7v5ad38hyY8leUF3X93dlyd56Zplv5rVP+QPrKrbd/el3f3PexnjW7v73d39pST/PckPLWN6fJJLl+12fXe/L8kbkjxxzWPf3N1/sYzrixvcJmud3t3X9up94ndm9UNJkvxskt/o7ou6+/ok/zPJ9+3pqHkdr+juf1q21evXPO96vpLk17r7K919bpLPJrn/cmr+x5M8r7s/092XJvmtfOP3JUnS3X+d1Q8pu85MPDnJu7r7E3tZ7wlZ/dDx0mXdb0zy17st87Ukz+/uL3X3F7r7U939hu7+fHd/JskLkjxir1sC9kCY2VRVdehyWvm6JA/J6sjiw1kdXV6zl1OO98nqqGatf0ly5AZXfV5WRz4PT/LuZb2PWL7+vLu/tqzj6uUf2j2t4/J1xrV23tfH2N2XJHlmVkfaV1XVa6vqPnsZ49efp7s/m+Tq5fnvl+QHl+12bVVdm9UFc9+y3mP308fX3P58briI635JXrJmvVcnqWx8u+/pedfzqSX+uy9/eG44qt1lb9/7s5I8dbn91CS/v48x3ifJx7p77fUJu2/PnWt/4Kmqu1TV/1lOq386q33qkPL+PvtBmNlUy5HlIVkdiZ2x3P6TJD+yHC2/eA8PvSKrSKx13yQf2+Cqz0vyb7KK83lJ3pPVqd9HLNO71nFoVd19L+vY/eKyK7M6hb12+RsW7v7D7n7YMvbO6nTonnz9earqblmdHr8iq0ict2yfXV936+7/updxHSiXJ/nZ3dZ95+7+y4O0vvV8Mquj6bXf/7197/8gyUlV9b1ZnYJ/0z6e/8okR659Xz3f+D1Nbrx9n53VD5M/2N33yOoHvmT1QwvcJMLMFGuvwn5QVqe19+bcJN9RVf+xqrZV1Y8neWBW743uU3dfnOQLWR1Bvbu7P53kE1m9T3jesszlSf4yyW9U1Z2q6nuSnJK9/2rR65M8b7kY6KgkP7/rjqq6f1U9qqrumNV76V/I6vT2njy2qh5WVXdI8utJzl/G9Jbltf9kVd1++fqBqnrARl77zfS7Wb2+70q+fhHWk26B9X5dd381q+38gqq6+3Ia/VlZBXi95Xck+ZusjpTfsJxG35u/yur78nPLvnVSVu9V783ds/p+XltVhyZ5/oZfEOxGmJni+5O8r6oOS/LV7r5mbwt396eyeq/12Uk+leQ5SR7f3Z+8Ces8L6vTpZetma4k71+zzE9kdXHRFUn+OKv3Fd+2l+f81axOq340yZ/lG0+b3jGri8M+mdUp3Xsl+aW9PNcfZvUP/NVZbZ+nJMlyav3fZfV+6RXLc+26EOmg6u4/Xtb12uWU7QeSbMbv6P58ks9lddHee7LaVr+3l+XPSvKvs+/T2OnuL2d1wdcpWV18+NSsfhj60l4e9uKsLgL7ZJL3ZnXWB/ZLfePbKMAEtfqVrx3d/cubPZatoKoentUR9fbl+oGb+vjzk/xud7/igA8OduOIGdjSavXBNc/I6hqGDUW5qh5RVd+ynMo+OavfFHAUzC3CJ9YAW9byvvsFSf4uq9/73jX/vkk+tIeHPTCrC7len9VV4P+c5IndfeXBHS2sOJUNAIM4lQ0AgwgzAAwy4j3mww8/vLdv377ZwwCAW8SFF174ye4+Yr37RoR5+/btueCCCzZ7GABwi6iq3T9S+OucygaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhk22YP4GDYftpbN3sI+3Tp6Y/b7CEAMJAjZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQTYU5qr6xar6YFV9oKpeU1V3qqpjqur8qrq4ql5XVXdYlr3jMn3Jcv/2g/kCAGAr2WeYq+rIJL+Q5Pju/u4kt0vy5CQvTPKi7j42yTVJTlkeckqSa7r725O8aFkOANiAjZ7K3pbkzlW1LcldklyZ5FFJzl7uPyvJE5bbJy3TWe4/sarqwAwXALa2fYa5uz+W5DeTXJZVkK9LcmGSa7v7+mWxHUmOXG4fmeTy5bHXL8sfdmCHDQBb00ZOZd8zq6PgY5LcJ8ldkzxmnUV710P2ct/a5z21qi6oqgt27ty58REDwBa2kVPZP5zko929s7u/kuSNSR6S5JDl1HaSHJXkiuX2jiRHJ8ly/zcnuXr3J+3ul3f38d19/BFHHHEzXwYAbA0bCfNlSU6oqrss7xWfmORDSd6Z5InLMicnefNy+5xlOsv97+juGx0xAwA3tpH3mM/P6iKu9yX5h+UxL0/y3CTPqqpLsnoP+czlIWcmOWyZ/6wkpx2EcQPAlrRt34sk3f38JM/fbfZHkjx4nWW/mORJN39oAHDb45O/AGAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEE2FOaqOqSqzq6qf6yqi6rqh6rq0Kp6W1VdvPx5z2XZqqqXVtUlVfX3VXXcwX0JALB1bPSI+SVJ/qS7vzPJ9ya5KMlpSd7e3ccmefsynSSPSXLs8nVqkpcd0BEDwBa2zzBX1T2SPDzJmUnS3V/u7muTnJTkrGWxs5I8Ybl9UpJX9cp7kxxSVd96wEcOAFvQRo6Yvy3JziSvqKr3V9UZVXXXJPfu7iuTZPnzXsvyRya5fM3jdyzzAIB92EiYtyU5LsnLuvtBST6XG05br6fWmdc3Wqjq1Kq6oKou2Llz54YGCwBb3UbCvCPJju4+f5k+O6tQf2LXKerlz6vWLH/0mscfleSK3Z+0u1/e3cd39/FHHHHE/o4fALaUfYa5uz+e5PKquv8y68QkH0pyTpKTl3knJ3nzcvucJD+1XJ19QpLrdp3yBgD2btsGl/v5JK+uqjsk+UiSp2UV9ddX1SlJLkvypGXZc5M8NsklST6/LAsAbMCGwtzdf5vk+HXuOnGdZTvJ02/muADgNsknfwHAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCAbDnNV3a6q3l9Vb1mmj6mq86vq4qp6XVXdYZl/x2X6kuX+7Qdn6ACw9dyUI+ZnJLlozfQLk7you49Nck2SU5b5pyS5pru/PcmLluUAgA3YUJir6qgkj0tyxjJdSR6V5OxlkbOSPGG5fdIyneX+E5flAYB92OgR84uTPCfJ15bpw5Jc293XL9M7khy53D4yyeVJstx/3bI8ALAP+wxzVT0+yVXdfeHa2ess2hu4b+3znlpVF1TVBTt37tzQYAFgq9vIEfNDk/xoVV2a5LVZncJ+cZJDqmrbssxRSa5Ybu9IcnSSLPd/c5Krd3/S7n55dx/f3ccfccQRN+tFAMBWsc8wd/fzuvuo7t6e5MlJ3tHdT0nyziRPXBY7Ocmbl9vnLNNZ7n9Hd9/oiBkAuLGb83vMz03yrKq6JKv3kM9c5p+Z5LBl/rOSnHbzhggAtx3b9r3IDbr7XUnetdz+SJIHr7PMF5M86QCMDQBuc3zyFwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADCIMAPAIMIMAIMIMwAMIswAMIgwA8AgwgwAgwgzAAwizAAwiDADwCDCDACDCDMADCLMADDIPsNcVUdX1Tur6qKq+mBVPWOZf2hVva2qLl7+vOcyv6rqpVV1SVX9fVUdd7BfBABsFRs5Yr4+ybO7+wFJTkjy9Kp6YJLTkry9u49N8vZlOkkek+TY5evUJC874KMGgC1qn2Hu7iu7+33L7c8kuSjJkUlOSnLWsthZSZ6w3D4pyat65b1JDqmqbz3gIweALegmvcdcVduTPCjJ+Unu3d1XJqt4J7nXstiRSS5f87Ady7zdn+vUqrqgqi7YuXPnTR85AGxBGw5zVd0tyRuSPLO7P723RdeZ1zea0f3y7j6+u48/4ogjNjoMANjSNhTmqrp9VlF+dXe/cZn9iV2nqJc/r1rm70hy9JqHH5XkigMzXADY2jZyVXYlOTPJRd3922vuOifJycvtk5O8ec38n1quzj4hyXW7TnkDAHu3bQPLPDTJTyb5h6r622XeLyU5Pcnrq+qUJJcledJy37lJHpvkkiSfT/K0AzpiANjC9hnm7n5P1n/fOElOXGf5TvL0mzkuALhN8slfADCIMAPAIMIMAIMIMwAMIswAMMhGfl2Kg2D7aW/d7CHs06WnP26zhwBwm+OIGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYJBtmz0A5tp+2ls3ewh7denpj9vsIQAccI6YAWAQYQaAQYQZAAYRZgAYRJgBYBBhBoBBhBkABhFmABhEmAFgEGEGgEGEGQAGEWYAGESYAWAQ/7sUt1rT//erxP+ABdx0jpgBYBBhBoBBhBkABhFmABhEmAFgkINyVXZVPTrJS5LcLskZ3X36wVgPTDf9ynFXjcM8B/yIuapul+R3kjwmyQOT/ERVPfBArwcAtqKDccT84CSXdPdHkqSqXpvkpCQfOgjrAm6G6Uf0HBjOjNy6HIwwH5nk8jXTO5L84EFYDwAb4Aewm++W/OHmYIS51pnXN1qo6tQkpy6Tn62qDx/AMRye5JMH8PluS2y7/Wfb7T/bbv/ZdvvnJm23euEBX//99nTHwQjzjiRHr5k+KskVuy/U3S9P8vKDsP5U1QXdffzBeO6tzrbbf7bd/rPt9p9tt38mb7eD8etSf5Pk2Ko6pqrukOTJSc45COsBgC3ngB8xd/f1VfVzSf40q1+X+r3u/uCBXg8AbEUH5feYu/vcJOcejOfeoINyivw2wrbbf7bd/rPt9p9tt3/GbrfqvtF1WQDAJvGRnAAwyJYLc1U9uqo+XFWXVNVpmz2eyarq6Kp6Z1VdVFUfrKpnLPMPraq3VdXFy5/33OyxTlRVt6uq91fVW5bpY6rq/GW7vW65+JHdVNUhVXV2Vf3jsu/9kH1uY6rqF5e/qx+oqtdU1Z3sd+urqt+rqquq6gNr5q27n9XKS5du/H1VHbd5I99iYfZxoDfZ9Ume3d0PSHJCkqcv2+u0JG/v7mOTvH2Z5saekeSiNdMvTPKiZbtdk+SUTRnVfC9J8ifd/Z1JvjerbWif24eqOjLJLyQ5vru/O6uLa58c+92evDLJo3ebt6f97DFJjl2+Tk3ysltojOvaUmHOmo8D7e4vJ9n1caCso7uv7O73Lbc/k9U/kEdmtc3OWhY7K8kTNmeEc1XVUUkel+SMZbqSPCrJ2csitts6quoeSR6e5Mwk6e4vd/e1sc9t1LYkd66qbUnukuTK2O/W1d3vTnL1brP3tJ+dlORVvfLeJIdU1bfeMiO9sa0W5vU+DvTITRrLrUpVbU/yoCTnJ7l3d1+ZrOKd5F6bN7KxXpzkOUm+tkwfluTa7r5+mbbvre/bkuxM8orlbYAzququsc/tU3d/LMlvJrksqyBfl+TC2O9uij3tZ6PasdXCvKGPA+UbVdXdkrwhyTO7+9ObPZ7pqurxSa7q7gvXzl5nUfvejW1LclySl3X3g5J8Lk5bb8jyfuhJSY5Jcp8kd83qFOzu7Hc33ai/v1stzBv6OFBuUFW3zyrKr+7uNy6zP7HrNM7y51WbNb6hHprkR6vq0qzeLnlUVkfQhyynGBP73p7sSLKju89fps/OKtT2uX374SQf7e6d3f2VJG9M8pDY726KPe1no9qx1cLs40BvguV90TOTXNTdv73mrnOSnLzcPjnJm2/psU3W3c/r7qO6e3tW+9g7uvspSd6Z5InLYrbbOrr740kur6r7L7NOzOq/hLXP7dtlSU6oqrssf3d3bTv73cbtaT87J8lPLVdnn5Dkul2nvDfDlvuAkap6bFZHL7s+DvQFmzyksarqYUn+PMk/5Ib3Sn8pq/eZX5/kvln9Y/Ck7t79IgqSVNUjk/y37n58VX1bVkfQhyZ5f5KndveXNnN8E1XV92V10dwdknwkydOyOkiwz+1DVf1qkh/P6jcq3p/kZ7J6L9R+t5uqek2SR2b1v0h9Isnzk7wp6+xnyw86/yurq7g/n+Rp3X3BZow72YJhBoBbs612KhsAbtWEGQAGEWYAGESYAWAQYQaAQYQZAAYRZgAYRJgBYJD/DzkNcPF8k9eFAAAAAElFTkSuQmCC%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/natural_language_processing/2020/07/15/01-Regular-expressions-and-word-tokenization.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
