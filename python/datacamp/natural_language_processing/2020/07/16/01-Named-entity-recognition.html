@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Named-entity recognition | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Named-entity recognition" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter will introduce a slightly more advanced topic - named-entity recognition. You’ll learn how to identify the who, what, and where of your texts using pre-trained models on English and non-English text. You’ll also learn how to use some new libraries, polyglot and spaCy, to add to your NLP toolbox. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<meta property="og:description" content="This chapter will introduce a slightly more advanced topic - named-entity recognition. You’ll learn how to identify the who, what, and where of your texts using pre-trained models on English and non-English text. You’ll also learn how to use some new libraries, polyglot and spaCy, to add to your NLP toolbox. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/16/01-Named-entity-recognition.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/16/01-Named-entity-recognition.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/chunk_pie.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-16T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter will introduce a slightly more advanced topic - named-entity recognition. You’ll learn how to identify the who, what, and where of your texts using pre-trained models on English and non-English text. You’ll also learn how to use some new libraries, polyglot and spaCy, to add to your NLP toolbox. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp.","@type":"BlogPosting","headline":"Named-entity recognition","dateModified":"2020-07-16T00:00:00-05:00","datePublished":"2020-07-16T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/chunk_pie.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/16/01-Named-entity-recognition.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/16/01-Named-entity-recognition.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Named-entity recognition | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Named-entity recognition" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter will introduce a slightly more advanced topic - named-entity recognition. You’ll learn how to identify the who, what, and where of your texts using pre-trained models on English and non-English text. You’ll also learn how to use some new libraries, polyglot and spaCy, to add to your NLP toolbox. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<meta property="og:description" content="This chapter will introduce a slightly more advanced topic - named-entity recognition. You’ll learn how to identify the who, what, and where of your texts using pre-trained models on English and non-English text. You’ll also learn how to use some new libraries, polyglot and spaCy, to add to your NLP toolbox. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/16/01-Named-entity-recognition.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/16/01-Named-entity-recognition.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/chunk_pie.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-16T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter will introduce a slightly more advanced topic - named-entity recognition. You’ll learn how to identify the who, what, and where of your texts using pre-trained models on English and non-English text. You’ll also learn how to use some new libraries, polyglot and spaCy, to add to your NLP toolbox. This is the Summary of lecture “Introduction to Natural Language Processing in Python”, via datacamp.","@type":"BlogPosting","headline":"Named-entity recognition","dateModified":"2020-07-16T00:00:00-05:00","datePublished":"2020-07-16T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/chunk_pie.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/16/01-Named-entity-recognition.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/16/01-Named-entity-recognition.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Named-entity recognition</h1><p class="page-description">This chapter will introduce a slightly more advanced topic - named-entity recognition. You'll learn how to identify the who, what, and where of your texts using pre-trained models on English and non-English text. You'll also learn how to use some new libraries, polyglot and spaCy, to add to your NLP toolbox. This is the Summary of lecture "Introduction to Natural Language Processing in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-16T00:00:00-05:00" itemprop="datePublished">
+        Jul 16, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Natural_Language_Processing">Natural_Language_Processing</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-16-01-Named-entity-recognition.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-16-01-Named-entity-recognition.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-16-01-Named-entity-recognition.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Named-Entity-Recognition">Named Entity Recognition </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#NER-with-NLTK">NER with NLTK </a></li>
+<li class="toc-entry toc-h3"><a href="#Charting-practice">Charting practice </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Introduction-to-SpaCy">Introduction to SpaCy </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Comparing-NLTK-with-spaCy-NER">Comparing NLTK with spaCy NER </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Multilingual-NER-with-polyglot">Multilingual NER with polyglot </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#French-NER-with-polyglot-I">French NER with polyglot I </a></li>
+<li class="toc-entry toc-h3"><a href="#French-NER-with-polyglot-II">French NER with polyglot II </a></li>
+<li class="toc-entry toc-h3"><a href="#Spanish-NER-with-polyglot">Spanish NER with polyglot </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-16-01-Named-entity-recognition.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Named-Entity-Recognition">
+<a class="anchor" href="#Named-Entity-Recognition" aria-hidden="true"><span class="octicon octicon-link"></span></a>Named Entity Recognition<a class="anchor-link" href="#Named-Entity-Recognition"> </a>
+</h2>
+<ul>
+<li>Named Entity Recognition (NER)<ul>
+<li>NLP task to identify important named entities in the text<ul>
+<li>People, places, organizations</li>
+<li>Dates, states, works of art</li>
+</ul>
+</li>
+<li>Can be used alongside topic identification</li>
+<li>Who? What? When? Where?</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="NER-with-NLTK">
+<a class="anchor" href="#NER-with-NLTK" aria-hidden="true"><span class="octicon octicon-link"></span></a>NER with NLTK<a class="anchor-link" href="#NER-with-NLTK"> </a>
+</h3>
+<p>You're now going to have some fun with named-entity recognition! A scraped news article has been pre-loaded into your workspace. Your task is to use <code>nltk</code> to find the named entities in this article.</p>
+<p>What might the article be about, given the names you found?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>Before using NER through NLTK, you must install ’averaged_perceptron_tagger’, ’maxent_ne_chunker’, ’words’ packages
+</div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">nltk</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'averaged_perceptron_tagger'</span><span class="p">)</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'maxent_ne_chunker'</span><span class="p">)</span>
+<span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'words'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /home/chanseok/nltk_data...
+[nltk_data]   Package averaged_perceptron_tagger is already up-to-
+[nltk_data]       date!
+[nltk_data] Downloading package maxent_ne_chunker to
+[nltk_data]     /home/chanseok/nltk_data...
+[nltk_data]   Package maxent_ne_chunker is already up-to-date!
+[nltk_data] Downloading package words to /home/chanseok/nltk_data...
+[nltk_data]   Package words is already up-to-date!
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/news_articles/uber_apple.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">sent_tokenize</span><span class="p">,</span> <span class="n">word_tokenize</span>
+
+<span class="c1"># Tokenize the article into sentences: sentences</span>
+<span class="n">sentences</span> <span class="o">=</span> <span class="n">sent_tokenize</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+
+<span class="c1"># Tokenize each sentence into words: token_sentences</span>
+<span class="n">token_sentences</span> <span class="o">=</span> <span class="p">[</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span> <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">]</span>
+
+<span class="c1"># Tag each tokenized sentence into parts of speech: pos_sentences</span>
+<span class="n">pos_sentences</span> <span class="o">=</span> <span class="p">[</span><span class="n">nltk</span><span class="o">.</span><span class="n">pos_tag</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span> <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">token_sentences</span><span class="p">]</span>
+
+<span class="c1"># Create the named entity chunks: chunked_sentences</span>
+<span class="n">chunked_sentences</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">ne_chunk_sents</span><span class="p">(</span><span class="n">pos_sentences</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Test for stems of the tree with 'NE' tags</span>
+<span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">chunked_sentences</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">sent</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">chunk</span><span class="o">.</span><span class="n">label</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'NE'</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(NE Uber/NNP)
+(NE Beyond/NN)
+(NE Apple/NNP)
+(NE Uber/NNP)
+(NE Uber/NNP)
+(NE Travis/NNP Kalanick/NNP)
+(NE Tim/NNP Cook/NNP)
+(NE Apple/NNP)
+(NE Silicon/NNP Valley/NNP)
+(NE CEO/NNP)
+(NE Yahoo/NNP)
+(NE Marissa/NNP Mayer/NNP)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Charting-practice">
+<a class="anchor" href="#Charting-practice" aria-hidden="true"><span class="octicon octicon-link"></span></a>Charting practice<a class="anchor-link" href="#Charting-practice"> </a>
+</h3>
+<p>In this exercise, you'll use some extracted named entities and their groupings from a series of newspaper articles to chart the diversity of named entity types in the articles.</p>
+<p>You'll use a <code>defaultdict</code> called <code>ner_categories</code>, with keys representing every named entity group type, and values to count the number of each different named entity type. You have a chunked sentence list called <code>chunked_sentences</code> similar to the last exercise, but this time with non-binary category names.</p>
+<p>You can use <code>hasattr()</code> to determine if each chunk has a 'label' and then simply use the chunk's <code>.label()</code> method as the dictionary key.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">chunked_sentences</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">ne_chunk_sents</span><span class="p">(</span><span class="n">pos_sentences</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="c1"># Create the defaultdict: ner_categories</span>
+<span class="n">ner_categories</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># Create the nested for loop</span>
+<span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">chunked_sentences</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">sent</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="s1">'label'</span><span class="p">):</span>
+            <span class="n">ner_categories</span><span class="p">[</span><span class="n">chunk</span><span class="o">.</span><span class="n">label</span><span class="p">()]</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+<span class="c1"># Create a list from the dictionary keys for the cart labels: labels</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ner_categories</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="c1"># Create a list of the values: values</span>
+<span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">ner_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]</span>
+
+<span class="c1"># Create the pie chart</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s1">'</span><span class="si">%1.1f%%</span><span class="s1">'</span><span class="p">,</span> <span class="n">startangle</span><span class="o">=</span><span class="mi">140</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introduction-to-SpaCy">
+<a class="anchor" href="#Introduction-to-SpaCy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction to SpaCy<a class="anchor-link" href="#Introduction-to-SpaCy"> </a>
+</h2>
+<ul>
+<li>SpaCy<ul>
+<li>NLP library similar to <code>gensim</code>, with different implementations</li>
+<li>Focuson creating NLP pipelines to generate models and corpora</li>
+<li>Open source, with extra libraries and tools<ul>
+<li>Displacy</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Why use SpaCy for NER?<ul>
+<li>Easy pipeline creation</li>
+<li>Different entity types compared to <code>nltk</code>
+</li>
+<li>Informal language corpora<ul>
+<li>Easily find entities in Tweets and chat messages</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Comparing-NLTK-with-spaCy-NER">
+<a class="anchor" href="#Comparing-NLTK-with-spaCy-NER" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparing NLTK with spaCy NER<a class="anchor-link" href="#Comparing-NLTK-with-spaCy-NER"> </a>
+</h3>
+<p>Using the same text you used in the first exercise of this chapter, you'll now see the results using spaCy's NER annotator. How will they compare?
+</p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>To use english model in SpaCy, you need to install appropriate english model:
+</div>
+<code>bash
+python -m spacy download en_core_web_sm</code>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">spacy</span>
+
+<span class="c1"># Instantiate the English model: nlp</span>
+<span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'en_core_web_sm'</span><span class="p">,</span> <span class="n">tagger</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">matcher</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Create a new document: doc</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+
+<span class="c1"># Print all of the found entities and their labels</span>
+<span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ent</span><span class="o">.</span><span class="n">label_</span><span class="p">,</span> <span class="n">ent</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ORG unroll.me
+ORG Apple
+PERSON Uber
+FAC Travis Kalanick of Uber
+PERSON Tim Cook
+ORG Apple
+CARDINAL Millions
+PERSON Uber
+LOC Silicon Valley
+ORG Yahoo
+PERSON Marissa Mayer
+MONEY 186
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From NER in <code>nltk</code>, we can get <code>organization</code>, <code>GPE</code>, <code>person</code> as a category. In case of <code>spacy</code>, we can additionally get <code>FAC</code>, <code>CARDINAL</code>, <code>LOC</code>, <code>MONEY</code> as a category.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Multilingual-NER-with-polyglot">
+<a class="anchor" href="#Multilingual-NER-with-polyglot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multilingual NER with polyglot<a class="anchor-link" href="#Multilingual-NER-with-polyglot"> </a>
+</h2>
+<ul>
+<li>polyglot<ul>
+<li>NLP library which uses word vectors</li>
+<li>vectors for many different languages (more than 130)</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="French-NER-with-polyglot-I">
+<a class="anchor" href="#French-NER-with-polyglot-I" aria-hidden="true"><span class="octicon octicon-link"></span></a>French NER with polyglot I<a class="anchor-link" href="#French-NER-with-polyglot-I"> </a>
+</h3>
+<p>In this exercise and the next, you'll use the <code>polyglot</code> library to identify French entities. The library functions slightly differently than <code>spacy</code>, so you'll use a few of the new things you learned in the last video to display the named entity text and category.
+</p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>Before using polyglot for specific language, you need to download appropriate language model. Also, it requires some dependencies.
+</div>
+<code>pip install pyicu
+pip install pycld2
+pip install morfessor
+polyglot download ner2.fr
+polyglot download embeddings2.fr</code>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>polyglot download ner2.fr
+<span class="o">!</span>polyglot download embeddings2.fr
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[polyglot_data] Downloading package ner2.fr to
+[polyglot_data]     /home/chanseok/polyglot_data...
+[polyglot_data]   Package ner2.fr is already up-to-date!
+[polyglot_data] Downloading package embeddings2.fr to
+[polyglot_data]     /home/chanseok/polyglot_data...
+[polyglot_data]   Package embeddings2.fr is already up-to-date!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/news_articles/french.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">polyglot.text</span> <span class="kn">import</span> <span class="n">Text</span>
+
+<span class="c1"># Create a new text object using Polyglot's Text class: txt</span>
+<span class="n">txt</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+
+<span class="c1"># Print each of the entities found</span>
+<span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">txt</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ent</span><span class="p">)</span>
+    
+<span class="c1"># Print the type of ent</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ent</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['Charles', 'Cuvelliez']
+['Charles', 'Cuvelliez']
+['Bruxelles']
+['l’IA']
+['Julien', 'Maldonato']
+['Deloitte']
+['Ethiquement']
+['l’IA']
+['.']
+&lt;class 'polyglot.text.Chunk'&gt;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="French-NER-with-polyglot-II">
+<a class="anchor" href="#French-NER-with-polyglot-II" aria-hidden="true"><span class="octicon octicon-link"></span></a>French NER with polyglot II<a class="anchor-link" href="#French-NER-with-polyglot-II"> </a>
+</h3>
+<p>Here, you'll complete the work you began in the previous exercise.</p>
+<p>Your task is to use a list comprehension to create a list of tuples, in which the first element is the entity tag, and the second element is the full string of the entity text.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create the list of tuples: entities</span>
+<span class="n">entities</span> <span class="o">=</span> <span class="p">[(</span><span class="n">ent</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ent</span><span class="p">))</span> <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">txt</span><span class="o">.</span><span class="n">entities</span><span class="p">]</span>
+
+<span class="c1"># Print entities</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">entities</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[('I-PER', 'Charles Cuvelliez'),
+ ('I-PER', 'Charles Cuvelliez'),
+ ('I-ORG', 'Bruxelles'),
+ ('I-PER', 'l’IA'),
+ ('I-PER', 'Julien Maldonato'),
+ ('I-ORG', 'Deloitte'),
+ ('I-PER', 'Ethiquement'),
+ ('I-LOC', 'l’IA'),
+ ('I-PER', '.')]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Spanish-NER-with-polyglot">
+<a class="anchor" href="#Spanish-NER-with-polyglot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spanish NER with polyglot<a class="anchor-link" href="#Spanish-NER-with-polyglot"> </a>
+</h3>
+<p>You'll continue your exploration of <code>polyglot</code> now with some Spanish annotation. This article is not written by a newspaper, so it is your first example of a more blog-like text. How do you think that might compare when finding entities?</p>
+<p>Your specific task is to determine how many of the entities contain the words <code>"Márquez"</code> or <code>"Gabo"</code> - these refer to the same person in different ways!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>polyglot download ner2.es embeddings2.es
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[polyglot_data] Downloading package ner2.es to
+[polyglot_data]     /home/chanseok/polyglot_data...
+[polyglot_data]   Package ner2.es is already up-to-date!
+[polyglot_data] Downloading package embeddings2.es to
+[polyglot_data]     /home/chanseok/polyglot_data...
+[polyglot_data]   Package embeddings2.es is already up-to-date!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/news_articles/spanish.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">txt</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+
+<span class="c1"># Initialize the count variable: count</span>
+<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># Iterate over all the entities</span>
+<span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">txt</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+    <span class="c1"># check whether the entity contains 'Márquez' or 'Gabo'</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">'Márquez'</span> <span class="ow">in</span> <span class="n">ent</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">'Gabo'</span> <span class="ow">in</span> <span class="n">ent</span><span class="p">):</span>
+        <span class="c1"># Increment count</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+<span class="c1"># Print count</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+
+<span class="c1"># Calculate the percentage of entities that refer to "Gabo": percentage</span>
+<span class="n">percentage</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">txt</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>28
+0.2978723404255319
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/natural_language_processing/2020/07/16/01-Named-entity-recognition.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
