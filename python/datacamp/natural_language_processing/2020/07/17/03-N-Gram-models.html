@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>N-Gram models | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="N-Gram models" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Learn about n-gram modeling and use it to perform sentiment analysis on movie reviews. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<meta property="og:description" content="Learn about n-gram modeling and use it to perform sentiment analysis on movie reviews. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/03-N-Gram-models.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/03-N-Gram-models.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"Learn about n-gram modeling and use it to perform sentiment analysis on movie reviews. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp.","@type":"BlogPosting","headline":"N-Gram models","dateModified":"2020-07-17T00:00:00-05:00","datePublished":"2020-07-17T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/03-N-Gram-models.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/03-N-Gram-models.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>N-Gram models | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="N-Gram models" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Learn about n-gram modeling and use it to perform sentiment analysis on movie reviews. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<meta property="og:description" content="Learn about n-gram modeling and use it to perform sentiment analysis on movie reviews. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/03-N-Gram-models.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/03-N-Gram-models.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"Learn about n-gram modeling and use it to perform sentiment analysis on movie reviews. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp.","@type":"BlogPosting","headline":"N-Gram models","dateModified":"2020-07-17T00:00:00-05:00","datePublished":"2020-07-17T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/03-N-Gram-models.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/03-N-Gram-models.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">N-Gram models</h1><p class="page-description">Learn about n-gram modeling and use it to perform sentiment analysis on movie reviews. This is the Summary of lecture "Feature Engineering for NLP in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-17T00:00:00-05:00" itemprop="datePublished">
+        Jul 17, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      11 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Natural_Language_Processing">Natural_Language_Processing</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-17-03-N-Gram-models.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-17-03-N-Gram-models.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-17-03-N-Gram-models.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Building-a-bag-of-words-model">Building a bag of words model </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#BoW-model-for-movie-taglines">BoW model for movie taglines </a></li>
+<li class="toc-entry toc-h3"><a href="#Analyzing-dimensionality-and-preprocessing">Analyzing dimensionality and preprocessing </a></li>
+<li class="toc-entry toc-h3"><a href="#Mapping-feature-indices-with-feature-names">Mapping feature indices with feature names </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Building-a-BoW-Naive-Bayes-classifier">Building a BoW Naive Bayes classifier </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#BoW-vectors-for-movie-reviews">BoW vectors for movie reviews </a></li>
+<li class="toc-entry toc-h3"><a href="#Predicting-the-sentiment-of-a-movie-review">Predicting the sentiment of a movie review </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Building-n-gram-models">Building n-gram models </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#n-gram-models-for-movie-tag-lines">n-gram models for movie tag lines </a></li>
+<li class="toc-entry toc-h3"><a href="#Higher-order-n-grams-for-sentiment-analysis">Higher order n-grams for sentiment analysis </a></li>
+<li class="toc-entry toc-h3"><a href="#Comparing-performance-of-n-gram-models">Comparing performance of n-gram models </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-17-03-N-Gram-models.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">spacy</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Building-a-bag-of-words-model">
+<a class="anchor" href="#Building-a-bag-of-words-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a bag of words model<a class="anchor-link" href="#Building-a-bag-of-words-model"> </a>
+</h2>
+<ul>
+<li>Bag of words model<ul>
+<li>Extract word tokens</li>
+<li>Compute frequency of word tokens</li>
+<li>Construct a word vector out of these frequencies and vocabulary of corpus</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="BoW-model-for-movie-taglines">
+<a class="anchor" href="#BoW-model-for-movie-taglines" aria-hidden="true"><span class="octicon octicon-link"></span></a>BoW model for movie taglines<a class="anchor-link" href="#BoW-model-for-movie-taglines"> </a>
+</h3>
+<p>In this exercise, you have been provided with a <code>corpus</code> of more than 7000 movie tag lines. Your job is to generate the bag of words representation <code>bow_matrix</code> for these taglines. For this exercise, we will ignore the text preprocessing step and generate <code>bow_matrix</code> directly.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">movies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/movie_overviews.csv'</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">movies</span><span class="p">[</span><span class="s1">'tagline'</span><span class="p">]</span> <span class="o">=</span> <span class="n">movies</span><span class="p">[</span><span class="s1">'tagline'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="n">movies</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>title</th>
+      <th>overview</th>
+      <th>tagline</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>8844</td>
+      <td>Jumanji</td>
+      <td>When siblings Judy and Peter discover an encha...</td>
+      <td>roll the dice and unleash the excitement!</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>15602</td>
+      <td>Grumpier Old Men</td>
+      <td>A family wedding reignites the ancient feud be...</td>
+      <td>still yelling. still fighting. still ready for...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>31357</td>
+      <td>Waiting to Exhale</td>
+      <td>Cheated on, mistreated and stepped on, the wom...</td>
+      <td>friends are the people who let you be yourself...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>11862</td>
+      <td>Father of the Bride Part II</td>
+      <td>Just when George Banks has recovered from his ...</td>
+      <td>just when his world is back to normal... he's ...</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>949</td>
+      <td>Heat</td>
+      <td>Obsessive master thief, Neil McCauley leads a ...</td>
+      <td>a los angeles crime saga</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">corpus</span> <span class="o">=</span> <span class="n">movies</span><span class="p">[</span><span class="s1">'tagline'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">CountVectorizer</span>
+
+<span class="c1"># Create CountVectorizer object</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">()</span>
+
+<span class="c1"># Generate matrix of word vectors</span>
+<span class="n">bow_matrix</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+
+<span class="c1"># Print the shape of bow_matrix</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bow_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(7033, 6614)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You now know how to generate a bag of words representation for a given corpus of documents. Notice that the word vectors created have more than 6600 dimensions. However, most of these dimensions have a value of zero since most words do not occur in a particular tagline.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Analyzing-dimensionality-and-preprocessing">
+<a class="anchor" href="#Analyzing-dimensionality-and-preprocessing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Analyzing dimensionality and preprocessing<a class="anchor-link" href="#Analyzing-dimensionality-and-preprocessing"> </a>
+</h3>
+<p>In this exercise, you have been provided with a <code>lem_corpus</code> which contains the pre-processed versions of the movie taglines from the previous exercise. In other words, the taglines have been lowercased and lemmatized, and stopwords have been removed.</p>
+<p>Your job is to generate the bag of words representation <code>bow_lem_matrix</code> for these lemmatized taglines and compare its shape with that of <code>bow_matrix</code> obtained in the previous exercise.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'en_core_web_sm'</span><span class="p">)</span>
+<span class="n">stopwords</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">en</span><span class="o">.</span><span class="n">stop_words</span><span class="o">.</span><span class="n">STOP_WORDS</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lem_corpus</span> <span class="o">=</span> <span class="n">corpus</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">lemma_</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">nlp</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> 
+                                                <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">lemma_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stopwords</span> 
+                                                <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">lemma_</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lem_corpus</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1                            roll dice unleash excitement
+2                                   yell fight ready love
+3                            friend people let let forget
+4                              world normal surprise life
+5                                  los angeles crime saga
+                              ...                        
+9091                         kingsglaive final fantasy xv
+9093                       happen vegas stay vegas happen
+9095    decorate officer devoted family man defend hon...
+9097                              god incarnate city doom
+9098                                      band know story
+Name: tagline, Length: 7033, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create CountVectorizer object</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">()</span>
+
+<span class="c1"># Generate of word vectors</span>
+<span class="n">bow_lem_matrix</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">lem_corpus</span><span class="p">)</span>
+
+<span class="c1"># Print the shape of how_lem_matrix</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bow_lem_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(7033, 4964)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Mapping-feature-indices-with-feature-names">
+<a class="anchor" href="#Mapping-feature-indices-with-feature-names" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mapping feature indices with feature names<a class="anchor-link" href="#Mapping-feature-indices-with-feature-names"> </a>
+</h3>
+<p>n the lesson video, we had seen that <code>CountVectorizer</code> doesn't necessarily index the vocabulary in alphabetical order. In this exercise, we will learn to map each feature index to its corresponding feature name from the vocabulary.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sentences</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'The lion is the king of the jungle'</span><span class="p">,</span>
+             <span class="s1">'Lions have lifespans of a decade'</span><span class="p">,</span> 
+             <span class="s1">'The lion is an endangered species'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create CountVectorizer object</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">()</span>
+
+<span class="c1"># Generate matrix of word vectors</span>
+<span class="n">bow_matrix</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span>
+
+<span class="c1"># Convert bow_matrix into a DataFrame</span>
+<span class="n">bow_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">bow_matrix</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+
+<span class="c1"># Map the column names to vocabulary</span>
+<span class="n">bow_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span>
+
+<span class="c1"># Print bow_df</span>
+<span class="n">bow_df</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>an</th>
+      <th>decade</th>
+      <th>endangered</th>
+      <th>have</th>
+      <th>is</th>
+      <th>jungle</th>
+      <th>king</th>
+      <th>lifespans</th>
+      <th>lion</th>
+      <th>lions</th>
+      <th>of</th>
+      <th>species</th>
+      <th>the</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Observe that the column names refer to the token whose frequency is being recorded. Therefore, since the first column name is an, the first feature represents the number of times the word <code>'an'</code> occurs in a particular sentence. <code>get_feature_names()</code> essentially gives us a list which represents the mapping of the feature indices to the feature name in the vocabulary.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Building-a-BoW-Naive-Bayes-classifier">
+<a class="anchor" href="#Building-a-BoW-Naive-Bayes-classifier" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a BoW Naive Bayes classifier<a class="anchor-link" href="#Building-a-BoW-Naive-Bayes-classifier"> </a>
+</h2>
+<ul>
+<li>Steps<ol>
+<li>Text preprocessing</li>
+<li>Building a bag-of-words model (or representation)</li>
+<li>Machine Learning</li>
+</ol>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="BoW-vectors-for-movie-reviews">
+<a class="anchor" href="#BoW-vectors-for-movie-reviews" aria-hidden="true"><span class="octicon octicon-link"></span></a>BoW vectors for movie reviews<a class="anchor-link" href="#BoW-vectors-for-movie-reviews"> </a>
+</h3>
+<p>n this exercise, you have been given two pandas Series, <code>X_train</code> and <code>X_test</code>, which consist of movie reviews. They represent the training and the test review data respectively. Your task is to preprocess the reviews and generate BoW vectors for these two sets using <code>CountVectorizer</code>.</p>
+<p>Once we have generated the BoW vector matrices <code>X_train_bow</code> and <code>X_test_bow</code>, we will be in a very good position to apply a machine learning model to it and conduct sentiment analysis.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">movie_reviews</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/movie_reviews_clean.csv'</span><span class="p">)</span>
+<span class="n">movie_reviews</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>review</th>
+      <th>sentiment</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>this anime series starts out great interesting...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>some may go for a film like this but i most as...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>i ve seen this piece of perfection during the ...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>this movie is likely the worst movie i ve ever...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>it ll soon be 10 yrs since this movie was rele...</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">movie_reviews</span><span class="p">[</span><span class="s1">'review'</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">movie_reviews</span><span class="p">[</span><span class="s1">'sentiment'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a CounterVectorizer object</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">lowercase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stop_words</span><span class="o">=</span><span class="s1">'english'</span><span class="p">)</span>
+
+<span class="c1"># fit and transform X_train</span>
+<span class="n">X_train_bow</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="c1"># Transform X_test</span>
+<span class="n">X_test_bow</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Print shape of X_train_bow and X_test_bow</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X_train_bow</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X_test_bow</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(750, 14859)
+(250, 14859)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You now have a good idea of preprocessing text and transforming them into their bag-of-words representation using <code>CountVectorizer</code>. In this exercise, you have set the lowercase argument to True. However, note that this is the default value of lowercase and passing it explicitly is not necessary. Also, note that both <code>X_train_bow</code> and <code>X_test_bow</code> have 7822 features. There were words present in <code>X_test</code> that were not in <code>X_train</code>. CountVectorizer chose to ignore them in order to ensure that the dimensions of both sets remain the same.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Predicting-the-sentiment-of-a-movie-review">
+<a class="anchor" href="#Predicting-the-sentiment-of-a-movie-review" aria-hidden="true"><span class="octicon octicon-link"></span></a>Predicting the sentiment of a movie review<a class="anchor-link" href="#Predicting-the-sentiment-of-a-movie-review"> </a>
+</h3>
+<p>n the previous exercise, you generated the bag-of-words representations for the training and test movie review data. In this exercise, we will use this model to train a Naive Bayes classifier that can detect the sentiment of a movie review and compute its accuracy. Note that since this is a binary classification problem, the model is only capable of classifying a review as either positive (1) or negative (0). It is incapable of detecting neutral reviews.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">MultinomialNB</span>
+
+<span class="c1"># Create a MultinomialNB object</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">MultinomialNB</span><span class="p">()</span>
+
+<span class="c1"># Fit the classifier</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_bow</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Measure the accuracy</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test_bow</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The accuracy of the classifier on the test set is </span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">accuracy</span><span class="p">)</span>
+
+<span class="c1"># Predict the sentiment of a negative review</span>
+<span class="n">review</span> <span class="o">=</span> <span class="s1">'The movie was terrible. The music was underwhelming and the acting mediocre.'</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">review</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The sentiment predicted by the classifier is </span><span class="si">%i</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">prediction</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The accuracy of the classifier on the test set is 0.836
+The sentiment predicted by the classifier is 0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You have successfully performed basic sentiment analysis. Note that the accuracy of the classifier is 80%. Considering the fact that it was trained on only 750 reviews, this is reasonably good performance. The classifier also correctly predicts the sentiment of a mini negative review which we passed into it.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Building-n-gram-models">
+<a class="anchor" href="#Building-n-gram-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building n-gram models<a class="anchor-link" href="#Building-n-gram-models"> </a>
+</h2>
+<ul>
+<li>BoW shortcomings<ul>
+<li>Example<ul>
+<li>
+<code>The movie was good and not boring</code> -&gt; positive</li>
+<li>
+<code>The movie was not good and boring</code> -&gt; negative</li>
+</ul>
+</li>
+<li>Exactly the same BoW representation!</li>
+<li>Context of the words is lost.</li>
+<li>Sentiment dependent on the position of <code>not</code>
+</li>
+</ul>
+</li>
+<li>n-grams<ul>
+<li>Contiguous sequence of n elements (or words) in a given document.</li>
+<li>Bi-grams / Tri-grams</li>
+</ul>
+</li>
+<li>n-grams Shortcomings<ul>
+<li>Increase number of dimension, occurs curse of dimensionality</li>
+<li>Higher order n-grams are rare</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="n-gram-models-for-movie-tag-lines">
+<a class="anchor" href="#n-gram-models-for-movie-tag-lines" aria-hidden="true"><span class="octicon octicon-link"></span></a>n-gram models for movie tag lines<a class="anchor-link" href="#n-gram-models-for-movie-tag-lines"> </a>
+</h3>
+<p>In this exercise, we have been provided with a corpus of more than 9000 movie tag lines. Our job is to generate n-gram models up to n equal to 1, n equal to 2 and n equal to 3 for this data and discover the number of features for each model.</p>
+<p>We will then compare the number of features generated for each model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Generate n-grams upto n=1</span>
+<span class="n">vectorizer_ng1</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">ng1</span> <span class="o">=</span> <span class="n">vectorizer_ng1</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+
+<span class="c1"># Generate n-grams upto n=2</span>
+<span class="n">vectorizer_ng2</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">ng2</span> <span class="o">=</span> <span class="n">vectorizer_ng2</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+
+<span class="c1"># Generate n-grams upto n=3</span>
+<span class="n">vectorizer_ng3</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">ng3</span> <span class="o">=</span> <span class="n">vectorizer_ng3</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+
+<span class="c1"># Print the number of features for each model</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"ng1, ng2 and ng3 have </span><span class="si">%i</span><span class="s2">, </span><span class="si">%i</span><span class="s2"> and </span><span class="si">%i</span><span class="s2"> features respectively"</span> <span class="o">%</span> 
+      <span class="p">(</span><span class="n">ng1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ng2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ng3</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ng1, ng2 and ng3 have 6614, 37100 and 76881 features respectively
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You now know how to generate n-gram models containing higher order n-grams. Notice that <code>ng2</code> has over 37,000 features whereas <code>ng3</code> has over 76,000 features. This is much greater than the 6,000 dimensions obtained for <code>ng1</code>. As the n-gram range increases, so does the number of features, leading to increased computational costs and a problem known as the curse of dimensionality.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Higher-order-n-grams-for-sentiment-analysis">
+<a class="anchor" href="#Higher-order-n-grams-for-sentiment-analysis" aria-hidden="true"><span class="octicon octicon-link"></span></a>Higher order n-grams for sentiment analysis<a class="anchor-link" href="#Higher-order-n-grams-for-sentiment-analysis"> </a>
+</h3>
+<p>Similar to a previous exercise, we are going to build a classifier that can detect if the review of a particular movie is positive or negative. However, this time, we will use n-grams up to n=2 for the task.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ng_vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">X_train_ng</span> <span class="o">=</span> <span class="n">ng_vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test_ng</span> <span class="o">=</span> <span class="n">ng_vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define an instance of MultinomialNB</span>
+<span class="n">clf_ng</span> <span class="o">=</span> <span class="n">MultinomialNB</span><span class="p">()</span>
+
+<span class="c1"># Fit the classifier</span>
+<span class="n">clf_ng</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_ng</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Measure the accuracy</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">clf_ng</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test_ng</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The accuracy of the classifier on the test set is </span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">accuracy</span><span class="p">)</span>
+
+<span class="c1"># Predict the sentiment of a negative review</span>
+<span class="n">review</span> <span class="o">=</span> <span class="s1">'The movie was not good. The plot had several holes and the acting lacked panache'</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">clf_ng</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">ng_vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">review</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The sentiment predicted by the classifier is </span><span class="si">%i</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">prediction</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The accuracy of the classifier on the test set is 0.824
+The sentiment predicted by the classifier is 0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice how this classifier performs slightly better than the BoW version. Also, it succeeds at correctly identifying the sentiment of the mini-review as negative.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Comparing-performance-of-n-gram-models">
+<a class="anchor" href="#Comparing-performance-of-n-gram-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparing performance of n-gram models<a class="anchor-link" href="#Comparing-performance-of-n-gram-models"> </a>
+</h3>
+<p>You now know how to conduct sentiment analysis by converting text into various n-gram representations and feeding them to a classifier. In this exercise, we will conduct sentiment analysis for the same movie reviews from before using two n-gram models: unigrams and n-grams upto n equal to 3.</p>
+<p>We will then compare the performance using three criteria: accuracy of the model on the test set, time taken to execute the program and the number of features created when generating the n-gram representation.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="c1"># Splitting the data into training and test sets</span>
+<span class="n">train_X</span><span class="p">,</span> <span class="n">test_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">movie_reviews</span><span class="p">[</span><span class="s1">'review'</span><span class="p">],</span>
+                                                    <span class="n">movie_reviews</span><span class="p">[</span><span class="s1">'sentiment'</span><span class="p">],</span> 
+                                                    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> 
+                                                    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+                                                    <span class="n">stratify</span><span class="o">=</span><span class="n">movie_reviews</span><span class="p">[</span><span class="s1">'sentiment'</span><span class="p">])</span>
+
+<span class="c1"># Generateing ngrams</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">train_X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">train_X</span><span class="p">)</span>
+<span class="n">test_X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test_X</span><span class="p">)</span>
+
+<span class="c1"># Fit classifier</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">MultinomialNB</span><span class="p">()</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
+
+<span class="c1"># Print the accuracy, time and number of dimensions</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The program took </span><span class="si">%.3f</span><span class="s2"> seconds to complete. The accuracy on the test set is </span><span class="si">%.2f</span><span class="s2">. "</span> <span class="o">%</span>
+      <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test_X</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The ngram representation had </span><span class="si">%i</span><span class="s2"> features."</span> <span class="o">%</span> <span class="p">(</span><span class="n">train_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The program took 0.127 seconds to complete. The accuracy on the test set is 0.75. 
+The ngram representation had 12347 features.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="c1"># Splitting the data into training and test sets</span>
+<span class="n">train_X</span><span class="p">,</span> <span class="n">test_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">movie_reviews</span><span class="p">[</span><span class="s1">'review'</span><span class="p">],</span>
+                                                    <span class="n">movie_reviews</span><span class="p">[</span><span class="s1">'sentiment'</span><span class="p">],</span> 
+                                                    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> 
+                                                    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+                                                    <span class="n">stratify</span><span class="o">=</span><span class="n">movie_reviews</span><span class="p">[</span><span class="s1">'sentiment'</span><span class="p">])</span>
+
+<span class="c1"># Generateing ngrams</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">train_X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">train_X</span><span class="p">)</span>
+<span class="n">test_X</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test_X</span><span class="p">)</span>
+
+<span class="c1"># Fit classifier</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">MultinomialNB</span><span class="p">()</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_X</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
+
+<span class="c1"># Print the accuracy, time and number of dimensions</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The program took </span><span class="si">%.3f</span><span class="s2"> seconds to complete. The accuracy on the test set is </span><span class="si">%.2f</span><span class="s2">. "</span> <span class="o">%</span>
+      <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test_X</span><span class="p">,</span> <span class="n">test_y</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The ngram representation had </span><span class="si">%i</span><span class="s2"> features."</span> <span class="o">%</span> <span class="p">(</span><span class="n">train_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The program took 0.681 seconds to complete. The accuracy on the test set is 0.77. 
+The ngram representation had 178240 features.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The program took around 0.2 seconds in the case of the unigram model and more than 10 times longer for the higher order n-gram model. The unigram model had over 12,000 features whereas the n-gram model for upto n=3 had over 178,000! Despite taking higher computation time and generating more features, the classifier only performs marginally better in the latter case, producing an accuracy of 77% in comparison to the 75% for the unigram model.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/03-N-Gram-models.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

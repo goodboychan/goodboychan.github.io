@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>TF-IDF and similarity scores | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="TF-IDF and similarity scores" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Learn how to compute tf-idf weights and the cosine similarity score between two vectors. You will use these concepts to build a movie and a TED Talk recommender. Finally, you will also learn about word embeddings and using word vector representations, you will compute similarities between various Pink Floyd songs. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<meta property="og:description" content="Learn how to compute tf-idf weights and the cosine similarity score between two vectors. You will use these concepts to build a movie and a TED Talk recommender. Finally, you will also learn about word embeddings and using word vector representations, you will compute similarities between various Pink Floyd songs. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/04-TF-IDF-and-similarity-scores.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/04-TF-IDF-and-similarity-scores.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/cos_sim.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"Learn how to compute tf-idf weights and the cosine similarity score between two vectors. You will use these concepts to build a movie and a TED Talk recommender. Finally, you will also learn about word embeddings and using word vector representations, you will compute similarities between various Pink Floyd songs. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp.","@type":"BlogPosting","headline":"TF-IDF and similarity scores","dateModified":"2020-07-17T00:00:00-05:00","datePublished":"2020-07-17T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/cos_sim.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/04-TF-IDF-and-similarity-scores.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/04-TF-IDF-and-similarity-scores.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>TF-IDF and similarity scores | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="TF-IDF and similarity scores" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Learn how to compute tf-idf weights and the cosine similarity score between two vectors. You will use these concepts to build a movie and a TED Talk recommender. Finally, you will also learn about word embeddings and using word vector representations, you will compute similarities between various Pink Floyd songs. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<meta property="og:description" content="Learn how to compute tf-idf weights and the cosine similarity score between two vectors. You will use these concepts to build a movie and a TED Talk recommender. Finally, you will also learn about word embeddings and using word vector representations, you will compute similarities between various Pink Floyd songs. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/04-TF-IDF-and-similarity-scores.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/04-TF-IDF-and-similarity-scores.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/cos_sim.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"Learn how to compute tf-idf weights and the cosine similarity score between two vectors. You will use these concepts to build a movie and a TED Talk recommender. Finally, you will also learn about word embeddings and using word vector representations, you will compute similarities between various Pink Floyd songs. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp.","@type":"BlogPosting","headline":"TF-IDF and similarity scores","dateModified":"2020-07-17T00:00:00-05:00","datePublished":"2020-07-17T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/cos_sim.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/04-TF-IDF-and-similarity-scores.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/04-TF-IDF-and-similarity-scores.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">TF-IDF and similarity scores</h1><p class="page-description">Learn how to compute tf-idf weights and the cosine similarity score between two vectors. You will use these concepts to build a movie and a TED Talk recommender. Finally, you will also learn about word embeddings and using word vector representations, you will compute similarities between various Pink Floyd songs. This is the Summary of lecture "Feature Engineering for NLP in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-17T00:00:00-05:00" itemprop="datePublished">
+        Jul 17, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      13 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Natural_Language_Processing">Natural_Language_Processing</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-17-04-TF-IDF-and-similarity-scores.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-17-04-TF-IDF-and-similarity-scores.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-17-04-TF-IDF-and-similarity-scores.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Building-tf-idf-document-vectors">Building tf-idf document vectors </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#tf-idf-vectors-for-TED-talks">tf-idf vectors for TED talks </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Cosine-similarity">Cosine similarity </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Computing-dot-product">Computing dot product </a></li>
+<li class="toc-entry toc-h3"><a href="#Cosine-similarity-matrix-of-a-corpus">Cosine similarity matrix of a corpus </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Building-a-plot-line-based-recommender">Building a plot line based recommender </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Comparing-linear_kernel-and-cosine_similarity">Comparing linear_kernel and cosine_similarity </a></li>
+<li class="toc-entry toc-h3"><a href="#The-recommender-function">The recommender function </a></li>
+<li class="toc-entry toc-h3"><a href="#Plot-recommendation-engine">Plot recommendation engine </a></li>
+<li class="toc-entry toc-h3"><a href="#TED-talk-recommender">TED talk recommender </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Beyond-n-grams:-word-embeddings">Beyond n-grams: word embeddings </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Generating-word-vectors">Generating word vectors </a></li>
+<li class="toc-entry toc-h3"><a href="#Computing-similarity-of-Pink-Floyd-songs">Computing similarity of Pink Floyd songs </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-17-04-TF-IDF-and-similarity-scores.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Building-tf-idf-document-vectors">
+<a class="anchor" href="#Building-tf-idf-document-vectors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building tf-idf document vectors<a class="anchor-link" href="#Building-tf-idf-document-vectors"> </a>
+</h2>
+<ul>
+<li>n-gram modeling<ul>
+<li>Weight of dimension dependent on the frequency of the word corresponding to the dimension</li>
+</ul>
+</li>
+<li>Applications<ul>
+<li>Automatically detect stopwords</li>
+<li>Search</li>
+<li>Recommender systems</li>
+<li>Better performance in predictive modeling for some cases</li>
+</ul>
+</li>
+<li>Term frequency-inverse document frequency<ul>
+<li>Proportional to term frequency</li>
+<li>Inverse function of the number of documents in which it occurs</li>
+<li>Mathematical formula
+$$ w_{i, j} = \text{tf}_{i, j} \cdot \log (\frac{N}{\text{df}_{i}}) $$<ul>
+<li>$w_{i, j} \rightarrow $ weight of term $i$ in document $j$</li>
+<li>$\text{tf}_{i, j} \rightarrow $ term frequency of term $i$ in document $j$</li>
+<li>$N \rightarrow$ number of documents in the corpus</li>
+<li>$\text{df}_{i} \rightarrow$ number of documents containing term $i$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="tf-idf-vectors-for-TED-talks">
+<a class="anchor" href="#tf-idf-vectors-for-TED-talks" aria-hidden="true"><span class="octicon octicon-link"></span></a>tf-idf vectors for TED talks<a class="anchor-link" href="#tf-idf-vectors-for-TED-talks"> </a>
+</h3>
+<p>In this exercise, you have been given a corpus <code>ted</code> which contains the transcripts of 500 TED Talks. Your task is to generate the tf-idf vectors for these talks.</p>
+<p>In a later lesson, we will use these vectors to generate recommendations of similar talks based on the transcript.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/ted.csv'</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>transcript</th>
+      <th>url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>We're going to talk — my — a new lecture, just...</td>
+      <td>https://www.ted.com/talks/al_seckel_says_our_b...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>This is a representation of your brain, and yo...</td>
+      <td>https://www.ted.com/talks/aaron_o_connell_maki...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>It's a great honor today to share with you The...</td>
+      <td>https://www.ted.com/talks/carter_emmart_demos_...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>My passions are music, technology and making t...</td>
+      <td>https://www.ted.com/talks/jared_ficklin_new_wa...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>It used to be that if you wanted to get a comp...</td>
+      <td>https://www.ted.com/talks/jeremy_howard_the_wo...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ted</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'transcript'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+
+<span class="c1"># Create TfidfVectorizer object</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">()</span>
+
+<span class="c1"># Generate matrix of word vectors</span>
+<span class="n">tfidf_matrix</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">ted</span><span class="p">)</span>
+
+<span class="c1"># Print the shape of tfidf_matrix</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tfidf_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(500, 29158)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You now know how to generate tf-idf vectors for a given corpus of text. You can use these vectors to perform predictive modeling just like we did with <code>CountVectorizer</code>. In the next few lessons, we will see another extremely useful application of the vectorized form of documents: generating recommendations.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Cosine-similarity">
+<a class="anchor" href="#Cosine-similarity" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cosine similarity<a class="anchor-link" href="#Cosine-similarity"> </a>
+</h2>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/cos_sim.png" alt="cos_sim"></p>
+<ul>
+<li>
+<p>The dot product</p>
+<ul>
+<li>
+<p>Consider two vectors,</p>
+<p>$ V = (v_1, v_2, \dots, v_n), W = (w_1, w_2, \dots, w_n) $</p>
+</li>
+<li>
+<p>Then the dot product of $V$ and $W$ is,</p>
+<p>$ V \cdot W = (v_1 \times w_1) + (v_2 \times w_2) + \dots + (v_n \times w_n) $</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Magnitude of vector</p>
+<ul>
+<li>
+<p>For any vector,</p>
+<p>$ V = (v_1, v_2, \dots, v_n) $</p>
+</li>
+<li>
+<p>The magnitude is defined as,</p>
+<p>$ \Vert V \Vert = \sqrt{(v_1)^2 + (v_2)^2 + \dots + (v_n)^2} $</p>
+</li>
+</ul>
+</li>
+<li>Cosine score: points to remember<ul>
+<li>Value between -1 and 1</li>
+<li>In NLP, value between 0 (no similarity) and 1 (same)</li>
+<li>Robust to document length</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Computing-dot-product">
+<a class="anchor" href="#Computing-dot-product" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing dot product<a class="anchor-link" href="#Computing-dot-product"> </a>
+</h3>
+<p>In this exercise, we will learn to compute the dot product between two vectors, A = (1, 3) and B = (-2, 2), using the <code>numpy</code> library. More specifically, we will use the <code>np.dot()</code> function to compute the dot product of two numpy arrays.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize numpy vectors</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="c1"># Compute dot product</span>
+<span class="n">dot_prod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+
+<span class="c1"># Print dot product</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dot_prod</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>4
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Cosine-similarity-matrix-of-a-corpus">
+<a class="anchor" href="#Cosine-similarity-matrix-of-a-corpus" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cosine similarity matrix of a corpus<a class="anchor-link" href="#Cosine-similarity-matrix-of-a-corpus"> </a>
+</h3>
+<p>In this exercise, you have been given a <code>corpus</code>, which is a list containing five sentences. You have to compute the cosine similarity matrix which contains the pairwise cosine similarity score for every pair of sentences (vectorized using tf-idf).</p>
+<p>Remember, the value corresponding to the ith row and jth column of a similarity matrix denotes the similarity score for the ith and jth vector.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">corpus</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'The sun is the largest celestial body in the solar system'</span><span class="p">,</span> 
+          <span class="s1">'The solar system consists of the sun and eight revolving planets'</span><span class="p">,</span> 
+          <span class="s1">'Ra was the Egyptian Sun God'</span><span class="p">,</span> 
+          <span class="s1">'The Pyramids were the pinnacle of Egyptian architecture'</span><span class="p">,</span> 
+          <span class="s1">'The quick brown fox jumps over the lazy dog'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">cosine_similarity</span>
+
+<span class="c1"># Initialize an instance of tf-idf Vectorizer</span>
+<span class="n">tfidf_vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">()</span>
+
+<span class="c1"># Generate the tf-idf vectors for the corpus</span>
+<span class="n">tfidf_matrix</span> <span class="o">=</span> <span class="n">tfidf_vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
+
+<span class="c1"># compute and print the cosine similarity matrix</span>
+<span class="n">cosine_sim</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">tfidf_matrix</span><span class="p">,</span> <span class="n">tfidf_matrix</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cosine_sim</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[1.         0.36413198 0.18314713 0.18435251 0.16336438]
+ [0.36413198 1.         0.15054075 0.21704584 0.11203887]
+ [0.18314713 0.15054075 1.         0.21318602 0.07763512]
+ [0.18435251 0.21704584 0.21318602 1.         0.12960089]
+ [0.16336438 0.11203887 0.07763512 0.12960089 1.        ]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you will see in a subsequent lesson, computing the cosine similarity matrix lies at the heart of many practical systems such as recommenders. From our similarity matrix, we see that the first and the second sentence are the most similar. Also the fifth sentence has, on average, the lowest pairwise cosine scores. This is intuitive as it contains entities that are not present in the other sentences.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Building-a-plot-line-based-recommender">
+<a class="anchor" href="#Building-a-plot-line-based-recommender" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a plot line based recommender<a class="anchor-link" href="#Building-a-plot-line-based-recommender"> </a>
+</h2>
+<ul>
+<li>Steps<ol>
+<li>Text preprocessing</li>
+<li>Generate tf-idf vectors</li>
+<li>Generate cosine-similarity matrix</li>
+</ol>
+</li>
+<li>The recommender function<ol>
+<li>Take a movie title, cosine similarity matrix and indices series as arguments</li>
+<li>Extract pairwise cosine similarity scores for the movie</li>
+<li>Sort the scores in descending order</li>
+<li>Output titles corresponding to the highest scores</li>
+<li>Ignore the highest similarity score (of 1)</li>
+</ol>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Comparing-linear_kernel-and-cosine_similarity">
+<a class="anchor" href="#Comparing-linear_kernel-and-cosine_similarity" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparing linear_kernel and cosine_similarity<a class="anchor-link" href="#Comparing-linear_kernel-and-cosine_similarity"> </a>
+</h3>
+<p>In this exercise, you have been given <code>tfidf_matrix</code> which contains the tf-idf vectors of a thousand documents. Your task is to generate the cosine similarity matrix for these vectors first using <code>cosine_similarity</code> and then, using <code>linear_kernel</code>.</p>
+<p>We will then compare the computation times for both functions.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># Record start time</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="c1"># Compute cosine similarity matrix</span>
+<span class="n">cosine_sim</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">tfidf_matrix</span><span class="p">,</span> <span class="n">tfidf_matrix</span><span class="p">)</span>
+
+<span class="c1"># Print cosine similarity matrix</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cosine_sim</span><span class="p">)</span>
+
+<span class="c1"># Print time taken</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Time taken: </span><span class="si">%s</span><span class="s2"> seconds"</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[1.         0.36413198 0.18314713 0.18435251 0.16336438]
+ [0.36413198 1.         0.15054075 0.21704584 0.11203887]
+ [0.18314713 0.15054075 1.         0.21318602 0.07763512]
+ [0.18435251 0.21704584 0.21318602 1.         0.12960089]
+ [0.16336438 0.11203887 0.07763512 0.12960089 1.        ]]
+Time taken: 0.001322031021118164 seconds
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">linear_kernel</span>
+
+<span class="c1"># Record start time</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="c1"># Compute cosine similarity matrix</span>
+<span class="n">cosine_sim</span> <span class="o">=</span> <span class="n">linear_kernel</span><span class="p">(</span><span class="n">tfidf_matrix</span><span class="p">,</span> <span class="n">tfidf_matrix</span><span class="p">)</span>
+
+<span class="c1"># Print cosine similarity matrix</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cosine_sim</span><span class="p">)</span>
+
+<span class="c1"># Print time taken</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Time taken: </span><span class="si">%s</span><span class="s2"> seconds"</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[1.         0.36413198 0.18314713 0.18435251 0.16336438]
+ [0.36413198 1.         0.15054075 0.21704584 0.11203887]
+ [0.18314713 0.15054075 1.         0.21318602 0.07763512]
+ [0.18435251 0.21704584 0.21318602 1.         0.12960089]
+ [0.16336438 0.11203887 0.07763512 0.12960089 1.        ]]
+Time taken: 0.0007748603820800781 seconds
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice how both <code>linear_kernel</code> and <code>cosine_similarity</code> produced the same result. However, <code>linear_kernel</code> took a smaller amount of time to execute. When you're working with a very large amount of data and your vectors are in the tf-idf representation, it is good practice to default to <code>linear_kernel</code> to improve performance. (NOTE: In case, you see <code>linear_kernel</code> taking more time, it's because the dataset we're dealing with is extremely small and Python's time module is incapable of capture such minute time differences accurately)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-recommender-function">
+<a class="anchor" href="#The-recommender-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>The recommender function<a class="anchor-link" href="#The-recommender-function"> </a>
+</h3>
+<p>In this exercise, we will build a recommender function <code>get_recommendations()</code>, as discussed in the lesson. As we know, it takes in a title, a cosine similarity matrix, and a movie title and index mapping as arguments and outputs a list of 10 titles most similar to the original title (excluding the title itself).</p>
+<p>You have been given a dataset metadata that consists of the movie titles and overviews. The head of this dataset has been printed to console.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/movie_metadata.csv'</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">metadata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>id</th>
+      <th>title</th>
+      <th>overview</th>
+      <th>tagline</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>49026</td>
+      <td>The Dark Knight Rises</td>
+      <td>Following the death of District Attorney Harve...</td>
+      <td>The Legend Ends</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>414</td>
+      <td>Batman Forever</td>
+      <td>The Dark Knight of Gotham City confronts a das...</td>
+      <td>Courage now, truth always...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>268</td>
+      <td>Batman</td>
+      <td>The Dark Knight of Gotham City begins his war ...</td>
+      <td>Have you ever danced with the devil in the pal...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>364</td>
+      <td>Batman Returns</td>
+      <td>Having defeated the Joker, Batman now faces th...</td>
+      <td>The Bat, the Cat, the Penguin.</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>415</td>
+      <td>Batman &amp; Robin</td>
+      <td>Along with crime-fighting partner Robin and ne...</td>
+      <td>Strength. Courage. Honor. And loyalty.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Generate mapping between titles and index</span>
+<span class="n">indices</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="s1">'title'</span><span class="p">])</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">get_recommendations</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">cosine_sim</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+    <span class="c1"># Get the index of the movie that matches the title</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">title</span><span class="p">]</span>
+    <span class="c1"># Get the pairwsie similarity scores</span>
+    <span class="n">sim_scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">cosine_sim</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+    <span class="c1"># Sort the movies based on the similarity scores</span>
+    <span class="n">sim_scores</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sim_scores</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Get the scores for 10 most similar movies</span>
+    <span class="n">sim_scores</span> <span class="o">=</span> <span class="n">sim_scores</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span>
+    <span class="c1"># Get the movie indices</span>
+    <span class="n">movie_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sim_scores</span><span class="p">]</span>
+    <span class="c1"># Return the top 10 most similar movies</span>
+    <span class="k">return</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">movie_indices</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Plot-recommendation-engine">
+<a class="anchor" href="#Plot-recommendation-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plot recommendation engine<a class="anchor-link" href="#Plot-recommendation-engine"> </a>
+</h3>
+<p>In this exercise, we will build a recommendation engine that suggests movies based on similarity of plot lines. You have been given a <code>get_recommendations()</code> function that takes in the title of a movie, a similarity matrix and an indices series as its arguments and outputs a list of most similar movies.</p>
+<p>You have also been given a <code>movie_plots</code> Series that contains the plot lines of several movies. Your task is to generate a cosine similarity matrix for the tf-idf vectors of these plots.</p>
+<p>Consequently, we will check the potency of our engine by generating recommendations for one of my favorite movies, The Dark Knight Rises.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">movie_plots</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">'overview'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize the TfidfVectorizer</span>
+<span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="s1">'english'</span><span class="p">)</span>
+
+<span class="c1"># Construct the TF-IDF matrix</span>
+<span class="n">tfidf_matrix</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">movie_plots</span><span class="p">)</span>
+
+<span class="c1"># Generate the cosine similarity matrix</span>
+<span class="n">cosine_sim</span> <span class="o">=</span> <span class="n">linear_kernel</span><span class="p">(</span><span class="n">tfidf_matrix</span><span class="p">,</span> <span class="n">tfidf_matrix</span><span class="p">)</span>
+
+<span class="c1"># Generate recommendations</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">get_recommendations</span><span class="p">(</span><span class="s2">"The Dark Knight Rises"</span><span class="p">,</span> <span class="n">cosine_sim</span><span class="p">,</span> <span class="n">indices</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1                              Batman Forever
+2                                      Batman
+8                  Batman: Under the Red Hood
+3                              Batman Returns
+9                            Batman: Year One
+10    Batman: The Dark Knight Returns, Part 1
+11    Batman: The Dark Knight Returns, Part 2
+5                Batman: Mask of the Phantasm
+7                               Batman Begins
+4                              Batman &amp; Robin
+Name: title, dtype: object
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You've just built your very first recommendation system. Notice how the recommender correctly identifies 'The Dark Knight Rises' as a Batman movie and recommends other Batman movies as a result. This sytem is, of course, very primitive and there are a host of ways in which it could be improved. One method would be to look at the cast, crew and genre in addition to the plot to generate recommendations.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="TED-talk-recommender">
+<a class="anchor" href="#TED-talk-recommender" aria-hidden="true"><span class="octicon octicon-link"></span></a>TED talk recommender<a class="anchor-link" href="#TED-talk-recommender"> </a>
+</h3>
+<p>n this exercise, we will build a recommendation system that suggests TED Talks based on their transcripts. You have been given a <code>get_recommendations()</code> function that takes in the title of a talk, a similarity matrix and an <code>indices</code> series as its arguments, and outputs a list of most similar talks.</p>
+<p>You have also been given a <code>transcripts</code> series that contains the transcripts of around 500 TED talks. Your task is to generate a cosine similarity matrix for the tf-idf vectors of the talk transcripts.</p>
+<p>Consequently, we will generate recommendations for a talk titled '5 ways to kill your dreams' by Brazilian entrepreneur Bel Pesce.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/ted_clean.csv'</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ted</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0.1</th>
+      <th>title</th>
+      <th>url</th>
+      <th>transcript</th>
+    </tr>
+    <tr>
+      <th>Unnamed: 0</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1407</td>
+      <td>10 top time-saving tech tips</td>
+      <td>https://www.ted.com/talks/david_pogue_10_top_t...</td>
+      <td>I've noticed something interesting about socie...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1524</td>
+      <td>Who am I? Think again</td>
+      <td>https://www.ted.com/talks/hetain_patel_who_am_...</td>
+      <td>Hetain Patel: (In Chinese)Yuyu Rau: Hi, I'm He...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2393</td>
+      <td>"Awoo"</td>
+      <td>https://www.ted.com/talks/sofi_tukker_awoo\n</td>
+      <td>(Music)Sophie Hawley-Weld: OK, you don't have ...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2313</td>
+      <td>What I learned from 2,000 obituaries</td>
+      <td>https://www.ted.com/talks/lux_narayan_what_i_l...</td>
+      <td>Joseph Keller used to jog around the Stanford ...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1633</td>
+      <td>Why giving away our wealth has been the most s...</td>
+      <td>https://www.ted.com/talks/bill_and_melinda_gat...</td>
+      <td>Chris Anderson: So, this is an interview with ...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_recommendations</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">cosine_sim</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+    <span class="c1"># Get the index of the movie that matches the title</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">title</span><span class="p">]</span>
+    <span class="c1"># Get the pairwsie similarity scores</span>
+    <span class="n">sim_scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">cosine_sim</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+    <span class="c1"># Sort the movies based on the similarity scores</span>
+    <span class="n">sim_scores</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sim_scores</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Get the scores for 10 most similar movies</span>
+    <span class="n">sim_scores</span> <span class="o">=</span> <span class="n">sim_scores</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span>
+    <span class="c1"># Get the movie indices</span>
+    <span class="n">talk_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sim_scores</span><span class="p">]</span>
+    <span class="c1"># Return the top 10 most similar movies</span>
+    <span class="k">return</span> <span class="n">ted</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">talk_indices</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Generate mapping between titles and index</span>
+<span class="n">indices</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">ted</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ted</span><span class="p">[</span><span class="s1">'title'</span><span class="p">])</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+<span class="n">transcripts</span> <span class="o">=</span> <span class="n">ted</span><span class="p">[</span><span class="s1">'transcript'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize the TfidfVectorizer</span>
+<span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="s1">'english'</span><span class="p">)</span>
+
+<span class="c1"># Construct the TF-IDF matrix</span>
+<span class="n">tfidf_matrix</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">transcripts</span><span class="p">)</span>
+
+<span class="c1"># Generate the cosine similarity matrix</span>
+<span class="n">cosine_sim</span> <span class="o">=</span> <span class="n">linear_kernel</span><span class="p">(</span><span class="n">tfidf_matrix</span><span class="p">,</span> <span class="n">tfidf_matrix</span><span class="p">)</span>
+
+<span class="c1"># Generate recommendations</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">get_recommendations</span><span class="p">(</span><span class="s1">'5 ways to kill your dreams'</span><span class="p">,</span> <span class="n">cosine_sim</span><span class="p">,</span> <span class="n">indices</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Unnamed: 0
+453             Success is a continuous journey
+157                        Why we do what we do
+494                   How to find work you love
+149          My journey into movies that matter
+447                        One Laptop per Child
+230             How to get your ideas to spread
+497         Plug into your hard-wired happiness
+495    Why you will fail to have a great career
+179             Be suspicious of simple stories
+53                          To upgrade is human
+Name: title, dtype: object
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You have successfully built a TED talk recommender. This recommender works surprisingly well despite being trained only on a small subset of TED talks. In fact, three of the talks recommended by our system is also recommended by the official TED website as talks to watch next after '5 ways to kill your dreams'!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Beyond-n-grams:-word-embeddings">
+<a class="anchor" href="#Beyond-n-grams:-word-embeddings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Beyond n-grams: word embeddings<a class="anchor-link" href="#Beyond-n-grams:-word-embeddings"> </a>
+</h2>
+<ul>
+<li>Word embeddings<ul>
+<li>Mapping words into an n-dimensional vector space</li>
+<li>Produced using deep learning and huge amounts of data</li>
+<li>Discern how similar two words are to each other</li>
+<li>Used to detect synonyms and antonyms</li>
+<li>Captures complex relationships</li>
+<li>Dependent on spacy model; independent of dataset you use</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>Before using word embedding through spaCy, you need to download <code>en_core_web_lg</code> model (<code>python -m spacy download en_core_web_lg</code>) refer this <a href="https://spacy.io/models/en#en_core_web_lg">page</a>
+</div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">spacy</span>
+<span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'en_core_web_lg'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Generating-word-vectors">
+<a class="anchor" href="#Generating-word-vectors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generating word vectors<a class="anchor-link" href="#Generating-word-vectors"> </a>
+</h3>
+<p>In this exercise, we will generate the pairwise similarity scores of all the words in a sentence.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sent</span> <span class="o">=</span> <span class="s1">'I like apples and orange'</span>
+
+<span class="c1"># Create the doc object</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span>
+
+<span class="c1"># Compute pairwise similarity scores</span>
+<span class="k">for</span> <span class="n">token1</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">token2</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">:</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="n">token1</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">token2</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">token1</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">token2</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>I I 1.0
+I like 0.5554912
+I apples 0.20442726
+I and 0.31607857
+I orange 0.30332792
+like I 0.5554912
+like like 1.0
+like apples 0.32987142
+like and 0.5267484
+like orange 0.3551869
+apples I 0.20442726
+apples like 0.32987142
+apples apples 1.0
+apples and 0.24097733
+apples orange 0.5123849
+and I 0.31607857
+and like 0.5267484
+and apples 0.24097733
+and and 1.0
+and orange 0.25450808
+orange I 0.30332792
+orange like 0.3551869
+orange apples 0.5123849
+orange and 0.25450808
+orange orange 1.0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice how the words <code>'apples'</code> and <code>'oranges'</code> have the highest pairwaise similarity score. This is expected as they are both fruits and are more related to each other than any other pair of words.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Computing-similarity-of-Pink-Floyd-songs">
+<a class="anchor" href="#Computing-similarity-of-Pink-Floyd-songs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing similarity of Pink Floyd songs<a class="anchor-link" href="#Computing-similarity-of-Pink-Floyd-songs"> </a>
+</h3>
+<p>In this final exercise, you have been given lyrics of three songs by the British band Pink Floyd, namely 'High Hopes', 'Hey You' and 'Mother'. The lyrics to these songs are available as <code>hopes</code>, <code>hey</code> and <code>mother</code> respectively.</p>
+<p>Your task is to compute the pairwise similarity between <code>mother</code> and <code>hopes</code>, and <code>mother</code> and <code>hey</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/mother.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">mother</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/hopes.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">hopes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/hey.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">hey</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create Doc objects</span>
+<span class="n">mother_doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">mother</span><span class="p">)</span>
+<span class="n">hopes_doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">hopes</span><span class="p">)</span>
+<span class="n">hey_doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">hey</span><span class="p">)</span>
+
+<span class="c1"># Print similarity between mother and hopes</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mother_doc</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">hopes_doc</span><span class="p">))</span>
+
+<span class="c1"># Print similarity between mother and hey</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mother_doc</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">hey_doc</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.8653562687318176
+0.9595267490921296
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice that 'Mother' and 'Hey You' have a similarity score of 0.9 whereas 'Mother' and 'High Hopes' has a score of only 0.6. This is probably because 'Mother' and 'Hey You' were both songs from the same album 'The Wall' and were penned by Roger Waters. On the other hand, 'High Hopes' was a part of the album 'Division Bell' with lyrics by David Gilmour and his wife, Penny Samson. Treat yourself by listening to these songs. They're some of the best!</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/04-TF-IDF-and-similarity-scores.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
