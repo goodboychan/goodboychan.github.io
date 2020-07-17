@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Text preprocessing, POS tagging and NER | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Text preprocessing, POS tagging and NER" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will learn about tokenization and lemmatization. You will then learn how to perform text cleaning, part-of-speech tagging, and named entity recognition using the spaCy library. Upon mastering these concepts, you will proceed to make the Gettysburg address machine-friendly, analyze noun usage in fake news, and identify people mentioned in a TechCrunch article. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will learn about tokenization and lemmatization. You will then learn how to perform text cleaning, part-of-speech tagging, and named entity recognition using the spaCy library. Upon mastering these concepts, you will proceed to make the Gettysburg address machine-friendly, analyze noun usage in fake news, and identify people mentioned in a TechCrunch article. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/02-Text-preprocessing-POS-tagging-and-NER.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/02-Text-preprocessing-POS-tagging-and-NER.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will learn about tokenization and lemmatization. You will then learn how to perform text cleaning, part-of-speech tagging, and named entity recognition using the spaCy library. Upon mastering these concepts, you will proceed to make the Gettysburg address machine-friendly, analyze noun usage in fake news, and identify people mentioned in a TechCrunch article. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp.","@type":"BlogPosting","headline":"Text preprocessing, POS tagging and NER","dateModified":"2020-07-17T00:00:00-05:00","datePublished":"2020-07-17T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/02-Text-preprocessing-POS-tagging-and-NER.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/02-Text-preprocessing-POS-tagging-and-NER.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Text preprocessing, POS tagging and NER | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Text preprocessing, POS tagging and NER" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will learn about tokenization and lemmatization. You will then learn how to perform text cleaning, part-of-speech tagging, and named entity recognition using the spaCy library. Upon mastering these concepts, you will proceed to make the Gettysburg address machine-friendly, analyze noun usage in fake news, and identify people mentioned in a TechCrunch article. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will learn about tokenization and lemmatization. You will then learn how to perform text cleaning, part-of-speech tagging, and named entity recognition using the spaCy library. Upon mastering these concepts, you will proceed to make the Gettysburg address machine-friendly, analyze noun usage in fake news, and identify people mentioned in a TechCrunch article. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/02-Text-preprocessing-POS-tagging-and-NER.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/02-Text-preprocessing-POS-tagging-and-NER.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will learn about tokenization and lemmatization. You will then learn how to perform text cleaning, part-of-speech tagging, and named entity recognition using the spaCy library. Upon mastering these concepts, you will proceed to make the Gettysburg address machine-friendly, analyze noun usage in fake news, and identify people mentioned in a TechCrunch article. This is the Summary of lecture “Feature Engineering for NLP in Python”, via datacamp.","@type":"BlogPosting","headline":"Text preprocessing, POS tagging and NER","dateModified":"2020-07-17T00:00:00-05:00","datePublished":"2020-07-17T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/02-Text-preprocessing-POS-tagging-and-NER.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/02-Text-preprocessing-POS-tagging-and-NER.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Text preprocessing, POS tagging and NER</h1><p class="page-description">In this chapter, you will learn about tokenization and lemmatization. You will then learn how to perform text cleaning, part-of-speech tagging, and named entity recognition using the spaCy library. Upon mastering these concepts, you will proceed to make the Gettysburg address machine-friendly, analyze noun usage in fake news, and identify people mentioned in a TechCrunch article. This is the Summary of lecture "Feature Engineering for NLP in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-17T00:00:00-05:00" itemprop="datePublished">
+        Jul 17, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      15 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Natural_Language_Processing">Natural_Language_Processing</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-17-02-Text-preprocessing-POS-tagging-and-NER.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-17-02-Text-preprocessing-POS-tagging-and-NER.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-17-02-Text-preprocessing-POS-tagging-and-NER.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Tokenization-and-Lemmatization">Tokenization and Lemmatization </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Tokenizing-the-Gettysburg-Address">Tokenizing the Gettysburg Address </a></li>
+<li class="toc-entry toc-h3"><a href="#Lemmatizing-the-Gettysburg-address">Lemmatizing the Gettysburg address </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Text-cleaning">Text cleaning </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Cleaning-a-blog-post">Cleaning a blog post </a></li>
+<li class="toc-entry toc-h3"><a href="#Cleaning-TED-talks-in-a-dataframe">Cleaning TED talks in a dataframe </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Part-of-speech-tagging">Part-of-speech tagging </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#POS-tagging-in-Lord-of-the-Flies">POS tagging in Lord of the Flies </a></li>
+<li class="toc-entry toc-h3"><a href="#Counting-nouns-in-a-piece-of-text">Counting nouns in a piece of text </a></li>
+<li class="toc-entry toc-h3"><a href="#Noun-usage-in-fake-news">Noun usage in fake news </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Named-entity-recognition">Named entity recognition </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Named-entities-in-a-sentence">Named entities in a sentence </a></li>
+<li class="toc-entry toc-h3"><a href="#Identifying-people-mentioned-in-a-news-article">Identifying people mentioned in a news article </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-17-02-Text-preprocessing-POS-tagging-and-NER.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tokenization-and-Lemmatization">
+<a class="anchor" href="#Tokenization-and-Lemmatization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tokenization and Lemmatization<a class="anchor-link" href="#Tokenization-and-Lemmatization"> </a>
+</h2>
+<ul>
+<li>Text preprocessing techniques<ul>
+<li>Converting words into lowercase</li>
+<li>Removing leading and trailing whitespaces</li>
+<li>Removing punctuation</li>
+<li>Removing stopwords</li>
+<li>Expanding contractions</li>
+</ul>
+</li>
+<li>Tokenization<ul>
+<li>the process of splitting a string into its constituent tokens</li>
+</ul>
+</li>
+<li>Lemmatization<ul>
+<li>the process of converting a word into its lowercased base form or lemma</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Tokenizing-the-Gettysburg-Address">
+<a class="anchor" href="#Tokenizing-the-Gettysburg-Address" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tokenizing the Gettysburg Address<a class="anchor-link" href="#Tokenizing-the-Gettysburg-Address"> </a>
+</h3>
+<p>In this exercise, you will be tokenizing one of the most famous speeches of all time: the Gettysburg Address delivered by American President Abraham Lincoln during the American Civil War.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/gettysburg.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">gettysburg</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">spacy</span>
+
+<span class="c1"># Load the en_core_web_sm model</span>
+<span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'en_core_web_sm'</span><span class="p">)</span>
+
+<span class="c1"># create a Doc object</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">gettysburg</span><span class="p">)</span>
+
+<span class="c1"># Generate the tokens</span>
+<span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['Four', 'score', 'and', 'seven', 'years', 'ago', 'our', 'fathers', 'brought', 'forth', 'on', 'this', 'continent', ',', 'a', 'new', 'nation', ',', 'conceived', 'in', 'Liberty', ',', 'and', 'dedicated', 'to', 'the', 'proposition', 'that', 'all', 'men', 'are', 'created', 'equal', '.', 'Now', 'we', "'re", 'engaged', 'in', 'a', 'great', 'civil', 'war', ',', 'testing', 'whether', 'that', 'nation', ',', 'or', 'any', 'nation', 'so', 'conceived', 'and', 'so', 'dedicated', ',', 'can', 'long', 'endure', '.', 'We', "'re", 'met', 'on', 'a', 'great', 'battlefield', 'of', 'that', 'war', '.', 'We', "'ve", 'come', 'to', 'dedicate', 'a', 'portion', 'of', 'that', 'field', ',', 'as', 'a', 'final', 'resting', 'place', 'for', 'those', 'who', 'here', 'gave', 'their', 'lives', 'that', 'that', 'nation', 'might', 'live', '.', 'It', "'s", 'altogether', 'fitting', 'and', 'proper', 'that', 'we', 'should', 'do', 'this', '.', 'But', ',', 'in', 'a', 'larger', 'sense', ',', 'we', 'ca', "n't", 'dedicate', '-', 'we', 'can', 'not', 'consecrate', '-', 'we', 'can', 'not', 'hallow', '-', 'this', 'ground', '.', 'The', 'brave', 'men', ',', 'living', 'and', 'dead', ',', 'who', 'struggled', 'here', ',', 'have', 'consecrated', 'it', ',', 'far', 'above', 'our', 'poor', 'power', 'to', 'add', 'or', 'detract', '.', 'The', 'world', 'will', 'little', 'note', ',', 'nor', 'long', 'remember', 'what', 'we', 'say', 'here', ',', 'but', 'it', 'can', 'never', 'forget', 'what', 'they', 'did', 'here', '.', 'It', 'is', 'for', 'us', 'the', 'living', ',', 'rather', ',', 'to', 'be', 'dedicated', 'here', 'to', 'the', 'unfinished', 'work', 'which', 'they', 'who', 'fought', 'here', 'have', 'thus', 'far', 'so', 'nobly', 'advanced', '.', 'It', "'s", 'rather', 'for', 'us', 'to', 'be', 'here', 'dedicated', 'to', 'the', 'great', 'task', 'remaining', 'before', 'us', '-', 'that', 'from', 'these', 'honored', 'dead', 'we', 'take', 'increased', 'devotion', 'to', 'that', 'cause', 'for', 'which', 'they', 'gave', 'the', 'last', 'full', 'measure', 'of', 'devotion', '-', 'that', 'we', 'here', 'highly', 'resolve', 'that', 'these', 'dead', 'shall', 'not', 'have', 'died', 'in', 'vain', '-', 'that', 'this', 'nation', ',', 'under', 'God', ',', 'shall', 'have', 'a', 'new', 'birth', 'of', 'freedom', '-', 'and', 'that', 'government', 'of', 'the', 'people', ',', 'by', 'the', 'people', ',', 'for', 'the', 'people', ',', 'shall', 'not', 'perish', 'from', 'the', 'earth', '.']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Lemmatizing-the-Gettysburg-address">
+<a class="anchor" href="#Lemmatizing-the-Gettysburg-address" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lemmatizing the Gettysburg address<a class="anchor-link" href="#Lemmatizing-the-Gettysburg-address"> </a>
+</h3>
+<p>In this exercise, we will perform lemmatization on the same <code>gettysburg</code> address from before.</p>
+<p>However, this time, we will also take a look at the speech, before and after lemmatization, and try to adjudge the kind of changes that take place to make the piece more machine friendly.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the gettysburg address</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gettysburg</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal. Now we're engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We're met on a great battlefield of that war. We've come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It's altogether fitting and proper that we should do this. But, in a larger sense, we can't dedicate - we can not consecrate - we can not hallow - this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced. It's rather for us to be here dedicated to the great task remaining before us - that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion - that we here highly resolve that these dead shall not have died in vain - that this nation, under God, shall have a new birth of freedom - and that government of the people, by the people, for the people, shall not perish from the earth.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Generate lemmas</span>
+<span class="n">lemmas</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+
+<span class="c1"># Convert lemmas into a string</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lemmas</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>four score and seven year ago -PRON- father bring forth on this continent , a new nation , conceive in Liberty , and dedicate to the proposition that all man be create equal . now -PRON- be engage in a great civil war , test whether that nation , or any nation so conceive and so dedicated , can long endure . -PRON- be meet on a great battlefield of that war . -PRON- have come to dedicate a portion of that field , as a final resting place for those who here give -PRON- life that that nation may live . -PRON- be altogether fitting and proper that -PRON- should do this . but , in a large sense , -PRON- can not dedicate - -PRON- can not consecrate - -PRON- can not hallow - this ground . the brave man , living and dead , who struggle here , have consecrate -PRON- , far above -PRON- poor power to add or detract . the world will little note , nor long remember what -PRON- say here , but -PRON- can never forget what -PRON- do here . -PRON- be for -PRON- the living , rather , to be dedicate here to the unfinished work which -PRON- who fight here have thus far so nobly advanced . -PRON- be rather for -PRON- to be here dedicated to the great task remain before -PRON- - that from these honor dead -PRON- take increase devotion to that cause for which -PRON- give the last full measure of devotion - that -PRON- here highly resolve that these dead shall not have die in vain - that this nation , under God , shall have a new birth of freedom - and that government of the people , by the people , for the people , shall not perish from the earth .
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Observe the lemmatized version of the speech. It isn't very readable to humans but it is in a much more convenient format for a machine to process.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Text-cleaning">
+<a class="anchor" href="#Text-cleaning" aria-hidden="true"><span class="octicon octicon-link"></span></a>Text cleaning<a class="anchor-link" href="#Text-cleaning"> </a>
+</h2>
+<ul>
+<li>Text cleaning techniques<ul>
+<li>Unnecessary whitespaces and escape sequences</li>
+<li>Punctuations</li>
+<li>Special characters (numbers, emojis, etc.)</li>
+<li>Stopwords</li>
+</ul>
+</li>
+<li>Stopwords<ul>
+<li>Words that occur extremely commonly</li>
+<li>E.g. articles, be verbs, pronouns, etc..</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Cleaning-a-blog-post">
+<a class="anchor" href="#Cleaning-a-blog-post" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cleaning a blog post<a class="anchor-link" href="#Cleaning-a-blog-post"> </a>
+</h3>
+<p>In this exercise, you have been given an excerpt from a blog post. Your task is to clean this text into a more machine friendly format. This will involve converting to lowercase, lemmatization and removing stopwords, punctuations and non-alphabetic characters.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/blog.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">blog</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    
+<span class="n">stopwords</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">en</span><span class="o">.</span><span class="n">stop_words</span><span class="o">.</span><span class="n">STOP_WORDS</span>
+<span class="n">blog</span> <span class="o">=</span> <span class="n">blog</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Generate doc Object: doc</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">blog</span><span class="p">)</span>
+
+<span class="c1"># Generate lemmatized tokens</span>
+<span class="n">lemmas</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+
+<span class="c1"># Remove stopwords and non-alphabetic tokens</span>
+<span class="n">a_lemmas</span> <span class="o">=</span> <span class="p">[</span><span class="n">lemma</span> <span class="k">for</span> <span class="n">lemma</span> <span class="ow">in</span> <span class="n">lemmas</span> <span class="k">if</span> <span class="n">lemma</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="ow">and</span> <span class="n">lemma</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="p">]</span>
+
+<span class="c1"># Print string after text cleaning</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a_lemmas</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>century politic witness alarm rise populism europe warning sign come uk brexit referendum vote swinge way leave follow stupendous victory billionaire donald trump president united states november europe steady rise populist far right party capitalize europe immigration crisis raise nationalist anti europe sentiment instance include alternative germany afd win seat enter bundestag upset germany political order time second world war success star movement italy surge popularity neo nazism neo fascism country hungary czech republic poland austria
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Take a look at the cleaned text; it is lowercased and devoid of numbers, punctuations and commonly used stopwords. Also, note that the word U.S. was present in the original text. Since it had periods in between, our text cleaning process completely removed it. This may not be ideal behavior. It is always advisable to use your custom functions in place of <code>isalpha()</code> for more nuanced cases.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Cleaning-TED-talks-in-a-dataframe">
+<a class="anchor" href="#Cleaning-TED-talks-in-a-dataframe" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cleaning TED talks in a dataframe<a class="anchor-link" href="#Cleaning-TED-talks-in-a-dataframe"> </a>
+</h3>
+<p>In this exercise, we will revisit the TED Talks from the first chapter. You have been a given a dataframe <code>ted</code> consisting of 5 TED Talks. Your task is to clean these talks using techniques discussed earlier by writing a function <code>preprocess</code> and applying it to the <code>transcript</code> feature of the dataframe.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/ted.csv'</span><span class="p">)</span>
+<span class="n">ted</span><span class="p">[</span><span class="s1">'transcript'</span><span class="p">]</span> <span class="o">=</span> <span class="n">ted</span><span class="p">[</span><span class="s1">'transcript'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="n">ted</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>transcript</th>
+      <th>url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>we're going to talk — my — a new lecture, just...</td>
+      <td>https://www.ted.com/talks/al_seckel_says_our_b...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>this is a representation of your brain, and yo...</td>
+      <td>https://www.ted.com/talks/aaron_o_connell_maki...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>it's a great honor today to share with you the...</td>
+      <td>https://www.ted.com/talks/carter_emmart_demos_...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>my passions are music, technology and making t...</td>
+      <td>https://www.ted.com/talks/jared_ficklin_new_wa...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>it used to be that if you wanted to get a comp...</td>
+      <td>https://www.ted.com/talks/jeremy_howard_the_wo...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Function to preprocess text</span>
+<span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="c1"># Create Doc object</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="p">[</span><span class="s1">'ner'</span><span class="p">,</span> <span class="s1">'parser'</span><span class="p">])</span>
+    
+    <span class="c1"># Generate lemmas</span>
+    <span class="n">lemmas</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+    
+    <span class="c1"># Remove stopwords and non-alphabetic characters</span>
+    <span class="n">a_lemmas</span> <span class="o">=</span> <span class="p">[</span><span class="n">lemma</span> <span class="k">for</span> <span class="n">lemma</span> <span class="ow">in</span> <span class="n">lemmas</span> <span class="k">if</span> <span class="n">lemma</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="ow">and</span> <span class="n">lemma</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a_lemmas</span><span class="p">)</span>
+
+<span class="c1"># Apply preprocess to ted['transcript']</span>
+<span class="n">ted</span><span class="p">[</span><span class="s1">'transcript'</span><span class="p">]</span> <span class="o">=</span> <span class="n">ted</span><span class="p">[</span><span class="s1">'transcript'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">preprocess</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ted</span><span class="p">[</span><span class="s1">'transcript'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0      talk new lecture ted illusion create ted try r...
+1      representation brain brain break left half log...
+2      great honor today share digital universe creat...
+3      passion music technology thing combination thi...
+4      use want computer new program programming requ...
+                             ...                        
+495    today unpack example iconic design perfect sen...
+496    brother belong demographic pat percent accord ...
+497    john hockenberry great tom want start question...
+498    right moment kill car internet little mobile d...
+499    real problem math education right basically ha...
+Name: transcript, Length: 500, dtype: object
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You have preprocessed all the TED talk transcripts contained in <code>ted</code> and it is now in a good shape to perform operations such as vectorization. You now have a good understanding of how text preprocessing works and why it is important. In the next lessons, we will move on to generating word level features for our texts.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Part-of-speech-tagging">
+<a class="anchor" href="#Part-of-speech-tagging" aria-hidden="true"><span class="octicon octicon-link"></span></a>Part-of-speech tagging<a class="anchor-link" href="#Part-of-speech-tagging"> </a>
+</h2>
+<ul>
+<li>Part-of-Speech (POS)<ul>
+<li>helps in identifying distinction by identifying one bear as a noun and the other as a verb</li>
+<li>Word-sense disambiguation<ul>
+<li>"The bear is a majestic animal"</li>
+<li>"Please bear with me"</li>
+</ul>
+</li>
+<li>Sentiment analysis</li>
+<li>Question answering</li>
+<li>Fake news and opinion spam detection</li>
+</ul>
+</li>
+<li>POS tagging<ul>
+<li>Assigning every word, its corresponding part of speech</li>
+</ul>
+</li>
+<li>POS annotation in spaCy<ul>
+<li>
+<code>PROPN</code> - proper noun</li>
+<li>
+<code>DET</code> - determinant</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="POS-tagging-in-Lord-of-the-Flies">
+<a class="anchor" href="#POS-tagging-in-Lord-of-the-Flies" aria-hidden="true"><span class="octicon octicon-link"></span></a>POS tagging in Lord of the Flies<a class="anchor-link" href="#POS-tagging-in-Lord-of-the-Flies"> </a>
+</h3>
+<p>In this exercise, you will perform part-of-speech tagging on a famous passage from one of the most well-known novels of all time, Lord of the Flies, authored by William Golding.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/lotf.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">lotf</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create d Doc object</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">lotf</span><span class="p">)</span>
+
+<span class="c1"># Generate tokens and pos tags</span>
+<span class="n">pos</span> <span class="o">=</span> <span class="p">[(</span><span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">pos_</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[('He', 'PRON'), ('found', 'VERB'), ('himself', 'PRON'), ('understanding', 'VERB'), ('the', 'DET'), ('wearisomeness', 'NOUN'), ('of', 'ADP'), ('this', 'DET'), ('life', 'NOUN'), (',', 'PUNCT'), ('where', 'ADV'), ('every', 'DET'), ('path', 'NOUN'), ('was', 'AUX'), ('an', 'DET'), ('improvisation', 'NOUN'), ('and', 'CCONJ'), ('a', 'DET'), ('considerable', 'ADJ'), ('part', 'NOUN'), ('of', 'ADP'), ('one', 'NOUN'), ('’s', 'PART'), ('waking', 'VERB'), ('life', 'NOUN'), ('was', 'AUX'), ('spent', 'VERB'), ('watching', 'VERB'), ('one', 'PRON'), ('’s', 'PART'), ('feet', 'NOUN'), ('.', 'PUNCT')]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Examine the various POS tags attached to each token and evaluate if they make intuitive sense to you. You will notice that they are indeed labelled correctly according to the standard rules of English grammar.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Counting-nouns-in-a-piece-of-text">
+<a class="anchor" href="#Counting-nouns-in-a-piece-of-text" aria-hidden="true"><span class="octicon octicon-link"></span></a>Counting nouns in a piece of text<a class="anchor-link" href="#Counting-nouns-in-a-piece-of-text"> </a>
+</h3>
+<p>In this exercise, we will write two functions, <code>nouns()</code> and <code>proper_nouns()</code> that will count the number of other nouns and proper nouns in a piece of text respectively.</p>
+<p>These functions will take in a piece of text and generate a list containing the POS tags for each word. It will then return the number of proper nouns/other nouns that the text contains. We will use these functions in the next exercise to generate interesting insights about fake news.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Returns number of proper nouns</span>
+<span class="k">def</span> <span class="nf">proper_nouns</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">nlp</span><span class="p">):</span>
+    <span class="c1"># Create doc object</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    
+    <span class="c1"># Generate list of POS tags</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+    
+    <span class="c1"># Return number of proper nouns</span>
+    <span class="k">return</span> <span class="n">pos</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">'PROPN'</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">proper_nouns</span><span class="p">(</span><span class="s1">'Abdul, Bill and Cathy went to the market to buy apples.'</span><span class="p">,</span> <span class="n">nlp</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>3
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Returns number of other nouns</span>
+<span class="k">def</span> <span class="nf">nouns</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">nlp</span><span class="p">):</span>
+    <span class="c1"># create doc object</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    
+    <span class="c1"># Generate list of POS tags</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">]</span>
+    
+    <span class="c1"># Return number of other nouns</span>
+    <span class="k">return</span> <span class="n">pos</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">'NOUN'</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">nouns</span><span class="p">(</span><span class="s1">'Abdul, Bill and Cathy went to the market to buy apples.'</span><span class="p">,</span> <span class="n">nlp</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Noun-usage-in-fake-news">
+<a class="anchor" href="#Noun-usage-in-fake-news" aria-hidden="true"><span class="octicon octicon-link"></span></a>Noun usage in fake news<a class="anchor-link" href="#Noun-usage-in-fake-news"> </a>
+</h3>
+<p>In this exercise, you have been given a dataframe <code>headlines</code> that contains news headlines that are either fake or real. Your task is to generate two new features <code>num_propn</code> and <code>num_noun</code> that represent the number of proper nouns and other nouns contained in the <code>title</code> feature of <code>headlines</code>.</p>
+<p>Next, we will compute the mean number of proper nouns and other nouns used in fake and real news headlines and compare the values. If there is a remarkable difference, then there is a good chance that using the <code>num_propn</code> and <code>num_noun</code> features in fake news detectors will improve its performance.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">headlines</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/fakenews.csv'</span><span class="p">)</span>
+<span class="n">headlines</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>title</th>
+      <th>label</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>You Can Smell Hillary’s Fear</td>
+      <td>FAKE</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>Watch The Exact Moment Paul Ryan Committed Pol...</td>
+      <td>FAKE</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>Kerry to go to Paris in gesture of sympathy</td>
+      <td>REAL</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>Bernie supporters on Twitter erupt in anger ag...</td>
+      <td>FAKE</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>The Battle of New York: Why This Primary Matters</td>
+      <td>REAL</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">headlines</span><span class="p">[</span><span class="s1">'num_propn'</span><span class="p">]</span> <span class="o">=</span> <span class="n">headlines</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">proper_nouns</span><span class="p">)</span>
+<span class="n">headlines</span><span class="p">[</span><span class="s1">'num_noun'</span><span class="p">]</span> <span class="o">=</span> <span class="n">headlines</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">nouns</span><span class="p">)</span>
+
+<span class="c1"># Compute mean of proper nouns</span>
+<span class="n">real_propn</span> <span class="o">=</span> <span class="n">headlines</span><span class="p">[</span><span class="n">headlines</span><span class="p">[</span><span class="s1">'label'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'REAL'</span><span class="p">][</span><span class="s1">'num_propn'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">fake_propn</span> <span class="o">=</span> <span class="n">headlines</span><span class="p">[</span><span class="n">headlines</span><span class="p">[</span><span class="s1">'label'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'FAKE'</span><span class="p">][</span><span class="s1">'num_propn'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="c1"># Compute mean of other nouns</span>
+<span class="n">real_noun</span> <span class="o">=</span> <span class="n">headlines</span><span class="p">[</span><span class="n">headlines</span><span class="p">[</span><span class="s1">'label'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'REAL'</span><span class="p">][</span><span class="s1">'num_noun'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">fake_noun</span> <span class="o">=</span> <span class="n">headlines</span><span class="p">[</span><span class="n">headlines</span><span class="p">[</span><span class="s1">'label'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'FAKE'</span><span class="p">][</span><span class="s1">'num_noun'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="c1"># Print results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Mean no. of proper nouns in real and fake headlines are </span><span class="si">%.2f</span><span class="s2"> and </span><span class="si">%.2f</span><span class="s2"> respectively"</span> <span class="o">%</span>
+      <span class="p">(</span><span class="n">real_propn</span><span class="p">,</span> <span class="n">fake_propn</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Mean no. of other nouns in real and fake headlines are </span><span class="si">%.2f</span><span class="s2"> and </span><span class="si">%.2f</span><span class="s2"> respectively"</span> <span class="o">%</span>
+     <span class="p">(</span><span class="n">real_noun</span><span class="p">,</span> <span class="n">fake_noun</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Mean no. of proper nouns in real and fake headlines are 2.42 and 4.58 respectively
+Mean no. of other nouns in real and fake headlines are 2.30 and 1.67 respectively
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You now know to construct features using POS tags information. Notice how the mean number of proper nouns is considerably higher for fake news than it is for real news. The opposite seems to be true in the case of other nouns. This fact can be put to great use in desgning fake news detectors.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Named-entity-recognition">
+<a class="anchor" href="#Named-entity-recognition" aria-hidden="true"><span class="octicon octicon-link"></span></a>Named entity recognition<a class="anchor-link" href="#Named-entity-recognition"> </a>
+</h2>
+<ul>
+<li>Named entity recognition (NER)<ul>
+<li>Identifying and classifying named entities into predefined categories</li>
+<li>Categories include person, organization, country, etc.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Named-entities-in-a-sentence">
+<a class="anchor" href="#Named-entities-in-a-sentence" aria-hidden="true"><span class="octicon octicon-link"></span></a>Named entities in a sentence<a class="anchor-link" href="#Named-entities-in-a-sentence"> </a>
+</h3>
+<p>In this exercise, we will identify and classify the labels of various named entities in a body of text using one of spaCy's statistical models. We will also verify the veracity of these labels.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a Doc instance</span>
+<span class="n">text</span> <span class="o">=</span> <span class="s1">'Sundar Pichai is the CEO of Google. Its headquarter is in Mountain View.'</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="c1"># Print all named entities and their labels</span>
+<span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ent</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">ent</span><span class="o">.</span><span class="n">label_</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Sundar Pichai PERSON
+Google ORG
+Mountain View GPE
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Identifying-people-mentioned-in-a-news-article">
+<a class="anchor" href="#Identifying-people-mentioned-in-a-news-article" aria-hidden="true"><span class="octicon octicon-link"></span></a>Identifying people mentioned in a news article<a class="anchor-link" href="#Identifying-people-mentioned-in-a-news-article"> </a>
+</h3>
+<p>In this exercise, you have been given an excerpt from a news article published in TechCrunch. Your task is to write a function <code>find_people</code> that identifies the names of people that have been mentioned in a particular piece of text. You will then use <code>find_people</code> to identify the people of interest in the article.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./dataset/tc.txt'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">tc</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">find_persons</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="c1"># Create Doc object</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    
+    <span class="c1"># Indentify the persons</span>
+    <span class="n">persons</span> <span class="o">=</span> <span class="p">[</span><span class="n">ent</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span> <span class="k">if</span> <span class="n">ent</span><span class="o">.</span><span class="n">label_</span> <span class="o">==</span> <span class="s1">'PERSON'</span><span class="p">]</span>
+    
+    <span class="c1"># Return persons</span>
+    <span class="k">return</span> <span class="n">persons</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">find_persons</span><span class="p">(</span><span class="n">tc</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['Sheryl Sandberg', 'Mark Zuckerberg']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The article was related to Facebook and our function correctly identified both the people mentioned. You can now see how NER could be used in a variety of applications. Publishers may use a technique like this to classify news articles by the people mentioned in them. A question answering system could also use something like this to answer questions such as 'Who are the people mentioned in this passage?'.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/natural_language_processing/2020/07/17/02-Text-preprocessing-POS-tagging-and-NER.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
