@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Introduction to TensorFlow | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Introduction to TensorFlow" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will learn how to build, solve, and make predictions with models in TensorFlow 2.0. You will focus on a simple class of models – the linear regression model – and will try to predict housing prices. By the end of the chapter, you will know how to load and manipulate data, construct loss functions, perform minimization, make predictions, and reduce resource use with batch training. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will learn how to build, solve, and make predictions with models in TensorFlow 2.0. You will focus on a simple class of models – the linear regression model – and will try to predict housing prices. By the end of the chapter, you will know how to load and manipulate data, construct loss functions, perform minimization, make predictions, and reduce resource use with batch training. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/19/01-Linear-models.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/19/01-Linear-models.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/fitted_linreg.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-19T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will learn how to build, solve, and make predictions with models in TensorFlow 2.0. You will focus on a simple class of models – the linear regression model – and will try to predict housing prices. By the end of the chapter, you will know how to load and manipulate data, construct loss functions, perform minimization, make predictions, and reduce resource use with batch training. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp.","@type":"BlogPosting","headline":"Introduction to TensorFlow","dateModified":"2020-07-19T00:00:00-05:00","datePublished":"2020-07-19T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/fitted_linreg.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/19/01-Linear-models.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/19/01-Linear-models.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Introduction to TensorFlow | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Introduction to TensorFlow" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will learn how to build, solve, and make predictions with models in TensorFlow 2.0. You will focus on a simple class of models – the linear regression model – and will try to predict housing prices. By the end of the chapter, you will know how to load and manipulate data, construct loss functions, perform minimization, make predictions, and reduce resource use with batch training. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will learn how to build, solve, and make predictions with models in TensorFlow 2.0. You will focus on a simple class of models – the linear regression model – and will try to predict housing prices. By the end of the chapter, you will know how to load and manipulate data, construct loss functions, perform minimization, make predictions, and reduce resource use with batch training. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/19/01-Linear-models.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/19/01-Linear-models.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/fitted_linreg.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-19T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will learn how to build, solve, and make predictions with models in TensorFlow 2.0. You will focus on a simple class of models – the linear regression model – and will try to predict housing prices. By the end of the chapter, you will know how to load and manipulate data, construct loss functions, perform minimization, make predictions, and reduce resource use with batch training. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp.","@type":"BlogPosting","headline":"Introduction to TensorFlow","dateModified":"2020-07-19T00:00:00-05:00","datePublished":"2020-07-19T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/fitted_linreg.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/19/01-Linear-models.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/19/01-Linear-models.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Introduction to TensorFlow</h1><p class="page-description">In this chapter, you will learn how to build, solve, and make predictions with models in TensorFlow 2.0. You will focus on a simple class of models – the linear regression model – and will try to predict housing prices. By the end of the chapter, you will know how to load and manipulate data, construct loss functions, perform minimization, make predictions, and reduce resource use with batch training. This is the Summary of lecture "Introduction to TensorFlow in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-19T00:00:00-05:00" itemprop="datePublished">
+        Jul 19, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      10 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow">Tensorflow</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-19-01-Linear-models.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-19-01-Linear-models.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-19-01-Linear-models.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Input-data">Input data </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Load-data-using-pandas">Load data using pandas </a></li>
+<li class="toc-entry toc-h3"><a href="#Setting-the-data-type">Setting the data type </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Loss-functions">Loss functions </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Loss-functions-in-TensorFlow">Loss functions in TensorFlow </a></li>
+<li class="toc-entry toc-h3"><a href="#Modifying-the-loss-function">Modifying the loss function </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Linear-regression">Linear regression </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Set-up-a-linear-regression">Set up a linear regression </a></li>
+<li class="toc-entry toc-h3"><a href="#Train-a-linear-model">Train a linear model </a></li>
+<li class="toc-entry toc-h3"><a href="#Multiple-linear-regression">Multiple linear regression </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Batch-training">Batch training </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Preparing-to-batch-train">Preparing to batch train </a></li>
+<li class="toc-entry toc-h3"><a href="#Training-a-linear-model-in-batches">Training a linear model in batches </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-19-01-Linear-models.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">tf</span><span class="o">.</span><span class="n">__version__</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'2.1.0'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Input-data">
+<a class="anchor" href="#Input-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Input data<a class="anchor-link" href="#Input-data"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Load-data-using-pandas">
+<a class="anchor" href="#Load-data-using-pandas" aria-hidden="true"><span class="octicon octicon-link"></span></a>Load data using pandas<a class="anchor-link" href="#Load-data-using-pandas"> </a>
+</h3>
+<p>Before you can train a machine learning model, you must first import data. There are several valid ways to do this, but for now, we will use a simple one-liner from pandas: <code>pd.read_csv()</code>. Recall from the video that the first argument specifies the path or URL. All other arguments are optional.</p>
+<p>In this exercise, you will import the King County housing dataset, which we will use to train a linear model later in the chapter.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Load the dataset as a dataframe named housing</span>
+<span class="n">housing</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/kc_house_data.csv'</span><span class="p">)</span>
+
+<span class="c1"># Print the price column of housing</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">housing</span><span class="p">[</span><span class="s1">'price'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0        221900.0
+1        538000.0
+2        180000.0
+3        604000.0
+4        510000.0
+           ...   
+21608    360000.0
+21609    400000.0
+21610    402101.0
+21611    400000.0
+21612    325000.0
+Name: price, Length: 21613, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice that you did not have to specify a delimiter with the <code>sep</code> parameter, since the dataset was stored in the default, comma-separated format.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Setting-the-data-type">
+<a class="anchor" href="#Setting-the-data-type" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting the data type<a class="anchor-link" href="#Setting-the-data-type"> </a>
+</h3>
+<p>In this exercise, you will both load data and set its type. You will import numpy and tensorflow, and define tensors that are usable in tensorflow using columns in housing with a given data type. Recall that you can select the <code>price</code> column, for instance, from housing using <code>housing['price']</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Use a numpy array to define price as a 32-bit float</span>
+<span class="n">price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">housing</span><span class="p">[</span><span class="s1">'price'</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define waterfront as a Boolean using case</span>
+<span class="n">waterfront</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">housing</span><span class="p">[</span><span class="s1">'waterfront'</span><span class="p">],</span> <span class="n">tf</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+<span class="c1"># Print price and waterfront</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">price</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">waterfront</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[221900. 538000. 180000. ... 402101. 400000. 325000.]
+tf.Tensor([False False False ... False False False], shape=(21613,), dtype=bool)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice that printing <code>price</code> yielded a numpy array; whereas printing <code>waterfront</code> yielded a tf.Tensor().</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Loss-functions">
+<a class="anchor" href="#Loss-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Loss functions<a class="anchor-link" href="#Loss-functions"> </a>
+</h2>
+<ul>
+<li>Loss function<ul>
+<li>Fundamental tensorflow operation<ul>
+<li>Used to train model</li>
+<li>Measure a model fit</li>
+</ul>
+</li>
+<li>Higher value -&gt; worse fit<ul>
+<li>Minimize the loss function</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Common loss functions in Tensorflow<ul>
+<li>Mean squared error (MSE)</li>
+<li>Mean absolute error (MAE)</li>
+<li>Huber error</li>
+</ul>
+</li>
+<li>Why do we care about loss functions?<ul>
+<li>MSE<ul>
+<li>Strongly penalizes outliers</li>
+<li>High (gradient) sensitivity near minimum</li>
+</ul>
+</li>
+<li>MAE<ul>
+<li>Scales linearly with size of error</li>
+<li>Low sensitivity near minimum</li>
+</ul>
+</li>
+<li>Huber<ul>
+<li>Similar to MSE near minimum</li>
+<li>Similar to MAE away from minimum</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Loss-functions-in-TensorFlow">
+<a class="anchor" href="#Loss-functions-in-TensorFlow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Loss functions in TensorFlow<a class="anchor-link" href="#Loss-functions-in-TensorFlow"> </a>
+</h3>
+<p>In this exercise, you will compute the loss using data from the King County housing dataset. You are given a target, <code>price</code>, which is a tensor of house prices, and <code>predictions</code>, which is a tensor of predicted house prices. You will evaluate the loss function and print out the value of the loss.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kc_sample</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/loss_price.csv'</span><span class="p">)</span>
+<span class="n">price</span> <span class="o">=</span> <span class="n">kc_sample</span><span class="p">[</span><span class="s1">'price'</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">kc_sample</span><span class="p">[</span><span class="s1">'pred'</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute the mean squared error (mse)</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">mse</span><span class="p">(</span><span class="n">price</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+<span class="c1"># Print the mean squared error (mse)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>141171604777.12717
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute the mean squared error (mse)</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">mae</span><span class="p">(</span><span class="n">price</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+<span class="c1"># Print the mean squared error (mse)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>268827.9930208799
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You may have noticed that the MAE was much smaller than the MSE, even though <code>price</code> and <code>predictions</code> were the same. This is because the different loss functions penalize deviations of <code>predictions</code> from <code>price</code> differently. MSE does not like large deviations and punishes them harshly.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Modifying-the-loss-function">
+<a class="anchor" href="#Modifying-the-loss-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifying the loss function<a class="anchor-link" href="#Modifying-the-loss-function"> </a>
+</h3>
+<p>In the previous exercise, you defined a tensorflow loss function and then evaluated it once for a set of actual and predicted values. In this exercise, you will compute the loss within another function called <code>loss_function()</code>, which first generates predicted values from the data and variables. The purpose of this is to construct a function of the trainable model variables that returns the loss. You can then repeatedly evaluate this function for different variable values until you find the minimum. In practice, you will pass this function to an optimizer in tensorflow.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize a variable named scalar</span>
+<span class="n">scalar</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define the model</span>
+<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">scalar</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">scalar</span> <span class="o">*</span> <span class="n">features</span>
+
+<span class="c1"># Define a loss function</span>
+<span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="n">scalar</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">):</span>
+    <span class="c1"># Compute the predicted values</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">scalar</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
+    
+    <span class="c1"># Return the mean absolute error loss</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">mae</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+<span class="c1"># Evaluate the loss function and print the loss</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loss_function</span><span class="p">(</span><span class="n">scalar</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>3.0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Linear-regression">
+<a class="anchor" href="#Linear-regression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linear regression<a class="anchor-link" href="#Linear-regression"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Set-up-a-linear-regression">
+<a class="anchor" href="#Set-up-a-linear-regression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Set up a linear regression<a class="anchor-link" href="#Set-up-a-linear-regression"> </a>
+</h3>
+<p>A univariate linear regression identifies the relationship between a single feature and the target tensor. In this exercise, we will use a property's lot size and price. Just as we discussed in the video, we will take the natural logarithms of both tensors, which are available as <code>price_log</code> and <code>size_log</code>.</p>
+<p>In this exercise, you will define the model and the loss function. You will then evaluate the loss function for two different values of <code>intercept</code> and <code>slope</code>. Remember that the predicted values are given by <code>intercept + features * slope</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">size_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">housing</span><span class="p">[</span><span class="s1">'sqft_lot'</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="n">price_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">housing</span><span class="p">[</span><span class="s1">'price'</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="n">bedrooms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">housing</span><span class="p">[</span><span class="s1">'bedrooms'</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define a linear regression model</span>
+<span class="k">def</span> <span class="nf">linear_regression</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">size_log</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">intercept</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">features</span>
+
+<span class="c1"># Set loss_function() to take the variables as arguments</span>
+<span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">size_log</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">price_log</span><span class="p">):</span>
+    <span class="c1"># Set the predicted values</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">linear_regression</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
+    
+    <span class="c1"># Return the mean squared error loss</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">mse</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+<span class="c1"># Compute the loss function for different slope and intercept values</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loss_function</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loss_function</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>145.44653
+71.866
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Train-a-linear-model">
+<a class="anchor" href="#Train-a-linear-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Train a linear model<a class="anchor-link" href="#Train-a-linear-model"> </a>
+</h3>
+<p>In this exercise, we will pick up where the previous exercise ended. The <code>intercept</code> and <code>slope</code>, have been defined and initialized. Additionally, a function has been defined, <code>loss_function(intercept, slope)</code>, which computes the loss using the data and model variables.</p>
+<p>You will now define an optimization operation as <code>opt</code>. You will then train a univariate linear model by minimizing the loss to find the optimal values of <code>intercept</code> and <code>slope</code>. Note that the <code>opt</code> operation will try to move closer to the optimum with each step, but will require many steps to find it. Thus, you must repeatedly execute the operation.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="k">def</span> <span class="nf">plot_results</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">):</span>
+    <span class="n">size_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">price_pred</span> <span class="o">=</span> <span class="p">[</span><span class="n">intercept</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">size_range</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">size_log</span><span class="p">,</span> <span class="n">price_log</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'black'</span><span class="p">);</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">size_range</span><span class="p">,</span> <span class="n">price_pred</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">);</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'log(size)'</span><span class="p">);</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'log(price)'</span><span class="p">);</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Scatterplot of data and fitted regression line'</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intercept</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">slope</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Initialize an adam optimizer</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="c1"># Apply minimize, pass the loss function, and supply the variables</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">),</span> <span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">])</span>
+    
+    <span class="c1"># Print every 10th value of the loss</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">loss_function</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+        
+<span class="c1"># Plot data and regressoin line</span>
+<span class="n">plot_results</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>65.26133
+1.4909142
+2.3818178
+2.9086726
+2.6110873
+1.7604784
+1.3467994
+1.3559676
+1.288407
+1.2425306
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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uOUWWHvt9HxKCQm3EEKIbDMyAkcf7RYPAXj3u51or7NOun6lhIRbCCFEdrn0Upg2rSTa73wn3HorrLtuun6liIRbCCFENrn8cpg6FUZHXfkd74DbboNCIV2/UkbCLYQQIntceSV87GMl0Z440Yn2+PHp+pUBJNxCCCGyxTXXwBFHwMqVrrz11nD77bD++un6lREk3EIIIbLDL34Bhx0GK1a48pZbOtHeYIN0/coQEm4hhBDZ4IYb4JBDSqL9trc50d5ww3T9yhgSbiGEEOnzq1/BQQfB8uWu/Na3OtHeeON0/cogTRNuY8wFxpjnjDEP+ra9yxhzjzHmAWPMXGPMe5t1fSGEEDnhllvggANg2TJXfstb4I47YJNN0vUrozQz4r4I2LNi23eBb1hr3wV83SsLIYToVH79a9h/f3jjDVceGnKivemmqbqVZZom3Nba3wAvVG4GipPKrg081azrCyGEyDh33AH77Qevv+7KEya4bYOD6fqVcXpafL3PATcbY87AvTS8v8XXF0IIkQXuugv23Rdee82VN9nEifbQUKpu5YFWJ6cNAydaazcFTgR+GrSjMWa61w8+9/nnn2+Zg0IIIZrM734H++wDS5e68sYbO9HebLN0/coJrRbuacDV3v+vAAKT06y1s6y1k6y1k9Zbb72WOCeEEKLJ3H037LUXvPqqK2+0kRPtzTdP168c0Wrhfgr4kPf/XYBHWnx9IYQQaXHPPbDnnrBkiStvsIEb8rXFFun6lTOa1sdtjLkU2BkYb4x5AjgZ+CRwljGmB3gdmB58BiGEEG3DfffBHnvA4sWuvP76TrS32ipdv3JI04TbWntEwEfbN+uaQgghMsj998Puu8Mrr7jy+PFuGNjEien6lVM0c5oQQojm8ec/w267wUsvuXKh4ER7m23S9SvHSLiFEEI0h7/8BXbdFV580ZXf9Ca3NOe226brV86RcAshhEieBx90ov2CNw/XOus40X7Xu9L1qw2QcAshhEiWf/wDdtkFFi505bXXhltvhe22S9evNkHCLYQQIjkeesiJdnHirLXWgptvhkmT0vWrjZBwCyGESIaHH4YPfxiefdaVx41zy3XusEO6frUZEm4hhBCN88gjTrSfecaVBwbgpptgxx3T9asNkXALIYRojH//24n200+7cn8/3HgjfOAD6frVpki4hRBC1M9//uNE+8kn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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice that we printed <code>loss_function(intercept, slope)</code> every 10th execution for 100 executions. Each time, the loss got closer to the minimum as the optimizer moved the <code>slope</code> and <code>intercept</code> parameters closer to their optimal values.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Multiple-linear-regression">
+<a class="anchor" href="#Multiple-linear-regression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multiple linear regression<a class="anchor-link" href="#Multiple-linear-regression"> </a>
+</h3>
+<p>In most cases, performing a univariate linear regression will not yield a model that is useful for making accurate predictions. In this exercise, you will perform a multiple regression, which uses more than one feature.</p>
+<p>You will use <code>price_log</code> as your target and <code>size_log</code> and <code>bedrooms</code> as your features. Each of these tensors has been defined and is available. You will also switch from using the the mean squared error loss to the mean absolute error loss: <code>keras.losses.mae()</code>. Finally, the predicted values are computed as follows:<code>params[0] + feature1 * params[1] + feature2 * params[2]</code>. Note that we've defined a vector of parameters, params, as a variable, rather than using three variables. Here, <code>params[0]</code> is the intercept and <code>params[1]</code> and <code>params[2]</code> are the slopes.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">print_results</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="s1">'loss: </span><span class="si">{:0.3f}</span><span class="s1">, intercept: </span><span class="si">{:0.3f}</span><span class="s1">, slope_1: </span><span class="si">{:0.3f}</span><span class="s1">, slope_2: </span><span class="si">{:0.3f}</span><span class="s1">'</span>
+                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss_function</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> 
+                         <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> 
+                         <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> 
+                         <span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">],</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define the linear regression model</span>
+<span class="k">def</span> <span class="nf">linear_regression</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">feature1</span><span class="o">=</span><span class="n">size_log</span><span class="p">,</span> <span class="n">feature2</span><span class="o">=</span><span class="n">bedrooms</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">feature1</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">feature2</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="c1"># Define the loss function</span>
+<span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">price_log</span><span class="p">,</span> <span class="n">feature1</span><span class="o">=</span><span class="n">size_log</span><span class="p">,</span> <span class="n">feature2</span><span class="o">=</span><span class="n">bedrooms</span><span class="p">):</span>
+    <span class="c1"># Set the predicted values</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">linear_regression</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">feature1</span><span class="p">,</span> <span class="n">feature2</span><span class="p">)</span>
+    
+    <span class="c1"># Use the mean absolute error loss</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">mae</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+<span class="c1"># Define the optimize operation</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">()</span>
+
+<span class="c1"># Perform minimization and print trainable variables</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">params</span><span class="p">),</span> <span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">params</span><span class="p">])</span>
+    <span class="n">print_results</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>loss: 12.418, intercept: 0.101, slope_1: 0.051, slope_2: 0.021
+loss: 12.404, intercept: 0.102, slope_1: 0.052, slope_2: 0.022
+loss: 12.391, intercept: 0.103, slope_1: 0.053, slope_2: 0.023
+loss: 12.377, intercept: 0.104, slope_1: 0.054, slope_2: 0.024
+loss: 12.364, intercept: 0.105, slope_1: 0.055, slope_2: 0.025
+loss: 12.351, intercept: 0.106, slope_1: 0.056, slope_2: 0.026
+loss: 12.337, intercept: 0.107, slope_1: 0.057, slope_2: 0.027
+loss: 12.324, intercept: 0.108, slope_1: 0.058, slope_2: 0.028
+loss: 12.311, intercept: 0.109, slope_1: 0.059, slope_2: 0.029
+loss: 12.297, intercept: 0.110, slope_1: 0.060, slope_2: 0.030
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that <code>params[2]</code> tells us how much the price will increase in percentage terms if we add one more bedroom. You could train <code>params[2]</code> and the other model parameters by increasing the number of times we iterate over <code>opt</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Batch-training">
+<a class="anchor" href="#Batch-training" aria-hidden="true"><span class="octicon octicon-link"></span></a>Batch training<a class="anchor-link" href="#Batch-training"> </a>
+</h2>
+<ul>
+<li>Full sample versus batch training<ul>
+<li>Full sample<ol>
+<li>One update per epoch</li>
+<li>Accepts dataset without modification</li>
+<li>Limited by memory</li>
+</ol>
+</li>
+<li>Batch Training<ol>
+<li>Multiple updates per epoch</li>
+<li>Requires division of dataset</li>
+<li>No limit on dataset size</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preparing-to-batch-train">
+<a class="anchor" href="#Preparing-to-batch-train" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preparing to batch train<a class="anchor-link" href="#Preparing-to-batch-train"> </a>
+</h3>
+<p>Before we can train a linear model in batches, we must first define variables, a loss function, and an optimization operation. In this exercise, we will prepare to train a model that will predict <code>price_batch</code>, a batch of house prices, using <code>size_batch</code>, a batch of lot sizes in square feet. In contrast to the previous lesson, we will do this by loading batches of data using pandas, converting it to numpy arrays, and then using it to minimize the loss function in steps.</p>
+<p>Note that you should not set default argument values for either the model or loss function, since we will generate the data in batches during the training process.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define the intercept and slope</span>
+<span class="n">intercept</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">slope</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define the model</span>
+<span class="k">def</span> <span class="nf">linear_regression</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+    <span class="c1"># Define the predicted values</span>
+    <span class="k">return</span> <span class="n">intercept</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">features</span>
+
+<span class="c1"># Define the loss function</span>
+<span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+    <span class="c1"># Define the predicted values</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">linear_regression</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
+    
+    <span class="c1"># Define the MSE loss</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">mse</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice that we did not use default argument values for the input data, <code>features</code> and <code>targets</code>. This is because the input data has not been defined in advance. Instead, with batch training, we will load it during the training process.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Training-a-linear-model-in-batches">
+<a class="anchor" href="#Training-a-linear-model-in-batches" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training a linear model in batches<a class="anchor-link" href="#Training-a-linear-model-in-batches"> </a>
+</h3>
+<p>In this exercise, we will train a linear regression model in batches, starting where we left off in the previous exercise. We will do this by stepping through the dataset in batches and updating the model's variables, <code>intercept</code> and <code>slope</code>, after each step. This approach will allow us to train with datasets that are otherwise too large to hold in memory.</p>
+<p>Note that the loss function,<code>loss_function(intercept, slope, targets, features)</code>, has been defined for you. The trainable variables should be entered into <code>var_list</code> in the order in which they appear as loss function arguments.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intercept</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">slope</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Initialize adam optimizer</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">()</span>
+
+<span class="c1"># Load data in batches</span>
+<span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/kc_house_data.csv'</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">size_batch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s1">'sqft_lot'</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    
+    <span class="c1"># Extract the price values for the current batch</span>
+    <span class="n">price_batch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s1">'price'</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    
+    <span class="c1"># Complete the loss, fill in the variable list, and minimize</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">price_batch</span><span class="p">,</span> <span class="n">size_batch</span><span class="p">),</span> 
+                 <span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">])</span>
+    
+<span class="c1"># Print trained parameters</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">intercept</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">slope</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>10.217888 0.7016001
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/19/01-Linear-models.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
