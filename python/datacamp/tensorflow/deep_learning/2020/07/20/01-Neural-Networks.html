@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Neural Networks | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Neural Networks" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The previous chapters taught you how to build models in TensorFlow 2.0. In this chapter, you will apply those same tools to build, train, and make predictions with neural networks. You will learn how to define dense layers, apply activation functions, select an optimizer, and apply regularization to reduce overfitting. You will take advantage of TensorFlow’s flexibility by using both low-level linear algebra and high-level Keras API operations to define and train models. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp." />
+<meta property="og:description" content="The previous chapters taught you how to build models in TensorFlow 2.0. In this chapter, you will apply those same tools to build, train, and make predictions with neural networks. You will learn how to define dense layers, apply activation functions, select an optimizer, and apply regularization to reduce overfitting. You will take advantage of TensorFlow’s flexibility by using both low-level linear algebra and high-level Keras API operations to define and train models. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/20/01-Neural-Networks.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/20/01-Neural-Networks.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/tf.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-20T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"The previous chapters taught you how to build models in TensorFlow 2.0. In this chapter, you will apply those same tools to build, train, and make predictions with neural networks. You will learn how to define dense layers, apply activation functions, select an optimizer, and apply regularization to reduce overfitting. You will take advantage of TensorFlow’s flexibility by using both low-level linear algebra and high-level Keras API operations to define and train models. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp.","@type":"BlogPosting","headline":"Neural Networks","dateModified":"2020-07-20T00:00:00-05:00","datePublished":"2020-07-20T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/tf.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/20/01-Neural-Networks.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/20/01-Neural-Networks.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Neural Networks | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Neural Networks" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The previous chapters taught you how to build models in TensorFlow 2.0. In this chapter, you will apply those same tools to build, train, and make predictions with neural networks. You will learn how to define dense layers, apply activation functions, select an optimizer, and apply regularization to reduce overfitting. You will take advantage of TensorFlow’s flexibility by using both low-level linear algebra and high-level Keras API operations to define and train models. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp." />
+<meta property="og:description" content="The previous chapters taught you how to build models in TensorFlow 2.0. In this chapter, you will apply those same tools to build, train, and make predictions with neural networks. You will learn how to define dense layers, apply activation functions, select an optimizer, and apply regularization to reduce overfitting. You will take advantage of TensorFlow’s flexibility by using both low-level linear algebra and high-level Keras API operations to define and train models. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/20/01-Neural-Networks.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/20/01-Neural-Networks.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/tf.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-20T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"The previous chapters taught you how to build models in TensorFlow 2.0. In this chapter, you will apply those same tools to build, train, and make predictions with neural networks. You will learn how to define dense layers, apply activation functions, select an optimizer, and apply regularization to reduce overfitting. You will take advantage of TensorFlow’s flexibility by using both low-level linear algebra and high-level Keras API operations to define and train models. This is the Summary of lecture “Introduction to TensorFlow in Python”, via datacamp.","@type":"BlogPosting","headline":"Neural Networks","dateModified":"2020-07-20T00:00:00-05:00","datePublished":"2020-07-20T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/tf.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/20/01-Neural-Networks.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/20/01-Neural-Networks.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Neural Networks</h1><p class="page-description">The previous chapters taught you how to build models in TensorFlow 2.0. In this chapter, you will apply those same tools to build, train, and make predictions with neural networks. You will learn how to define dense layers, apply activation functions, select an optimizer, and apply regularization to reduce overfitting. You will take advantage of TensorFlow's flexibility by using both low-level linear algebra and high-level Keras API operations to define and train models. This is the Summary of lecture "Introduction to TensorFlow in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-20T00:00:00-05:00" itemprop="datePublished">
+        Jul 20, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      13 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow">Tensorflow</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-20-01-Neural-Networks.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-20-01-Neural-Networks.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-20-01-Neural-Networks.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Dense-layers">Dense layers </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#The-linear-algebra-of-dense-layers">The linear algebra of dense layers </a></li>
+<li class="toc-entry toc-h3"><a href="#The-low-level-approach-with-multiple-examples">The low-level approach with multiple examples </a></li>
+<li class="toc-entry toc-h3"><a href="#Using-the-dense-layer-operation">Using the dense layer operation </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Activation-functions">Activation functions </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Binary-classification-problems">Binary classification problems </a></li>
+<li class="toc-entry toc-h3"><a href="#Multiclass-classification-problems">Multiclass classification problems </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Optimizers">Optimizers </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#The-dangers-of-local-minima">The dangers of local minima </a></li>
+<li class="toc-entry toc-h3"><a href="#Avoiding-local-minima">Avoiding local minima </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Training-a-network-in-TensorFlow">Training a network in TensorFlow </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Initialization-in-TensorFlow">Initialization in TensorFlow </a></li>
+<li class="toc-entry toc-h3"><a href="#Defining-the-model-and-loss-function">Defining the model and loss function </a></li>
+<li class="toc-entry toc-h3"><a href="#Training-neural-networks-with-TensorFlow">Training neural networks with TensorFlow </a></li>
+<li class="toc-entry toc-h3"><a href="#Additional-:-Plot-heatmap">Additional : Plot heatmap </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-20-01-Neural-Networks.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+<span class="n">tf</span><span class="o">.</span><span class="n">__version__</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>'2.2.0'</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Dense-layers">
+<a class="anchor" href="#Dense-layers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dense layers<a class="anchor-link" href="#Dense-layers"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-linear-algebra-of-dense-layers">
+<a class="anchor" href="#The-linear-algebra-of-dense-layers" aria-hidden="true"><span class="octicon octicon-link"></span></a>The linear algebra of dense layers<a class="anchor-link" href="#The-linear-algebra-of-dense-layers"> </a>
+</h3>
+<p>There are two ways to define a dense layer in tensorflow. The first involves the use of low-level, linear algebraic operations. The second makes use of high-level keras operations. In this exercise, we will use the first method to construct the network shown in the image below.</p>
+<p><figure>
+  
+    <img class="docimage" src="/chans_jupyter/images/copied_from_nb/./image/3_2_1_network2.png" alt="drawing">
+    
+    
+</figure>
+</p>
+<p>The input layer contains 3 features -- education, marital status, and age -- which are available as <code>borrower_features</code>. The hidden layer contains 2 nodes and the output layer contains a single node.</p>
+<p>For each layer, you will take the previous layer as an input, initialize a set of weights, compute the product of the inputs and weights, and then apply an activation function.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">borrower_features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">43.</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize bias1</span>
+<span class="n">bias1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Initialize weights1 as 3x2 variable of ones</span>
+<span class="n">weights1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+
+<span class="c1"># Perform matrix multiplication of borrower_features and weights1</span>
+<span class="n">product1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">borrower_features</span><span class="p">,</span> <span class="n">weights1</span><span class="p">)</span>
+
+<span class="c1"># Apply sigmoid activation function to product1 + bias1</span>
+<span class="n">dense1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">product1</span> <span class="o">+</span> <span class="n">bias1</span><span class="p">)</span>
+
+<span class="c1"># Print shape of dense1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"dense1's output shape: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dense1</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>dense1's output shape: (1, 2)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize bias2 and weights2</span>
+<span class="n">bias2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">weights2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+<span class="c1"># Perform matrix multiplication of dense1 and weights2</span>
+<span class="n">product2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">dense1</span><span class="p">,</span> <span class="n">weights2</span><span class="p">)</span>
+
+<span class="c1"># Apply activation to product2 + bias2 and print the prediction</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">product2</span> <span class="o">+</span> <span class="n">bias2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'prediction: </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prediction</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> actual: 1'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>prediction: 0.9525741338729858
+
+ actual: 1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Our model produces predicted values in the interval between 0 and 1. For the example we considered, the actual value was 1 and the predicted value was a probability between 0 and 1. This, of course, is not meaningful, since we have not yet trained our model's parameters.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-low-level-approach-with-multiple-examples">
+<a class="anchor" href="#The-low-level-approach-with-multiple-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>The low-level approach with multiple examples<a class="anchor-link" href="#The-low-level-approach-with-multiple-examples"> </a>
+</h3>
+<p>In this exercise, we'll build further intuition for the low-level approach by constructing the first dense hidden layer for the case where we have multiple examples. We'll assume the model is trained and the first layer weights, <code>weights1</code>, and bias, <code>bias1</code>, are available. We'll then perform matrix multiplication of the <code>borrower_features</code> tensor by the <code>weights1</code> variable. Recall that the <code>borrower_features</code> tensor includes education, marital status, and age. Finally, we'll apply the sigmoid function to the elements of <code>products1 + bias1</code>, yielding <code>dense1</code>.</p>
+<p>
+$$ \text{products1} = \begin{bmatrix} 3 &amp; 3 &amp; 23 \\ 2 &amp; 1 &amp; 24 \\ 1 &amp; 1 &amp; 49 \\ 1 &amp; 1 &amp; 49 \\ 2 &amp; 1 &amp; 29 \end{bmatrix} \begin{bmatrix} -0.6 &amp; 0.6 \\ 0.8 &amp; -0.3 \\ -0.09 &amp; -0.08 \end{bmatrix} $$
+</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bias1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">([</span><span class="mf">0.1</span><span class="p">],</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Compute the product of borrower_features and weights1</span>
+<span class="n">products1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">borrower_features</span><span class="p">,</span> <span class="n">weights1</span><span class="p">)</span>
+
+<span class="c1"># Apply a sigmoid activation function to products1 + bias1</span>
+<span class="n">dense1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">products1</span> <span class="o">+</span> <span class="n">bias1</span><span class="p">)</span>
+
+<span class="c1"># Print the shapes of borrower_features, weights1, bias1, and dense1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> shape of borrower_features: '</span><span class="p">,</span> <span class="n">borrower_features</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> shape of weights1: '</span><span class="p">,</span> <span class="n">weights1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> shape of bias1: '</span><span class="p">,</span> <span class="n">bias1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> shape of dense1: '</span><span class="p">,</span> <span class="n">dense1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+ shape of borrower_features:  (1, 3)
+
+ shape of weights1:  (3, 2)
+
+ shape of bias1:  (1,)
+
+ shape of dense1:  (1, 2)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that our input data, <code>borrower_features</code>, is 5x3 because it consists of 5 examples for 3 features. The shape of <code>weights1</code> is 3x2, as it was in the previous exercise, since it does not depend on the number of examples. Additionally, <code>bias1</code> is a scalar. Finally, <code>dense1</code> is 5x2, which means that we can multiply it by the following set of weights, <code>weights2</code>, which we defined to be 2x1 in the previous exercise.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Using-the-dense-layer-operation">
+<a class="anchor" href="#Using-the-dense-layer-operation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the dense layer operation<a class="anchor-link" href="#Using-the-dense-layer-operation"> </a>
+</h3>
+<p>We've now seen how to define dense layers in tensorflow using linear algebra. In this exercise, we'll skip the linear algebra and let keras work out the details. This will allow us to construct the network below, which has 2 hidden layers and 10 features, using less code than we needed for the network with 1 hidden layer and 3 features.</p>
+<p><figure>
+  
+    <img class="docimage" src="/chans_jupyter/images/copied_from_nb/./image/10_7_3_1_network.png" alt="drawing">
+    
+    
+</figure>
+</p>
+<p>To construct this network, we'll need to define three dense layers, each of which takes the previous layer as an input, multiplies it by weights, and applies an activation function.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/uci_credit_card.csv'</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ID</th>
+      <th>LIMIT_BAL</th>
+      <th>SEX</th>
+      <th>EDUCATION</th>
+      <th>MARRIAGE</th>
+      <th>AGE</th>
+      <th>PAY_0</th>
+      <th>PAY_2</th>
+      <th>PAY_3</th>
+      <th>PAY_4</th>
+      <th>...</th>
+      <th>BILL_AMT4</th>
+      <th>BILL_AMT5</th>
+      <th>BILL_AMT6</th>
+      <th>PAY_AMT1</th>
+      <th>PAY_AMT2</th>
+      <th>PAY_AMT3</th>
+      <th>PAY_AMT4</th>
+      <th>PAY_AMT5</th>
+      <th>PAY_AMT6</th>
+      <th>default.payment.next.month</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>20000.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>24</td>
+      <td>2</td>
+      <td>2</td>
+      <td>-1</td>
+      <td>-1</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>689.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>120000.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>26</td>
+      <td>-1</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>3272.0</td>
+      <td>3455.0</td>
+      <td>3261.0</td>
+      <td>0.0</td>
+      <td>1000.0</td>
+      <td>1000.0</td>
+      <td>1000.0</td>
+      <td>0.0</td>
+      <td>2000.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>90000.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>34</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>14331.0</td>
+      <td>14948.0</td>
+      <td>15549.0</td>
+      <td>1518.0</td>
+      <td>1500.0</td>
+      <td>1000.0</td>
+      <td>1000.0</td>
+      <td>1000.0</td>
+      <td>5000.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>50000.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>37</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>28314.0</td>
+      <td>28959.0</td>
+      <td>29547.0</td>
+      <td>2000.0</td>
+      <td>2019.0</td>
+      <td>1200.0</td>
+      <td>1100.0</td>
+      <td>1069.0</td>
+      <td>1000.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>50000.0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+      <td>57</td>
+      <td>-1</td>
+      <td>0</td>
+      <td>-1</td>
+      <td>0</td>
+      <td>...</td>
+      <td>20940.0</td>
+      <td>19146.0</td>
+      <td>19131.0</td>
+      <td>2000.0</td>
+      <td>36681.0</td>
+      <td>10000.0</td>
+      <td>9000.0</td>
+      <td>689.0</td>
+      <td>679.0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 25 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">borrower_features</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">features</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">borrower_features</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">borrower_features</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">)))</span>
+<span class="n">borrower_features</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">borrower_features</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define the first dense layer</span>
+<span class="n">dense1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'sigmoid'</span><span class="p">)(</span><span class="n">borrower_features</span><span class="p">)</span>
+
+<span class="c1"># Define a dense layer with 3 output nodes</span>
+<span class="n">dense2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'sigmoid'</span><span class="p">)(</span><span class="n">dense1</span><span class="p">)</span>
+
+<span class="c1"># Define a dense layer with 1 output node</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'sigmoid'</span><span class="p">)(</span><span class="n">dense2</span><span class="p">)</span>
+
+<span class="c1"># Print the shapes of dense1, dense2, and predictions</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> shape of dense1: '</span><span class="p">,</span> <span class="n">dense1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> shape of dense2: '</span><span class="p">,</span> <span class="n">dense2</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> shape of predictions: '</span><span class="p">,</span> <span class="n">predictions</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+ shape of dense1:  (100, 7)
+
+ shape of dense2:  (100, 3)
+
+ shape of predictions:  (100, 1)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With just 8 lines of code, you were able to define 2 dense hidden layers and an output layer. This is the advantage of using high-level operations in tensorflow. Note that each layer has 100 rows because the input data contains 100 examples.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Activation-functions">
+<a class="anchor" href="#Activation-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Activation functions<a class="anchor-link" href="#Activation-functions"> </a>
+</h2>
+<ul>
+<li>Activation function<ul>
+<li>Component of a typical hidden layer<ul>
+<li>Linear: Matrix multiplication</li>
+<li>Nonlinear: Activation function</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Binary-classification-problems">
+<a class="anchor" href="#Binary-classification-problems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Binary classification problems<a class="anchor-link" href="#Binary-classification-problems"> </a>
+</h3>
+<p>In this exercise, you will again make use of credit card data. The target variable, <code>default</code>, indicates whether a credit card holder defaults on his or her payment in the following period. Since there are only two options--default or not--this is a binary classification problem. While the dataset has many features, you will focus on just three: the size of the three latest credit card bills. Finally, you will compute predictions from your untrained network, <code>outputs</code>, and compare those the target variable, <code>default</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bill_amounts</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">'BILL_AMT1'</span><span class="p">,</span> <span class="s1">'BILL_AMT2'</span><span class="p">,</span> <span class="s1">'BILL_AMT3'</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">default</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">'default.payment.next.month'</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Construct input layer from features</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">bill_amounts</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define first dense layer</span>
+<span class="n">dense1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">)(</span><span class="n">inputs</span><span class="p">)</span>
+
+<span class="c1"># Define second dense layer</span>
+<span class="n">dense2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">)(</span><span class="n">dense1</span><span class="p">)</span>
+
+<span class="c1"># Define output layer</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'sigmoid'</span><span class="p">)(</span><span class="n">dense2</span><span class="p">)</span>
+
+<span class="c1"># Print error for first five examples</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">default</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span> <span class="o">-</span> <span class="n">outputs</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[:</span><span class="mi">5</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[ 0. ]
+ [ 0.5]
+ [-0.5]
+ [-1. ]
+ [-0.5]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you run the code several times, you'll notice that the errors change each time. This is because you're using an untrained model with randomly initialized parameters. Furthermore, the errors fall on the interval between -1 and 1 because <code>default</code> is a binary variable that takes on values of 0 and 1 and <code>outputs</code> is a probability between 0 and 1.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Multiclass-classification-problems">
+<a class="anchor" href="#Multiclass-classification-problems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multiclass classification problems<a class="anchor-link" href="#Multiclass-classification-problems"> </a>
+</h3>
+<p>In this exercise, we expand beyond binary classification to cover multiclass problems. A multiclass problem has targets that can take on three or more values. In the credit card dataset, the education variable can take on 6 different values, each corresponding to a different level of education. We will use that as our target in this exercise and will also expand the feature set from 3 to 10 columns.</p>
+<p>As in the previous problem, you will define an input layer, dense layers, and an output layer. You will also print the untrained model's predictions, which are probabilities assigned to the classes.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">11</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">borrower_features</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">features</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Construct input layer from borrower features</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">borrower_features</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define first dense layer</span>
+<span class="n">dense1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'sigmoid'</span><span class="p">)(</span><span class="n">inputs</span><span class="p">)</span>
+
+<span class="c1"># Define second dense layer</span>
+<span class="n">dense2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">)(</span><span class="n">dense1</span><span class="p">)</span>
+
+<span class="c1"># Define output layer</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">)(</span><span class="n">dense2</span><span class="p">)</span>
+
+<span class="c1"># Print first five predictions</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[:</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[0.11079348 0.2970938  0.15755723 0.13226885 0.19852833 0.10375827]
+ [0.11079348 0.2970938  0.15755723 0.13226885 0.19852833 0.10375827]
+ [0.11079348 0.2970938  0.15755723 0.13226885 0.19852833 0.10375827]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice that each row of <code>outputs</code> sums to one. This is because a row contains the predicted class probabilities for one example. As with the previous exercise, our predictions are not yet informative, since we are using an untrained model with randomly initialized parameters. This is why the model tends to assign similar probabilities to each class.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Optimizers">
+<a class="anchor" href="#Optimizers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Optimizers<a class="anchor-link" href="#Optimizers"> </a>
+</h2>
+<ul>
+<li>Stochastic Gradient Descent (SGD) optimizer<ul>
+<li>Simple and easy to interpret</li>
+</ul>
+</li>
+<li>Root Mean Squared (RMS) propagation optimizer<ul>
+<li>Applies different learning rates to each feature</li>
+<li>Allows for momentum to both build and decay</li>
+</ul>
+</li>
+<li>Adaptive Momemtum (Adam) optimizer<ul>
+<li>performs well with default parameter values</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-dangers-of-local-minima">
+<a class="anchor" href="#The-dangers-of-local-minima" aria-hidden="true"><span class="octicon octicon-link"></span></a>The dangers of local minima<a class="anchor-link" href="#The-dangers-of-local-minima"> </a>
+</h3>
+<p>Consider the plot of the following loss function, <code>loss_function()</code>, which contains a global minimum, marked by the dot on the right, and several local minima, including the one marked by the dot on the left.</p>
+<p><figure>
+  
+    <img class="docimage" src="/chans_jupyter/images/copied_from_nb/./image/local_minima_dots_4_10.png" alt="drawing">
+    
+    
+</figure>
+</p>
+<p>In this exercise, you will try to find the global minimum of <code>loss_function()</code> using <code>keras.optimizers.SGD()</code>. You will do this twice, each time with a different initial value of the input to <code>loss_function()</code>. First, you will use <code>x_1</code>, which is a variable with an initial value of 6.0. Second, you will use <code>x_2</code>, which is a variable with an initial value of 0.3.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize x_1 and x_2</span>
+<span class="n">x_1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">x_2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define the optimization operation</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="c1"># Perform minimization using the loss function and x_1</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">x_1</span><span class="p">),</span> <span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">x_1</span><span class="p">])</span>
+    
+    <span class="c1"># Perform minimization using the loss function and x_2</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">x_2</span><span class="p">),</span> <span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">x_2</span><span class="p">])</span>
+
+<span class="c1"># Print x_1 and x_2 as numpy arrays</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x_1</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">x_2</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>6.027515 0.25
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice that we used the same optimizer and loss function, but two different initial values. When we started at 6.0 with <code>x_1</code>, we found the global minimum at 6.03(?), marked by the dot on the right. When we started at 0.3, we stopped around 0.25 with <code>x_2</code>, the local minimum marked by a dot on the far left.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Avoiding-local-minima">
+<a class="anchor" href="#Avoiding-local-minima" aria-hidden="true"><span class="octicon octicon-link"></span></a>Avoiding local minima<a class="anchor-link" href="#Avoiding-local-minima"> </a>
+</h3>
+<p>The previous problem showed how easy it is to get stuck in local minima. We had a simple optimization problem in one variable and gradient descent still failed to deliver the global minimum when we had to travel through local minima first. One way to avoid this problem is to use momentum, which allows the optimizer to break through local minima. We will again use the loss function from the previous problem, which has been defined and is available for you as <code>loss_function()</code>.</p>
+<p>Several optimizers in tensorflow have a momentum parameter, including SGD and RMSprop. You will make use of RMSprop in this exercise. Note that <code>x_1</code> and <code>x_2</code> have been initialized to the same value this time.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Initialize x_1 and x_2</span>
+<span class="n">x_1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">x_2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define the optimization operation for opt_1 and opt_2</span>
+<span class="n">opt_1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">RMSprop</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">opt_2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">RMSprop</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.00</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">opt_1</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">x_1</span><span class="p">),</span> <span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">x_1</span><span class="p">])</span>
+    <span class="c1"># Define the minimization operation for opt_2</span>
+    <span class="n">opt_2</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">x_2</span><span class="p">),</span> <span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">x_2</span><span class="p">])</span>
+    
+<span class="c1"># Print x_1 and x_2 as numpy arrays</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x_1</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">x_2</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>2.744511 0.24999999
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall that the global minimum is approximately 4.38. Notice that opt_1 built momentum, bringing <code>x_1</code> closer to the global minimum. To the contrary, <code>opt_2</code>, which had a momentum parameter of 0.0, got stuck in the local minimum on the left.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Training-a-network-in-TensorFlow">
+<a class="anchor" href="#Training-a-network-in-TensorFlow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training a network in TensorFlow<a class="anchor-link" href="#Training-a-network-in-TensorFlow"> </a>
+</h2>
+<ul>
+<li>Random Initializers<ul>
+<li>Often need to initialize thousands of variables<ul>
+<li>
+<code>tf.ones()</code> may perform poorly</li>
+<li>Tedious and difficult to initialize variables individually</li>
+</ul>
+</li>
+<li>Alternatively, draw initial values from distribution<ul>
+<li>Normal</li>
+<li>Uniform</li>
+<li>Glorot initializer</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Applying dropout
+<figure>
+  
+    <img class="docimage" src="/chans_jupyter/images/copied_from_nb/./image/dropout.png" alt="drawing">
+    
+    
+</figure>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Initialization-in-TensorFlow">
+<a class="anchor" href="#Initialization-in-TensorFlow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Initialization in TensorFlow<a class="anchor-link" href="#Initialization-in-TensorFlow"> </a>
+</h3>
+<p>A good initialization can reduce the amount of time needed to find the global minimum. In this exercise, we will initialize weights and biases for a neural network that will be used to predict credit card default decisions. To build intuition, we will use the low-level, linear algebraic approach, rather than making use of convenience functions and high-level keras operations. We will also expand the set of input features from 3 to 23.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define the layer 1 weights</span>
+<span class="n">w1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">23</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Initialize the layer 1 bias</span>
+<span class="n">b1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">7</span><span class="p">]),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define the layer 2 weights</span>
+<span class="n">w2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Define the layer 2 bias</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Defining-the-model-and-loss-function">
+<a class="anchor" href="#Defining-the-model-and-loss-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defining the model and loss function<a class="anchor-link" href="#Defining-the-model-and-loss-function"> </a>
+</h3>
+<p>In this exercise, you will train a neural network to predict whether a credit card holder will default. The features and targets you will use to train your network are available in the Python shell as <code>borrower_features</code> and <code>default</code>. You defined the weights and biases in the previous exercise.</p>
+<p>Note that the predictions layer is defined as $\sigma(\text{layer1} \times w2 + b2)$, where $\sigma$ is the sigmoid activation, <code>layer1</code> is a tensor of nodes for the first hidden dense layer, <code>w2</code> is a tensor of weights, and <code>b2</code> is the bias tensor.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">3000</span> <span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">24</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">3000</span><span class="p">,</span> <span class="mi">24</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([1., 1., 0., ..., 0., 1., 0.], dtype=float32)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">borrower_features</span><span class="p">,</span> <span class="n">test_features</span><span class="p">,</span> <span class="n">borrower_targets</span><span class="p">,</span> <span class="n">test_targets</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> 
+                                                                                    <span class="n">y</span><span class="p">,</span> 
+                                                                                    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+                                                                                   <span class="n">stratify</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define the model</span>
+<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">w2</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">borrower_features</span><span class="p">):</span>
+    <span class="c1"># Apply relu activation function to layer 1</span>
+    <span class="n">layer1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">w1</span><span class="p">)</span> <span class="o">+</span> <span class="n">b1</span><span class="p">)</span>
+    
+    <span class="c1"># Apply Dropout</span>
+    <span class="n">dropout</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)(</span><span class="n">layer1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">activations</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">dropout</span><span class="p">,</span> <span class="n">w2</span><span class="p">)</span> <span class="o">+</span> <span class="n">b2</span><span class="p">)</span>
+
+<span class="c1"># Define the loss function</span>
+<span class="k">def</span> <span class="nf">loss_function</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">w2</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">borrower_features</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">borrower_targets</span><span class="p">):</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">w2</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span>
+    
+    <span class="c1"># Pass targets and predictions to the cross entropy loss</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">binary_crossentropy</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Training-neural-networks-with-TensorFlow">
+<a class="anchor" href="#Training-neural-networks-with-TensorFlow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training neural networks with TensorFlow<a class="anchor-link" href="#Training-neural-networks-with-TensorFlow"> </a>
+</h3>
+<p>In the previous exercise, you defined a model, <code>model(w1, b1, w2, b2, features)</code>, and a loss function, <code>loss_function(w1, b1, w2, b2, features, targets)</code>, both of which are available to you in this exercise. You will now train the model and then evaluate its performance by predicting default outcomes in a test set, which consists of <code>test_features</code> and <code>test_targets</code> and is available to you. The trainable variables are <code>w1</code>, <code>b1</code>, <code>w2</code>, and <code>b2</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">opt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">beta_1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">beta_2</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span> <span class="n">amsgrad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span>
+
+<span class="c1"># Train the model</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="c1"># Complete the optimizer</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">loss_function</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">w2</span><span class="p">,</span> <span class="n">b2</span><span class="p">),</span> <span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">w1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">w2</span><span class="p">,</span> <span class="n">b2</span><span class="p">])</span>
+    
+<span class="c1"># Make predictions with model</span>
+<span class="n">model_predictions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">w2</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">test_features</span><span class="p">)</span>
+
+<span class="c1"># Construct the confusion matrix</span>
+<span class="n">confusion_matrix</span><span class="p">(</span><span class="n">test_targets</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">model_predictions</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[575,   8],
+       [166,   1]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Additional-:-Plot-heatmap">
+<a class="anchor" href="#Additional-:-Plot-heatmap" aria-hidden="true"><span class="octicon octicon-link"></span></a>Additional : Plot heatmap<a class="anchor-link" href="#Additional-:-Plot-heatmap"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="k">def</span> <span class="nf">confusion_matrix_plot</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">model_predictions</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">default</span><span class="p">,</span> <span class="n">model_predictions</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">]),</span>
+                      <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Actual'</span><span class="p">,</span><span class="s1">'Predicted'</span><span class="p">])</span>
+    <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Actual'</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Predicted'</span><span class="p">],</span> 
+                                   <span class="n">rownames</span><span class="o">=</span><span class="p">[</span><span class="s1">'Actual'</span><span class="p">],</span> <span class="n">colnames</span><span class="o">=</span><span class="p">[</span><span class="s1">'Predicted'</span><span class="p">])</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"Greys"</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">"d"</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">confusion_matrix_plot</span><span class="p">(</span><span class="n">test_targets</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">model_predictions</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAesAAAHgCAYAAACFNEViAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjMsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy+AADFEAAAVqklEQVR4nO3de+zldX3n8debmQEkDCAYkYoCynihqziDYLMIK4hUmrbYURE2Qq1GoqtYStqou5tsq0ZdL9QQK6tN663LJaWZDZWysrJF3C0oFwVBcOUiXmCpURwIHWRn5rN//H4Mw2RmGOB3fuc9v3k8kl9yzvd8z/m+MZ485/s93/M9NcYIANDXTtMeAADYOrEGgObEGgCaE2sAaE6sAaA5sQaA5hZPe4AtqSrfKYMpWL9+/bRHgB1WVdXmltuzBoDmxBoAmhNrAGhOrAGgObEGgObEGgCaE2sAaE6sAaA5sQaA5sQaAJoTawBoTqwBoDmxBoDmxBoAmhNrAGhOrAGgObEGgObEGgCaE2sAaE6sAaA5sQaA5sQaAJoTawBoTqwBoDmxBoDmxBoAmhNrAGhOrAGgObEGgObEGgCaE2sAaE6sAaA5sQaA5sQaAJoTawBoTqwBoDmxBoDmxBoAmhNrAGhOrAGgObEGgObEGgCaE2sAaE6sAaA5sQaA5sQaAJoTawBoTqwBoDmxBoDmxBoAmhNrAGhOrAGgObEGgObEGgCaE2sAaE6sAaA5sQaA5sQaAJoTawBoTqwBoDmxBoDmxBoAmhNrAGhOrAGgObEGgObEGgCaE2sAaE6sAaA5sQaA5sQaAJoTawBoTqwBoDmxBoDmxBoAmhNrAGhOrAGgObEGgObEGgCaE2sAaE6sAaA5sQaA5sQaAJoTawBoTqwBoDmxBoDmxBoAmhNrAGhOrAGgObEGgObEGgCaE2sAaE6sAaA5sQaA5sQaAJoTawBoTqwBoDmxBoDmxBoAmhNrAGhOrAGgObEGgObEGgCaE2sAaG7xtAdg+3TnnXfmgQceyLp167J27docfvjhueCCC/LCF74wSbLXXnvll7/8ZZYvX54DDjggt9xyS77//e8nSa6++uq8853vnOb4sOB84QtfyEUXXZSqyrJly/KRj3wku+yyy7THYo6INU/aMccck5///Ocb7p988skbbn/iE5/I6tWrN9y//fbbs3z58nmdD3YU9957b7785S/nkksuya677pozzzwzl1xySVauXDnt0ZgjYs1EnHTSSTn22GOnPQbsMNatW5eHHnooixcvzpo1a/LMZz5z2iMxhyb+mXVV7V1VT5/0dphfY4xcdtllufbaa/P2t7/9MY8dddRRuffee3PbbbdtWHbQQQfl+uuvzxVXXJFXvvKV8z0uLGj77rtv3vrWt+bYY4/NUUcdlaVLl3qfLTATiXVVPbeqLqiqnyX5ZpJrquqfZ5cdOIltMr+OPPLIHHbYYTnhhBPyrne9K0cdddSGx0455ZScf/75G+7fc889ee5zn5sVK1bkrLPOynnnnZelS5dOY2xYkFavXp3LL788X/va13LllVdmzZo1ufjii6c9FnNoUnvWFyZZleRZY4xlY4yDk+yX5L8luWBLT6qq06vq2qq6dkJzMUfuueeeJMnPfvazrFq1KkcccUSSZNGiRVm5cmUuvPDCDes+/PDD+cUvfpEkuf7663P77bfnBS94wfwPDQvUVVddlf333z977713lixZkte85jX59re/Pe2xmEOTivUzxhgXjjHWPbJgjLFujHFBkn229KQxxufGGC8fY7x8QnMxB3bbbbfsvvvuG24ff/zxuemmm5Ikxx13XG699db89Kc/3bD+M57xjOy008z/1Q466KAsW7Ysd9xxx/wPDgvUfvvtlxtuuCFr1qzJGCNXXXVVnve85017LObQpE4wu66qPpPki0l+PLvsOUl+P4l/7m3n9t1336xatSpJsnjx4px33nn56le/mmTmjPCND4EnydFHH50PfOADWbt2bdatW5d3vOMdue++++Z9blioDj300Bx//PFZuXJlFi9enBe/+MV505veNO2xmEM1xpj7F63aOcnbkpyY5NlJKjPR/vskfzXG+NU2vMbcDwY8rvXr1097BNhhVVVtdvkkYj0XxBqmQ6xherYU63m/3GhV/fZ8bxMAtmfTuDb44VPYJgBstyZ2GLyqXpRHP7MeSe5OcvEY45ZtfL7D4DAFDoPD9MzrYfCqem9mvk9dSb6V5JrZ2+dX1fsmsU0AWKgmdTb4/0ny62OM/7fJ8p2T3DzGWLYNr2HPGqbAnjVMz3yfYLY+ya9tZvl+s48BANtoUhdFOTPJ5VX1gzx6UZTnJjk4ybsntE0AWJAmeYLZTkmOyKMXRflJkms2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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The diagram shown is called a "confusion matrix." The diagonal elements show the number of correct predictions. The off-diagonal elements show the number of incorrect predictions. We can see that the model performs reasonably-well, but does so by overpredicting non-default. This suggests that we may need to train longer, tune the model's hyperparameters, or change the model's architecture.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/20/01-Neural-Networks.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
