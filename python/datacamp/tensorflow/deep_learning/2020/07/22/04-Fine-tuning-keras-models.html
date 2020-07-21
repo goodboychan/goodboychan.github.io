@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Fine-tuning keras models | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Fine-tuning keras models" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Learn how to optimize your deep learning models in Keras. Start by learning how to validate your models, then understand the concept of model capacity, and finally, experiment with wider and deeper networks. This is the Summary of lecture “Introduction to Deep Learning in Python”, via datacamp." />
+<meta property="og:description" content="Learn how to optimize your deep learning models in Keras. Start by learning how to validate your models, then understand the concept of model capacity, and finally, experiment with wider and deeper networks. This is the Summary of lecture “Introduction to Deep Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/22/04-Fine-tuning-keras-models.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/22/04-Fine-tuning-keras-models.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/of.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-22T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"Learn how to optimize your deep learning models in Keras. Start by learning how to validate your models, then understand the concept of model capacity, and finally, experiment with wider and deeper networks. This is the Summary of lecture “Introduction to Deep Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Fine-tuning keras models","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/of.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/22/04-Fine-tuning-keras-models.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/22/04-Fine-tuning-keras-models.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Fine-tuning keras models | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Fine-tuning keras models" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Learn how to optimize your deep learning models in Keras. Start by learning how to validate your models, then understand the concept of model capacity, and finally, experiment with wider and deeper networks. This is the Summary of lecture “Introduction to Deep Learning in Python”, via datacamp." />
+<meta property="og:description" content="Learn how to optimize your deep learning models in Keras. Start by learning how to validate your models, then understand the concept of model capacity, and finally, experiment with wider and deeper networks. This is the Summary of lecture “Introduction to Deep Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/22/04-Fine-tuning-keras-models.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/22/04-Fine-tuning-keras-models.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/of.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-22T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"Learn how to optimize your deep learning models in Keras. Start by learning how to validate your models, then understand the concept of model capacity, and finally, experiment with wider and deeper networks. This is the Summary of lecture “Introduction to Deep Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Fine-tuning keras models","dateModified":"2020-07-22T00:00:00-05:00","datePublished":"2020-07-22T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/of.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/22/04-Fine-tuning-keras-models.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/22/04-Fine-tuning-keras-models.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Fine-tuning keras models</h1><p class="page-description">Learn how to optimize your deep learning models in Keras. Start by learning how to validate your models, then understand the concept of model capacity, and finally, experiment with wider and deeper networks. This is the Summary of lecture "Introduction to Deep Learning in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-22T00:00:00-05:00" itemprop="datePublished">
+        Jul 22, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      17 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow">Tensorflow</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/master/_notebooks/2020-07-22-04-Fine-tuning-keras-models.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/master?filepath=_notebooks%2F2020-07-22-04-Fine-tuning-keras-models.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/master/_notebooks/2020-07-22-04-Fine-tuning-keras-models.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Understanding-model-optimization">Understanding model optimization </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Changing-optimization-parameters">Changing optimization parameters </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Model-validation">Model validation </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Evaluating-model-accuracy-on-validation-dataset">Evaluating model accuracy on validation dataset </a></li>
+<li class="toc-entry toc-h3"><a href="#Early-stopping:-Optimizing-the-optimization">Early stopping: Optimizing the optimization </a></li>
+<li class="toc-entry toc-h3"><a href="#Experimenting-with-wider-networks">Experimenting with wider networks </a></li>
+<li class="toc-entry toc-h3"><a href="#Adding-layers-to-a-network">Adding layers to a network </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Thinking-about-model-capacity">Thinking about model capacity </a></li>
+<li class="toc-entry toc-h2"><a href="#Stepping-up-to-images">Stepping up to images </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Building-your-own-digit-recognition-model">Building your own digit recognition model </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-22-04-Fine-tuning-keras-models.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Understanding-model-optimization">
+<a class="anchor" href="#Understanding-model-optimization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding model optimization<a class="anchor-link" href="#Understanding-model-optimization"> </a>
+</h2>
+<ul>
+<li>Why optimization is hard<ul>
+<li>Simultaneously optimizing 1000s of parameters with complex relationships</li>
+<li>Updates may not improve model meaningfully</li>
+<li>Updates too small (if learning rate is low) or too large (if learning rate is high)</li>
+</ul>
+</li>
+<li>Vanishing gradients<ul>
+<li>Occurs when many layers have very small slopes (e.g. due to being on flat part of tanh curve)</li>
+<li>In deep networks, updates to backprop were close to 0</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Changing-optimization-parameters">
+<a class="anchor" href="#Changing-optimization-parameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changing optimization parameters<a class="anchor-link" href="#Changing-optimization-parameters"> </a>
+</h3>
+<p>It's time to get your hands dirty with optimization. You'll now try optimizing a model at a very low learning rate, a very high learning rate, and a "just right" learning rate. You'll want to look at the results after running this exercise, remembering that a low value for the loss function is good.</p>
+<p>For these exercises, we've pre-loaded the predictors and target values from your previous classification models (predicting who would survive on the Titanic). You'll want the optimization to start from scratch every time you change the learning rate, to give a fair comparison of how each learning rate did in your results.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/titanic_all_numeric.csv'</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>survived</th>
+      <th>pclass</th>
+      <th>age</th>
+      <th>sibsp</th>
+      <th>parch</th>
+      <th>fare</th>
+      <th>male</th>
+      <th>age_was_missing</th>
+      <th>embarked_from_cherbourg</th>
+      <th>embarked_from_queenstown</th>
+      <th>embarked_from_southampton</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>3</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>7.2500</td>
+      <td>1</td>
+      <td>False</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>71.2833</td>
+      <td>0</td>
+      <td>False</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>3</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>7.9250</td>
+      <td>0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>1</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>53.1000</td>
+      <td>0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>3</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>8.0500</td>
+      <td>1</td>
+      <td>False</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.utils</span> <span class="kn">import</span> <span class="n">to_categorical</span>
+
+<span class="n">predictors</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">to_categorical</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">input_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_new_model</span><span class="p">(</span><span class="n">input_shape</span> <span class="o">=</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span> <span class="o">=</span> <span class="n">input_shape</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">model</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create list of learning rates: lr_to_test</span>
+<span class="n">lr_to_test</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.000001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># Loop over learning rates</span>
+<span class="k">for</span> <span class="n">lr</span> <span class="ow">in</span> <span class="n">lr_to_test</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n\n</span><span class="s1">Testing model with learning rate: </span><span class="si">%f</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> <span class="n">lr</span><span class="p">)</span>
+    
+    <span class="c1"># Build new model to test, unaffected by previous models</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">get_new_model</span><span class="p">()</span>
+    
+    <span class="c1"># Create SGD optimizer with specified learning rate: my_optimizer</span>
+    <span class="n">my_optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
+    
+    <span class="c1"># Compile the model</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">my_optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">)</span>
+    
+    <span class="c1"># Fit the model</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">predictors</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+
+Testing model with learning rate: 0.000001
+
+Epoch 1/10
+28/28 [==============================] - 0s 1ms/step - loss: 2.1949
+Epoch 2/10
+28/28 [==============================] - 0s 1ms/step - loss: 2.1499
+Epoch 3/10
+28/28 [==============================] - 0s 1ms/step - loss: 2.1049
+Epoch 4/10
+28/28 [==============================] - 0s 997us/step - loss: 2.0602
+Epoch 5/10
+28/28 [==============================] - 0s 954us/step - loss: 2.0157
+Epoch 6/10
+28/28 [==============================] - 0s 1ms/step - loss: 1.9715
+Epoch 7/10
+28/28 [==============================] - 0s 1ms/step - loss: 1.9275
+Epoch 8/10
+28/28 [==============================] - 0s 988us/step - loss: 1.8839
+Epoch 9/10
+28/28 [==============================] - 0s 1ms/step - loss: 1.8403
+Epoch 10/10
+28/28 [==============================] - 0s 1ms/step - loss: 1.7973
+
+
+Testing model with learning rate: 0.010000
+
+Epoch 1/10
+28/28 [==============================] - 0s 1ms/step - loss: 1.8178
+Epoch 2/10
+28/28 [==============================] - 0s 1ms/step - loss: 0.8062
+Epoch 3/10
+28/28 [==============================] - 0s 1ms/step - loss: 0.6392
+Epoch 4/10
+28/28 [==============================] - 0s 992us/step - loss: 0.6361
+Epoch 5/10
+28/28 [==============================] - 0s 1ms/step - loss: 0.6157
+Epoch 6/10
+28/28 [==============================] - 0s 992us/step - loss: 0.5927
+Epoch 7/10
+28/28 [==============================] - 0s 932us/step - loss: 0.5925
+Epoch 8/10
+28/28 [==============================] - 0s 957us/step - loss: 0.5918
+Epoch 9/10
+28/28 [==============================] - 0s 959us/step - loss: 0.5884
+Epoch 10/10
+28/28 [==============================] - 0s 1ms/step - loss: 0.5908
+
+
+Testing model with learning rate: 1.000000
+
+Epoch 1/10
+28/28 [==============================] - 0s 1ms/step - loss: 26042796.0000
+Epoch 2/10
+28/28 [==============================] - 0s 1ms/step - loss: 0.6709
+Epoch 3/10
+28/28 [==============================] - 0s 1ms/step - loss: 0.6674
+Epoch 4/10
+28/28 [==============================] - 0s 977us/step - loss: 0.6734
+Epoch 5/10
+28/28 [==============================] - 0s 993us/step - loss: 0.6778
+Epoch 6/10
+28/28 [==============================] - 0s 998us/step - loss: 0.6676
+Epoch 7/10
+28/28 [==============================] - 0s 1ms/step - loss: 0.6733
+Epoch 8/10
+28/28 [==============================] - 0s 949us/step - loss: 0.6736
+Epoch 9/10
+28/28 [==============================] - 0s 966us/step - loss: 0.6697
+Epoch 10/10
+28/28 [==============================] - 0s 1ms/step - loss: 0.6697
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Model-validation">
+<a class="anchor" href="#Model-validation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model validation<a class="anchor-link" href="#Model-validation"> </a>
+</h2>
+<ul>
+<li>Validation in deep learning<ul>
+<li>Commonly use validation split rather than cross-validation</li>
+<li>Deep learning widely used on large datasets</li>
+<li>Single validation score is based on large amount of data, and is reliable</li>
+</ul>
+</li>
+<li>Experimentation<ul>
+<li>Experiment with different architectures<ul>
+<li>More layers</li>
+<li>Fewer layers</li>
+<li>Layers with more nodes</li>
+<li>Layers with fewer nodes</li>
+<li>Creating a great model requires experimentation</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluating-model-accuracy-on-validation-dataset">
+<a class="anchor" href="#Evaluating-model-accuracy-on-validation-dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluating model accuracy on validation dataset<a class="anchor-link" href="#Evaluating-model-accuracy-on-validation-dataset"> </a>
+</h3>
+<p>Now it's your turn to monitor model accuracy with a validation data set. A model definition has been provided as <code>model</code>. Your job is to add the code to compile it and then fit it. You'll check the validation score in each epoch.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Save the number of columns in predictors: n_cols</span>
+<span class="n">n_cols</span> <span class="o">=</span> <span class="n">predictors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">input_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_cols</span><span class="p">,</span> <span class="p">)</span>
+
+<span class="c1"># Specify the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+
+<span class="c1"># Compile the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+
+<span class="c1"># Fit the model</span>
+<span class="n">hist</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">predictors</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Epoch 1/10
+20/20 [==============================] - 0s 7ms/step - loss: 0.8035 - accuracy: 0.6308 - val_loss: 0.5820 - val_accuracy: 0.7090
+Epoch 2/10
+20/20 [==============================] - 0s 2ms/step - loss: 0.6391 - accuracy: 0.6934 - val_loss: 0.5344 - val_accuracy: 0.7239
+Epoch 3/10
+20/20 [==============================] - 0s 2ms/step - loss: 0.7710 - accuracy: 0.6372 - val_loss: 0.7069 - val_accuracy: 0.7239
+Epoch 4/10
+20/20 [==============================] - 0s 2ms/step - loss: 0.7163 - accuracy: 0.6533 - val_loss: 0.6188 - val_accuracy: 0.6754
+Epoch 5/10
+20/20 [==============================] - 0s 3ms/step - loss: 0.6758 - accuracy: 0.6822 - val_loss: 0.5743 - val_accuracy: 0.7239
+Epoch 6/10
+20/20 [==============================] - 0s 2ms/step - loss: 0.6334 - accuracy: 0.6758 - val_loss: 0.5045 - val_accuracy: 0.7463
+Epoch 7/10
+20/20 [==============================] - 0s 2ms/step - loss: 0.6088 - accuracy: 0.6870 - val_loss: 0.6298 - val_accuracy: 0.6530
+Epoch 8/10
+20/20 [==============================] - 0s 2ms/step - loss: 0.6201 - accuracy: 0.6693 - val_loss: 0.5187 - val_accuracy: 0.7537
+Epoch 9/10
+20/20 [==============================] - 0s 2ms/step - loss: 0.5964 - accuracy: 0.7127 - val_loss: 0.5387 - val_accuracy: 0.7388
+Epoch 10/10
+20/20 [==============================] - 0s 2ms/step - loss: 0.6187 - accuracy: 0.6709 - val_loss: 0.4768 - val_accuracy: 0.7687
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Early-stopping:-Optimizing-the-optimization">
+<a class="anchor" href="#Early-stopping:-Optimizing-the-optimization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Early stopping: Optimizing the optimization<a class="anchor-link" href="#Early-stopping:-Optimizing-the-optimization"> </a>
+</h3>
+<p>Now that you know how to monitor your model performance throughout optimization, you can use early stopping to stop optimization when it isn't helping any more. Since the optimization stops automatically when it isn't helping, you can also set a high value for epochs in your call to <code>.fit()</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.callbacks</span> <span class="kn">import</span> <span class="n">EarlyStopping</span>
+
+<span class="c1"># Save the number of columns in predictors: n_cols</span>
+<span class="n">n_cols</span> <span class="o">=</span> <span class="n">predictors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">input_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_cols</span><span class="p">,</span> <span class="p">)</span>
+
+<span class="c1"># Specify the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+
+<span class="c1"># Compile the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+
+<span class="c1"># Define early_stopping_monitor</span>
+<span class="n">early_stopping_monitor</span> <span class="o">=</span> <span class="n">EarlyStopping</span><span class="p">(</span><span class="n">patience</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Fit the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">predictors</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+          <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">early_stopping_monitor</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Epoch 1/30
+20/20 [==============================] - 0s 6ms/step - loss: 0.6940 - accuracy: 0.6469 - val_loss: 0.5595 - val_accuracy: 0.7201
+Epoch 2/30
+20/20 [==============================] - 0s 2ms/step - loss: 0.6713 - accuracy: 0.6549 - val_loss: 0.5452 - val_accuracy: 0.7276
+Epoch 3/30
+20/20 [==============================] - 0s 2ms/step - loss: 0.6777 - accuracy: 0.6613 - val_loss: 0.5755 - val_accuracy: 0.7351
+Epoch 4/30
+20/20 [==============================] - 0s 2ms/step - loss: 0.6433 - accuracy: 0.6629 - val_loss: 0.5584 - val_accuracy: 0.7500
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tensorflow.python.keras.callbacks.History at 0x7f0b181dd750&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because optimization will automatically stop when it is no longer helpful, it is okay to specify the maximum number of epochs as 30 rather than using the default of 10 that you've used so far. Here, it seems like the optimization stopped after 4 epochs.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Experimenting-with-wider-networks">
+<a class="anchor" href="#Experimenting-with-wider-networks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Experimenting with wider networks<a class="anchor-link" href="#Experimenting-with-wider-networks"> </a>
+</h3>
+<p>Now you know everything you need to begin experimenting with different models!</p>
+<p>A model called <code>model_1</code> has been pre-loaded. This is a relatively small network, with only 10 units in each hidden layer.</p>
+<p>In this exercise you'll create a new model called <code>model_2</code> which is similar to <code>model_1</code>, except it has 100 units in each hidden layer.</p>
+<p>After you create model_2, both models will be fitted, and a graph showing both models loss score at each epoch will be shown. We added the argument verbose=False in the fitting commands to print out fewer updates, since you will look at these graphically instead of as text.</p>
+<p>Because you are fitting two models, it will take a moment to see the outputs after you hit run, so be patient.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model_1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model_1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">))</span>
+<span class="n">model_1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+<span class="n">model_1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+<span class="n">model_1</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model_1</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Model: "sequential_25"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_73 (Dense)             (None, 10)                110       
+_________________________________________________________________
+dense_74 (Dense)             (None, 10)                110       
+_________________________________________________________________
+dense_75 (Dense)             (None, 2)                 22        
+=================================================================
+Total params: 242
+Trainable params: 242
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define early_stopping_monitor</span>
+<span class="n">early_stopping_monitor</span> <span class="o">=</span> <span class="n">EarlyStopping</span><span class="p">(</span><span class="n">patience</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Create the new model: model_2</span>
+<span class="n">model_2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+
+<span class="c1"># Add the first and second layers</span>
+<span class="n">model_2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">))</span>
+<span class="n">model_2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+
+<span class="c1"># Add the output layer</span>
+<span class="n">model_2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+
+<span class="c1"># Compile model_2</span>
+<span class="n">model_2</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+
+<span class="c1"># Fit model_1</span>
+<span class="n">model_1_training</span> <span class="o">=</span> <span class="n">model_1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">predictors</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                               <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">early_stopping_monitor</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Fit model_2</span>
+<span class="n">model_2_training</span> <span class="o">=</span> <span class="n">model_2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">predictors</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                               <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">early_stopping_monitor</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Create th eplot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model_1_training</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">'val_loss'</span><span class="p">],</span> <span class="s1">'r'</span><span class="p">,</span> <span class="n">model_2_training</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">'val_loss'</span><span class="p">],</span> <span class="s1">'b'</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Epochs'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Validation score'</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Adding-layers-to-a-network">
+<a class="anchor" href="#Adding-layers-to-a-network" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding layers to a network<a class="anchor-link" href="#Adding-layers-to-a-network"> </a>
+</h3>
+<p>You've seen how to experiment with wider networks. In this exercise, you'll try a deeper network (more hidden layers).</p>
+<p>Once again, you have a baseline model called <code>model_1</code> as a starting point. It has 1 hidden layer, with 50 units. You can see a summary of that model's structure printed out. You will create a similar network with 3 hidden layers (still keeping 50 units in each layer).</p>
+<p>This will again take a moment to fit both models, so you'll need to wait a few seconds to see the results after you run your code.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model_1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model_1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">))</span>
+<span class="n">model_1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+<span class="n">model_1</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model_1</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Model: "sequential_32"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_97 (Dense)             (None, 50)                550       
+_________________________________________________________________
+dense_98 (Dense)             (None, 2)                 102       
+=================================================================
+Total params: 652
+Trainable params: 652
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create the new model: model_2</span>
+<span class="n">model_2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+
+<span class="c1"># Add the first, second, and third hidden layers</span>
+<span class="n">model_2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">))</span>
+<span class="n">model_2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+<span class="n">model_2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+
+<span class="c1"># Add the output layer</span>
+<span class="n">model_2</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+
+<span class="c1"># Compile model_2</span>
+<span class="n">model_2</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+
+<span class="c1"># Fit model 1</span>
+<span class="n">model_1_training</span> <span class="o">=</span> <span class="n">model_1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">predictors</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">early_stopping_monitor</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Fit model 2</span>
+<span class="n">model_2_training</span> <span class="o">=</span> <span class="n">model_2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">predictors</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">early_stopping_monitor</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Create the plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model_1_training</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">'val_loss'</span><span class="p">],</span> <span class="s1">'r'</span><span class="p">,</span> <span class="n">model_2_training</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">'val_loss'</span><span class="p">],</span> <span class="s1">'b'</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Epochs'</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Validation score'</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Thinking-about-model-capacity">
+<a class="anchor" href="#Thinking-about-model-capacity" aria-hidden="true"><span class="octicon octicon-link"></span></a>Thinking about model capacity<a class="anchor-link" href="#Thinking-about-model-capacity"> </a>
+</h2>
+<ul>
+<li>Overfitting
+<img src="/chans_jupyter/images/copied_from_nb/image/of.png" alt="of">
+</li>
+<li>Workflow for optimizing model capacity<ul>
+<li>Start with a small network</li>
+<li>Gradually increase capacity</li>
+<li>Keep increasing capacity until validation score is no longer improving</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Stepping-up-to-images">
+<a class="anchor" href="#Stepping-up-to-images" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stepping up to images<a class="anchor-link" href="#Stepping-up-to-images"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Building-your-own-digit-recognition-model">
+<a class="anchor" href="#Building-your-own-digit-recognition-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building your own digit recognition model<a class="anchor-link" href="#Building-your-own-digit-recognition-model"> </a>
+</h3>
+<p>You've reached the final exercise of the course - you now know everything you need to build an accurate model to recognize handwritten digits!</p>
+<p>To add an extra challenge, we've loaded only 2500 images, rather than 60000 which you will see in some published results. Deep learning models perform better with more data, however, they also take longer to train, especially when they start becoming more complex.</p>
+<p>If you have a computer with a CUDA compatible GPU, you can take advantage of it to improve computation time. If you don't have a GPU, no problem! You can set up a deep learning environment in the cloud that can run your models on a GPU. Here is a <a href="https://www.datacamp.com/community/tutorials/deep-learning-jupyter-aws">blog post</a> by Dan that explains how to do this - check it out after completing this exercise! It is a great next step as you continue your deep learning journey.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mnist</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/mnist.csv'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">mnist</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>...</th>
+      <th>775</th>
+      <th>776</th>
+      <th>777</th>
+      <th>778</th>
+      <th>779</th>
+      <th>780</th>
+      <th>781</th>
+      <th>782</th>
+      <th>783</th>
+      <th>784</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5</td>
+      <td>0</td>
+      <td>0.1</td>
+      <td>0.2</td>
+      <td>0.3</td>
+      <td>0.4</td>
+      <td>0.5</td>
+      <td>0.6</td>
+      <td>0.7</td>
+      <td>0.8</td>
+      <td>...</td>
+      <td>0.608</td>
+      <td>0.609</td>
+      <td>0.61</td>
+      <td>0.611</td>
+      <td>0.612</td>
+      <td>0.613</td>
+      <td>0.614</td>
+      <td>0.615</td>
+      <td>0.616</td>
+      <td>0.617</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.00</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.00</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.00</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.00</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+      <td>0.000</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 785 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">mnist</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">to_categorical</span><span class="p">(</span><span class="n">mnist</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create the model: model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+
+<span class="c1"># Add the first hidden layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">)))</span>
+
+<span class="c1"># Add the second hidden layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+
+<span class="c1"># Add the output layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+
+<span class="c1"># Compile the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+
+<span class="c1"># Fit the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">50</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Epoch 1/50
+44/44 [==============================] - 0s 3ms/step - loss: 18.8407 - accuracy: 0.4229 - val_loss: 7.5732 - val_accuracy: 0.5391
+Epoch 2/50
+44/44 [==============================] - 0s 2ms/step - loss: 4.0665 - accuracy: 0.6879 - val_loss: 4.7740 - val_accuracy: 0.6456
+Epoch 3/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.1160 - accuracy: 0.7729 - val_loss: 4.4106 - val_accuracy: 0.6689
+Epoch 4/50
+44/44 [==============================] - 0s 2ms/step - loss: 1.2134 - accuracy: 0.8307 - val_loss: 3.7577 - val_accuracy: 0.6839
+Epoch 5/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.9683 - accuracy: 0.8614 - val_loss: 3.5194 - val_accuracy: 0.7238
+Epoch 6/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.5479 - accuracy: 0.9114 - val_loss: 3.1736 - val_accuracy: 0.7288
+Epoch 7/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.3776 - accuracy: 0.9221 - val_loss: 3.3420 - val_accuracy: 0.7255
+Epoch 8/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.2887 - accuracy: 0.9329 - val_loss: 3.0673 - val_accuracy: 0.7338
+Epoch 9/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.1504 - accuracy: 0.9664 - val_loss: 3.0627 - val_accuracy: 0.7371
+Epoch 10/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.0817 - accuracy: 0.9800 - val_loss: 3.0174 - val_accuracy: 0.7438
+Epoch 11/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.0606 - accuracy: 0.9821 - val_loss: 3.0648 - val_accuracy: 0.7388
+Epoch 12/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.0328 - accuracy: 0.9879 - val_loss: 3.0618 - val_accuracy: 0.7537
+Epoch 13/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.0253 - accuracy: 0.9914 - val_loss: 2.9957 - val_accuracy: 0.7687
+Epoch 14/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.0132 - accuracy: 0.9964 - val_loss: 3.0766 - val_accuracy: 0.7521
+Epoch 15/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.0045 - accuracy: 0.9993 - val_loss: 3.0787 - val_accuracy: 0.7471
+Epoch 16/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.0019 - accuracy: 1.0000 - val_loss: 3.0682 - val_accuracy: 0.7537
+Epoch 17/50
+44/44 [==============================] - 0s 2ms/step - loss: 0.0017 - accuracy: 1.0000 - val_loss: 3.0551 - val_accuracy: 0.7554
+Epoch 18/50
+44/44 [==============================] - 0s 2ms/step - loss: 9.4450e-04 - accuracy: 1.0000 - val_loss: 3.0612 - val_accuracy: 0.7504
+Epoch 19/50
+44/44 [==============================] - 0s 2ms/step - loss: 7.6430e-04 - accuracy: 1.0000 - val_loss: 3.0624 - val_accuracy: 0.7504
+Epoch 20/50
+44/44 [==============================] - 0s 2ms/step - loss: 6.7846e-04 - accuracy: 1.0000 - val_loss: 3.0623 - val_accuracy: 0.7521
+Epoch 21/50
+44/44 [==============================] - 0s 2ms/step - loss: 6.2465e-04 - accuracy: 1.0000 - val_loss: 3.0610 - val_accuracy: 0.7537
+Epoch 22/50
+44/44 [==============================] - 0s 2ms/step - loss: 5.8118e-04 - accuracy: 1.0000 - val_loss: 3.0643 - val_accuracy: 0.7504
+Epoch 23/50
+44/44 [==============================] - 0s 2ms/step - loss: 5.3415e-04 - accuracy: 1.0000 - val_loss: 3.0627 - val_accuracy: 0.7537
+Epoch 24/50
+44/44 [==============================] - 0s 2ms/step - loss: 5.0316e-04 - accuracy: 1.0000 - val_loss: 3.0637 - val_accuracy: 0.7537
+Epoch 25/50
+44/44 [==============================] - 0s 2ms/step - loss: 4.6953e-04 - accuracy: 1.0000 - val_loss: 3.0648 - val_accuracy: 0.7537
+Epoch 26/50
+44/44 [==============================] - 0s 2ms/step - loss: 4.3986e-04 - accuracy: 1.0000 - val_loss: 3.0635 - val_accuracy: 0.7537
+Epoch 27/50
+44/44 [==============================] - 0s 2ms/step - loss: 4.1727e-04 - accuracy: 1.0000 - val_loss: 3.0630 - val_accuracy: 0.7537
+Epoch 28/50
+44/44 [==============================] - 0s 2ms/step - loss: 3.9517e-04 - accuracy: 1.0000 - val_loss: 3.0641 - val_accuracy: 0.7537
+Epoch 29/50
+44/44 [==============================] - 0s 2ms/step - loss: 3.7410e-04 - accuracy: 1.0000 - val_loss: 3.0674 - val_accuracy: 0.7537
+Epoch 30/50
+44/44 [==============================] - 0s 2ms/step - loss: 3.5648e-04 - accuracy: 1.0000 - val_loss: 3.0671 - val_accuracy: 0.7554
+Epoch 31/50
+44/44 [==============================] - 0s 2ms/step - loss: 3.3969e-04 - accuracy: 1.0000 - val_loss: 3.0688 - val_accuracy: 0.7554
+Epoch 32/50
+44/44 [==============================] - 0s 2ms/step - loss: 3.2434e-04 - accuracy: 1.0000 - val_loss: 3.0653 - val_accuracy: 0.7554
+Epoch 33/50
+44/44 [==============================] - 0s 2ms/step - loss: 3.1208e-04 - accuracy: 1.0000 - val_loss: 3.0667 - val_accuracy: 0.7554
+Epoch 34/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.9868e-04 - accuracy: 1.0000 - val_loss: 3.0664 - val_accuracy: 0.7554
+Epoch 35/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.8480e-04 - accuracy: 1.0000 - val_loss: 3.0667 - val_accuracy: 0.7554
+Epoch 36/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.7411e-04 - accuracy: 1.0000 - val_loss: 3.0662 - val_accuracy: 0.7554
+Epoch 37/50
+44/44 [==============================] - 0s 6ms/step - loss: 2.6219e-04 - accuracy: 1.0000 - val_loss: 3.0684 - val_accuracy: 0.7537
+Epoch 38/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.5434e-04 - accuracy: 1.0000 - val_loss: 3.0676 - val_accuracy: 0.7554
+Epoch 39/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.4130e-04 - accuracy: 1.0000 - val_loss: 3.0685 - val_accuracy: 0.7537
+Epoch 40/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.3264e-04 - accuracy: 1.0000 - val_loss: 3.0675 - val_accuracy: 0.7554
+Epoch 41/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.2436e-04 - accuracy: 1.0000 - val_loss: 3.0682 - val_accuracy: 0.7554
+Epoch 42/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.1692e-04 - accuracy: 1.0000 - val_loss: 3.0698 - val_accuracy: 0.7537
+Epoch 43/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.0934e-04 - accuracy: 1.0000 - val_loss: 3.0683 - val_accuracy: 0.7554
+Epoch 44/50
+44/44 [==============================] - 0s 2ms/step - loss: 2.0208e-04 - accuracy: 1.0000 - val_loss: 3.0703 - val_accuracy: 0.7554
+Epoch 45/50
+44/44 [==============================] - 0s 2ms/step - loss: 1.9523e-04 - accuracy: 1.0000 - val_loss: 3.0680 - val_accuracy: 0.7554
+Epoch 46/50
+44/44 [==============================] - 0s 2ms/step - loss: 1.8736e-04 - accuracy: 1.0000 - val_loss: 3.0668 - val_accuracy: 0.7571
+Epoch 47/50
+44/44 [==============================] - 0s 2ms/step - loss: 1.7953e-04 - accuracy: 1.0000 - val_loss: 3.0687 - val_accuracy: 0.7554
+Epoch 48/50
+44/44 [==============================] - 0s 2ms/step - loss: 1.7335e-04 - accuracy: 1.0000 - val_loss: 3.0697 - val_accuracy: 0.7554
+Epoch 49/50
+44/44 [==============================] - 0s 2ms/step - loss: 1.6714e-04 - accuracy: 1.0000 - val_loss: 3.0696 - val_accuracy: 0.7571
+Epoch 50/50
+44/44 [==============================] - 0s 2ms/step - loss: 1.6202e-04 - accuracy: 1.0000 - val_loss: 3.0690 - val_accuracy: 0.7571
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/tensorflow/deep_learning/2020/07/22/04-Fine-tuning-keras-models.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
