@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>The Keras Functional API | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="The Keras Functional API" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you’ll become familiar with the basics of the Keras functional API. You’ll build a simple functional network using functional building blocks, fit it to data, and make predictions. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<meta property="og:description" content="In this chapter, you’ll become familiar with the basics of the Keras functional API. You’ll build a simple functional network using functional building blocks, fit it to data, and make predictions. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/01-The-Keras-Functional-API.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/01-The-Keras-Functional-API.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/plot_model.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you’ll become familiar with the basics of the Keras functional API. You’ll build a simple functional network using functional building blocks, fit it to data, and make predictions. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp.","@type":"BlogPosting","headline":"The Keras Functional API","dateModified":"2020-07-27T00:00:00-05:00","datePublished":"2020-07-27T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/plot_model.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/01-The-Keras-Functional-API.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/01-The-Keras-Functional-API.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>The Keras Functional API | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="The Keras Functional API" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you’ll become familiar with the basics of the Keras functional API. You’ll build a simple functional network using functional building blocks, fit it to data, and make predictions. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<meta property="og:description" content="In this chapter, you’ll become familiar with the basics of the Keras functional API. You’ll build a simple functional network using functional building blocks, fit it to data, and make predictions. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/01-The-Keras-Functional-API.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/01-The-Keras-Functional-API.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/plot_model.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you’ll become familiar with the basics of the Keras functional API. You’ll build a simple functional network using functional building blocks, fit it to data, and make predictions. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp.","@type":"BlogPosting","headline":"The Keras Functional API","dateModified":"2020-07-27T00:00:00-05:00","datePublished":"2020-07-27T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/plot_model.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/01-The-Keras-Functional-API.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/01-The-Keras-Functional-API.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">The Keras Functional API</h1><p class="page-description">In this chapter, you'll become familiar with the basics of the Keras functional API. You'll build a simple functional network using functional building blocks, fit it to data, and make predictions. This is the Summary of lecture "Advanced Deep Learning with Keras", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-27T00:00:00-05:00" itemprop="datePublished">
+        Jul 27, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow-Keras">Tensorflow-Keras</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-07-27-01-The-Keras-Functional-API.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-07-27-01-The-Keras-Functional-API.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-07-27-01-The-Keras-Functional-API.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Keras-input-and-dense-layers">Keras input and dense layers </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Input-layers">Input layers </a></li>
+<li class="toc-entry toc-h3"><a href="#Dense-layers">Dense layers </a></li>
+<li class="toc-entry toc-h3"><a href="#Output-layers">Output layers </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Build-and-compile-a-model">Build and compile a model </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Build-a-model">Build a model </a></li>
+<li class="toc-entry toc-h3"><a href="#Compile-a-model">Compile a model </a></li>
+<li class="toc-entry toc-h3"><a href="#Visualize-a-model">Visualize a model </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Fit-and-evaluate-a-model">Fit and evaluate a model </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Fit-the-model-to-the-tournament-basketball-data">Fit the model to the tournament basketball data </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-model-on-a-test-set">Evaluate the model on a test set </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-27-01-The-Keras-Functional-API.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Keras-input-and-dense-layers">
+<a class="anchor" href="#Keras-input-and-dense-layers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Keras input and dense layers<a class="anchor-link" href="#Keras-input-and-dense-layers"> </a>
+</h2>
+<ul>
+<li>Inputs and outputs<ul>
+<li>Input layer</li>
+<li>Output layer</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Input-layers">
+<a class="anchor" href="#Input-layers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Input layers<a class="anchor-link" href="#Input-layers"> </a>
+</h3>
+<p>The first step in creating a neural network model is to define the Input layer. This layer takes in raw data, usually in the form of numpy arrays. The shape of the Input layer defines how many variables your neural network will use. For example, if the input data has 10 columns, you define an Input layer with a shape of <code>(10,)</code>.</p>
+<p>In this case, you are only using one input in your network.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Input</span>
+
+<span class="c1"># Create an input layer of shape 1</span>
+<span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dense-layers">
+<a class="anchor" href="#Dense-layers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dense layers<a class="anchor-link" href="#Dense-layers"> </a>
+</h3>
+<p>Once you have an Input layer, the next step is to add a Dense layer.</p>
+<p>Dense layers learn a weight matrix, where the first dimension of the matrix is the dimension of the input data, and the second dimension is the dimension of the output data. Recall that your Input layer has a shape of 1. In this case, your output layer will also have a shape of 1. This means that the Dense layer will learn a 1x1 weight matrix.</p>
+<p>In this exercise, you will add a dense layer to your model, after the input layer.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Dense</span>
+
+<span class="c1"># Input layer</span>
+<span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
+
+<span class="c1"># Dense layer</span>
+<span class="n">output_layer</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Connect the dense layer to the input_tensor</span>
+<span class="n">output_tensor</span> <span class="o">=</span> <span class="n">output_layer</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Output-layers">
+<a class="anchor" href="#Output-layers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Output layers<a class="anchor-link" href="#Output-layers"> </a>
+</h3>
+<p>Output layers are simply Dense layers! Output layers are used to reduce the dimension of the inputs to the dimension of the outputs. You'll learn more about output dimensions in chapter 4, but for now, you'll always use a single output in your neural networks, which is equivalent to <code>Dense(1)</code> or a dense layer with a single unit.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Input layer</span>
+<span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
+
+<span class="c1"># Create a dense layer and connect the dense layer to the input_tensor in one step</span>
+<span class="c1"># Note that we did this in 2 steps in the previous exercise, but are doing it in one step now</span>
+<span class="n">output_tensor</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="n">input_tensor</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Build-and-compile-a-model">
+<a class="anchor" href="#Build-and-compile-a-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build and compile a model<a class="anchor-link" href="#Build-and-compile-a-model"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Build-a-model">
+<a class="anchor" href="#Build-a-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build a model<a class="anchor-link" href="#Build-a-model"> </a>
+</h3>
+<p>Once you've defined an input layer and an output layer, you can build a Keras model. The model object is how you tell Keras where the model starts and stops: where data comes in and where predictions come out.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
+<span class="n">output_tensor</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="n">input_tensor</span><span class="p">)</span>
+
+<span class="c1"># Built the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">output_tensor</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Compile-a-model">
+<a class="anchor" href="#Compile-a-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compile a model<a class="anchor-link" href="#Compile-a-model"> </a>
+</h3>
+<p>The final step in creating a model is compiling it. Now that you've created a model, you have to compile it before you can fit it to data. This finalizes your model, freezes all its settings, and prepares it to meet some data!</p>
+<p>During compilation, you specify the optimizer to use for fitting the model to the data, and a loss function. <code>'adam'</code> is a good default optimizer to use, and will generally work well. Loss function depends on the problem at hand. Mean squared error is a common loss function and will optimize for predicting the mean, as is done in least squares regression.</p>
+<p>Mean absolute error optimizes for the median and is used in quantile regression. For this dataset, <code>'mean_absolute_error'</code> works pretty well, so use it as your loss function.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compile the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'mean_absolute_error'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Visualize-a-model">
+<a class="anchor" href="#Visualize-a-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Visualize a model<a class="anchor-link" href="#Visualize-a-model"> </a>
+</h3>
+<p>Now that you've compiled the model, take a look a the result of your hard work! You can do this by looking at the model summary, as well as its plot.</p>
+<p>The summary will tell you the names of the layers, as well as how many units they have and how many parameters are in the model.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>Before using <code>plot_model</code>, you need to install pydot, pydotplus, and graphviz. After install them, restart the kernel.
+</div>
+<code>sudo apt install graphviz
+pip install pydot pydotplus graphviz</code>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.utils</span> <span class="kn">import</span> <span class="n">plot_model</span>
+
+<span class="c1"># Summarize the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+
+<span class="c1"># Plot the model</span>
+<span class="n">plot_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">to_file</span><span class="o">=</span><span class="s1">'../images/plot_model.png'</span><span class="p">)</span>
+
+<span class="c1"># Display the image</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">'../images/plot_model.png'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Model: "model_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_5 (InputLayer)         [(None, 1)]               0         
+_________________________________________________________________
+dense_3 (Dense)              (None, 1)                 2         
+=================================================================
+Total params: 2
+Trainable params: 2
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeYAAAFfCAYAAACbVm9yAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjMsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy+AADFEAAAgAElEQVR4nO3deZRcVZ3A8e/PhLAjS4KGJEyAQRRBJbSYgCCHRQMCQUxYZAkSjYwgILIKAodNEARlEDwRkaDscZCMuMBEgVEI0mFAwLAEEIgECCIoqGDgzh9dl+rudHV3ekndrv5+zulTVa9evfq9eq/6V7/37r0vUkpIkqQyvKPeAUiSpCoTsyRJBTExS5JUEBOzJEkFMTFLklQQE7MkSQXpt8QcERMj4pGIWBARJ/TX+0iS1EiiP/oxR8QQ4FFgZ2AhcA+wX0rpD33+ZpIkNZD+qpi3AhaklJ5IKb0BXAtM6qf3kiSpYQztp+WOAp5p9Xgh8JFaMw8fPjyNHTu2n0KRJKk88+bNezGlNKL99P5KzNHBtDbHzCNiOjAdYP3116e5ubmfQpEkqTwR8VRH0/vrUPZCYEyrx6OBZ1vPkFKakVJqSik1jRix1A8GSZIGpf5KzPcAG0fEBhExDNgXmN1P7yVJUsPol0PZKaUlEXE48EtgCHB5Sumh/ngvSZIaSX+dYyal9DPgZ/21fEmSGpEjf0mSVBATsyRJBTExS5JUkH47x9yX7rrrLgAuuOCCOkciSVLnJkyYAMDRRx/do9dbMUuSVJABUTE/80zL6J6zZs0CYPLkyfUMR5KkpcydO7dPlmPFLElSQQZExdzeDTfcUO8QJElqY8qUKX2yHCtmSZIKYmKWJKkgJmZJkgpiYpYkqSAmZkmSCmJiliSpICZmSZIKYmKWJKkgJmZJkgpiYpYkqSAmZkmSCmJiliSpICZmSZIKYmKWJKkgJmZJkgpiYpYkqSAmZkmSCmJiliSpICZmSZIKYmKWJKkgJmZJkgpiYpYkqSAmZkmSCmJiliSpID1OzBExJiJ+HRHzI+KhiDiyMn3tiLg1Ih6r3K7Vd+FKktTYelMxLwG+klJ6HzAeOCwiNgVOAOaklDYG5lQeS5KkbuhxYk4pLUop3Vu5/zdgPjAKmATMrMw2E9izt0FKkjRY9Mk55ogYC2wB3A28K6W0CFqSN7BujddMj4jmiGhevHhxX4QhSdKAN7S3C4iI1YAfA0ellP4aEd16XUppBjADoKmpKfU2Dqm7PvrRjwLw29/+dpled+SRRwLwrW99q89j6o7VVlsNgNdee63T+c477zwAjjnmmH6PSS26u23A7aOu9apijogVaEnKV6WU/qsy+fmIGFl5fiTwQu9ClCRp8OhxxRwtpfH3gfkppQtaPTUbmAqcU7m9qVcRLkevvvoqAFtssQUAm2yyCQA//elP6xaTlOX987777gOq++mkSZMA+MlPflKfwNTltgG3j7qvN4eytwEOBB6IiPsq075KS0K+PiKmAU8DU3oXoiRJg0ePE3NK6TdArRPKO/Z0ufWUUsup7rfeeqvNrXovn4P70Ic+BMBvfvObeoYDwD333ANAU1NTnSNRKUrcTzX4OPKXJEkF6XWr7Eay+uqrA/D444/XORJJ0mBlxSxJUkFMzJIkFcTELElSQTzHTLV/4ac+9akOn//HP/4BwEorrdRm/s5e8+STTwJw/PHHA/DLX/4SgCFDhgAwYcIEAL797W8DsNFGG7V5/fnnnw/Ascce22b6qFGjALjxxhsBOOGElmuE/O53vwPgzTffBOAjH/kIAGeeeSYA22yzTZvl5Olf+9rX2kzP87VvjfqLX/wCgF122aXN9HXWWQeAF198sVvx59G22o8Qlz+XJUuWsLz88Ic/BOBzn/scAI899hgAQ4e2fC0+8IEPAPAf//EfAHzmM59ZbrH1ha7267yPgvtpyftplt/zxz/+MQCXXXYZAA888AAAr7zyCgD//u//DlT36y996UsAvOMdLXXYyy+/DMBaa3V+4b8zzjgDgJNPPrnN+6+wwgodzv/pT38agFmzZrWZnodczsubPXs2AM8++ywA73znOwHYdtttATjllFOAasv4rKv9GeDhhx8GqvvLnDlzAHjppZc6jGn48OE1l1VPVsySJBUkct/dempqakrNzc01n7/++usB2GeffYBqf+P+sueeLRfEuummlkHL2lfM3XlNHvEnVyK5+rrrrrsA2GOPPQDYbLPNgGolUUv+9bhgwYI2y/vmN7/Z5vH8+fMBmDZtGlD9BXnLLbcA8LGPfazD5S9r/83c9/ePf/wjsHQl0tvl96c8VvaGG24IwFFHHQVUR3pbuHAhAGeddRZQraxz5XHRRRd1uvwddtgBgPvvvx+A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85o5c+a0ia39Z7LyyisDcN555wHVc2i1LO/Poq/kMbGPO+44AJ544gmgeu4yt8Y+9dRT335N++q6vbfeeguoVoTVHpJl6W5c9di2Xe3r7ufKrJglSSqIFfMA84tf/KLN40984hOdzr/eeusB1SsNPfroo53On1uXvuMdLb/Zdtttt07nz+f08q/pefPmAbBw4UIARo8e3enrP/zhD3f6PFRHqspyK9H2lcTEiS3XWrn00ksBmD59OgCHHHJIm/fKrVLz1ZlqWd6fRV/LI33lEcLy5/L8888D1Va1UK3iWh+paO22227rrzD7VD5fmuVW2O33lXps2672dfdzZVbMkiQVxIp5gMh9F//2t78B1b6Kq622Wrdev+666wK1K+a8/FdeeaXN9J6OCJVHl+rq13N3lp8rvyyf72wvX4M3V38zZ84EYMcdd2wzX+6H+YUvfAFYuu9pvT6L5WX33XcHqq2zAX76058CtSvmgaL99cbzvpAr53pu267ew/1cmRWzJEkFsWIeIPJVf1ZffXWgWjm/+uqrQNeVc74+bVfLX3PNNdss9x//+AdQveZvyfJ4yQceeGCb2zzqUz5Pmvt37rXXXgB885vfBODoo48GGuOz6ExHV5Dqav8oXa4uczWZ5T63WSNsW/fzxmfFLElSQfxJNMDssssuQHV83NxKe/LkyR3On/tCdtUyM8u/rvOoP7/97W8B+NjHPtbp684991ygWrHkvrPL81d3/uWfx0fOrZHz+cXc3zOPkJRHTcujWOVKIiv9s8ijuj333HMA/OhHP+rW637+858vNa07reNLlvvi5tGy8vnUKVOmdDh/6du2M4NtPx+MrJglSSqIP20GmLPPPhuA//mf/wGq4+/mlpS5pWa+0kz+dZzPQbdvgdlevhrV7bffDlT7Rl588cUAbL311gC8+WbL1TzzOL2nn346UB1prJ6/mg899FAALrroIgA22WQToLruuf9nHiUqjwPd3kD5LK6++mqg2lf9oIMOApYeFzqvd66st9xyy7eXkUelqqXeY2Xnc8j5CFAeXzpv4zxec/ttlM/HtjdQtm1nBtt+PphYMUuSVJAoYczbpqamNNDHWc3nfPfZZx+g/8cSzv2R85VqcsWQW2bmKwfl8ZAvvPBCoDrObjZt2jSgOuZ2llvp5mu+5tGBnnnmGaB6niuPu3zssccCS/eDzefB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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Fit-and-evaluate-a-model">
+<a class="anchor" href="#Fit-and-evaluate-a-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fit and evaluate a model<a class="anchor-link" href="#Fit-and-evaluate-a-model"> </a>
+</h2>
+<ul>
+<li>Basketball Data<ul>
+<li>Goal: Predict tournament outcomes</li>
+<li>Data Available: team ratings from the tournament organizers</li>
+</ul>
+</li>
+<li>Input<ul>
+<li>Seed difference (<code>seed_diff</code>)</li>
+</ul>
+</li>
+<li>Output<ul>
+<li>Score difference (<code>score_diff</code>)</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Fit-the-model-to-the-tournament-basketball-data">
+<a class="anchor" href="#Fit-the-model-to-the-tournament-basketball-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fit the model to the tournament basketball data<a class="anchor-link" href="#Fit-the-model-to-the-tournament-basketball-data"> </a>
+</h3>
+<p>Now that the model is compiled, you are ready to fit it to some data!</p>
+<p>In this exercise, you'll use a dataset of scores from US College Basketball tournament games. Each row of the dataset has the team ids: <code>team_1</code> and <code>team_2</code>, as integers. It also has the seed difference between the teams (seeds are assigned by the tournament committee and represent a ranking of how strong the teams are) and the score difference of the game (e.g. if <code>team_1</code> wins by 5 points, the score difference is 5).</p>
+<p>To fit the model, you provide a matrix of X variables (in this case one column: the seed difference) and a matrix of Y variables (in this case one column: the score difference).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">games_tourney</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/games_tourney.csv'</span><span class="p">)</span>
+<span class="n">games_tourney</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>season</th>
+      <th>team_1</th>
+      <th>team_2</th>
+      <th>home</th>
+      <th>seed_diff</th>
+      <th>score_diff</th>
+      <th>score_1</th>
+      <th>score_2</th>
+      <th>won</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1985</td>
+      <td>288</td>
+      <td>73</td>
+      <td>0</td>
+      <td>-3</td>
+      <td>-9</td>
+      <td>41</td>
+      <td>50</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1985</td>
+      <td>5929</td>
+      <td>73</td>
+      <td>0</td>
+      <td>4</td>
+      <td>6</td>
+      <td>61</td>
+      <td>55</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1985</td>
+      <td>9884</td>
+      <td>73</td>
+      <td>0</td>
+      <td>5</td>
+      <td>-4</td>
+      <td>59</td>
+      <td>63</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1985</td>
+      <td>73</td>
+      <td>288</td>
+      <td>0</td>
+      <td>3</td>
+      <td>9</td>
+      <td>50</td>
+      <td>41</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1985</td>
+      <td>3920</td>
+      <td>410</td>
+      <td>0</td>
+      <td>1</td>
+      <td>-9</td>
+      <td>54</td>
+      <td>63</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">games_tourney_train</span><span class="p">,</span> <span class="n">games_tourney_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">games_tourney</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
+<span class="n">output_tensor</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="n">input_tensor</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">output_tensor</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'mean_absolute_error'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Now fit the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">games_tourney_train</span><span class="p">[</span><span class="s1">'seed_diff'</span><span class="p">],</span> <span class="n">games_tourney_train</span><span class="p">[</span><span class="s1">'score_diff'</span><span class="p">],</span>
+          <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+          <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+          <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>21/21 [==============================] - 0s 8ms/step - loss: 9.5143 - val_loss: 9.5148
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-model-on-a-test-set">
+<a class="anchor" href="#Evaluate-the-model-on-a-test-set" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the model on a test set<a class="anchor-link" href="#Evaluate-the-model-on-a-test-set"> </a>
+</h3>
+<p>After fitting the model, you can evaluate it on new data. You will give the model a new <code>X</code> matrix (also called test data), allow it to make predictions, and then compare to the known <code>y</code> variable (also called target data).</p>
+<p>In this case, you'll use data from the post-season tournament to evaluate your model. The tournament games happen after the regular season games you used to train our model, and are therefore a good evaluation of how well your model performs out-of-sample.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Load the X variable from the test data</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">games_tourney_test</span><span class="p">[</span><span class="s1">'seed_diff'</span><span class="p">]</span>
+
+<span class="c1"># Load the y variable from the test data</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">games_tourney_test</span><span class="p">[</span><span class="s1">'score_diff'</span><span class="p">]</span>
+
+<span class="c1"># Evaluate the model on the test data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>9.419431686401367
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/01-The-Keras-Functional-API.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
