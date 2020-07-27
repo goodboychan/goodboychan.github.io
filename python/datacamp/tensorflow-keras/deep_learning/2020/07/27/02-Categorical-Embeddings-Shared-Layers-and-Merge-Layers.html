@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Two Input Networks Using Categorical Embeddings, Shared Layers, and Merge Layers | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Two Input Networks Using Categorical Embeddings, Shared Layers, and Merge Layers" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will build two-input networks that use categorical embeddings to represent high-cardinality data, shared layers to specify re-usable building blocks, and merge layers to join multiple inputs to a single output. By the end of this chapter, you will have the foundational building blocks for designing neural networks with complex data flows. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will build two-input networks that use categorical embeddings to represent high-cardinality data, shared layers to specify re-usable building blocks, and merge layers to join multiple inputs to a single output. By the end of this chapter, you will have the foundational building blocks for designing neural networks with complex data flows. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/embedding_shared_merge_model.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will build two-input networks that use categorical embeddings to represent high-cardinality data, shared layers to specify re-usable building blocks, and merge layers to join multiple inputs to a single output. By the end of this chapter, you will have the foundational building blocks for designing neural networks with complex data flows. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp.","@type":"BlogPosting","headline":"Two Input Networks Using Categorical Embeddings, Shared Layers, and Merge Layers","dateModified":"2020-07-27T00:00:00-05:00","datePublished":"2020-07-27T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/embedding_shared_merge_model.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Two Input Networks Using Categorical Embeddings, Shared Layers, and Merge Layers | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Two Input Networks Using Categorical Embeddings, Shared Layers, and Merge Layers" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will build two-input networks that use categorical embeddings to represent high-cardinality data, shared layers to specify re-usable building blocks, and merge layers to join multiple inputs to a single output. By the end of this chapter, you will have the foundational building blocks for designing neural networks with complex data flows. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will build two-input networks that use categorical embeddings to represent high-cardinality data, shared layers to specify re-usable building blocks, and merge layers to join multiple inputs to a single output. By the end of this chapter, you will have the foundational building blocks for designing neural networks with complex data flows. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/embedding_shared_merge_model.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will build two-input networks that use categorical embeddings to represent high-cardinality data, shared layers to specify re-usable building blocks, and merge layers to join multiple inputs to a single output. By the end of this chapter, you will have the foundational building blocks for designing neural networks with complex data flows. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp.","@type":"BlogPosting","headline":"Two Input Networks Using Categorical Embeddings, Shared Layers, and Merge Layers","dateModified":"2020-07-27T00:00:00-05:00","datePublished":"2020-07-27T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/embedding_shared_merge_model.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Two Input Networks Using Categorical Embeddings, Shared Layers, and Merge Layers</h1><p class="page-description">In this chapter, you will build two-input networks that use categorical embeddings to represent high-cardinality data, shared layers to specify re-usable building blocks, and merge layers to join multiple inputs to a single output. By the end of this chapter, you will have the foundational building blocks for designing neural networks with complex data flows. This is the Summary of lecture "Advanced Deep Learning with Keras", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-27T00:00:00-05:00" itemprop="datePublished">
+        Jul 27, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      5 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow-Keras">Tensorflow-Keras</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-07-27-02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-07-27-02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-07-27-02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Category-embeddings">Category embeddings </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Define-team-lookup">Define team lookup </a></li>
+<li class="toc-entry toc-h3"><a href="#Define-team-model">Define team model </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Shared-layers">Shared layers </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Defining-two-inputs">Defining two inputs </a></li>
+<li class="toc-entry toc-h3"><a href="#Lookup-both-inputs-in-the-same-model">Lookup both inputs in the same model </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Merge-layers">Merge layers </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Output-layer-using-shared-layer">Output layer using shared layer </a></li>
+<li class="toc-entry toc-h3"><a href="#Model-using-two-inputs-and-one-output">Model using two inputs and one output </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Predict-from-your-model">Predict from your model </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Fit-the-model-to-the-regular-season-training-data">Fit the model to the regular season training data </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-model-on-the-tournament-test-data">Evaluate the model on the tournament test data </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-27-02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Category-embeddings">
+<a class="anchor" href="#Category-embeddings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Category embeddings<a class="anchor-link" href="#Category-embeddings"> </a>
+</h2>
+<ul>
+<li>Category embeddings
+<img src="/chans_jupyter/images/copied_from_nb/image/category_embeddings.png" alt="category"><ul>
+<li>Input: integer</li>
+<li>Output: floats</li>
+<li>Note: Increased dimensionality: output layer flattens back to 2D</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Define-team-lookup">
+<a class="anchor" href="#Define-team-lookup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Define team lookup<a class="anchor-link" href="#Define-team-lookup"> </a>
+</h3>
+<p>Shared layers allow a model to use the same weight matrix for multiple steps. In this exercise, you will build a "team strength" layer that represents each team by a single number. You will use this number for both teams in the model. The model will learn a number for each team that works well both when the team is <code>team_1</code> and when the team is <code>team_2</code> in the input data.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">games_season</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/games_season.csv'</span><span class="p">)</span>
+<span class="n">games_season</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>season</th>
+      <th>team_1</th>
+      <th>team_2</th>
+      <th>home</th>
+      <th>score_diff</th>
+      <th>score_1</th>
+      <th>score_2</th>
+      <th>won</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1985</td>
+      <td>3745</td>
+      <td>6664</td>
+      <td>0</td>
+      <td>17</td>
+      <td>81</td>
+      <td>64</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1985</td>
+      <td>126</td>
+      <td>7493</td>
+      <td>1</td>
+      <td>7</td>
+      <td>77</td>
+      <td>70</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1985</td>
+      <td>288</td>
+      <td>3593</td>
+      <td>1</td>
+      <td>7</td>
+      <td>63</td>
+      <td>56</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1985</td>
+      <td>1846</td>
+      <td>9881</td>
+      <td>1</td>
+      <td>16</td>
+      <td>70</td>
+      <td>54</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1985</td>
+      <td>2675</td>
+      <td>10298</td>
+      <td>1</td>
+      <td>12</td>
+      <td>86</td>
+      <td>74</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Embedding</span>
+
+<span class="c1"># Count the unique number of teams</span>
+<span class="n">n_teams</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">games_season</span><span class="p">[</span><span class="s1">'team_1'</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Create an embedding layer</span>
+<span class="n">team_lookup</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="n">n_teams</span><span class="p">,</span>
+                        <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">input_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="s1">'Team-Strength'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Define-team-model">
+<a class="anchor" href="#Define-team-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Define team model<a class="anchor-link" href="#Define-team-model"> </a>
+</h3>
+<p>The team strength lookup has three components: an input, an embedding layer, and a flatten layer that creates the output.</p>
+<p>If you wrap these three layers in a model with an input and output, you can re-use that stack of three layers at multiple places.</p>
+<p>Note again that the weights for all three layers will be shared everywhere we use them.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Flatten</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="c1"># Create an input layer for the team ID</span>
+<span class="n">teamid_in</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
+
+<span class="c1"># Lookup the input in the team strength embedding layer</span>
+<span class="n">strength_lookup</span> <span class="o">=</span> <span class="n">team_lookup</span><span class="p">(</span><span class="n">teamid_in</span><span class="p">)</span>
+
+<span class="c1"># Flatten the output</span>
+<span class="n">strength_lookup_flat</span> <span class="o">=</span> <span class="n">Flatten</span><span class="p">()(</span><span class="n">strength_lookup</span><span class="p">)</span>
+
+<span class="c1"># Combine the operations into a single, re-usable model</span>
+<span class="n">team_strength_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">teamid_in</span><span class="p">,</span> <span class="n">strength_lookup_flat</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'Team-Strength-Model'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Shared-layers">
+<a class="anchor" href="#Shared-layers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shared layers<a class="anchor-link" href="#Shared-layers"> </a>
+</h2>
+<ul>
+<li>Shared layers
+<img src="/chans_jupyter/images/copied_from_nb/image/shared_layer.png" alt="shared"><ul>
+<li>Requires the functional API</li>
+<li>Very flexible</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Defining-two-inputs">
+<a class="anchor" href="#Defining-two-inputs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defining two inputs<a class="anchor-link" href="#Defining-two-inputs"> </a>
+</h3>
+<p>In this exercise, you will define two input layers for the two teams in your model. This allows you to specify later in the model how the data from each team will be used differently.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Input layer for team 1</span>
+<span class="n">team_in_1</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'Team-1-In'</span><span class="p">)</span>
+
+<span class="c1"># Separate input layer for team 2</span>
+<span class="n">team_in_2</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'Team-2-In'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Lookup-both-inputs-in-the-same-model">
+<a class="anchor" href="#Lookup-both-inputs-in-the-same-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lookup both inputs in the same model<a class="anchor-link" href="#Lookup-both-inputs-in-the-same-model"> </a>
+</h3>
+<p>Now that you have a team strength model and an input layer for each team, you can lookup the team inputs in the shared team strength model. The two inputs will share the same weights.</p>
+<p>In this dataset, you have 10,888 unique teams. You want to learn a strength rating for each team, such that if any pair of teams plays each other, you can predict the score, even if those two teams have never played before. Furthermore, you want the strength rating to be the same, regardless of whether the team is the home team or the away team.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Lookup team 1 in the team strength model</span>
+<span class="n">team_1_strength</span> <span class="o">=</span> <span class="n">team_strength_model</span><span class="p">(</span><span class="n">team_in_1</span><span class="p">)</span>
+
+<span class="c1"># Lookup team 2 in the team strength model</span>
+<span class="n">team_2_strength</span> <span class="o">=</span> <span class="n">team_strength_model</span><span class="p">(</span><span class="n">team_in_2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Merge-layers">
+<a class="anchor" href="#Merge-layers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Merge layers<a class="anchor-link" href="#Merge-layers"> </a>
+</h2>
+<ul>
+<li>Merge layers<ul>
+<li>Add</li>
+<li>Subtract</li>
+<li>Multiply</li>
+<li>Concatenate</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Output-layer-using-shared-layer">
+<a class="anchor" href="#Output-layer-using-shared-layer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Output layer using shared layer<a class="anchor-link" href="#Output-layer-using-shared-layer"> </a>
+</h3>
+<p>Now that you've looked up how "strong" each team is, subtract the team strengths to determine which team is expected to win the game.</p>
+<p>This is a bit like the seeds that the tournament committee uses, which are also a measure of team strength. But rather than using seed differences to predict score differences, you'll use the difference of your own team strength model to predict score differences.</p>
+<p>The subtract layer will combine the weights from the two layers by subtracting them.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Subtract</span>
+
+<span class="c1"># Create a subtract layer using the inputs from the previous exercise</span>
+<span class="n">score_diff</span> <span class="o">=</span> <span class="n">Subtract</span><span class="p">()([</span><span class="n">team_1_strength</span><span class="p">,</span> <span class="n">team_2_strength</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Model-using-two-inputs-and-one-output">
+<a class="anchor" href="#Model-using-two-inputs-and-one-output" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model using two inputs and one output<a class="anchor-link" href="#Model-using-two-inputs-and-one-output"> </a>
+</h3>
+<p>Now that you have your two inputs (team id 1 and team id 2) and output (score difference), you can wrap them up in a model so you can use it later for fitting to data and evaluating on new data.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">([</span><span class="n">team_in_1</span><span class="p">,</span> <span class="n">team_in_2</span><span class="p">],</span> <span class="n">score_diff</span><span class="p">)</span>
+
+<span class="c1"># Compile the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'mean_absolute_error'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.utils</span> <span class="kn">import</span> <span class="n">plot_model</span>
+
+<span class="n">plot_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">to_file</span><span class="o">=</span><span class="s1">'../images/embedding_shared_merge_model.png'</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">'../images/embedding_shared_merge_model.png'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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pbD4IiIiItIQiy+iWtKgQQMsXLgQn3zyCdatW4euXbsiJydH77CIasV3332Hzp07Y+vWrdi4cSMWLlwIb29vvcMickksvohq2fDhw5GdnY2goCB06dIF7777rt4hETmNiGDhwoXo3bs32rZti+zsbCQkJOgdFpFLY/FFpIFWrVph27ZtmDlzJv7yl79gwoQJKCoqQlFRkd6hEVXL2bNncfbsWQwaNAhPP/00nnvuOXzxxRf8Y/NElcBHTRBpxMvLC7NmzULv3r0xbtw4xMTEAADS0tIQGWn1N+qJXNbXX3+N8ePHAyj7en379u3o3r27zlERuQ+e+SLS2AMPPIB9+/ahVatWaNWqFbp3746FCxfqHRaRQ8a/y5iQkIDY2FjExsYiKyuLhRdRFfHMF5EOQkNDsXHjRgDA7Nmz8dRTT2Hbtm147733+LfuyCUdO3YMY8aMwf79+/H2229j6tSpeodE5LZ45otIJ56envD09MSsWbPw9ddfY/fu3ejUqRPS09P1Do2onFWrVqFTp064ceMG9u7dy8KLqIZYfBG5gD59+iA7OxsdOnTA/fffj1mzZuHWrVt6h0X13LVr15Camork5GRMmDABu3btwl133aV3WERuj187ErmIkJAQrFu3DosWLcLMmTOxc+dO/Oc//0FoaKjeoVE9lJOTg9GjR+PMmTP47LPPMHToUL1DIqozeOaLiIiISEMsvohciFIKqamp2LFjB3755RfExMRg+/bt2L59u96hUT0gIliyZAmWLFmCLl264LbbbkN2djbPehE5GYsvIhfUpUsXfP/99+jVqxf69u2Lvn37YtasWSgtLdU7NKqjzp07h8TERDzyyCN45JFHMHPmTHz99dcICwvTOzSiOofXfBG5qKCgIKxYsQJLly4FAPzlL3/Btm3bsGzZMrRs2VLn6Kgu2bZtG8aOHQsPDw9s2bIFABAbG6tzVER1F898Ebm4CRMmYMKECdi5cydOnjyJqKgo0zPCiGqitLQUs2bNQr9+/RATE4OsrCzTw1OJqPaw+CJyE506dcLevXuRkJCAwYMHIzU1FTdu3NA7LHJTubm56Nu3L+bOnYvXXnsNn376KYKDg/UOi6heYPFF5EYCAwPx0Ucf4YMPPsB7772H3r1745dfftE7LHIzn332GaKiopCXl4f09HSkpqZCKaV3WET1BosvIjc0YcIE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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Predict-from-your-model">
+<a class="anchor" href="#Predict-from-your-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Predict from your model<a class="anchor-link" href="#Predict-from-your-model"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Fit-the-model-to-the-regular-season-training-data">
+<a class="anchor" href="#Fit-the-model-to-the-regular-season-training-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fit the model to the regular season training data<a class="anchor-link" href="#Fit-the-model-to-the-regular-season-training-data"> </a>
+</h3>
+<p>Now that you've defined a complete team strength model, you can fit it to the basketball data! Since your model has two inputs now, you need to pass the input data as a list.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Get the team_1 column from the regular season data</span>
+<span class="n">input_1</span> <span class="o">=</span> <span class="n">games_season</span><span class="p">[</span><span class="s1">'team_1'</span><span class="p">]</span>
+
+<span class="c1"># Get the team_2 column from the regular season data</span>
+<span class="n">input_2</span> <span class="o">=</span> <span class="n">games_season</span><span class="p">[</span><span class="s1">'team_2'</span><span class="p">]</span>
+
+<span class="c1"># Fit the model to input 1 and 2, using score diff as a target</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">([</span><span class="n">input_1</span><span class="p">,</span> <span class="n">input_2</span><span class="p">],</span> <span class="n">games_season</span><span class="p">[</span><span class="s1">'score_diff'</span><span class="p">],</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>138/138 [==============================] - 0s 2ms/step - loss: 12.1205 - val_loss: 11.8391
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-model-on-the-tournament-test-data">
+<a class="anchor" href="#Evaluate-the-model-on-the-tournament-test-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the model on the tournament test data<a class="anchor-link" href="#Evaluate-the-model-on-the-tournament-test-data"> </a>
+</h3>
+<p>In this exercise, you will evaluate the model on this new dataset. This evaluation will tell you how well you can predict the tournament games, based on a model trained with the regular season data. This is interesting because many teams play each other in the tournament that did not play in the regular season, so this is a very good check that your model is not overfitting.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">games_tourney</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/games_tourney.csv'</span><span class="p">)</span>
+<span class="n">games_tourney</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>season</th>
+      <th>team_1</th>
+      <th>team_2</th>
+      <th>home</th>
+      <th>seed_diff</th>
+      <th>score_diff</th>
+      <th>score_1</th>
+      <th>score_2</th>
+      <th>won</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1985</td>
+      <td>288</td>
+      <td>73</td>
+      <td>0</td>
+      <td>-3</td>
+      <td>-9</td>
+      <td>41</td>
+      <td>50</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1985</td>
+      <td>5929</td>
+      <td>73</td>
+      <td>0</td>
+      <td>4</td>
+      <td>6</td>
+      <td>61</td>
+      <td>55</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1985</td>
+      <td>9884</td>
+      <td>73</td>
+      <td>0</td>
+      <td>5</td>
+      <td>-4</td>
+      <td>59</td>
+      <td>63</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1985</td>
+      <td>73</td>
+      <td>288</td>
+      <td>0</td>
+      <td>3</td>
+      <td>9</td>
+      <td>50</td>
+      <td>41</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1985</td>
+      <td>3920</td>
+      <td>410</td>
+      <td>0</td>
+      <td>1</td>
+      <td>-9</td>
+      <td>54</td>
+      <td>63</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Get team_1 from the tournament data</span>
+<span class="n">input_1</span> <span class="o">=</span> <span class="n">games_tourney</span><span class="p">[</span><span class="s1">'team_1'</span><span class="p">]</span>
+
+<span class="c1"># Get team_2 from the tournament data</span>
+<span class="n">input_2</span> <span class="o">=</span> <span class="n">games_tourney</span><span class="p">[</span><span class="s1">'team_2'</span><span class="p">]</span>
+
+<span class="c1"># Evaluate the model using these inputs</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">([</span><span class="n">input_1</span><span class="p">,</span> <span class="n">input_2</span><span class="p">],</span> <span class="n">games_tourney</span><span class="p">[</span><span class="s1">'score_diff'</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>11.682927131652832
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/27/02-Categorical-Embeddings-Shared-Layers-and-Merge-Layers.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
