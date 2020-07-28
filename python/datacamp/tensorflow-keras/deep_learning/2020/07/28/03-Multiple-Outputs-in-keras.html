@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Multiple Outputs in Keras | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Multiple Outputs in Keras" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will build neural networks with multiple outputs, which can be used to solve regression problems with multiple targets. You will also build a model that solves a regression problem and a classification problem simultaneously. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will build neural networks with multiple outputs, which can be used to solve regression problems with multiple targets. You will also build a model that solves a regression problem and a classification problem simultaneously. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/28/03-Multiple-Outputs-in-keras.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/28/03-Multiple-Outputs-in-keras.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/multi_output_model.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-28T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will build neural networks with multiple outputs, which can be used to solve regression problems with multiple targets. You will also build a model that solves a regression problem and a classification problem simultaneously. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp.","@type":"BlogPosting","headline":"Multiple Outputs in Keras","dateModified":"2020-07-28T00:00:00-05:00","datePublished":"2020-07-28T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/multi_output_model.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/28/03-Multiple-Outputs-in-keras.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/28/03-Multiple-Outputs-in-keras.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Multiple Outputs in Keras | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Multiple Outputs in Keras" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this chapter, you will build neural networks with multiple outputs, which can be used to solve regression problems with multiple targets. You will also build a model that solves a regression problem and a classification problem simultaneously. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<meta property="og:description" content="In this chapter, you will build neural networks with multiple outputs, which can be used to solve regression problems with multiple targets. You will also build a model that solves a regression problem and a classification problem simultaneously. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/28/03-Multiple-Outputs-in-keras.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/28/03-Multiple-Outputs-in-keras.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/multi_output_model.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-28T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this chapter, you will build neural networks with multiple outputs, which can be used to solve regression problems with multiple targets. You will also build a model that solves a regression problem and a classification problem simultaneously. This is the Summary of lecture “Advanced Deep Learning with Keras”, via datacamp.","@type":"BlogPosting","headline":"Multiple Outputs in Keras","dateModified":"2020-07-28T00:00:00-05:00","datePublished":"2020-07-28T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/multi_output_model.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/28/03-Multiple-Outputs-in-keras.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/28/03-Multiple-Outputs-in-keras.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Multiple Outputs in Keras</h1><p class="page-description">In this chapter, you will build neural networks with multiple outputs, which can be used to solve regression problems with multiple targets. You will also build a model that solves a regression problem and a classification problem simultaneously. This is the Summary of lecture "Advanced Deep Learning with Keras", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-28T00:00:00-05:00" itemprop="datePublished">
+        Jul 28, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      9 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow-Keras">Tensorflow-Keras</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-07-28-03-Multiple-Outputs-in-keras.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-07-28-03-Multiple-Outputs-in-keras.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-07-28-03-Multiple-Outputs-in-keras.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Two-output-models">Two-output models </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Simple-two-output-model">Simple two-output model </a></li>
+<li class="toc-entry toc-h3"><a href="#Fit-a-model-with-two-outputs">Fit a model with two outputs </a></li>
+<li class="toc-entry toc-h3"><a href="#Inspect-the-model-(I)">Inspect the model (I) </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-model">Evaluate the model </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Single-model-for-classification-and-regression">Single model for classification and regression </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Classification-and-regression-in-one-model">Classification and regression in one model </a></li>
+<li class="toc-entry toc-h3"><a href="#Compile-and-fit-the-model">Compile and fit the model </a></li>
+<li class="toc-entry toc-h3"><a href="#Inspect-the-model-(II)">Inspect the model (II) </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-on-new-data-with-two-metrics">Evaluate on new data with two metrics </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-28-03-Multiple-Outputs-in-keras.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Two-output-models">
+<a class="anchor" href="#Two-output-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Two-output models<a class="anchor-link" href="#Two-output-models"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Simple-two-output-model">
+<a class="anchor" href="#Simple-two-output-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple two-output model<a class="anchor-link" href="#Simple-two-output-model"> </a>
+</h3>
+<p>In this exercise, you will use the tournament data to build one model that makes two predictions: the scores of both teams in a given game. Your inputs will be the seed difference of the two teams, as well as the predicted score difference from the model you built in chapter 3.</p>
+<p>The output from your model will be the predicted score for team 1 as well as team 2. This is called "multiple target regression": one model making more than one prediction.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Dense</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="c1"># Define the input</span>
+<span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">))</span>
+
+<span class="c1"># Define the output</span>
+<span class="n">output_tensor</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">)(</span><span class="n">input_tensor</span><span class="p">)</span>
+
+<span class="c1"># Create a model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">output_tensor</span><span class="p">)</span>
+
+<span class="c1"># Compile the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'mean_absolute_error'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Fit-a-model-with-two-outputs">
+<a class="anchor" href="#Fit-a-model-with-two-outputs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fit a model with two outputs<a class="anchor-link" href="#Fit-a-model-with-two-outputs"> </a>
+</h3>
+<p>Now that you've defined your 2-output model, fit it to the tournament data. I've split the data into <code>games_tourney_train</code> and <code>games_tourney_test</code>, so use the training set to fit for now.</p>
+<p>This model will use the pre-tournament seeds, as well as your pre-tournament predictions from the regular season model you built previously in this course.</p>
+<p>As a reminder, this model will predict the scores of both teams.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">games_tourney</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/games_tourney.csv'</span><span class="p">)</span>
+<span class="n">games_tourney</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>season</th>
+      <th>team_1</th>
+      <th>team_2</th>
+      <th>home</th>
+      <th>seed_diff</th>
+      <th>score_diff</th>
+      <th>score_1</th>
+      <th>score_2</th>
+      <th>won</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1985</td>
+      <td>288</td>
+      <td>73</td>
+      <td>0</td>
+      <td>-3</td>
+      <td>-9</td>
+      <td>41</td>
+      <td>50</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1985</td>
+      <td>5929</td>
+      <td>73</td>
+      <td>0</td>
+      <td>4</td>
+      <td>6</td>
+      <td>61</td>
+      <td>55</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1985</td>
+      <td>9884</td>
+      <td>73</td>
+      <td>0</td>
+      <td>5</td>
+      <td>-4</td>
+      <td>59</td>
+      <td>63</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1985</td>
+      <td>73</td>
+      <td>288</td>
+      <td>0</td>
+      <td>3</td>
+      <td>9</td>
+      <td>50</td>
+      <td>41</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1985</td>
+      <td>3920</td>
+      <td>410</td>
+      <td>0</td>
+      <td>1</td>
+      <td>-9</td>
+      <td>54</td>
+      <td>63</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">games_season</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/games_season.csv'</span><span class="p">)</span>
+<span class="n">games_season</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>season</th>
+      <th>team_1</th>
+      <th>team_2</th>
+      <th>home</th>
+      <th>score_diff</th>
+      <th>score_1</th>
+      <th>score_2</th>
+      <th>won</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1985</td>
+      <td>3745</td>
+      <td>6664</td>
+      <td>0</td>
+      <td>17</td>
+      <td>81</td>
+      <td>64</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1985</td>
+      <td>126</td>
+      <td>7493</td>
+      <td>1</td>
+      <td>7</td>
+      <td>77</td>
+      <td>70</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1985</td>
+      <td>288</td>
+      <td>3593</td>
+      <td>1</td>
+      <td>7</td>
+      <td>63</td>
+      <td>56</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1985</td>
+      <td>1846</td>
+      <td>9881</td>
+      <td>1</td>
+      <td>16</td>
+      <td>70</td>
+      <td>54</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1985</td>
+      <td>2675</td>
+      <td>10298</td>
+      <td>1</td>
+      <td>12</td>
+      <td>86</td>
+      <td>74</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Embedding</span><span class="p">,</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Concatenate</span><span class="p">,</span> <span class="n">Dense</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+<span class="c1"># Count the unique number of teams</span>
+<span class="n">n_teams</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">games_season</span><span class="p">[</span><span class="s1">'team_1'</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Create an embedding layer</span>
+<span class="n">team_lookup</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="n">n_teams</span><span class="p">,</span>
+                        <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">input_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">name</span><span class="o">=</span><span class="s1">'Team-Strength'</span><span class="p">)</span>
+
+<span class="c1"># Create an input layer for the team ID</span>
+<span class="n">teamid_in</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
+
+<span class="c1"># Lookup the input in the team strength embedding layer</span>
+<span class="n">strength_lookup</span> <span class="o">=</span> <span class="n">team_lookup</span><span class="p">(</span><span class="n">teamid_in</span><span class="p">)</span>
+
+<span class="c1"># Flatten the output</span>
+<span class="n">strength_lookup_flat</span> <span class="o">=</span> <span class="n">Flatten</span><span class="p">()(</span><span class="n">strength_lookup</span><span class="p">)</span>
+
+<span class="c1"># Combine the operations into a single, re-usable model</span>
+<span class="n">team_strength_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">teamid_in</span><span class="p">,</span> <span class="n">strength_lookup_flat</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'Team-Strength-Model'</span><span class="p">)</span>
+
+<span class="c1"># Create an Input for each team</span>
+<span class="n">team_in_1</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'Team-1-In'</span><span class="p">)</span>
+<span class="n">team_in_2</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'Team-2-In'</span><span class="p">)</span>
+
+<span class="c1"># Create an input for home vs away</span>
+<span class="n">home_in</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'Home-In'</span><span class="p">)</span>
+
+<span class="c1"># Lookup the team inputs in the team strength model</span>
+<span class="n">team_1_strength</span> <span class="o">=</span> <span class="n">team_strength_model</span><span class="p">(</span><span class="n">team_in_1</span><span class="p">)</span>
+<span class="n">team_2_strength</span> <span class="o">=</span> <span class="n">team_strength_model</span><span class="p">(</span><span class="n">team_in_2</span><span class="p">)</span>
+
+<span class="c1"># Combine the team strengths with the home input using a Concatenate layer, </span>
+<span class="c1"># then add a Dense layer</span>
+
+<span class="n">out</span> <span class="o">=</span> <span class="n">Concatenate</span><span class="p">()([</span><span class="n">team_1_strength</span><span class="p">,</span> <span class="n">team_2_strength</span><span class="p">,</span> <span class="n">home_in</span><span class="p">])</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="n">out</span><span class="p">)</span>
+
+<span class="c1"># Make a model</span>
+<span class="n">p_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">([</span><span class="n">team_in_1</span><span class="p">,</span> <span class="n">team_in_2</span><span class="p">,</span> <span class="n">home_in</span><span class="p">],</span> <span class="n">out</span><span class="p">)</span>
+
+<span class="c1"># Compile the model</span>
+<span class="n">p_model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'mean_absolute_error'</span><span class="p">)</span>
+
+<span class="c1"># Fit the model to the games_season dataset</span>
+<span class="n">p_model</span><span class="o">.</span><span class="n">fit</span><span class="p">([</span><span class="n">games_season</span><span class="p">[</span><span class="s1">'team_1'</span><span class="p">],</span> <span class="n">games_season</span><span class="p">[</span><span class="s1">'team_2'</span><span class="p">],</span> <span class="n">games_season</span><span class="p">[</span><span class="s1">'home'</span><span class="p">]],</span>
+          <span class="n">games_season</span><span class="p">[</span><span class="s1">'score_diff'</span><span class="p">],</span>
+          <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2048</span><span class="p">)</span>
+
+<span class="n">games_tourney</span><span class="p">[</span><span class="s1">'pred'</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_model</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">games_tourney</span><span class="p">[</span><span class="s1">'team_1'</span><span class="p">],</span> 
+                                       <span class="n">games_tourney</span><span class="p">[</span><span class="s1">'team_2'</span><span class="p">],</span> 
+                                       <span class="n">games_tourney</span><span class="p">[</span><span class="s1">'home'</span><span class="p">]])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>138/138 [==============================] - 0s 2ms/step - loss: 11.9445 - val_loss: 12.4844
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">games_tourney_train</span> <span class="o">=</span> <span class="n">games_tourney</span><span class="p">[</span><span class="n">games_tourney</span><span class="p">[</span><span class="s1">'season'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2010</span><span class="p">]</span>
+<span class="n">games_tourney_test</span> <span class="o">=</span> <span class="n">games_tourney</span><span class="p">[</span><span class="n">games_tourney</span><span class="p">[</span><span class="s1">'season'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2010</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fit the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">games_tourney_train</span><span class="p">[[</span><span class="s1">'seed_diff'</span><span class="p">,</span> <span class="s1">'pred'</span><span class="p">]],</span> 
+          <span class="n">games_tourney_train</span><span class="p">[[</span><span class="s1">'score_1'</span><span class="p">,</span> <span class="s1">'score_2'</span><span class="p">]],</span>
+          <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+          <span class="n">epochs</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+          <span class="n">batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Inspect-the-model-(I)">
+<a class="anchor" href="#Inspect-the-model-(I)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inspect the model (I)<a class="anchor-link" href="#Inspect-the-model-(I)"> </a>
+</h3>
+<p>Now that you've fit your model, let's take a look at it. You can use the <code>.get_weights()</code> method to inspect your model's weights.</p>
+<p>The input layer will have 4 weights: 2 for each input times 2 for each output.</p>
+<p>The output layer will have 2 weights, one for each output.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the model's weight</span>
+<span class="n">model</span><span class="o">.</span><span class="n">get_weights</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[array([[ 0.54203993, -0.6890212 ],
+        [30.134958  , 26.926764  ]], dtype=float32),
+ array([66.90998, 67.09042], dtype=float32)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the column means of the training data</span>
+<span class="n">games_tourney_train</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>season        1997.548544
+team_1        5560.890777
+team_2        5560.890777
+home             0.000000
+seed_diff        0.000000
+score_diff       0.000000
+score_1         71.786711
+score_2         71.786711
+won              0.500000
+pred             0.139160
+dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-model">
+<a class="anchor" href="#Evaluate-the-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the model<a class="anchor-link" href="#Evaluate-the-model"> </a>
+</h3>
+<p>Now that you've fit your model and inspected it's weights to make sure it makes sense, evaluate it on the tournament test set to see how well it performs on new data.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Evaluate the model on the tournament test data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">games_tourney_test</span><span class="p">[[</span><span class="s1">'seed_diff'</span><span class="p">,</span> <span class="s1">'pred'</span><span class="p">]],</span> 
+                     <span class="n">games_tourney_test</span><span class="p">[[</span><span class="s1">'score_1'</span><span class="p">,</span> <span class="s1">'score_2'</span><span class="p">]],</span>
+                     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>8.851910591125488
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Single-model-for-classification-and-regression">
+<a class="anchor" href="#Single-model-for-classification-and-regression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Single model for classification and regression<a class="anchor-link" href="#Single-model-for-classification-and-regression"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Classification-and-regression-in-one-model">
+<a class="anchor" href="#Classification-and-regression-in-one-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification and regression in one model<a class="anchor-link" href="#Classification-and-regression-in-one-model"> </a>
+</h3>
+<p>Now you will create a different kind of 2-output model. This time, you will predict the score difference, instead of both team's scores and then you will predict the probability that team 1 won the game. This is a pretty cool model: it is going to do both classification and regression!</p>
+<p>In this model, turn off the bias, or intercept for each layer. Your inputs (seed difference and predicted score difference) have a mean of very close to zero, and your outputs both have means that are close to zero, so your model shouldn't need the bias term to fit the data well.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create an input layer with 2 columns</span>
+<span class="n">input_tensor</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">))</span>
+
+<span class="c1"># Create the first output</span>
+<span class="n">output_tensor_1</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">,</span> <span class="n">use_bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span><span class="n">input_tensor</span><span class="p">)</span>
+
+<span class="c1"># Create the second output(use the first output as input here)</span>
+<span class="n">output_tensor_2</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'sigmoid'</span><span class="p">,</span> <span class="n">use_bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span><span class="n">output_tensor_1</span><span class="p">)</span>
+
+<span class="c1"># Create a model with 2 outputs</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">,</span> <span class="p">[</span><span class="n">output_tensor_1</span><span class="p">,</span> <span class="n">output_tensor_2</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.utils</span> <span class="kn">import</span> <span class="n">plot_model</span>
+
+<span class="n">plot_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">to_file</span><span class="o">=</span><span class="s1">'../images/multi_output_model.png'</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">'../images/multi_output_model.png'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaEAAAHVCAYAAABYG0QVAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjMsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy+AADFEAAAgAElEQVR4nO3deZRU1bmw8WczOqDihBMQonG4oolgO4Eav4gJOIFeQIwBjRh1RblyjQM4x9mo8eoSyTK5KF41COYTXJo4D7kqiOCnV72KoigQiEKIY4yKnu+Pql1dTVcPQFfvKvr5rdWrq0+dOvWeU7vrPXs4+4Qsy5AkKYV2qQOQJLVdJiFJUjImIUlSMiYhSVIyJiFJUjImIUlSMmVLQiGEgSGEeSGE+SGEceV6H0lS9QrluE4ohNAeeBM4BFgMvAAcm2XZ/7b4m0mSqla5akJ7A/OzLHsny7IvgSnA4DK9lySpSnUo03a3AxYV/b0Y2KehlbfYYousV69eZQpFkpTS3Llzl2dZtmWp58qVhEKJZXXa/UIIJwMnA/Ts2ZM5c+aUKRRJUkohhPcaeq5czXGLgR5Ff3cHlhSvkGXZrVmW1WRZVrPlliUTpCRpHVeuJPQCsGMI4dshhE7ACOD+Mr2XJKlKlaU5LsuylSGE04GHgfbApCzLXivHe0mSqle5+oTIsuyPwB/LtX1JUvVzxgRJUjImIUlSMiYhSVIyZesTaikzZ84E4Ne//nXiSCRJq9pvv/0AOPPMM9fo9RWfhBYtyk28cO+99zJ06NDE0UiSolmzZq31NmyOkyQlU/E1oWLTpk1LHYIkKW/YsGFrvQ1rQpKkZExCkqRkTEKSpGRMQpKkZExCkqRkTEKSpGRMQpKkZExCkqRkTEKSpGRMQpKkZExCkqRkTEKSpGRMQpKkZExCkqRkTEKSpGRMQpKkZExCkqRkTEKSpGRMQpKkZExCkqRkTEKSpGRMQpKkZExCkqRkOqQOQIqyLOO5554D4O677wbg0Ucf5b333gNgk002AWCnnXYC4NRTT+W4444DIITQKjF26dKFzz77rMHnr732WgDOOuusVolnXeKxbZusCUmSkmmzNaFPP/0UgD59+rDzzjsD8MADD6QMqc2bN28e+++/PwADBgwA4N577y3UfJYsWQLABRdcAMDIkSN56aWXALjuuutaJcZPP/208J59+vQBYPDgwUyfPr1V3n9d5rFtm9psEsqyDIBvvvmGb775JnE0lalLly4A7LHHHgA888wzZX/PDh1yRXLq1KkAbLrppoXntt9+ewBuv/12AB555BFuvvlmAK644goAOnfuXPYY1TxdunRp1bKj6mRznCQpmTZbE9poo40AePvttxNHomiXXXbhq6++anK9Tp06AdCjR49C880///lPwJqQVG2sCUmSkmmzNSFVrw8//BCAt956q9CBHYdvS6oubS4JxZE2Rx11VL3nPv/8cwDWW2+9wrql1luwYAEA5557LgAPP/ww7du3B2C//fYD4MYbbwRghx12KLwujuA6++yzC8u22247AO677z4Axo0bx+zZswH4+uuvAdhnn324/PLLAejfv3/htXHZhRdeWCe+/v371+sIfuihhxg0aFCdZZtvvjkAy5cvbzTGZ599Fqh7LU7c35UrV1JuH3/8MQCvvPIKAOPHjwdg66235o477ij7+6+JxsrZggUL6pQdyB3Plig7ALNnz65TdiBXVorLTlxWquxA3YEEDz30EECd8lMNZSdu/w9/+AO/+93vgNoy9NFHHwHwne98h5NOOgmAMWPGANCuXbvCiU7xwJhVXXbZZUButGZ8r44dO9Zb71//9V+B3EjPaNmyZXW2cf/99xdGf8YTqgMOOACAiy66qDDAI2rou+mNN94Aar8THn/8cQBWrFhR77232GKLBvetNdkcJ0lKJsShyinV1NRkc+bMKflcHKp7zDHHUI5YhwwZwowZM4D6NaFV1wOYMWMGgwcPBmprQt/97neZOXMmAEceeSQAu+22G0ChVrOqeGYzf/78wjYArr/++sLj119/HYDRo0cXznAeeeQRAL7//e/X22bxkOrGhsTW1NQA8O677wJ1z2Yb2h6kGWZb6mz9oIMOAuCmm25i9913b3IbP/jBDwB4+eWXefDBBwHYd9991zim1b2WpbjsxPWLyw7AzJkzm112IPeZlCo78e/isgO5M+Tmlh1o+LNubtmJ21zdstOS1wnF6/6OOOIIrrzySiA3ywbUtjL8/ve/Z+zYsQCceeaZQO3MDMUGDhwI5GbwePPNN4G6NdVV9evXj9NPPx2AH//4x3WeW7p0aaHWGwfUTJo0iQMPPBCgMEPIaaedBsDzzz/PE088AdS2tBQrLl/xs73kkksA2HvvvYFcDTDWcv/6178CLVMTGjZsWOHxtGnTGlwvhDA3y7KaUs9ZE5IkJdPm+oRaQmxDLj4riVf4H3bYYUBt++/y5csbPeOIc2XdcsstAHXafuNZ55133lk42z3jjDOA2jPGdd0FF1zAOeecA8A777wD1PaZ9OnTh4svvhio3y9WLF6MnGVZWWrTq+ukk06qd0Y7YMCAkmUHGj5jbW7ZgVztqK2Vneiggw4q9COuasyYMYUaZyxXF154IRtvvHGd9WIt6eGHH+bXv/41ABMmTKi3vdgHtnDhwjq1hGLjx48v1HbuuusuAA499NDC87179wZgypQpAPTq1avQX9VQi1EUa9ixtSDaZ599WqX/dk2YhNbAXnvt1eBzPXr0qPP3kiVLGk1CG264IUC9jsdiu+++O9tuuy2Qa1KCXJV+m222aXbM1SxeF7TLLrsAMHHiRADef/99LrroIqD2hCCeDBR76qmnWiHK5muo/JQqO9BwEmpu2QHYdttt65QdYJ0vP4cffnid3w353ve+B9Qm7Ndee63eScIPf/hDIHc844wdl156KVA7SANqm/LGjBlTcpAC5AYVtGvXrsnYtt56ayCXlObOnQvA4sWLAejevXvJ18Tmt2pic5wkKRlrQmugsWtS4ll71NS8dF27dm3We3br1g2oPTv+4IMP1vkz2aYcccQRheHJsRO6VE2o0jRUfspVdiBXforLDqz7NaE4DPv6668vlJNYk4hDsEv5xz/+0eBzY8eOLQz2iM2gF154YWGwQhxAcNttt9V77RdffFEnLlj969veeustoOGaUKwdVxNrQpKkZKwJJfa3v/0NqJ3Vu6Gbs8Wz1yjWjIrFduYvv/yy0fds7CywWGvdKG5NFc8TV3wxXlvR3LIDdctPa5SdpuJpDUcccQQA//3f/10YdHDssccCtf1sIQT+4z/+A4B///d/B2h08Mpxxx3HeeedB1CYwf2cc84pDI8//vjjgdIXucby2rVr18KtZOJlIXH2+LbImpAkKZm2m34rRLxY7YUXXgBKj2555ZVXCu35cSRPqfb8uOwvf/lLyfeKF6ktXLgQoN4w1FVtsMEGQOmz43gjwF/84hcAnHzyyY1uqznOOuusQoxxpFJj/vSnPxUeNzZicV3V3LIDub7EtSk7kCs/zS07kCs/rVV2og4dOhRGAcbh0ltvvTX/9m//1uBrYm2kOTp37szPf/5zgMLlAddff31hqHVzhr8fffTRTJo0qU6MpS4gjq655prCcPB4mcK6VHNad/akSsWOyVjFv+yyy0rOmBA7rWOzQilxGOnNN99caCo44YQTgNxw5vgesTkmfok1pG/fvgCF2SAWLVpU6NiN/wxxfquWcvfddwMU7qY6atSowhdkHFoch2jfeeed7LnnnkDttVultPSMCZWiVNmB0jMmdOrUqdllJ/4uLjvxfZpbdiBXforLDuQGBpSr7ERxbrp4rcwTTzxRGDr905/+FKjtwJ81axa/+c1vVmv7MQldffXVQO5atjjbxXe+850mX3/VVVfx9NNPA3DiiScCuePdr18/oHY2hzgDwaWXXloY6LAuJZ/I5jhJUjJtbu64xmY3jo477jgATj/99JJzNUXnn38+kJvfrLFO2HglfBxGDLUXGMar4h999FEg1zn63HPPAbWzAO+9996F21evOhNysTj086yzziqc8ceO5D333JMbbrgBqJ0/K14AB7VXWsezO4B58+YB8LOf/QyAF198kc022wyonbE5nhW2hI8//rhw9hd/z5s3r9AUGWuDsTln6NChhVkA1l9//Qa3G+fkevXVVwvHpbHPtTFdunQpzFRQSjzj3n///Rt9n+KyA4134h922GF1yg7kyk+psgPw3HPP1Sk7kLv9eXPLDsCDDz5Yp+wA3HDDDSXLDuTKT3HZgdxnV1x2ADbbbLMGy05Tx7a5Yi0wDj644IIL+OMf/wjUNknHcjxo0KDCRaHF8cd9bmyGgtiM+Nvf/rZQs4llrSlxIE38v54+fXqhthiH3sf5884+++x6lx7MmjWrWWW43N/vzh0nSapqba4mVClWrQnFvhapOYprQpadNGI/zYQJE5qc021d1RI1oXWvl0uSWkEc0BAnN9WasTlOkpSMNSFJakC8LXgc0PJf//VfhWvY/v73vwMwfPjwNMGtI6wJSZKSsSbUiq677jogN+RyVXGI7vnnn18YtltN1maesHjlebwlseprbtkBqrL8VLp4acemm27KrrvuCtTedG5dvIC0NVkTkiQl4xBtSdIa8WJVSVJVMwlJkpIxCUmSkjEJSZKSMQlJkpIxCUmSkjEJSZKSMQlJkpIxCUmSkjEJSZKSMQlJkpIxCUmSkjEJSZKSMQlJkpJZq7sxhRDeBT4BvgZWZllWE0LYDLgH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p54K1NYo7r33XoYMGdIqMX766adArobWp08fAAYPHgzA9OnT+frrrwFYvnw5ALNmzQLgxhtvpKamBoATTjgBgAkTJrDBBhu0StxqO6wJSZKSsSYkraUTTzyRM844o+RzBxxwQKF2tMceewC5vqHWqgk1pX379gBstdVWQG0tafDgwZx77rkA/OpXvwJgxYoVTJ8+HajtS5LWlklIWkO/+93vmrVeHIiw/vrrA/D222+TZRlQ2V/mV199NQBPP/00APfffz9TpkwBqDdQRlpTNsdJkpKxJiSVWRweHYdtf/e7363oGlAUYzz99NMBeP7557nlllsAa0JqOdaEJEnJWBOqEG+88QYA48aN48knnwRg5cqVAPTt25errrpqtba3bNkyAC677DIg156/ZMkSoPbCxAMOOACAiy66qNBpHk2fPp2jjjqq3nYXLFgAUOi0fvjhh4FcB/d+++0H5Ib3Auywww71Xv/FF18AcMUVVxQu8Fy4cCEA6623Hv379wfgZz/7GQCHHXZYofO81D4W7x/AkiVLSu4fUG8fW8u0adPq/H3++ecniWNN7b///oXHcQj3V199BUDHjh0LzzW3zDX0eZSzzF1xxRUArVrmUpW3amNNSJKUjDWhxObPnw9QOKPbcMMNuffee+ssW7BgAWeddRaQG1nVlKVLlxZeG6f2mTRpEgceeCAA7733HgCnnXZa4X2eeOKJOu85ZMiQwgiuOJx4xowZjB07Fqg9K500aRIAM2fO5MgjjwRq+wtmz55dL7bYvzBt2rRCDSGeaX/88ceFiz7jUOEnn3ySgw46qN7+xViL9w/gwAMPLLl/AE888UThcWt5//33GTduHAAnnXQSAMOHD2/0NT/4wQ8AePnllwF48MEH2XfffcsYZeO23nrrwuNYO48Xt26zzTbA6pW54s8DWqfMxbLWmmVu1f1TaSahxM477zwAPvzwQyA37PeQQw6ps87uu+/ObbfdBsD222/f5DbHjx9f+Ke46667ADj00EMLz/fu3RugMNy2V69ejBkzBoA5c+Y0uu34RbrqP9aAAQM47LDDAApJdPny5WyxxRZ11nv88ccLMay6n+uvvz7XXnstUNvU0dD+Qe6Lrbn7BzBmzJgm96+l/O1vfwNg4MCBhS+03/zmN8167TfffANQ+EKOv1NpzvuvTpkr/jygdcpcfP/WLHPN3b+2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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Compile-and-fit-the-model">
+<a class="anchor" href="#Compile-and-fit-the-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Compile and fit the model<a class="anchor-link" href="#Compile-and-fit-the-model"> </a>
+</h3>
+<p>Now that you have a model with 2 outputs, compile it with 2 loss functions: mean absolute error (MAE) for <code>'score_diff'</code> and binary cross-entropy (also known as logloss) for <code>'won'</code>. Then fit the model with <code>'seed_diff'</code> and <code>'pred'</code> as inputs. For outputs, predict <code>'score_diff'</code> and <code>'won'</code>.</p>
+<p>This model can use the scores of the games to make sure that close games (small score diff) have lower win probabilities than blowouts (large score diff).</p>
+<p>The regression problem is easier than the classification problem because MAE punishes the model less for a loss due to random chance. For example, if <code>score_diff</code> is -1 and <code>won</code> is 0, that means <code>team_1</code> had some bad luck and lost by a single free throw. The data for the easy problem helps the model find a solution to the hard problem.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.optimizers</span> <span class="kn">import</span> <span class="n">Adam</span>
+
+<span class="c1"># Compile the model with 2 losses and the Adam optimizer with a higher learning rate</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="p">[</span><span class="s1">'mean_absolute_error'</span><span class="p">,</span> <span class="s1">'binary_crossentropy'</span><span class="p">],</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">Adam</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">))</span>
+
+<span class="c1"># Fit the model to the tournament training data, with 2 inputs and 2 outputs</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">games_tourney_train</span><span class="p">[[</span><span class="s1">'seed_diff'</span><span class="p">,</span> <span class="s1">'pred'</span><span class="p">]],</span>
+          <span class="p">[</span><span class="n">games_tourney_train</span><span class="p">[[</span><span class="s1">'score_diff'</span><span class="p">]],</span> <span class="n">games_tourney_train</span><span class="p">[[</span><span class="s1">'won'</span><span class="p">]]],</span>
+          <span class="n">epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+          <span class="n">batch_size</span><span class="o">=</span><span class="mi">16384</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Epoch 1/20
+1/1 [==============================] - 0s 688us/step - loss: 11.6251 - dense_2_loss: 9.9799 - dense_3_loss: 1.6452
+Epoch 2/20
+1/1 [==============================] - 0s 640us/step - loss: 11.5974 - dense_2_loss: 9.9550 - dense_3_loss: 1.6424
+Epoch 3/20
+1/1 [==============================] - 0s 647us/step - loss: 11.5692 - dense_2_loss: 9.9305 - dense_3_loss: 1.6387
+Epoch 4/20
+1/1 [==============================] - 0s 529us/step - loss: 11.5404 - dense_2_loss: 9.9063 - dense_3_loss: 1.6342
+Epoch 5/20
+1/1 [==============================] - 0s 606us/step - loss: 11.5109 - dense_2_loss: 9.8821 - dense_3_loss: 1.6288
+Epoch 6/20
+1/1 [==============================] - 0s 571us/step - loss: 11.4808 - dense_2_loss: 9.8582 - dense_3_loss: 1.6226
+Epoch 7/20
+1/1 [==============================] - 0s 628us/step - loss: 11.4507 - dense_2_loss: 9.8352 - dense_3_loss: 1.6155
+Epoch 8/20
+1/1 [==============================] - 0s 545us/step - loss: 11.4200 - dense_2_loss: 9.8126 - dense_3_loss: 1.6074
+Epoch 9/20
+1/1 [==============================] - 0s 506us/step - loss: 11.3889 - dense_2_loss: 9.7905 - dense_3_loss: 1.5984
+Epoch 10/20
+1/1 [==============================] - 0s 714us/step - loss: 11.3576 - dense_2_loss: 9.7692 - dense_3_loss: 1.5884
+Epoch 11/20
+1/1 [==============================] - 0s 723us/step - loss: 11.3259 - dense_2_loss: 9.7485 - dense_3_loss: 1.5774
+Epoch 12/20
+1/1 [==============================] - 0s 639us/step - loss: 11.2936 - dense_2_loss: 9.7281 - dense_3_loss: 1.5655
+Epoch 13/20
+1/1 [==============================] - 0s 830us/step - loss: 11.2606 - dense_2_loss: 9.7079 - dense_3_loss: 1.5527
+Epoch 14/20
+1/1 [==============================] - 0s 1ms/step - loss: 11.2268 - dense_2_loss: 9.6878 - dense_3_loss: 1.5391
+Epoch 15/20
+1/1 [==============================] - 0s 596us/step - loss: 11.1925 - dense_2_loss: 9.6679 - dense_3_loss: 1.5246
+Epoch 16/20
+1/1 [==============================] - 0s 530us/step - loss: 11.1575 - dense_2_loss: 9.6481 - dense_3_loss: 1.5094
+Epoch 17/20
+1/1 [==============================] - 0s 660us/step - loss: 11.1216 - dense_2_loss: 9.6283 - dense_3_loss: 1.4934
+Epoch 18/20
+1/1 [==============================] - 0s 909us/step - loss: 11.0850 - dense_2_loss: 9.6084 - dense_3_loss: 1.4766
+Epoch 19/20
+1/1 [==============================] - 0s 622us/step - loss: 11.0478 - dense_2_loss: 9.5888 - dense_3_loss: 1.4590
+Epoch 20/20
+1/1 [==============================] - 0s 510us/step - loss: 11.0100 - dense_2_loss: 9.5693 - dense_3_loss: 1.4407
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Inspect-the-model-(II)">
+<a class="anchor" href="#Inspect-the-model-(II)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inspect the model (II)<a class="anchor-link" href="#Inspect-the-model-(II)"> </a>
+</h3>
+<p>Now you should take a look at the weights for this model. In particular, note the last weight of the model. This weight converts the predicted score difference to a predicted win probability. If you multiply the predicted score difference by the last weight of the model and then apply the sigmoid function, you get the win probability of the game.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the model weights</span>
+<span class="n">model</span><span class="o">.</span><span class="n">get_weights</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[array([[ 0.7577214],
+        [-1.0725204]], dtype=float32),
+ array([[-0.2949189]], dtype=float32)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the training data means</span>
+<span class="n">games_tourney_train</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>season        1997.548544
+team_1        5560.890777
+team_2        5560.890777
+home             0.000000
+seed_diff        0.000000
+score_diff       0.000000
+score_1         71.786711
+score_2         71.786711
+won              0.500000
+pred             0.139160
+dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">expit</span> <span class="k">as</span> <span class="n">sigmoid</span>
+
+<span class="c1"># Weight from the model</span>
+<span class="n">weight</span><span class="o">=</span><span class="mf">0.14</span>
+
+<span class="c1"># Print the approximate win probability predicted close game</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sigmoid</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">weight</span><span class="p">))</span>
+
+<span class="c1"># Print the approximate win probability predicted blowout game</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sigmoid</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">weight</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.5349429451582145
+0.8021838885585818
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/home/chanseok/anaconda3/lib/python3.7/importlib/_bootstrap.py:219: RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject
+  return f(*args, **kwds)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-on-new-data-with-two-metrics">
+<a class="anchor" href="#Evaluate-on-new-data-with-two-metrics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate on new data with two metrics<a class="anchor-link" href="#Evaluate-on-new-data-with-two-metrics"> </a>
+</h3>
+<p>Now that you've fit your model and inspected its weights to make sure they make sense, evaluate your model on the tournament test set to see how well it does on new data.</p>
+<p>Note that in this case, Keras will return 3 numbers: the first number will be the sum of both the loss functions, and then the next 2 numbers will be the loss functions you used when defining the model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Evaluate the model on new data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">games_tourney_test</span><span class="p">[[</span><span class="s1">'seed_diff'</span><span class="p">,</span> <span class="s1">'pred'</span><span class="p">]],</span>
+                    <span class="p">[</span><span class="n">games_tourney_test</span><span class="p">[[</span><span class="s1">'score_diff'</span><span class="p">]],</span> <span class="n">games_tourney_test</span><span class="p">[[</span><span class="s1">'won'</span><span class="p">]]],</span> 
+                     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[10.702475547790527, 9.355356216430664, 1.347119688987732]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/tensorflow-keras/deep_learning/2020/07/28/03-Multiple-Outputs-in-keras.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
