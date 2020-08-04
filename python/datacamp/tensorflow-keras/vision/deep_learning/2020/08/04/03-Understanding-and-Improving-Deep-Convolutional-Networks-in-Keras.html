@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Understanding and Improving Deep Convolutional Networks in Keras | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Understanding and Improving Deep Convolutional Networks in Keras" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="There are many ways to improve training by neural networks. In this chapter, we will focus on our ability to track how well a network is doing, and explore approaches towards improving convolutional neural networks. This is the Summary of lecture “Image Processing with Keras in Python”, via datacamp." />
+<meta property="og:description" content="There are many ways to improve training by neural networks. In this chapter, we will focus on our ability to track how well a network is doing, and explore approaches towards improving convolutional neural networks. This is the Summary of lecture “Image Processing with Keras in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/vision/deep_learning/2020/08/04/03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/vision/deep_learning/2020/08/04/03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/fasion_mnist_kernel.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-04T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"There are many ways to improve training by neural networks. In this chapter, we will focus on our ability to track how well a network is doing, and explore approaches towards improving convolutional neural networks. This is the Summary of lecture “Image Processing with Keras in Python”, via datacamp.","@type":"BlogPosting","headline":"Understanding and Improving Deep Convolutional Networks in Keras","dateModified":"2020-08-04T00:00:00-05:00","datePublished":"2020-08-04T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/fasion_mnist_kernel.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/vision/deep_learning/2020/08/04/03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/vision/deep_learning/2020/08/04/03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Understanding and Improving Deep Convolutional Networks in Keras | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Understanding and Improving Deep Convolutional Networks in Keras" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="There are many ways to improve training by neural networks. In this chapter, we will focus on our ability to track how well a network is doing, and explore approaches towards improving convolutional neural networks. This is the Summary of lecture “Image Processing with Keras in Python”, via datacamp." />
+<meta property="og:description" content="There are many ways to improve training by neural networks. In this chapter, we will focus on our ability to track how well a network is doing, and explore approaches towards improving convolutional neural networks. This is the Summary of lecture “Image Processing with Keras in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/vision/deep_learning/2020/08/04/03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/vision/deep_learning/2020/08/04/03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/fasion_mnist_kernel.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-04T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"There are many ways to improve training by neural networks. In this chapter, we will focus on our ability to track how well a network is doing, and explore approaches towards improving convolutional neural networks. This is the Summary of lecture “Image Processing with Keras in Python”, via datacamp.","@type":"BlogPosting","headline":"Understanding and Improving Deep Convolutional Networks in Keras","dateModified":"2020-08-04T00:00:00-05:00","datePublished":"2020-08-04T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/fasion_mnist_kernel.png","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/vision/deep_learning/2020/08/04/03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/tensorflow-keras/vision/deep_learning/2020/08/04/03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Understanding and Improving Deep Convolutional Networks in Keras</h1><p class="page-description">There are many ways to improve training by neural networks. In this chapter, we will focus on our ability to track how well a network is doing, and explore approaches towards improving convolutional neural networks. This is the Summary of lecture "Image Processing with Keras in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-08-04T00:00:00-05:00" itemprop="datePublished">
+        Aug 4, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow-Keras">Tensorflow-Keras</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Vision">Vision</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-08-04-03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-08-04-03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-08-04-03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Tracking-learning">Tracking learning </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Plot-the-learning-curves">Plot the learning curves </a></li>
+<li class="toc-entry toc-h3"><a href="#Using-stored-weights-to-predict-in-a-test-set">Using stored weights to predict in a test set </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Regularization">Regularization </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Adding-dropout-to-your-network">Adding dropout to your network </a></li>
+<li class="toc-entry toc-h3"><a href="#Add-batch-normalization-to-your-network">Add batch normalization to your network </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Interpreting-the-model">Interpreting the model </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Extracting-a-kernel-from-a-trained-network">Extracting a kernel from a trained network </a></li>
+<li class="toc-entry toc-h3"><a href="#Visualizing-kernel-responses">Visualizing kernel responses </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Summary">Summary </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-08-04-03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tracking-learning">
+<a class="anchor" href="#Tracking-learning" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tracking learning<a class="anchor-link" href="#Tracking-learning"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Plot-the-learning-curves">
+<a class="anchor" href="#Plot-the-learning-curves" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plot the learning curves<a class="anchor-link" href="#Plot-the-learning-curves"> </a>
+</h3>
+<p>During learning, the model will store the loss function evaluated in each epoch. Looking at the learning curves can tell us quite a bit about the learning process. In this exercise, you will plot the learning and validation loss curves for a model that you will train.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">),</span> <span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">)</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">fashion_mnist</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+
+<span class="n">train_data</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">[(</span><span class="n">train_labels</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">train_labels</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)][</span><span class="mi">0</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">train_labels</span> <span class="o">=</span> <span class="n">train_labels</span><span class="p">[(</span><span class="n">train_labels</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">train_labels</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)][</span><span class="mi">0</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span>
+<span class="n">train_labels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">train_labels</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[(</span><span class="n">test_labels</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">test_labels</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">test_labels</span> <span class="o">=</span> <span class="n">test_labels</span><span class="p">[(</span><span class="n">test_labels</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">test_labels</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">test_labels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">test_labels</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">MaxPool2D</span>
+
+<span class="n">img_rows</span><span class="p">,</span> <span class="n">img_cols</span> <span class="o">=</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">img_rows</span><span class="p">,</span> <span class="n">img_cols</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPool2D</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Flatten</span><span class="p">())</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d (Conv2D)              (None, 27, 27, 4)         20        
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) (None, 13, 13, 4)         0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 11, 11, 8)         296       
+_________________________________________________________________
+flatten (Flatten)            (None, 968)               0         
+_________________________________________________________________
+dense (Dense)                (None, 3)                 2907      
+=================================================================
+Total params: 3,223
+Trainable params: 3,223
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.callbacks</span> <span class="kn">import</span> <span class="n">ModelCheckpoint</span>
+
+<span class="n">checkpoint</span> <span class="o">=</span> <span class="n">ModelCheckpoint</span><span class="p">(</span><span class="s1">'weights.hdf5'</span><span class="p">,</span> <span class="n">monitor</span><span class="o">=</span><span class="s1">'val_loss'</span><span class="p">,</span> <span class="n">save_best_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Train the model and store the training object (including modelCheckpoint callback)</span>
+<span class="n">training</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">checkpoint</span><span class="p">])</span>
+
+<span class="c1"># Extract the history from the training object</span>
+<span class="n">history</span> <span class="o">=</span> <span class="n">training</span><span class="o">.</span><span class="n">history</span>
+
+<span class="c1"># Plot the training loss</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">'train loss'</span><span class="p">);</span>
+<span class="c1"># Plot the validation loss</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="s1">'val_loss'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">'validation loss'</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Epoch 1/3
+4/4 [==============================] - 0s 37ms/step - loss: 13.5767 - accuracy: 0.4250 - val_loss: 2.1897 - val_accuracy: 0.8000
+Epoch 2/3
+4/4 [==============================] - 0s 8ms/step - loss: 5.1165 - accuracy: 0.5250 - val_loss: 1.1824 - val_accuracy: 0.9000
+Epoch 3/3
+4/4 [==============================] - 0s 9ms/step - loss: 1.2841 - accuracy: 0.8500 - val_loss: 8.1849e-04 - val_accuracy: 1.0000
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Using-stored-weights-to-predict-in-a-test-set">
+<a class="anchor" href="#Using-stored-weights-to-predict-in-a-test-set" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using stored weights to predict in a test set<a class="anchor-link" href="#Using-stored-weights-to-predict-in-a-test-set"> </a>
+</h3>
+<p>Model weights stored in an <code>hdf5</code> file can be reused to populate an untrained model. Once the weights are loaded into this model, it behaves just like a model that has been trained to reach these weights. For example, you can use this model to make predictions from an unseen data set (e.g. <code>test_data</code>).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Load the weights from file</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_weights</span><span class="p">(</span><span class="s1">'weights.hdf5'</span><span class="p">)</span>
+
+<span class="c1"># Predict from the first three images in the test data</span>
+<span class="c1"># model.predict_classes(test_data) &lt;- .predict_classes API will be decrepted</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_labels</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[2 1 1 1 1 2 0 0 1 0]
+[[0 0 1]
+ [0 1 0]
+ [0 1 0]
+ [0 1 0]
+ [0 1 0]
+ [0 0 1]
+ [1 0 0]
+ [0 0 1]
+ [0 1 0]
+ [1 0 0]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Regularization">
+<a class="anchor" href="#Regularization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Regularization<a class="anchor-link" href="#Regularization"> </a>
+</h2>
+<ul>
+<li>Dropout<ul>
+<li>In each learning step:<ul>
+<li>Select a subset of the units</li>
+<li>Ignore it in the forward pass</li>
+<li>And in the back-propagation of error
+<img src="/chans_jupyter/images/copied_from_nb/image/dropout.png" alt="dropout">
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Batch Normalization<ul>
+<li>Rescale the outputs</li>
+</ul>
+</li>
+<li>Disharmony between dropout and batch normalization <ul>
+<li>Dropout tends to slow down learning, making it more incremental</li>
+<li>Batch Normalization tends to make learning go faster</li>
+<li>Their effects together may in fact each other.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Adding-dropout-to-your-network">
+<a class="anchor" href="#Adding-dropout-to-your-network" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding dropout to your network<a class="anchor-link" href="#Adding-dropout-to-your-network"> </a>
+</h3>
+<p>Dropout is a form of regularization that removes a different random subset of the units in a layer in each round of training. In this exercise, we will add dropout to the convolutional neural network that we have used in previous exercises:</p>
+<ol>
+<li>Convolution (15 units, kernel size 2, 'relu' activation)</li>
+<li>Dropout (20%)</li>
+<li>Convolution (5 units, kernel size 2, 'relu' activation)</li>
+<li>Flatten</li>
+<li>Dense (3 units, 'softmax' activation)</li>
+</ol>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Dropout</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+
+<span class="c1"># Add a convolutional layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">img_rows</span><span class="p">,</span> <span class="n">img_cols</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+<span class="c1"># Add a dropout layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">))</span>
+         
+<span class="c1"># Add another convolutional layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+
+<span class="c1"># Flatten and feed to output layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Flatten</span><span class="p">())</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d_2 (Conv2D)            (None, 27, 27, 15)        75        
+_________________________________________________________________
+dropout (Dropout)            (None, 27, 27, 15)        0         
+_________________________________________________________________
+conv2d_3 (Conv2D)            (None, 26, 26, 5)         305       
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 3380)              0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 3)                 10143     
+=================================================================
+Total params: 10,523
+Trainable params: 10,523
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Add-batch-normalization-to-your-network">
+<a class="anchor" href="#Add-batch-normalization-to-your-network" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add batch normalization to your network<a class="anchor-link" href="#Add-batch-normalization-to-your-network"> </a>
+</h3>
+<p>Batch normalization is another form of regularization that rescales the outputs of a layer to make sure that they have mean 0 and standard deviation 1. In this exercise, we will add batch normalization to the convolutional neural network that we have used in previous exercises:</p>
+<ol>
+<li>Convolution (15 units, kernel size 2, 'relu' activation)</li>
+<li>Batch normalization</li>
+<li>Convolution (5 unites, kernel size 2, 'relu' activation)</li>
+<li>Flatten</li>
+<li>Dense (3 units, 'softmax' activation)</li>
+</ol>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">BatchNormalization</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+
+<span class="c1"># Add a convolutional layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">img_rows</span><span class="p">,</span> <span class="n">img_cols</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+<span class="c1"># Add batch normalization layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">BatchNormalization</span><span class="p">())</span>
+
+<span class="c1"># Add another convolutional layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+
+<span class="c1"># Flatten and feed to output layer</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Flatten</span><span class="p">())</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Model: "sequential_2"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d_4 (Conv2D)            (None, 27, 27, 15)        75        
+_________________________________________________________________
+batch_normalization (BatchNo (None, 27, 27, 15)        60        
+_________________________________________________________________
+conv2d_5 (Conv2D)            (None, 26, 26, 5)         305       
+_________________________________________________________________
+flatten_2 (Flatten)          (None, 3380)              0         
+_________________________________________________________________
+dense_2 (Dense)              (None, 3)                 10143     
+=================================================================
+Total params: 10,583
+Trainable params: 10,553
+Non-trainable params: 30
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Interpreting-the-model">
+<a class="anchor" href="#Interpreting-the-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Interpreting the model<a class="anchor-link" href="#Interpreting-the-model"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Extracting-a-kernel-from-a-trained-network">
+<a class="anchor" href="#Extracting-a-kernel-from-a-trained-network" aria-hidden="true"><span class="octicon octicon-link"></span></a>Extracting a kernel from a trained network<a class="anchor-link" href="#Extracting-a-kernel-from-a-trained-network"> </a>
+</h3>
+<p>One way to interpret models is to examine the properties of the kernels in the convolutional layers. In this exercise, you will extract one of the kernels from a convolutional neural network with weights that you saved in a hdf5 file.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">img_rows</span><span class="p">,</span> <span class="n">img_cols</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPool2D</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Flatten</span><span class="p">())</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">))</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+
+<span class="n">checkpoint</span> <span class="o">=</span> <span class="n">ModelCheckpoint</span><span class="p">(</span><span class="s1">'weights_fasion.hdf5'</span><span class="p">,</span> <span class="n">monitor</span><span class="o">=</span><span class="s1">'val_loss'</span><span class="p">,</span> <span class="n">save_best_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+          <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">checkpoint</span><span class="p">]);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Model: "sequential_3"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d_6 (Conv2D)            (None, 27, 27, 5)         25        
+_________________________________________________________________
+conv2d_7 (Conv2D)            (None, 26, 26, 15)        315       
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 (None, 13, 13, 15)        0         
+_________________________________________________________________
+flatten_3 (Flatten)          (None, 2535)              0         
+_________________________________________________________________
+dense_3 (Dense)              (None, 3)                 7608      
+=================================================================
+Total params: 7,948
+Trainable params: 7,948
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/3
+4/4 [==============================] - 0s 23ms/step - loss: 5.8664 - accuracy: 0.5250 - val_loss: 7.5253 - val_accuracy: 0.6000
+Epoch 2/3
+4/4 [==============================] - 0s 8ms/step - loss: 0.9252 - accuracy: 0.8500 - val_loss: 1.5153 - val_accuracy: 0.9000
+Epoch 3/3
+4/4 [==============================] - 0s 9ms/step - loss: 0.1283 - accuracy: 0.9750 - val_loss: 0.6925 - val_accuracy: 0.9000
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Load the weights into the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_weights</span><span class="p">(</span><span class="s1">'weights_fasion.hdf5'</span><span class="p">)</span>
+
+<span class="c1"># Get the first convolutional layer from the model</span>
+<span class="n">c1</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Get the weights of the first convolutional layer</span>
+<span class="n">weights1</span> <span class="o">=</span> <span class="n">c1</span><span class="o">.</span><span class="n">get_weights</span><span class="p">()</span>
+
+<span class="c1"># Pull out the first channel of the first kernel in the first layer</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">weights1</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[-0.2344359   0.34422657]
+ [-0.49246848  0.262047  ]]
+(2, 2)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Visualizing-kernel-responses">
+<a class="anchor" href="#Visualizing-kernel-responses" aria-hidden="true"><span class="octicon octicon-link"></span></a>Visualizing kernel responses<a class="anchor-link" href="#Visualizing-kernel-responses"> </a>
+</h3>
+<p>One of the ways to interpret the weights of a neural network is to see how the kernels stored in these weights "see" the world. That is, what properties of an image are emphasized by this kernel. In this exercise, we will do that by convolving an image with the kernel and visualizing the result. Given images in the <code>test_data</code> variable, a function called <code>extract_kernel()</code> that extracts a kernel from the provided network, and the function called <code>convolution()</code> that we defined in the first chapter, extract the kernel, load the data from a file and visualize it with <code>matplotlib</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">convolution</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">-</span> <span class="n">kernel</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">ii</span><span class="p">:</span><span class="n">ii</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">jj</span><span class="p">:</span><span class="n">jj</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">kernel</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convolve with the fourth image in test_data</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">convolution</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">kernel</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plot_comparison</span><span class="p">(</span><span class="n">img_original</span><span class="p">,</span> <span class="n">img_filtered</span><span class="p">,</span> <span class="n">img_title_filtered</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_original</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Original'</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_filtered</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">img_title_filtered</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
+    
+<span class="n">plot_comparison</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">out</span><span class="p">,</span> <span class="s1">'applying kernel'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Summary">
+<a class="anchor" href="#Summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary<a class="anchor-link" href="#Summary"> </a>
+</h2>
+<ul>
+<li>Learn<ul>
+<li>Image Classification</li>
+<li>Convolution</li>
+<li>Reducing the number of parameters<ul>
+<li>Tweaking your convolutions</li>
+<li>Adding pooling layers</li>
+</ul>
+</li>
+<li>Improving network<ul>
+<li>Regularization</li>
+</ul>
+</li>
+<li>Understanding network<ul>
+<li>Monitoring learning</li>
+<li>Interpreting the parameters</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/tensorflow-keras/vision/deep_learning/2020/08/04/03-Understanding-and-Improving-Deep-Convolutional-Networks-in-Keras.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
