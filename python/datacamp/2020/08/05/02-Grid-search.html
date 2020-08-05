@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Grid search | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Grid search" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter introduces you to a popular automated hyperparameter tuning methodology called Grid Search. You will learn what it is, how it works and practice undertaking a Grid Search using Scikit Learn. You will then learn how to analyze the output of a Grid Search &amp; gain practical experience doing this. This is the Summary of lecture “Hyperparameter Tuning in Python”, via datacamp." />
+<meta property="og:description" content="This chapter introduces you to a popular automated hyperparameter tuning methodology called Grid Search. You will learn what it is, how it works and practice undertaking a Grid Search using Scikit Learn. You will then learn how to analyze the output of a Grid Search &amp; gain practical experience doing this. This is the Summary of lecture “Hyperparameter Tuning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/08/05/02-Grid-search.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/08/05/02-Grid-search.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-05T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter introduces you to a popular automated hyperparameter tuning methodology called Grid Search. You will learn what it is, how it works and practice undertaking a Grid Search using Scikit Learn. You will then learn how to analyze the output of a Grid Search &amp; gain practical experience doing this. This is the Summary of lecture “Hyperparameter Tuning in Python”, via datacamp.","@type":"BlogPosting","headline":"Grid search","dateModified":"2020-08-05T00:00:00-05:00","datePublished":"2020-08-05T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/08/05/02-Grid-search.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/08/05/02-Grid-search.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Grid search | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Grid search" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter introduces you to a popular automated hyperparameter tuning methodology called Grid Search. You will learn what it is, how it works and practice undertaking a Grid Search using Scikit Learn. You will then learn how to analyze the output of a Grid Search &amp; gain practical experience doing this. This is the Summary of lecture “Hyperparameter Tuning in Python”, via datacamp." />
+<meta property="og:description" content="This chapter introduces you to a popular automated hyperparameter tuning methodology called Grid Search. You will learn what it is, how it works and practice undertaking a Grid Search using Scikit Learn. You will then learn how to analyze the output of a Grid Search &amp; gain practical experience doing this. This is the Summary of lecture “Hyperparameter Tuning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/08/05/02-Grid-search.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/08/05/02-Grid-search.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-05T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter introduces you to a popular automated hyperparameter tuning methodology called Grid Search. You will learn what it is, how it works and practice undertaking a Grid Search using Scikit Learn. You will then learn how to analyze the output of a Grid Search &amp; gain practical experience doing this. This is the Summary of lecture “Hyperparameter Tuning in Python”, via datacamp.","@type":"BlogPosting","headline":"Grid search","dateModified":"2020-08-05T00:00:00-05:00","datePublished":"2020-08-05T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/08/05/02-Grid-search.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/2020/08/05/02-Grid-search.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Grid search</h1><p class="page-description">This chapter introduces you to a popular automated hyperparameter tuning methodology called Grid Search. You will learn what it is, how it works and practice undertaking a Grid Search using Scikit Learn. You will then learn how to analyze the output of a Grid Search & gain practical experience doing this. This is the Summary of lecture "Hyperparameter Tuning in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-08-05T00:00:00-05:00" itemprop="datePublished">
+        Aug 5, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      9 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-08-05-02-Grid-search.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-08-05-02-Grid-search.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-08-05-02-Grid-search.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Introducing-Grid-Search">Introducing Grid Search </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Build-Grid-Search-functions">Build Grid Search functions </a></li>
+<li class="toc-entry toc-h3"><a href="#Iteratively-tune-multiple-hyperparameters">Iteratively tune multiple hyperparameters </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Grid-Search-with-Scikit-Learn">Grid Search with Scikit Learn </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#GridSearchCV-with-Scikit-Learn">GridSearchCV with Scikit Learn </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Understanding-a-grid-search-output">Understanding a grid search output </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Exploring-the-grid-search-results">Exploring the grid search results </a></li>
+<li class="toc-entry toc-h3"><a href="#Analyzing-the-best-results">Analyzing the best results </a></li>
+<li class="toc-entry toc-h3"><a href="#Using-the-best-results">Using the best results </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-08-05-02-Grid-search.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introducing-Grid-Search">
+<a class="anchor" href="#Introducing-Grid-Search" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introducing Grid Search<a class="anchor-link" href="#Introducing-Grid-Search"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Build-Grid-Search-functions">
+<a class="anchor" href="#Build-Grid-Search-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build Grid Search functions<a class="anchor-link" href="#Build-Grid-Search-functions"> </a>
+</h3>
+<p>In data science it is a great idea to try building algorithms, models and processes 'from scratch' so you can really understand what is happening at a deeper level. Of course there are great packages and libraries for this work (and we will get to that very soon!) but building from scratch will give you a great edge in your data science work.</p>
+<p>In this exercise, you will create a function to take in 2 hyperparameters, build models and return results. You will use this function in a future exercise.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">credit_card</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/credit-card-full.csv'</span><span class="p">)</span>
+<span class="c1"># To change categorical variable with dummy variables</span>
+<span class="n">credit_card</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">credit_card</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'SEX'</span><span class="p">,</span> <span class="s1">'EDUCATION'</span><span class="p">,</span> <span class="s1">'MARRIAGE'</span><span class="p">],</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">credit_card</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">'ID'</span><span class="p">,</span> <span class="s1">'default payment next month'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">credit_card</span><span class="p">[</span><span class="s1">'default payment next month'</span><span class="p">]</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">GradientBoostingClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+
+<span class="c1"># Create the function</span>
+<span class="k">def</span> <span class="nf">gbm_grid_search</span><span class="p">(</span><span class="n">learn_rate</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">):</span>
+    <span class="c1"># Create the model</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">GradientBoostingClassifier</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="n">learn_rate</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="n">max_depth</span><span class="p">)</span>
+    
+    <span class="c1"># Use the model to make predictions</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    
+    <span class="c1"># Return the hyperparameters and score</span>
+    <span class="k">return</span> <span class="p">([</span><span class="n">learn_rate</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Iteratively-tune-multiple-hyperparameters">
+<a class="anchor" href="#Iteratively-tune-multiple-hyperparameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Iteratively tune multiple hyperparameters<a class="anchor-link" href="#Iteratively-tune-multiple-hyperparameters"> </a>
+</h3>
+<p>In this exercise, you will build on the function you previously created to take in 2 hyperparameters, build a model and return the results. You will now use that to loop through some values and then extend this function and loop with another hyperparameter.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create the relevant lists</span>
+<span class="n">results_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">learn_rate_list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+<span class="n">max_depth_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+
+<span class="c1"># Create the for loop</span>
+<span class="k">for</span> <span class="n">learn_rate</span> <span class="ow">in</span> <span class="n">learn_rate_list</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">max_depth</span> <span class="ow">in</span> <span class="n">max_depth_list</span><span class="p">:</span>
+        <span class="n">results_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gbm_grid_search</span><span class="p">(</span><span class="n">learn_rate</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">))</span>
+        
+<span class="c1"># Print the results</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">results_list</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[0.01, 2, 0.8214444444444444],
+ [0.01, 4, 0.8198888888888889],
+ [0.01, 6, 0.8172222222222222],
+ [0.1, 2, 0.8205555555555556],
+ [0.1, 4, 0.8204444444444444],
+ [0.1, 6, 0.8204444444444444],
+ [0.5, 2, 0.8188888888888889],
+ [0.5, 4, 0.8042222222222222],
+ [0.5, 6, 0.7894444444444444]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Extend the function input</span>
+<span class="k">def</span> <span class="nf">gbm_grid_search_extended</span><span class="p">(</span><span class="n">learn_rate</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">subsample</span><span class="p">):</span>
+    <span class="c1"># Extend the model creation section</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">GradientBoostingClassifier</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="n">learn_rate</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="n">max_depth</span><span class="p">,</span>
+                                       <span class="n">subsample</span><span class="o">=</span><span class="n">subsample</span><span class="p">)</span>
+    
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    
+    <span class="c1"># Extend the return part</span>
+    <span class="k">return</span><span class="p">([</span><span class="n">learn_rate</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">subsample</span><span class="p">,</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create the new list to test</span>
+<span class="n">subsample_list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">learn_rate</span> <span class="ow">in</span> <span class="n">learn_rate_list</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">max_depth</span> <span class="ow">in</span> <span class="n">max_depth_list</span><span class="p">:</span>
+        <span class="c1"># Extend the for loop</span>
+        <span class="k">for</span> <span class="n">subsample</span> <span class="ow">in</span> <span class="n">subsample_list</span><span class="p">:</span>
+            <span class="c1"># Extend the results to include the new hyperparameter</span>
+            <span class="n">results_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gbm_grid_search_extended</span><span class="p">(</span><span class="n">learn_rate</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">subsample</span><span class="p">))</span>
+            
+<span class="c1"># Print the results</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">results_list</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[0.01, 2, 0.8214444444444444],
+ [0.01, 4, 0.8198888888888889],
+ [0.01, 6, 0.8172222222222222],
+ [0.1, 2, 0.8205555555555556],
+ [0.1, 4, 0.8204444444444444],
+ [0.1, 6, 0.8204444444444444],
+ [0.5, 2, 0.8188888888888889],
+ [0.5, 4, 0.8042222222222222],
+ [0.5, 6, 0.7894444444444444],
+ [0.01, 2, 0.4, 0.8192222222222222],
+ [0.01, 2, 0.6, 0.8208888888888889],
+ [0.01, 4, 0.4, 0.8183333333333334],
+ [0.01, 4, 0.6, 0.8195555555555556],
+ [0.01, 6, 0.4, 0.8177777777777778],
+ [0.01, 6, 0.6, 0.8196666666666667],
+ [0.1, 2, 0.4, 0.821],
+ [0.1, 2, 0.6, 0.8201111111111111],
+ [0.1, 4, 0.4, 0.8207777777777778],
+ [0.1, 4, 0.6, 0.8196666666666667],
+ [0.1, 6, 0.4, 0.8155555555555556],
+ [0.1, 6, 0.6, 0.8183333333333334],
+ [0.5, 2, 0.4, 0.8128888888888889],
+ [0.5, 2, 0.6, 0.8156666666666667],
+ [0.5, 4, 0.4, 0.7945555555555556],
+ [0.5, 4, 0.6, 0.8065555555555556],
+ [0.5, 6, 0.4, 0.7714444444444445],
+ [0.5, 6, 0.6, 0.7743333333333333]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Grid-Search-with-Scikit-Learn">
+<a class="anchor" href="#Grid-Search-with-Scikit-Learn" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grid Search with Scikit Learn<a class="anchor-link" href="#Grid-Search-with-Scikit-Learn"> </a>
+</h2>
+<ul>
+<li>Steps in a Grid Search<ol>
+<li>An algorithm to tune the hyperparameters (or estimator)</li>
+<li>Defining which hyperparameters to tune</li>
+<li>Defining a range of values for each hyperparameter</li>
+<li>Setting a cross-validatoin scheme</li>
+<li>Defining a score function so we can decide which square on our grid was 'the best'</li>
+<li>Include extra useful information or functions</li>
+</ol>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="GridSearchCV-with-Scikit-Learn">
+<a class="anchor" href="#GridSearchCV-with-Scikit-Learn" aria-hidden="true"><span class="octicon octicon-link"></span></a>GridSearchCV with Scikit Learn<a class="anchor-link" href="#GridSearchCV-with-Scikit-Learn"> </a>
+</h3>
+<p>The <code>GridSearchCV</code> module from Scikit Learn provides many useful features to assist with efficiently undertaking a grid search. You will now put your learning into practice by creating a <code>GridSearchCV</code> object with certain parameters.</p>
+<p>The desired options are:</p>
+<ul>
+<li>A Random Forest Estimator, with the split criterion as 'entropy'</li>
+<li>5-fold cross validation</li>
+<li>The hyperparameters <code>max_depth</code> (2, 4, 8, 15) and <code>max_features</code> ('auto' vs 'sqrt')</li>
+<li>Use <code>roc_auc</code> to score the models</li>
+<li>Use 4 cores for processing in parallel</li>
+<li>Ensure you refit the best model and return training scores</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="c1"># Create a Random Forest Classifier with specified criterion</span>
+<span class="n">rf_class</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">criterion</span><span class="o">=</span><span class="s1">'entropy'</span><span class="p">)</span>
+
+<span class="c1"># Create the parametergrid</span>
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'max_depth'</span><span class="p">:[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span>
+    <span class="s1">'max_features'</span><span class="p">:[</span><span class="s1">'auto'</span><span class="p">,</span> <span class="s1">'sqrt'</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># Create a GridSearchCV object</span>
+<span class="n">grid_rf_class</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="o">=</span><span class="n">rf_class</span><span class="p">,</span>
+    <span class="n">param_grid</span><span class="o">=</span><span class="n">param_grid</span><span class="p">,</span>
+    <span class="n">scoring</span><span class="o">=</span><span class="s1">'roc_auc'</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">refit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">return_train_score</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">grid_rf_class</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>GridSearchCV(cv=5, estimator=RandomForestClassifier(criterion='entropy'),
+             n_jobs=4,
+             param_grid={'max_depth': [2, 4, 8, 15],
+                         'max_features': ['auto', 'sqrt']},
+             return_train_score=True, scoring='roc_auc')
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Understanding-a-grid-search-output">
+<a class="anchor" href="#Understanding-a-grid-search-output" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding a grid search output<a class="anchor-link" href="#Understanding-a-grid-search-output"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Exploring-the-grid-search-results">
+<a class="anchor" href="#Exploring-the-grid-search-results" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exploring the grid search results<a class="anchor-link" href="#Exploring-the-grid-search-results"> </a>
+</h3>
+<p>You will now explore the <code>cv_results_</code> property of the GridSearchCV object defined in the video. This is a dictionary that we can read into a pandas DataFrame and contains a lot of useful information about the grid search we just undertook.</p>
+<p>A reminder of the different column types in this property:</p>
+<ul>
+<li>
+<code>time_</code> columns</li>
+<li>
+<code>param_</code> columns (one for each hyperparameter) and the singular params column (with all hyperparameter settings)</li>
+<li>a <code>train_score</code> column for each cv fold including the mean_train_score and std_train_score columns</li>
+<li>a <code>test_score</code> column for each cv fold including the mean_test_score and std_test_score columns</li>
+<li>a <code>rank_test_score</code> column with a number from 1 to n (number of iterations) ranking the rows based on their <code>mean_test_score</code>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">grid_rf_class</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Read the cv_results property into adataframe &amp; print it out</span>
+<span class="n">cv_results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">grid_rf_class</span><span class="o">.</span><span class="n">cv_results_</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cv_results_df</span><span class="p">)</span>
+
+<span class="c1"># Extract and print the column with a dictionary of hyperparameters used</span>
+<span class="n">column</span> <span class="o">=</span> <span class="n">cv_results_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">"params"</span><span class="p">]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+
+<span class="c1"># Extract and print the row that had the best mean test score</span>
+<span class="n">best_row</span> <span class="o">=</span> <span class="n">cv_results_df</span><span class="p">[</span><span class="n">cv_results_df</span><span class="p">[</span><span class="s1">'rank_test_score'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">best_row</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>   mean_fit_time  std_fit_time  mean_score_time  std_score_time  \
+0       0.633362      0.012019         0.022155        0.000390   
+1       0.641156      0.005938         0.021984        0.000733   
+2       1.075554      0.013504         0.025514        0.000493   
+3       1.078453      0.010363         0.025199        0.000147   
+4       1.944722      0.012599         0.033582        0.000308   
+5       1.945425      0.028632         0.034088        0.000777   
+6       3.206863      0.097319         0.053727        0.002878   
+7       3.147933      0.044344         0.051127        0.000389   
+
+  param_max_depth param_max_features  \
+0               2               auto   
+1               2               sqrt   
+2               4               auto   
+3               4               sqrt   
+4               8               auto   
+5               8               sqrt   
+6              15               auto   
+7              15               sqrt   
+
+                                      params  split0_test_score  \
+0   {'max_depth': 2, 'max_features': 'auto'}           0.762140   
+1   {'max_depth': 2, 'max_features': 'sqrt'}           0.764059   
+2   {'max_depth': 4, 'max_features': 'auto'}           0.770780   
+3   {'max_depth': 4, 'max_features': 'sqrt'}           0.771145   
+4   {'max_depth': 8, 'max_features': 'auto'}           0.777029   
+5   {'max_depth': 8, 'max_features': 'sqrt'}           0.775533   
+6  {'max_depth': 15, 'max_features': 'auto'}           0.764570   
+7  {'max_depth': 15, 'max_features': 'sqrt'}           0.768063   
+
+   split1_test_score  split2_test_score  ...  mean_test_score  std_test_score  \
+0           0.765329           0.761279  ...         0.766216        0.006197   
+1           0.763412           0.762643  ...         0.766549        0.006738   
+2           0.767779           0.767878  ...         0.772387        0.005807   
+3           0.767072           0.768481  ...         0.772561        0.006485   
+4           0.774657           0.774855  ...         0.778609        0.005532   
+5           0.773319           0.775794  ...         0.777846        0.005482   
+6           0.767184           0.773903  ...         0.771833        0.005240   
+7           0.770179           0.775381  ...         0.773331        0.003961   
+
+   rank_test_score  split0_train_score  split1_train_score  \
+0                8            0.769725            0.770268   
+1                7            0.769879            0.770792   
+2                5            0.780189            0.780651   
+3                4            0.780138            0.781665   
+4                1            0.829683            0.829852   
+5                2            0.830955            0.830563   
+6                6            0.977494            0.973979   
+7                3            0.975494            0.973033   
+
+   split2_train_score  split3_train_score  split4_train_score  \
+0            0.770262            0.769099            0.766369   
+1            0.771637            0.767746            0.765142   
+2            0.781025            0.780711            0.777592   
+3            0.781055            0.780815            0.777521   
+4            0.829912            0.829288            0.829285   
+5            0.830177            0.831415            0.827246   
+6            0.974724            0.974242            0.976732   
+7            0.976973            0.974084            0.973877   
+
+   mean_train_score  std_train_score  
+0          0.769145         0.001453  
+1          0.769039         0.002340  
+2          0.780034         0.001249  
+3          0.780239         0.001444  
+4          0.829604         0.000270  
+5          0.830071         0.001471  
+6          0.975434         0.001412  
+7          0.974692         0.001388  
+
+[8 rows x 22 columns]
+                                      params
+0   {'max_depth': 2, 'max_features': 'auto'}
+1   {'max_depth': 2, 'max_features': 'sqrt'}
+2   {'max_depth': 4, 'max_features': 'auto'}
+3   {'max_depth': 4, 'max_features': 'sqrt'}
+4   {'max_depth': 8, 'max_features': 'auto'}
+5   {'max_depth': 8, 'max_features': 'sqrt'}
+6  {'max_depth': 15, 'max_features': 'auto'}
+7  {'max_depth': 15, 'max_features': 'sqrt'}
+   mean_fit_time  std_fit_time  mean_score_time  std_score_time  \
+4       1.944722      0.012599         0.033582        0.000308   
+
+  param_max_depth param_max_features  \
+4               8               auto   
+
+                                     params  split0_test_score  \
+4  {'max_depth': 8, 'max_features': 'auto'}           0.777029   
+
+   split1_test_score  split2_test_score  ...  mean_test_score  std_test_score  \
+4           0.774657           0.774855  ...         0.778609        0.005532   
+
+   rank_test_score  split0_train_score  split1_train_score  \
+4                1            0.829683            0.829852   
+
+   split2_train_score  split3_train_score  split4_train_score  \
+4            0.829912            0.829288            0.829285   
+
+   mean_train_score  std_train_score  
+4          0.829604          0.00027  
+
+[1 rows x 22 columns]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Analyzing-the-best-results">
+<a class="anchor" href="#Analyzing-the-best-results" aria-hidden="true"><span class="octicon octicon-link"></span></a>Analyzing the best results<a class="anchor-link" href="#Analyzing-the-best-results"> </a>
+</h3>
+<p>At the end of the day, we primarily care about the best performing 'square' in a grid search. Luckily Scikit Learn's <code>gridSearchCV</code> objects have a number of parameters that provide key information on just the best square (or row in <code>cv_results_</code>).</p>
+<p>Three properties you will explore are:</p>
+<ul>
+<li>
+<code>best_score_</code> – The score (here ROC_AUC) from the best-performing square.</li>
+<li>
+<code>best_index_</code> – The index of the row in <code>cv_results_</code> containing information on the best-performing square.</li>
+<li>
+<code>best_params_</code> – A dictionary of the parameters that gave the best score, for example 'max_depth': 10</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print out the ROC_AUC score from the best-performing square</span>
+<span class="n">best_score</span> <span class="o">=</span> <span class="n">grid_rf_class</span><span class="o">.</span><span class="n">best_score_</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">best_score</span><span class="p">)</span>
+
+<span class="c1"># Create a variable from the row related to the best-performing square</span>
+<span class="n">cv_results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">grid_rf_class</span><span class="o">.</span><span class="n">cv_results_</span><span class="p">)</span>
+<span class="n">best_row</span> <span class="o">=</span> <span class="n">cv_results_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">grid_rf_class</span><span class="o">.</span><span class="n">best_index_</span><span class="p">]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">best_row</span><span class="p">)</span>
+
+<span class="c1"># Get the max_depth parameter from the best-performing square and print</span>
+<span class="n">best_max_depth</span> <span class="o">=</span> <span class="n">grid_rf_class</span><span class="o">.</span><span class="n">best_params_</span><span class="p">[</span><span class="s1">'max_depth'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">best_max_depth</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.7786085423910816
+   mean_fit_time  std_fit_time  mean_score_time  std_score_time  \
+4       1.944722      0.012599         0.033582        0.000308   
+
+  param_max_depth param_max_features  \
+4               8               auto   
+
+                                     params  split0_test_score  \
+4  {'max_depth': 8, 'max_features': 'auto'}           0.777029   
+
+   split1_test_score  split2_test_score  ...  mean_test_score  std_test_score  \
+4           0.774657           0.774855  ...         0.778609        0.005532   
+
+   rank_test_score  split0_train_score  split1_train_score  \
+4                1            0.829683            0.829852   
+
+   split2_train_score  split3_train_score  split4_train_score  \
+4            0.829912            0.829288            0.829285   
+
+   mean_train_score  std_train_score  
+4          0.829604          0.00027  
+
+[1 rows x 22 columns]
+8
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Using-the-best-results">
+<a class="anchor" href="#Using-the-best-results" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the best results<a class="anchor-link" href="#Using-the-best-results"> </a>
+</h3>
+<p>While it is interesting to analyze the results of our grid search, our final goal is practical in nature; we want to make predictions on our test set using our estimator object.</p>
+<p>We can access this object through the <code>best_estimator_</code> property of our grid search object.</p>
+<p>In this exercise we will take a look inside the <code>best_estimator_</code> property and then use this to make predictions on our test set for credit card defaults and generate a variety of scores. Remember to use <code>predict_proba</code> rather than <code>predict</code> since we need probability values rather than class labels for our roc_auc score. We use a slice <code>[:,1]</code> to get probabilities of the positive class.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">roc_auc_score</span>
+
+<span class="c1"># See what type of object the best_estimator_property is</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">grid_rf_class</span><span class="o">.</span><span class="n">best_estimator_</span><span class="p">))</span>
+
+<span class="c1"># Create an array of predictions directly using the best_estimator_property</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">grid_rf_class</span><span class="o">.</span><span class="n">best_estimator_</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Take a look to confirm it worked, this should be an array of 1's and 0's</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+
+<span class="c1"># Now create a confusion matrix</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Confusion Matrix </span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">))</span>
+
+<span class="c1"># Get the ROC-AUC score</span>
+<span class="n">predictions_proba</span> <span class="o">=</span> <span class="n">grid_rf_class</span><span class="o">.</span><span class="n">best_estimator_</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"ROC-AUC Score </span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">predictions_proba</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;class 'sklearn.ensemble._forest.RandomForestClassifier'&gt;
+[1 0 0 1 0]
+Confusion Matrix 
+ [[6685  323]
+ [1292  700]]
+ROC-AUC Score 
+ 0.7767071783137115
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>.best_estimator_</code> property is a really powerful property to understand for streamlining your machine learning model building process. You now can run a grid search and seamlessly use the best model from that search to make predictions.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/2020/08/05/02-Grid-search.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
