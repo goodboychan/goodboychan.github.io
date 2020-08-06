@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Policy Gradient with gym-MiniGrid | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Policy Gradient with gym-MiniGrid" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this session, it will show the pytorch-implemented Policy Gradient in Gym-MiniGrid Environment. Through this, you will know how to implement Vanila Policy Gradient (also known as REINFORCE), and test it on open source RL environment." />
+<meta property="og:description" content="In this session, it will show the pytorch-implemented Policy Gradient in Gym-MiniGrid Environment. Through this, you will know how to implement Vanila Policy Gradient (also known as REINFORCE), and test it on open source RL environment." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/reinforcement%20learning/2020/08/06/03-Policy-Gradient-With-Gym-MiniGrid.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/reinforcement%20learning/2020/08/06/03-Policy-Gradient-With-Gym-MiniGrid.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-06T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this session, it will show the pytorch-implemented Policy Gradient in Gym-MiniGrid Environment. Through this, you will know how to implement Vanila Policy Gradient (also known as REINFORCE), and test it on open source RL environment.","@type":"BlogPosting","headline":"Policy Gradient with gym-MiniGrid","dateModified":"2020-08-06T00:00:00-05:00","datePublished":"2020-08-06T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/reinforcement%20learning/2020/08/06/03-Policy-Gradient-With-Gym-MiniGrid.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/reinforcement%20learning/2020/08/06/03-Policy-Gradient-With-Gym-MiniGrid.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Policy Gradient with gym-MiniGrid | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Policy Gradient with gym-MiniGrid" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this session, it will show the pytorch-implemented Policy Gradient in Gym-MiniGrid Environment. Through this, you will know how to implement Vanila Policy Gradient (also known as REINFORCE), and test it on open source RL environment." />
+<meta property="og:description" content="In this session, it will show the pytorch-implemented Policy Gradient in Gym-MiniGrid Environment. Through this, you will know how to implement Vanila Policy Gradient (also known as REINFORCE), and test it on open source RL environment." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/reinforcement%20learning/2020/08/06/03-Policy-Gradient-With-Gym-MiniGrid.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/reinforcement%20learning/2020/08/06/03-Policy-Gradient-With-Gym-MiniGrid.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-06T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this session, it will show the pytorch-implemented Policy Gradient in Gym-MiniGrid Environment. Through this, you will know how to implement Vanila Policy Gradient (also known as REINFORCE), and test it on open source RL environment.","@type":"BlogPosting","headline":"Policy Gradient with gym-MiniGrid","dateModified":"2020-08-06T00:00:00-05:00","datePublished":"2020-08-06T00:00:00-05:00","url":"https://goodboychan.github.io/chans_jupyter/python/reinforcement%20learning/2020/08/06/03-Policy-Gradient-With-Gym-MiniGrid.html","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/reinforcement%20learning/2020/08/06/03-Policy-Gradient-With-Gym-MiniGrid.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Policy Gradient with gym-MiniGrid</h1><p class="page-description">In this session, it will show the pytorch-implemented Policy Gradient in Gym-MiniGrid Environment.  Through this, you will know how to implement Vanila Policy Gradient (also known as REINFORCE), and test it on open source RL environment.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-08-06T00:00:00-05:00" itemprop="datePublished">
+        Aug 6, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Reinforcement Learning">Reinforcement Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-08-06-03-Policy-Gradient-With-Gym-MiniGrid.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-08-06-03-Policy-Gradient-With-Gym-MiniGrid.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-08-06-03-Policy-Gradient-With-Gym-MiniGrid.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Basic-Jupyter-Setting">Basic Jupyter Setting </a></li>
+<li class="toc-entry toc-h2"><a href="#Setup-the-environment">Setup the environment </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-08-06-03-Policy-Gradient-With-Gym-MiniGrid.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Basic-Jupyter-Setting">
+<a class="anchor" href="#Basic-Jupyter-Setting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Jupyter Setting<a class="anchor-link" href="#Basic-Jupyter-Setting"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">)</span> <span class="c1"># set default size of plots</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'image.interpolation'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'nearest'</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'image.cmap'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'gray'</span>
+
+<span class="c1"># for auto-reloading external modules</span>
+<span class="c1"># see http://stackoverflow.com/questions/1907993/autoreload-of-modules-in-ipython</span>
+<span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Setup-the-environment">
+<a class="anchor" href="#Setup-the-environment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup the environment<a class="anchor-link" href="#Setup-the-environment"> </a>
+</h2>
+<p>Gridworld is widely used in RL environment. <a href="https://github.com/maximecb/gym-minigrid">Gym-MiniGrid</a> is custom GridWorld environment of OpenAI <a href="https://github.com/openai/gym">gym</a> style. Before dive in this environment, you need to install both of them.</p>
+
+<pre><code>pip install gym
+pip install gym-minigrid</code></pre>
+<p>At first, Let's look at some frames of MiniGrid.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">gym_minigrid</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'MiniGrid-Empty-5x5-v0'</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">before_img</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">'rgb_array'</span><span class="p">)</span>
+<span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">forward</span>
+<span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+<span class="n">after_img</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">'rgb_array'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">before_img</span><span class="p">,</span> <span class="n">after_img</span><span class="p">],</span> <span class="mi">1</span><span class="p">));</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is the example of <code>MiniGrid-Empty-5x5-v0</code> environment. There are some blank cells, and gray obstacle which the agent cannot pass it. And the green cell is the goal to reach. The ultimate goal of this environment (and most of RL problem) is to find the optimal policy with highest reward. In this case, well-trained agent should find the optimal path to reach the goal.</p>
+<p>Let's move to more larger environment <code>MiniGrid-Empty-8x8-v0</code>, and find the information what we can get.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Make a new environment MiniGrid-Empty-8x8-v0</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'MiniGrid-Empty-8x8-v0'</span><span class="p">)</span>
+
+<span class="c1"># Reset the environment</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="c1"># Select the action right (sample action)</span>
+<span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">right</span>
+
+<span class="c1"># Take a step in the environment and store it in appropriate variables</span>
+<span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+<span class="c1"># Render the current state of the environment</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">'rgb_array'</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Observation:'</span><span class="p">,</span> <span class="n">obs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reward:'</span><span class="p">,</span> <span class="n">reward</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Done:'</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Info:'</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Image shape:'</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Observation: {'image': array([[[2, 5, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0]],
+
+       [[2, 5, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0]],
+
+       [[2, 5, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0]],
+
+       [[2, 5, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0]],
+
+       [[2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0]],
+
+       [[2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0]],
+
+       [[2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0],
+        [2, 5, 0]]], dtype=uint8), 'direction': 1, 'mission': 'get to the green goal square'}
+Reward: 0
+Done: False
+Info: {}
+Image shape: (256, 256, 3)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As the agent take an action, environment (MiniGrid) will be changed with respect to action. 
+If the agent want to find the optimal path, the agent should notice the difference between current state and next state while taking an action. To help this, the environment generates next state, reward, and terminal flags.</p>
+<p>Some helper function offers to render the sample action in Jupyter Notebook.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">display</span> 
+
+<span class="k">def</span> <span class="nf">show_video</span><span class="p">():</span>
+    <span class="n">mp4list</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'video/*.mp4'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mp4list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">mp4</span> <span class="o">=</span> <span class="n">mp4list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">video</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mp4</span><span class="p">,</span> <span class="s1">'r+b'</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">video</span><span class="p">)</span>
+        <span class="n">display</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">'''&lt;video alt="test" autoplay </span>
+<span class="s1">                loop controls style="height: 400px;"&gt;</span>
+<span class="s1">                &lt;source src="data:video/mp4;base64,</span><span class="si">{0}</span><span class="s1">" type="video/mp4" /&gt;</span>
+<span class="s1">             &lt;/video&gt;'''</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">encoded</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'ascii'</span><span class="p">))))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Could not find video"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To help agent training easily, MiniGrid offers <code>FlatObsWrapper</code> for flattening observation (in other words, 1D array)</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
+<span class="kn">from</span> <span class="nn">gym</span> <span class="kn">import</span> <span class="n">spaces</span>
+<span class="kn">from</span> <span class="nn">gym_minigrid.minigrid</span> <span class="kn">import</span> <span class="n">OBJECT_TO_IDX</span><span class="p">,</span> <span class="n">COLOR_TO_IDX</span>
+
+<span class="n">max_env_steps</span> <span class="o">=</span> <span class="mi">50</span>
+
+<span class="k">class</span> <span class="nc">FlatObsWrapper</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">):</span>
+    <span class="sd">"""Fully observable gridworld returning a flat grid encoding."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+        <span class="c1"># Since the outer walls are always present, we remove left, right, top, bottom walls</span>
+        <span class="c1"># from the observation space of the agent. There are 3 channels, but for simplicity</span>
+        <span class="c1"># in this assignment, we will deal with flattened version of state.</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+            <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">high</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">height</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,),</span>  <span class="c1"># number of cells</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="s1">'uint8'</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="n">max_env_steps</span>
+
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+        <span class="c1"># this method is called in the step() function to get the observation</span>
+        <span class="c1"># we provide code that gets the grid state and places the agent in it</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unwrapped</span>
+        <span class="n">full_grid</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="n">full_grid</span><span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">agent_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">env</span><span class="o">.</span><span class="n">agent_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">OBJECT_TO_IDX</span><span class="p">[</span><span class="s1">'agent'</span><span class="p">],</span>
+            <span class="n">COLOR_TO_IDX</span><span class="p">[</span><span class="s1">'red'</span><span class="p">],</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">agent_dir</span>
+        <span class="p">])</span>
+        <span class="n">full_grid</span> <span class="o">=</span> <span class="n">full_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>   <span class="c1"># remove outer walls of the environment (for efficiency)</span>
+        
+        <span class="n">flattened_grid</span> <span class="o">=</span> <span class="n">full_grid</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">flattened_grid</span>
+    
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">"""This removes the default visualization of the partially observable field of view."""</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">'highlight'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So It's time to run with sample action!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Convert MiniGrid Environment with Flat Observable </span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">FlatObsWrapper</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'MiniGrid-Empty-8x8-v0'</span><span class="p">))</span>
+
+<span class="c1"># Reset the environment</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="c1"># Select the action right</span>
+<span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">right</span>
+
+<span class="c1"># Take a step in the environment and store it in appropriate variables</span>
+<span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+<span class="c1"># Render the current state of the environment</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">'rgb_array'</span><span class="p">)</span>
+<span class="c1">################# YOUR CODE ENDS HERE ###############################</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Observation:'</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="s1">', Observation Shape: '</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reward:'</span><span class="p">,</span> <span class="n">reward</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Done:'</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Info:'</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Image shape:'</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Observation: [10  0  1  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0
+  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0
+  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0
+  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0  1  0  0
+  1  0  0  1  0  0  1  0  0  8  1  0] , Observation Shape:  (108,)
+Reward: 0
+Done: False
+Info: {}
+Image shape: (256, 256, 3)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see it in observation, the dimension of observation is changed from 2D to 1D. Using this observation, we will make some kind of neural network to help agent to notice the observation. Let's check the real-time video of random movement.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">gym.wrappers</span> <span class="kn">import</span> <span class="n">Monitor</span>
+
+<span class="c1"># Monitor is a gym wrapper, which helps easy rendering of videos of the wrapped environment.</span>
+<span class="k">def</span> <span class="nf">wrap_env</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">Monitor</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s1">'./video'</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">env</span>
+
+<span class="k">def</span> <span class="nf">gen_wrapped_env</span><span class="p">(</span><span class="n">env_name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">wrap_env</span><span class="p">(</span><span class="n">FlatObsWrapper</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_name</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Currently, OpenAI Gym offers several utils to help understanding the training progress. Monitor is one of that tool to log the history data. If we set the rendering option to <code>rgb_array</code>, the video data will be stored in specific path. (Maybe it requires some additional apps such as ffmpeg)</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Random agent - we only use it in this cell for demonstration</span>
+<span class="k">class</span> <span class="nc">RandPolicy</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_space</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">action_space</span>
+        
+    <span class="k">def</span> <span class="nf">act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unused_args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(),</span> <span class="kc">None</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>At first, we want check the operation of environment-agent interaction. To do this, Random Policy that generates the "random action" is defined. This policy just generates random action from pre-defined action space. And then run it.</p>
+<blockquote>
+<p>Note that <code>pytorch_policy</code> flag is set to <code>False</code> as a default. But to implement the policy gradient, the gradient calculation is required, and pytorch will be used.</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># This function plots videos of rollouts (episodes) of a given policy and environment</span>
+<span class="k">def</span> <span class="nf">log_policy_rollout</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">pytorch_policy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># Create environment with flat observation</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gen_wrapped_env</span><span class="p">(</span><span class="n">env_name</span><span class="p">)</span>
+
+    <span class="c1"># Initialize environment</span>
+    <span class="n">observation</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">episode_length</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Run until done == True</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+      <span class="c1"># Take a step</span>
+        <span class="k">if</span> <span class="n">pytorch_policy</span><span class="p">:</span> 
+            <span class="n">observation</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">observation</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">observation</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="n">episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+        <span class="n">episode_length</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Total reward:'</span><span class="p">,</span> <span class="n">episode_reward</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Total length:'</span><span class="p">,</span> <span class="n">episode_length</span><span class="p">)</span>
+
+    <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="n">show_video</span><span class="p">()</span>
+
+<span class="c1"># Test that the logging function is working</span>
+<span class="n">test_env_name</span> <span class="o">=</span> <span class="s1">'MiniGrid-Empty-8x8-v0'</span>
+<span class="n">rand_policy</span> <span class="o">=</span> <span class="n">RandPolicy</span><span class="p">(</span><span class="n">FlatObsWrapper</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">test_env_name</span><span class="p">))</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
+<span class="n">log_policy_rollout</span><span class="p">(</span><span class="n">rand_policy</span><span class="p">,</span> <span class="n">test_env_name</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Total reward: 0
+Total length: 50
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<video alt="test" autoplay="" loop="" controls="" style="height: 400px;">
+                <source src="data:video/mp4;base64,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" type="video/mp4"></source>
+             </video>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>That's the agent work with Random Policy.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/reinforcement%20learning/2020/08/06/03-Policy-Gradient-With-Gym-MiniGrid.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
