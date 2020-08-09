@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Model tuning and selection in PySpark | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Model tuning and selection in PySpark" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this last chapter, you’ll apply what you’ve learned to create a model that predicts which flights will be delayed. This is the Summary of lecture “Introduction to PySpark”, via datacamp." />
+<meta property="og:description" content="In this last chapter, you’ll apply what you’ve learned to create a model that predicts which flights will be delayed. This is the Summary of lecture “Introduction to PySpark”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/01-Model-tuning-and-selection-in-PySpark.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/01-Model-tuning-and-selection-in-PySpark.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/spark.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-10T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Model tuning and selection in PySpark","description":"In this last chapter, you’ll apply what you’ve learned to create a model that predicts which flights will be delayed. This is the Summary of lecture “Introduction to PySpark”, via datacamp.","datePublished":"2020-08-10T00:00:00-05:00","dateModified":"2020-08-10T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/spark.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/01-Model-tuning-and-selection-in-PySpark.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/01-Model-tuning-and-selection-in-PySpark.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Model tuning and selection in PySpark | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Model tuning and selection in PySpark" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this last chapter, you’ll apply what you’ve learned to create a model that predicts which flights will be delayed. This is the Summary of lecture “Introduction to PySpark”, via datacamp." />
+<meta property="og:description" content="In this last chapter, you’ll apply what you’ve learned to create a model that predicts which flights will be delayed. This is the Summary of lecture “Introduction to PySpark”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/01-Model-tuning-and-selection-in-PySpark.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/01-Model-tuning-and-selection-in-PySpark.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/spark.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-10T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Model tuning and selection in PySpark","description":"In this last chapter, you’ll apply what you’ve learned to create a model that predicts which flights will be delayed. This is the Summary of lecture “Introduction to PySpark”, via datacamp.","datePublished":"2020-08-10T00:00:00-05:00","dateModified":"2020-08-10T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/spark.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/01-Model-tuning-and-selection-in-PySpark.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/01-Model-tuning-and-selection-in-PySpark.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Model tuning and selection in PySpark</h1><p class="page-description">In this last chapter, you'll apply what you've learned to create a model that predicts which flights will be delayed. This is the Summary of lecture "Introduction to PySpark", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-08-10T00:00:00-05:00" itemprop="datePublished">
+        Aug 10, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      5 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#PySpark">PySpark</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-08-10-01-Model-tuning-and-selection-in-PySpark.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-08-10-01-Model-tuning-and-selection-in-PySpark.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-08-10-01-Model-tuning-and-selection-in-PySpark.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#What-is-logistic-regression?">What is logistic regression? </a></li>
+<li class="toc-entry toc-h2"><a href="#Create-the-modeler">Create the modeler </a></li>
+<li class="toc-entry toc-h2"><a href="#Cross-validation">Cross validation </a></li>
+<li class="toc-entry toc-h2"><a href="#Create-the-evaluator">Create the evaluator </a></li>
+<li class="toc-entry toc-h2"><a href="#Make-a-grid">Make a grid </a></li>
+<li class="toc-entry toc-h2"><a href="#Make-the-validator">Make the validator </a></li>
+<li class="toc-entry toc-h2"><a href="#Fit-the-model(s)">Fit the model(s) </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Building-Training/Test-set">Building Training/Test set </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Evaluate-the-model">Evaluate the model </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-08-10-01-Model-tuning-and-selection-in-PySpark.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="What-is-logistic-regression?">
+<a class="anchor" href="#What-is-logistic-regression?" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is logistic regression?<a class="anchor-link" href="#What-is-logistic-regression?"> </a>
+</h2>
+<p>The model you'll be fitting in this chapter is called a logistic regression. This model is very similar to a linear regression, but instead of predicting a numeric variable, it predicts the probability (between 0 and 1) of an event.</p>
+<p>To use this as a classification algorithm, all you have to do is assign a cutoff point to these probabilities. If the predicted probability is above the cutoff point, you classify that observation as a 'yes' (in this case, the flight being late), if it's below, you classify it as a 'no'!</p>
+<p>You'll tune this model by testing different values for several hyperparameters. A hyperparameter is just a value in the model that's not estimated from the data, but rather is supplied by the user to maximize performance. For this course it's not necessary to understand the mathematics behind all of these values - what's important is that you'll try out a few different choices and pick the best one.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Create-the-modeler">
+<a class="anchor" href="#Create-the-modeler" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create the modeler<a class="anchor-link" href="#Create-the-modeler"> </a>
+</h2>
+<p>The <code>Estimator</code> you'll be using is a <code>LogisticRegression</code> from the <code>pyspark.ml.classification</code> submodule.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="n">spark</span> <span class="o">=</span> <span class="p">(</span><span class="n">SparkSession</span>
+  <span class="o">.</span><span class="n">builder</span>
+  <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">"flights"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">getOrCreate</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+
+<span class="c1"># Create a LogisticRegression Estimator</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Cross-validation">
+<a class="anchor" href="#Cross-validation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cross validation<a class="anchor-link" href="#Cross-validation"> </a>
+</h2>
+<p>In the next few exercises you'll be tuning your logistic regression model using a procedure called k-fold cross validation. This is a method of estimating the model's performance on unseen data (like your <a href="/chans_jupyter/images/copied_from_nb/test"><code>test</code></a> DataFrame).</p>
+<p>It works by splitting the training data into a few different partitions. The exact number is up to you, but in this course you'll be using PySpark's default value of three. Once the data is split up, one of the partitions is set aside, and the model is fit to the others. Then the error is measured against the held out partition. This is repeated for each of the partitions, so that every block of data is held out and used as a test set exactly once. Then the error on each of the partitions is averaged. This is called the cross validation error of the model, and is a good estimate of the actual error on the held out data.</p>
+<p>You'll be using cross validation to choose the hyperparameters by creating a grid of the possible pairs of values for the two hyperparameters, <code>elasticNetParam</code> and <code>regParam</code>, and using the cross validation error to compare all the different models so you can choose the best one!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Create-the-evaluator">
+<a class="anchor" href="#Create-the-evaluator" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create the evaluator<a class="anchor-link" href="#Create-the-evaluator"> </a>
+</h2>
+<p>The first thing you need when doing cross validation for model selection is a way to compare different models. Luckily, the <code>pyspark.ml.evaluation</code> submodule has classes for evaluating different kinds of models. Your model is a binary classification model, so you'll be using the <code>BinaryClassificationEvaluator</code> from the <code>pyspark.ml.evaluation</code> module.</p>
+<p>This evaluator calculates the area under the ROC. This is a metric that combines the two kinds of errors a binary classifier can make (false positives and false negatives) into a simple number. You'll learn more about this towards the end of the chapter!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">as</span> <span class="nn">evals</span>
+
+<span class="c1"># Create a BinaryClassificationEvaluator</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">evals</span><span class="o">.</span><span class="n">BinaryClassificationEvaluator</span><span class="p">(</span><span class="n">metricName</span><span class="o">=</span><span class="s1">'areaUnderROC'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Make-a-grid">
+<a class="anchor" href="#Make-a-grid" aria-hidden="true"><span class="octicon octicon-link"></span></a>Make a grid<a class="anchor-link" href="#Make-a-grid"> </a>
+</h2>
+<p>Next, you need to create a grid of values to search over when looking for the optimal hyperparameters. The submodule <code>pyspark.ml.tuning</code> includes a class called <code>ParamGridBuilder</code> that does just that (maybe you're starting to notice a pattern here; PySpark has a submodule for just about everything!).</p>
+<p>You'll need to use the <code>.addGrid()</code> and <code>.build()</code> methods to create a grid that you can use for cross validation. The <code>.addGrid()</code> method takes a model parameter (an attribute of the model <code>Estimator</code>, <code>lr</code>, that you created a few exercises ago) and a list of values that you want to try. The <code>.build()</code> method takes no arguments, it just returns the grid that you'll use later.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark.ml.tuning</span> <span class="k">as</span> <span class="nn">tune</span>
+
+<span class="c1"># Create the parameter grid</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">tune</span><span class="o">.</span><span class="n">ParamGridBuilder</span><span class="p">()</span>
+
+<span class="c1"># Add the hyperparameter</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">regParam</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">01</span><span class="p">))</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">elasticNetParam</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># Build the grid</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Make-the-validator">
+<a class="anchor" href="#Make-the-validator" aria-hidden="true"><span class="octicon octicon-link"></span></a>Make the validator<a class="anchor-link" href="#Make-the-validator"> </a>
+</h2>
+<p>The submodule <code>pyspark.ml.tuning</code> also has a class called <code>CrossValidator</code> for performing cross validation. This <code>Estimator</code> takes the modeler you want to fit, the grid of hyperparameters you created, and the evaluator you want to use to compare your models.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create the CrossValidator</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">tune</span><span class="o">.</span><span class="n">CrossValidator</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">estimatorParamMaps</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">evaluator</span><span class="o">=</span><span class="n">evaluator</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Fit-the-model(s)">
+<a class="anchor" href="#Fit-the-model(s)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fit the model(s)<a class="anchor-link" href="#Fit-the-model(s)"> </a>
+</h2>
+<p>You're finally ready to fit the models and select the best one!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Building-Training/Test-set">
+<a class="anchor" href="#Building-Training/Test-set" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building Training/Test set<a class="anchor-link" href="#Building-Training/Test-set"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">StringIndexer</span><span class="p">,</span> <span class="n">OneHotEncoder</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">VectorAssembler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="n">flights</span> <span class="o">=</span> <span class="p">(</span><span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"csv"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"inferSchema"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"header"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"./dataset/flights_small.csv"</span><span class="p">))</span>
+<span class="n">flights</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s2">"flights"</span><span class="p">)</span>
+
+<span class="n">planes</span> <span class="o">=</span> <span class="p">(</span><span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"csv"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"inferSchema"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"header"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'./dataset/planes.csv'</span><span class="p">))</span>
+<span class="n">planes</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s2">"planes"</span><span class="p">)</span>
+
+<span class="c1"># Rename year column</span>
+<span class="n">planes</span> <span class="o">=</span> <span class="n">planes</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="s1">'plane_year'</span><span class="p">)</span>
+
+<span class="c1"># Join the DataFrame</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">planes</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'tailnum'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'leftouter'</span><span class="p">)</span>
+
+<span class="c1"># Cast the columns to integers</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">"arr_delay"</span><span class="p">,</span> <span class="n">model_data</span><span class="o">.</span><span class="n">arr_delay</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">'integer'</span><span class="p">))</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'air_time'</span><span class="p">,</span> <span class="n">model_data</span><span class="o">.</span><span class="n">air_time</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">'integer'</span><span class="p">))</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'month'</span><span class="p">,</span> <span class="n">model_data</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">'integer'</span><span class="p">))</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'plane_year'</span><span class="p">,</span> <span class="n">model_data</span><span class="o">.</span><span class="n">plane_year</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">'integer'</span><span class="p">))</span>
+
+<span class="c1"># Create the column plane_age</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'plane_age'</span><span class="p">,</span> <span class="n">model_data</span><span class="o">.</span><span class="n">year</span> <span class="o">-</span> <span class="n">model_data</span><span class="o">.</span><span class="n">plane_year</span><span class="p">)</span>
+
+<span class="c1"># Create is_late</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'is_late'</span><span class="p">,</span> <span class="n">model_data</span><span class="o">.</span><span class="n">arr_delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Convert to an integer</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'label'</span><span class="p">,</span> <span class="n">model_data</span><span class="o">.</span><span class="n">is_late</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">'integer'</span><span class="p">))</span>
+
+<span class="c1"># Remove missing values</span>
+<span class="n">model_data</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'arr_delay is not NULL and dep_delay is not NULL and </span><span class="se">\</span>
+<span class="s1">                               air_time is not NULL and plane_year is not NULL'</span><span class="p">)</span>
+
+<span class="c1"># Create StringIndexer</span>
+<span class="n">carr_indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'carrier'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'carrier_index'</span><span class="p">)</span>
+
+<span class="c1"># Create a OneHotEncoder</span>
+<span class="n">carr_encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'carrier_index'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'carrier_fact'</span><span class="p">)</span>
+
+<span class="c1"># Create a StringIndexer</span>
+<span class="n">dest_indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'dest'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'dest_index'</span><span class="p">)</span>
+
+<span class="c1"># Create a OneHotEncoder</span>
+<span class="n">dest_encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'dest_index'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'dest_fact'</span><span class="p">)</span>
+
+<span class="c1"># Make a VectorAssembler</span>
+<span class="n">vec_assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">'month'</span><span class="p">,</span> <span class="s1">'air_time'</span><span class="p">,</span> <span class="s1">'carrier_fact'</span><span class="p">,</span> <span class="s1">'dest_fact'</span><span class="p">,</span> <span class="s1">'plane_age'</span><span class="p">],</span>
+                                <span class="n">outputCol</span><span class="o">=</span><span class="s1">'features'</span><span class="p">)</span>
+
+<span class="c1"># Make the pipeline</span>
+<span class="n">flights_pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">dest_indexer</span><span class="p">,</span> <span class="n">dest_encoder</span><span class="p">,</span> <span class="n">carr_indexer</span><span class="p">,</span> <span class="n">carr_encoder</span><span class="p">,</span> <span class="n">vec_assembler</span><span class="p">])</span>
+
+<span class="c1"># Fit and transform the data</span>
+<span class="n">piped_data</span> <span class="o">=</span> <span class="n">flights_pipe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">model_data</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">model_data</span><span class="p">)</span>
+
+<span class="c1"># Split the data into training and test sets</span>
+<span class="n">training</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">piped_data</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="o">.</span><span class="mi">6</span><span class="p">,</span> <span class="o">.</span><span class="mi">4</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Call lr.fit()</span>
+<span class="n">best_lr</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training</span><span class="p">)</span>
+
+<span class="c1"># Print best_lr</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">best_lr</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>LogisticRegressionModel: uid=LogisticRegression_9351d3c7e2ad, numClasses=2, numFeatures=81
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Evaluate-the-model">
+<a class="anchor" href="#Evaluate-the-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the model<a class="anchor-link" href="#Evaluate-the-model"> </a>
+</h2>
+<p>It's finally time to test your model on it! You can use the same evaluator you made to fit the model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Use the model to predict the test set</span>
+<span class="n">test_results</span> <span class="o">=</span> <span class="n">best_lr</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+<span class="c1"># Evaluate the predictions</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_results</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.7031047941756943
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/01-Model-tuning-and-selection-in-PySpark.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
