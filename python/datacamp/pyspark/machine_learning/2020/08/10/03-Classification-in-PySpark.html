@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Classification in PySpark | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Classification in PySpark" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Now that you are familiar with getting data into Spark, you’ll move onto building two types of classification model - Decision Trees and Logistic Regression. You’ll also find out about a few approaches to data preparation. This is the Summary of lecture “Machine Learning with PySpark" />
+<meta property="og:description" content="Now that you are familiar with getting data into Spark, you’ll move onto building two types of classification model - Decision Trees and Logistic Regression. You’ll also find out about a few approaches to data preparation. This is the Summary of lecture “Machine Learning with PySpark" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/03-Classification-in-PySpark.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/03-Classification-in-PySpark.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-10T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Classification in PySpark","description":"Now that you are familiar with getting data into Spark, you’ll move onto building two types of classification model - Decision Trees and Logistic Regression. You’ll also find out about a few approaches to data preparation. This is the Summary of lecture “Machine Learning with PySpark","datePublished":"2020-08-10T00:00:00-05:00","dateModified":"2020-08-10T00:00:00-05:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/03-Classification-in-PySpark.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/03-Classification-in-PySpark.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Classification in PySpark | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Classification in PySpark" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Now that you are familiar with getting data into Spark, you’ll move onto building two types of classification model - Decision Trees and Logistic Regression. You’ll also find out about a few approaches to data preparation. This is the Summary of lecture “Machine Learning with PySpark" />
+<meta property="og:description" content="Now that you are familiar with getting data into Spark, you’ll move onto building two types of classification model - Decision Trees and Logistic Regression. You’ll also find out about a few approaches to data preparation. This is the Summary of lecture “Machine Learning with PySpark" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/03-Classification-in-PySpark.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/03-Classification-in-PySpark.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-10T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Classification in PySpark","description":"Now that you are familiar with getting data into Spark, you’ll move onto building two types of classification model - Decision Trees and Logistic Regression. You’ll also find out about a few approaches to data preparation. This is the Summary of lecture “Machine Learning with PySpark","datePublished":"2020-08-10T00:00:00-05:00","dateModified":"2020-08-10T00:00:00-05:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/03-Classification-in-PySpark.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/03-Classification-in-PySpark.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Classification in PySpark</h1><p class="page-description">Now that you are familiar with getting data into Spark, you'll move onto building two types of classification model - Decision Trees and Logistic Regression. You'll also find out about a few approaches to data preparation. This is the Summary of lecture "Machine Learning with PySpark</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-08-10T00:00:00-05:00" itemprop="datePublished">
+        Aug 10, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      10 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#PySpark">PySpark</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-08-10-03-Classification-in-PySpark.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-08-10-03-Classification-in-PySpark.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-08-10-03-Classification-in-PySpark.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Data-Preparation">Data Preparation </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Removing-columns-and-rows">Removing columns and rows </a></li>
+<li class="toc-entry toc-h3"><a href="#Column-manipulation">Column manipulation </a></li>
+<li class="toc-entry toc-h3"><a href="#Categorical-columns">Categorical columns </a></li>
+<li class="toc-entry toc-h3"><a href="#Assembling-columns">Assembling columns </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Decision-Tree">Decision Tree </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Train/test-split">Train/test split </a></li>
+<li class="toc-entry toc-h3"><a href="#Build-a-Decision-Tree">Build a Decision Tree </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-Decision-Tree">Evaluate the Decision Tree </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Logistic-Regression">Logistic Regression </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Build-a-Logistic-Regression-model">Build a Logistic Regression model </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-Logistic-Regression-model">Evaluate the Logistic Regression model </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Turning-Text-into-Tables">Turning Text into Tables </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Punctuation,-numbers-and-tokens">Punctuation, numbers and tokens </a></li>
+<li class="toc-entry toc-h3"><a href="#Stop-words-and-hashing">Stop words and hashing </a></li>
+<li class="toc-entry toc-h3"><a href="#Training-a-spam-classifier">Training a spam classifier </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-08-10-03-Classification-in-PySpark.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-Preparation">
+<a class="anchor" href="#Data-Preparation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Preparation<a class="anchor-link" href="#Data-Preparation"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Removing-columns-and-rows">
+<a class="anchor" href="#Removing-columns-and-rows" aria-hidden="true"><span class="octicon octicon-link"></span></a>Removing columns and rows<a class="anchor-link" href="#Removing-columns-and-rows"> </a>
+</h3>
+<p>You previously loaded airline flight data from a CSV file. You're going to develop a model which will predict whether or not a given flight will be delayed.</p>
+<p>In this exercise you need to trim those data down by:</p>
+<ol>
+<li>removing an uninformative column and</li>
+<li>removing rows which do not have information about whether or not a flight was delayed.</li>
+</ol>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s1">'local[*]'</span><span class="p">)</span><span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s1">'flights'</span><span class="p">)</span><span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+
+<span class="c1"># Read data from CSV file</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">'./dataset/flights-larger.csv'</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">','</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">nullValue</span><span class="o">=</span><span class="s1">'NA'</span><span class="p">)</span>
+
+<span class="n">flights</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+-------+------+---+----+------+--------+-----+
+|mon|dom|dow|carrier|flight|org|mile|depart|duration|delay|
++---+---+---+-------+------+---+----+------+--------+-----+
+| 10| 10|  1|     OO|  5836|ORD| 157|  8.18|      51|   27|
+|  1|  4|  1|     OO|  5866|ORD| 466|  15.5|     102| null|
+| 11| 22|  1|     OO|  6016|ORD| 738|  7.17|     127|  -19|
+|  2| 14|  5|     B6|   199|JFK|2248| 21.17|     365|   60|
+|  5| 25|  3|     WN|  1675|SJC| 386| 12.92|      85|   22|
++---+---+---+-------+------+---+----+------+--------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Remove the 'flight' column</span>
+<span class="n">flights_drop_column</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'flight'</span><span class="p">)</span>
+
+<span class="c1"># Number of records with missing 'delay' values</span>
+<span class="n">flights_drop_column</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'delay IS NULL'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+<span class="c1"># Remove records with missing 'delay' values</span>
+<span class="n">flights_valid_delay</span> <span class="o">=</span> <span class="n">flights_drop_column</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'delay IS NOT NULL'</span><span class="p">)</span>
+
+<span class="c1"># Remove records with missing values in any column and get the number of remaining rows</span>
+<span class="n">flights_none_missing</span> <span class="o">=</span> <span class="n">flights_valid_delay</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">flights_none_missing</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>258289
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Column-manipulation">
+<a class="anchor" href="#Column-manipulation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Column manipulation<a class="anchor-link" href="#Column-manipulation"> </a>
+</h3>
+<p>The Federal Aviation Administration (FAA) considers a flight to be "delayed" when it arrives 15 minutes or more after its scheduled time.</p>
+<p>The next step of preparing the flight data has two parts:</p>
+<ol>
+<li>convert the units of distance, replacing the <code>mile</code> column with a <code>kmcolumn</code>; and</li>
+<li>create a Boolean column indicating whether or not a flight was delayed.</li>
+</ol>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="nb">round</span>
+
+<span class="c1"># Convert 'mile' to 'km' and drop 'mile' column</span>
+<span class="n">flights_km</span> <span class="o">=</span> <span class="n">flights_none_missing</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'km'</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">flights_none_missing</span><span class="o">.</span><span class="n">mile</span> <span class="o">*</span> <span class="mf">1.60934</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'mile'</span><span class="p">)</span>
+
+<span class="c1"># Create 'label' column indicating whether flight delayed (1) or not(0)</span>
+<span class="n">flights_km</span> <span class="o">=</span> <span class="n">flights_km</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'label'</span><span class="p">,</span> <span class="p">(</span><span class="n">flights_km</span><span class="o">.</span><span class="n">delay</span> <span class="o">&gt;=</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">'integer'</span><span class="p">))</span>
+
+<span class="c1"># Check first five records</span>
+<span class="n">flights_km</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+-------+---+------+--------+-----+------+-----+
+|mon|dom|dow|carrier|org|depart|duration|delay|    km|label|
++---+---+---+-------+---+------+--------+-----+------+-----+
+| 10| 10|  1|     OO|ORD|  8.18|      51|   27| 253.0|    1|
+| 11| 22|  1|     OO|ORD|  7.17|     127|  -19|1188.0|    0|
+|  2| 14|  5|     B6|JFK| 21.17|     365|   60|3618.0|    1|
+|  5| 25|  3|     WN|SJC| 12.92|      85|   22| 621.0|    1|
+|  3| 28|  1|     B6|LGA| 13.33|     182|   70|1732.0|    1|
++---+---+---+-------+---+------+--------+-----+------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Categorical-columns">
+<a class="anchor" href="#Categorical-columns" aria-hidden="true"><span class="octicon octicon-link"></span></a>Categorical columns<a class="anchor-link" href="#Categorical-columns"> </a>
+</h3>
+<p>In the flights data there are two columns, <code>carrier</code> and <code>org</code>, which hold categorical data. You need to transform those columns into indexed numerical values.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">StringIndexer</span>
+
+<span class="c1"># Create an indexer</span>
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'carrier'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'carrier_idx'</span><span class="p">)</span>
+
+<span class="c1"># Indexer identifies categories in the data</span>
+<span class="n">indexer_model</span> <span class="o">=</span> <span class="n">indexer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_km</span><span class="p">)</span>
+
+<span class="c1"># Indexer creates a new column with numeric index values</span>
+<span class="n">flights_indexed</span> <span class="o">=</span> <span class="n">indexer_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_km</span><span class="p">)</span>
+
+<span class="c1"># Repeat the process for the other categorical feature</span>
+<span class="n">flights_indexed</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'org'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'org_idx'</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_indexed</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_indexed</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Assembling-columns">
+<a class="anchor" href="#Assembling-columns" aria-hidden="true"><span class="octicon octicon-link"></span></a>Assembling columns<a class="anchor-link" href="#Assembling-columns"> </a>
+</h3>
+<p>The final stage of data preparation is to consolidate all of the predictor columns into a single column.</p>
+<p>At present our data has the following predictor columns:</p>
+<ul>
+<li>
+<code>mon</code>, <code>dom</code> and <code>dow</code>
+</li>
+<li>
+<code>carrier_idx</code> (derived from <code>carrier</code>)</li>
+<li>
+<code>org_idx</code> (derived from <code>org</code>)</li>
+<li><code>km</code></li>
+<li><code>depart</code></li>
+<li><code>duration</code></li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">VectorAssembler</span>
+
+<span class="c1"># Create an assembler object</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span>
+    <span class="s1">'mon'</span><span class="p">,</span> <span class="s1">'dom'</span><span class="p">,</span> <span class="s1">'dow'</span><span class="p">,</span>
+    <span class="s1">'carrier_idx'</span><span class="p">,</span> 
+    <span class="s1">'org_idx'</span><span class="p">,</span>
+    <span class="s1">'km'</span><span class="p">,</span> <span class="s1">'depart'</span><span class="p">,</span> <span class="s1">'duration'</span>
+<span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'features'</span><span class="p">)</span>
+
+<span class="c1"># Consolidate predictor columns</span>
+<span class="n">flights_assembled</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_indexed</span><span class="p">)</span>
+
+<span class="c1"># Check the resulting column</span>
+<span class="n">flights_assembled</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">'features'</span><span class="p">,</span> <span class="s1">'delay'</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----------------------------------------+-----+
+|features                                 |delay|
++-----------------------------------------+-----+
+|[10.0,10.0,1.0,2.0,0.0,253.0,8.18,51.0]  |27   |
+|[11.0,22.0,1.0,2.0,0.0,1188.0,7.17,127.0]|-19  |
+|[2.0,14.0,5.0,4.0,2.0,3618.0,21.17,365.0]|60   |
+|[5.0,25.0,3.0,3.0,5.0,621.0,12.92,85.0]  |22   |
+|[3.0,28.0,1.0,4.0,3.0,1732.0,13.33,182.0]|70   |
++-----------------------------------------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Decision-Tree">
+<a class="anchor" href="#Decision-Tree" aria-hidden="true"><span class="octicon octicon-link"></span></a>Decision Tree<a class="anchor-link" href="#Decision-Tree"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Train/test-split">
+<a class="anchor" href="#Train/test-split" aria-hidden="true"><span class="octicon octicon-link"></span></a>Train/test split<a class="anchor-link" href="#Train/test-split"> </a>
+</h3>
+<p>To objectively assess a Machine Learning model you need to be able to test it on an independent set of data. You can't use the same data that you used to train the model: of course the model will perform (relatively) well on those data!</p>
+<p>You will split the data into two components:</p>
+<ul>
+<li>training data (used to train the model) and</li>
+<li>testing data (used to test the model).</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split into training and test sets in a 80:20 ratio</span>
+<span class="n">flights_train</span><span class="p">,</span> <span class="n">flights_test</span> <span class="o">=</span> <span class="n">flights_assembled</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+
+<span class="c1"># Check that training set has around 80% of records</span>
+<span class="n">training_ratio</span> <span class="o">=</span> <span class="n">flights_train</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">/</span> <span class="n">flights_assembled</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">training_ratio</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.7996856234682855
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Build-a-Decision-Tree">
+<a class="anchor" href="#Build-a-Decision-Tree" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build a Decision Tree<a class="anchor-link" href="#Build-a-Decision-Tree"> </a>
+</h3>
+<p>Now that you've split the flights data into training and testing sets, you can use the training set to fit a Decision Tree model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
+
+<span class="c1"># Create a classifier object and fit to the training data</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
+<span class="n">tree_model</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+
+<span class="c1"># Create predictions for the testing data and take a look at the predictions</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">tree_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">)</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">'label'</span><span class="p">,</span> <span class="s1">'prediction'</span><span class="p">,</span> <span class="s1">'probability'</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+----------------------------------------+
+|label|prediction|probability                             |
++-----+----------+----------------------------------------+
+|1    |0.0       |[0.6282628262826283,0.37173717371737175]|
+|1    |0.0       |[0.6282628262826283,0.37173717371737175]|
+|0    |1.0       |[0.3195001440187889,0.6804998559812111] |
+|1    |1.0       |[0.3195001440187889,0.6804998559812111] |
+|0    |1.0       |[0.37094017094017095,0.629059829059829] |
++-----+----------+----------------------------------------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-Decision-Tree">
+<a class="anchor" href="#Evaluate-the-Decision-Tree" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the Decision Tree<a class="anchor-link" href="#Evaluate-the-Decision-Tree"> </a>
+</h3>
+<p>You can assess the quality of your model by evaluating how well it performs on the testing data. Because the model was not trained on these data, this represents an objective assessment of the model.</p>
+<p>A confusion matrix gives a useful breakdown of predictions versus known values. It has four cells which represent the counts of:</p>
+<ul>
+<li>True Negatives (TN) — model predicts negative outcome &amp; known outcome is negative</li>
+<li>True Positives (TP) — model predicts positive outcome &amp; known outcome is positive</li>
+<li>False Negatives (FN) — model predicts negative outcome but known outcome is positive</li>
+<li>False Positives (FP) — model predicts positive outcome but known outcome is negative.</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a confusion matrix</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">'label'</span><span class="p">,</span> <span class="s1">'prediction'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Calculate the elements of the confusion matrix</span>
+<span class="n">TN</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'prediction = 0 AND label = prediction'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">TP</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'prediction = 1 AND label = prediction'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">FN</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'prediction = 0 AND label = 1'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">FP</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'prediction = 1 AND label = 0'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+<span class="c1"># Accuracy measures the proportion of correct predictions</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="p">(</span><span class="n">TN</span> <span class="o">+</span> <span class="n">TP</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">TN</span> <span class="o">+</span> <span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+-----+
+|label|prediction|count|
++-----+----------+-----+
+|    1|       0.0| 9472|
+|    0|       0.0|16371|
+|    1|       1.0|16643|
+|    0|       1.0| 9253|
++-----+----------+-----+
+
+0.6380873229092174
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Logistic-Regression">
+<a class="anchor" href="#Logistic-Regression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Logistic Regression<a class="anchor-link" href="#Logistic-Regression"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Build-a-Logistic-Regression-model">
+<a class="anchor" href="#Build-a-Logistic-Regression-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build a Logistic Regression model<a class="anchor-link" href="#Build-a-Logistic-Regression-model"> </a>
+</h3>
+<p>You've already built a Decision Tree model using the flights data. Now you're going to create a Logistic Regression model on the same data.</p>
+<p>The objective is to predict whether a flight is likely to be delayed by at least 15 minutes (label 1) or not (label 0).</p>
+<p>Although you have a variety of predictors at your disposal, you'll only use the <code>mon</code>, <code>depart</code> and <code>duration</code> columns for the moment. These are numerical features which can immediately be used for a Logistic Regression model. You'll need to do a little more work before you can include categorical features.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+
+<span class="c1"># Selecting numeric columns</span>
+<span class="n">flights_train_num</span> <span class="o">=</span> <span class="n">flights_train</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">"mon"</span><span class="p">,</span> <span class="s1">'depart'</span><span class="p">,</span> <span class="s1">'duration'</span><span class="p">,</span> <span class="s1">'features'</span><span class="p">,</span> <span class="s1">'label'</span><span class="p">)</span>
+<span class="n">flights_test_num</span> <span class="o">=</span> <span class="n">flights_test</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">"mon"</span><span class="p">,</span> <span class="s2">"depart"</span><span class="p">,</span> <span class="s2">"duration"</span><span class="p">,</span> <span class="s1">'features'</span><span class="p">,</span> <span class="s1">'label'</span><span class="p">)</span>
+
+<span class="c1"># Create classifier object and train on training data</span>
+<span class="n">logistic</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train_num</span><span class="p">)</span>
+
+<span class="c1"># Create a predictions for the test data and show confusion matrix</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">logistic</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test_num</span><span class="p">)</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">"label"</span><span class="p">,</span> <span class="s2">"prediction"</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+-----+
+|label|prediction|count|
++-----+----------+-----+
+|    1|       0.0| 9455|
+|    0|       0.0|14931|
+|    1|       1.0|16660|
+|    0|       1.0|10693|
++-----+----------+-----+
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-Logistic-Regression-model">
+<a class="anchor" href="#Evaluate-the-Logistic-Regression-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the Logistic Regression model<a class="anchor-link" href="#Evaluate-the-Logistic-Regression-model"> </a>
+</h3>
+<p>Accuracy is generally not a very reliable metric because it can be biased by the most common target class.</p>
+<p>There are two other useful metrics:</p>
+<ul>
+<li>precision and</li>
+<li>recall.</li>
+</ul>
+<p>Precision is the proportion of positive predictions which are correct. For all flights which are predicted to be delayed, what proportion is actually delayed?</p>
+<p>Recall is the proportion of positives outcomes which are correctly predicted. For all delayed flights, what proportion is correctly predicted by the model?</p>
+<p>The precision and recall are generally formulated in terms of the positive target class. But it's also possible to calculate weighted versions of these metrics which look at both target classes.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate the elements of the confusion matrix</span>
+<span class="n">TN</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'prediction = 0 AND label = prediction'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">TP</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'prediction = 1 AND label = prediction'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">FN</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'prediction = 0 AND label = 1'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="n">FP</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">'prediction = 1 AND label = 0'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="kn">import</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">,</span> <span class="n">BinaryClassificationEvaluator</span>
+
+<span class="c1"># Calculate precision and recall</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span>
+<span class="n">recall</span> <span class="o">=</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FN</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'precision = </span><span class="si">{:.2f}</span><span class="se">\n</span><span class="s1">recall   = </span><span class="si">{:.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">))</span>
+
+<span class="c1"># Find weighted precision</span>
+<span class="n">multi_evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">()</span>
+<span class="n">weighted_precision</span> <span class="o">=</span> <span class="n">multi_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="p">{</span><span class="n">multi_evaluator</span><span class="o">.</span><span class="n">metricName</span><span class="p">:</span> <span class="s2">"weightedPrecision"</span><span class="p">})</span>
+
+<span class="c1"># Find AUC</span>
+<span class="n">binary_evaluator</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">()</span>
+<span class="n">auc</span> <span class="o">=</span> <span class="n">binary_evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="p">{</span><span class="n">binary_evaluator</span><span class="o">.</span><span class="n">metricName</span><span class="p">:</span> <span class="s2">"areaUnderROC"</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>precision = 0.61
+recall   = 0.64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">weighted_precision</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">auc</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6106605467579678
+0.6504917093209514
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Turning-Text-into-Tables">
+<a class="anchor" href="#Turning-Text-into-Tables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Turning Text into Tables<a class="anchor-link" href="#Turning-Text-into-Tables"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Punctuation,-numbers-and-tokens">
+<a class="anchor" href="#Punctuation,-numbers-and-tokens" aria-hidden="true"><span class="octicon octicon-link"></span></a>Punctuation, numbers and tokens<a class="anchor-link" href="#Punctuation,-numbers-and-tokens"> </a>
+</h3>
+<p>At the end of the previous chapter you loaded a dataset of SMS messages which had been labeled as either "spam" (label 1) or "ham" (label 0). You're now going to use those data to build a classifier model.</p>
+<p>But first you'll need to prepare the SMS messages as follows:</p>
+<ul>
+<li>remove punctuation and numbers</li>
+<li>tokenize (split into individual words)</li>
+<li>remove stop words</li>
+<li>apply the hashing trick</li>
+<li>convert to TF-IDF representation.</li>
+</ul>
+<p>In this exercise you'll remove punctuation and numbers, then tokenize the messages.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">StringType</span>
+
+<span class="c1"># Specify column names and types</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">()),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">()),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"label"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="c1"># Load data from a delimited file</span>
+<span class="n">sms</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">'./dataset/sms.csv'</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">';'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">regexp_replace</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">Tokenizer</span>
+
+<span class="c1"># Remove punctuation (REGEX provided) and numbers</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">sms</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'text'</span><span class="p">,</span> <span class="n">regexp_replace</span><span class="p">(</span><span class="n">sms</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">'[_():;,.!?</span><span class="se">\\</span><span class="s1">-]'</span><span class="p">,</span> <span class="s1">' '</span><span class="p">))</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">wrangled</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'text'</span><span class="p">,</span> <span class="n">regexp_replace</span><span class="p">(</span><span class="n">wrangled</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">'[0-9]'</span><span class="p">,</span> <span class="s1">' '</span><span class="p">))</span>
+
+<span class="c1"># Merge multiple spaces</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">wrangled</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'text'</span><span class="p">,</span> <span class="n">regexp_replace</span><span class="p">(</span><span class="n">wrangled</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">' +'</span><span class="p">,</span> <span class="s1">' '</span><span class="p">))</span>
+
+<span class="c1"># Split the text into words</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'text'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'words'</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">wrangled</span><span class="p">)</span>
+
+<span class="n">wrangled</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+----------------------------------+-----+------------------------------------------+
+|id |text                              |label|words                                     |
++---+----------------------------------+-----+------------------------------------------+
+|1  |Sorry I'll call later in meeting  |0    |[sorry, i'll, call, later, in, meeting]   |
+|2  |Dont worry I guess he's busy      |0    |[dont, worry, i, guess, he's, busy]       |
+|3  |Call FREEPHONE now                |1    |[call, freephone, now]                    |
+|4  |Win a cash prize or a prize worth |1    |[win, a, cash, prize, or, a, prize, worth]|
++---+----------------------------------+-----+------------------------------------------+
+only showing top 4 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Stop-words-and-hashing">
+<a class="anchor" href="#Stop-words-and-hashing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stop words and hashing<a class="anchor-link" href="#Stop-words-and-hashing"> </a>
+</h3>
+<p>The next steps will be to remove stop words and then apply the hashing trick, converting the results into a TF-IDF.</p>
+<p>A quick reminder about these concepts:</p>
+<ul>
+<li>The hashing trick provides a fast and space-efficient way to map a very large (possibly infinite) set of items (in this case, all words contained in the SMS messages) onto a smaller, finite number of values.</li>
+<li>The TF-IDF matrix reflects how important a word is to each document. It takes into account both the frequency of the word within each document but also the frequency of the word across all of the documents in the collection.</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">StopWordsRemover</span><span class="p">,</span> <span class="n">HashingTF</span><span class="p">,</span> <span class="n">IDF</span>
+
+<span class="n">sms</span> <span class="o">=</span> <span class="n">wrangled</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="s1">'words'</span><span class="p">,</span> <span class="s1">'label'</span><span class="p">)</span>
+
+<span class="c1"># Remove stop words.</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">StopWordsRemover</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'words'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'terms'</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">sms</span><span class="p">)</span>
+
+<span class="c1"># Apply the hashing trick</span>
+<span class="n">wrangled</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'terms'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'hash'</span><span class="p">,</span> <span class="n">numFeatures</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">wrangled</span><span class="p">)</span>
+
+<span class="c1"># Convert hashed symbols to TF-IDF</span>
+<span class="n">tf_idf</span> <span class="o">=</span> <span class="n">IDF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'hash'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'features'</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangled</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">wrangled</span><span class="p">)</span>
+
+<span class="n">tf_idf</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">'terms'</span><span class="p">,</span> <span class="s1">'features'</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+--------------------------------+----------------------------------------------------------------------------------------------------+
+|terms                           |features                                                                                            |
++--------------------------------+----------------------------------------------------------------------------------------------------+
+|[sorry, call, later, meeting]   |(1024,[138,384,577,996],[2.273418200008753,3.6288353225642043,3.5890949939146903,4.104259019279279])|
+|[dont, worry, guess, busy]      |(1024,[215,233,276,329],[3.9913186080986836,3.3790235241678332,4.734227298217693,4.58299632849377]) |
+|[call, freephone]               |(1024,[133,138],[5.367951058306837,2.273418200008753])                                              |
+|[win, cash, prize, prize, worth]|(1024,[31,47,62,389],[3.6632029660684124,4.754846585420428,4.072170704727778,7.064594791043114])    |
++--------------------------------+----------------------------------------------------------------------------------------------------+
+only showing top 4 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Training-a-spam-classifier">
+<a class="anchor" href="#Training-a-spam-classifier" aria-hidden="true"><span class="octicon octicon-link"></span></a>Training a spam classifier<a class="anchor-link" href="#Training-a-spam-classifier"> </a>
+</h3>
+<p>The SMS data have now been prepared for building a classifier. Specifically, this is what you have done:</p>
+<ul>
+<li>removed numbers and punctuation</li>
+<li>split the messages into words (or "tokens")</li>
+<li>removed stop words</li>
+<li>applied the hashing trick and</li>
+<li>converted to a TF-IDF representation.</li>
+</ul>
+<p>Next you'll need to split the TF-IDF data into training and testing sets. Then you'll use the training data to fit a Logistic Regression model and finally evaluate the performance of that model on the testing data.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sms</span> <span class="o">=</span> <span class="n">tf_idf</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">'label'</span><span class="p">,</span> <span class="s1">'features'</span><span class="p">)</span>
+
+<span class="c1"># Split the data into training and test sets</span>
+<span class="n">sms_train</span><span class="p">,</span> <span class="n">sms_test</span> <span class="o">=</span> <span class="n">sms</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+
+<span class="c1"># Fit a Logistic Regression model to the training data</span>
+<span class="n">logistic</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">regParam</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">sms_train</span><span class="p">)</span>
+
+<span class="c1"># Make predictions on the test data</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">logistic</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">sms_test</span><span class="p">)</span>
+
+<span class="c1"># Create a confusion matrix, comparing predictions to known labels</span>
+<span class="n">prediction</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">'label'</span><span class="p">,</span> <span class="s1">'prediction'</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-----+----------+-----+
+|label|prediction|count|
++-----+----------+-----+
+|    1|       0.0|   39|
+|    0|       0.0|  932|
+|    1|       1.0|  121|
+|    0|       1.0|    4|
++-----+----------+-----+
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/10/03-Classification-in-PySpark.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
