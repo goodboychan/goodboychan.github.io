@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Ensembles and Pipelines in PySpark | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Ensembles and Pipelines in PySpark" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Finally you’ll learn how to make your models more efficient. You’ll find out how to use pipelines to make your code clearer and easier to maintain. Then you’ll use cross-validation to better test your models and select good model parameters. Finally you’ll dabble in two types of ensemble model. This is the Summary of lecture “Machine Learning with PySpark”, via datacamp." />
+<meta property="og:description" content="Finally you’ll learn how to make your models more efficient. You’ll find out how to use pipelines to make your code clearer and easier to maintain. Then you’ll use cross-validation to better test your models and select good model parameters. Finally you’ll dabble in two types of ensemble model. This is the Summary of lecture “Machine Learning with PySpark”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/11/02-Ensembles-and-Pipelines-in-PySpark.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/11/02-Ensembles-and-Pipelines-in-PySpark.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/watertight_model.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-11T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Ensembles and Pipelines in PySpark","description":"Finally you’ll learn how to make your models more efficient. You’ll find out how to use pipelines to make your code clearer and easier to maintain. Then you’ll use cross-validation to better test your models and select good model parameters. Finally you’ll dabble in two types of ensemble model. This is the Summary of lecture “Machine Learning with PySpark”, via datacamp.","datePublished":"2020-08-11T00:00:00-05:00","dateModified":"2020-08-11T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/watertight_model.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/11/02-Ensembles-and-Pipelines-in-PySpark.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/11/02-Ensembles-and-Pipelines-in-PySpark.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Ensembles and Pipelines in PySpark | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Ensembles and Pipelines in PySpark" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Finally you’ll learn how to make your models more efficient. You’ll find out how to use pipelines to make your code clearer and easier to maintain. Then you’ll use cross-validation to better test your models and select good model parameters. Finally you’ll dabble in two types of ensemble model. This is the Summary of lecture “Machine Learning with PySpark”, via datacamp." />
+<meta property="og:description" content="Finally you’ll learn how to make your models more efficient. You’ll find out how to use pipelines to make your code clearer and easier to maintain. Then you’ll use cross-validation to better test your models and select good model parameters. Finally you’ll dabble in two types of ensemble model. This is the Summary of lecture “Machine Learning with PySpark”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/11/02-Ensembles-and-Pipelines-in-PySpark.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/11/02-Ensembles-and-Pipelines-in-PySpark.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/watertight_model.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-11T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Ensembles and Pipelines in PySpark","description":"Finally you’ll learn how to make your models more efficient. You’ll find out how to use pipelines to make your code clearer and easier to maintain. Then you’ll use cross-validation to better test your models and select good model parameters. Finally you’ll dabble in two types of ensemble model. This is the Summary of lecture “Machine Learning with PySpark”, via datacamp.","datePublished":"2020-08-11T00:00:00-05:00","dateModified":"2020-08-11T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/watertight_model.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/11/02-Ensembles-and-Pipelines-in-PySpark.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/11/02-Ensembles-and-Pipelines-in-PySpark.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Ensembles and Pipelines in PySpark</h1><p class="page-description">Finally you'll learn how to make your models more efficient. You'll find out how to use pipelines to make your code clearer and easier to maintain. Then you'll use cross-validation to better test your models and select good model parameters. Finally you'll dabble in two types of ensemble model. This is the Summary of lecture "Machine Learning with PySpark", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-08-11T00:00:00-05:00" itemprop="datePublished">
+        Aug 11, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      10 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#PySpark">PySpark</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-08-11-02-Ensembles-and-Pipelines-in-PySpark.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-08-11-02-Ensembles-and-Pipelines-in-PySpark.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-08-11-02-Ensembles-and-Pipelines-in-PySpark.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Pipeline">Pipeline </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Flight-duration-model---Pipeline-stages">Flight duration model - Pipeline stages </a></li>
+<li class="toc-entry toc-h3"><a href="#Flight-duration-model:-Pipeline-model">Flight duration model: Pipeline model </a></li>
+<li class="toc-entry toc-h3"><a href="#SMS-spam-pipeline">SMS spam pipeline </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Cross-Validation">Cross-Validation </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Cross-validating-simple-flight-duration-model">Cross validating simple flight duration model </a></li>
+<li class="toc-entry toc-h3"><a href="#Cross-validating-flight-duration-model-pipeline">Cross validating flight duration model pipeline </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Grid-Search">Grid Search </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Optimizing-flights-linear-regression">Optimizing flights linear regression </a></li>
+<li class="toc-entry toc-h3"><a href="#Dissecting-the-best-flight-duration-model">Dissecting the best flight duration model </a></li>
+<li class="toc-entry toc-h3"><a href="#SMS-spam-optimized">SMS spam optimized </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Ensemble">Ensemble </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Delayed-flights-with-Gradient-Boosted-Trees">Delayed flights with Gradient-Boosted Trees </a></li>
+<li class="toc-entry toc-h3"><a href="#Delayed-flights-with-a-Random-Forest">Delayed flights with a Random Forest </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluating-Random-Forest">Evaluating Random Forest </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-08-11-02-Ensembles-and-Pipelines-in-PySpark.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Pipeline">
+<a class="anchor" href="#Pipeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pipeline<a class="anchor-link" href="#Pipeline"> </a>
+</h2>
+<ul>
+<li>A watertight model
+<img src="/chans_jupyter/images/copied_from_nb/image/watertight_model.png" alt="watertight"><ul>
+<li>If test data is included while training, the model will be no longer for objective (leakage)</li>
+</ul>
+</li>
+<li>Pipeline
+<img src="/chans_jupyter/images/copied_from_nb/image/pipeline_spark.png" alt="pipeline">
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Flight-duration-model---Pipeline-stages">
+<a class="anchor" href="#Flight-duration-model---Pipeline-stages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Flight duration model - Pipeline stages<a class="anchor-link" href="#Flight-duration-model---Pipeline-stages"> </a>
+</h3>
+<p>You're going to create the stages for the flights duration model pipeline. You will use these in the next exercise to build a pipeline and to create a regression model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s1">'local[*]'</span><span class="p">)</span><span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s1">'flights'</span><span class="p">)</span><span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+
+<span class="c1"># Read data from CSV file</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">'./dataset/flights-larger.csv'</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">','</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">nullValue</span><span class="o">=</span><span class="s1">'NA'</span><span class="p">)</span>
+
+<span class="c1"># Get number of records</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The data contain </span><span class="si">%d</span><span class="s2"> records."</span> <span class="o">%</span> <span class="n">flights</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+
+<span class="c1"># View the first five records</span>
+<span class="n">flights</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Check column data types</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">printSchema</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The data contain 275000 records.
++---+---+---+-------+------+---+----+------+--------+-----+
+|mon|dom|dow|carrier|flight|org|mile|depart|duration|delay|
++---+---+---+-------+------+---+----+------+--------+-----+
+| 10| 10|  1|     OO|  5836|ORD| 157|  8.18|      51|   27|
+|  1|  4|  1|     OO|  5866|ORD| 466|  15.5|     102| null|
+| 11| 22|  1|     OO|  6016|ORD| 738|  7.17|     127|  -19|
+|  2| 14|  5|     B6|   199|JFK|2248| 21.17|     365|   60|
+|  5| 25|  3|     WN|  1675|SJC| 386| 12.92|      85|   22|
++---+---+---+-------+------+---+----+------+--------+-----+
+only showing top 5 rows
+
+root
+ |-- mon: integer (nullable = true)
+ |-- dom: integer (nullable = true)
+ |-- dow: integer (nullable = true)
+ |-- carrier: string (nullable = true)
+ |-- flight: integer (nullable = true)
+ |-- org: string (nullable = true)
+ |-- mile: integer (nullable = true)
+ |-- depart: double (nullable = true)
+ |-- duration: integer (nullable = true)
+ |-- delay: integer (nullable = true)
+
+None
+[('mon', 'int'), ('dom', 'int'), ('dow', 'int'), ('carrier', 'string'), ('flight', 'int'), ('org', 'string'), ('mile', 'int'), ('depart', 'double'), ('duration', 'int'), ('delay', 'int')]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="nb">round</span>
+
+<span class="c1"># Convert 'mile' to 'km' and drop 'mile' column</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'km'</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">mile</span> <span class="o">*</span> <span class="mf">1.60934</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'mile'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">StringIndexer</span><span class="p">,</span> <span class="n">OneHotEncoder</span><span class="p">,</span> <span class="n">VectorAssembler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="c1"># Convert categorical strings to index values</span>
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'org'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'org_idx'</span><span class="p">)</span>
+
+<span class="c1"># One-hot encode index values</span>
+<span class="n">onehot</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span>
+    <span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">'org_idx'</span><span class="p">,</span> <span class="s1">'dow'</span><span class="p">],</span>
+    <span class="n">outputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">'org_dummy'</span><span class="p">,</span> <span class="s1">'dow_dummy'</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Assemble predictors into a single column</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">'km'</span><span class="p">,</span> <span class="s1">'org_dummy'</span><span class="p">,</span> <span class="s1">'dow_dummy'</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'features'</span><span class="p">)</span>
+
+<span class="c1"># A linear regression object</span>
+<span class="n">regression</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">'duration'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Flight-duration-model:-Pipeline-model">
+<a class="anchor" href="#Flight-duration-model:-Pipeline-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Flight duration model: Pipeline model<a class="anchor-link" href="#Flight-duration-model:-Pipeline-model"> </a>
+</h3>
+<p>You're now ready to put those stages together in a pipeline.</p>
+<p>You'll construct the pipeline and then train the pipeline on the training data. This will apply each of the individual stages in the pipeline to the training data in turn. None of the stages will be exposed to the testing data at all: there will be no leakage!</p>
+<p>Once the entire pipeline has been trained it will then be used to make predictions on the testing data.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="n">flights_train</span><span class="p">,</span> <span class="n">flights_test</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+
+<span class="c1"># Construct a pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">indexer</span><span class="p">,</span> <span class="n">onehot</span><span class="p">,</span> <span class="n">assembler</span><span class="p">,</span> <span class="n">regression</span><span class="p">])</span>
+
+<span class="c1"># Train the pipeline on the training data</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+
+<span class="c1"># Make predictions on the test data</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="SMS-spam-pipeline">
+<a class="anchor" href="#SMS-spam-pipeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>SMS spam pipeline<a class="anchor-link" href="#SMS-spam-pipeline"> </a>
+</h3>
+<p>You haven't looked at the SMS data for quite a while. Last time we did the following:</p>
+<ul>
+<li>split the text into tokens</li>
+<li>removed stop words</li>
+<li>applied the hashing trick</li>
+<li>converted the data from counts to IDF and</li>
+<li>trained a linear regression model.</li>
+</ul>
+<p>Each of these steps was done independently. This seems like a great application for a pipeline!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">StringType</span>
+
+<span class="c1"># Specify column names and types</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">()),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">()),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"label"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">())</span>
+<span class="p">])</span>
+
+<span class="c1"># Read data from CSV file</span>
+<span class="n">sms</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s1">'./dataset/sms.csv'</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">';'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">nullValue</span><span class="o">=</span><span class="s1">'NA'</span><span class="p">)</span>
+
+<span class="n">sms</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+--------------------+-----+
+| id|                text|label|
++---+--------------------+-----+
+|  1|Sorry, I'll call ...|    0|
+|  2|Dont worry. I gue...|    0|
+|  3|Call FREEPHONE 08...|    1|
+|  4|Win a 1000 cash p...|    1|
+|  5|Go until jurong p...|    0|
++---+--------------------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">Tokenizer</span><span class="p">,</span> <span class="n">StopWordsRemover</span><span class="p">,</span> <span class="n">HashingTF</span><span class="p">,</span> <span class="n">IDF</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+
+<span class="c1"># Break text into tokens at non-word characters</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'text'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'words'</span><span class="p">)</span>
+
+<span class="c1"># Remove stop words</span>
+<span class="n">remover</span> <span class="o">=</span> <span class="n">StopWordsRemover</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">getOutputCol</span><span class="p">(),</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'terms'</span><span class="p">)</span>
+
+<span class="c1"># Apply the hashing trick and transform to TF-IDF</span>
+<span class="n">hasher</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">remover</span><span class="o">.</span><span class="n">getOutputCol</span><span class="p">(),</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'hash'</span><span class="p">)</span>
+<span class="n">idf</span> <span class="o">=</span> <span class="n">IDF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">hasher</span><span class="o">.</span><span class="n">getOutputCol</span><span class="p">(),</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'features'</span><span class="p">)</span>
+
+<span class="c1"># Create a logistic regression object and add everything to a pipeline</span>
+<span class="n">logistic</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">remover</span><span class="p">,</span> <span class="n">hasher</span><span class="p">,</span> <span class="n">idf</span><span class="p">,</span> <span class="n">logistic</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Cross-Validation">
+<a class="anchor" href="#Cross-Validation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cross-Validation<a class="anchor-link" href="#Cross-Validation"> </a>
+</h2>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/cv_spark.png" alt="cv"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Cross-validating-simple-flight-duration-model">
+<a class="anchor" href="#Cross-validating-simple-flight-duration-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cross validating simple flight duration model<a class="anchor-link" href="#Cross-validating-simple-flight-duration-model"> </a>
+</h3>
+<p>You've already built a few models for predicting flight duration and evaluated them with a simple train/test split. However, cross-validation provides a much better way to evaluate model performance.</p>
+<p>In this exercise you're going to train a simple model for flight duration using cross-validation. Travel time is usually strongly correlated with distance, so using the <code>km</code> column alone should give a decent model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">'km'</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'features'</span><span class="p">)</span>
+
+<span class="n">flights</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'features'</span><span class="p">))</span>
+
+<span class="n">flights</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+---+---+-------+------+---+------+--------+-----+------+--------+
+|mon|dom|dow|carrier|flight|org|depart|duration|delay|    km|features|
++---+---+---+-------+------+---+------+--------+-----+------+--------+
+| 10| 10|  1|     OO|  5836|ORD|  8.18|      51|   27| 253.0| [253.0]|
+|  1|  4|  1|     OO|  5866|ORD|  15.5|     102| null| 750.0| [750.0]|
+| 11| 22|  1|     OO|  6016|ORD|  7.17|     127|  -19|1188.0|[1188.0]|
+|  2| 14|  5|     B6|   199|JFK| 21.17|     365|   60|3618.0|[3618.0]|
+|  5| 25|  3|     WN|  1675|SJC| 12.92|      85|   22| 621.0| [621.0]|
++---+---+---+-------+------+---+------+--------+-----+------+--------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.tuning</span> <span class="kn">import</span> <span class="n">ParamGridBuilder</span><span class="p">,</span> <span class="n">CrossValidator</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="kn">import</span> <span class="n">RegressionEvaluator</span>
+
+<span class="n">flights_train</span><span class="p">,</span> <span class="n">flights_test</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+
+<span class="c1"># Create an empty parameter grid</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">ParamGridBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="c1"># Create objects for building and evaluating a regression model</span>
+<span class="n">regression</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">'duration'</span><span class="p">)</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">'duration'</span><span class="p">)</span>
+
+<span class="c1"># Create a cross validator</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">CrossValidator</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">regression</span><span class="p">,</span> <span class="n">estimatorParamMaps</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> 
+                    <span class="n">evaluator</span><span class="o">=</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">numFolds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Train and test model on multiple folds of the training data</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Cross-validating-flight-duration-model-pipeline">
+<a class="anchor" href="#Cross-validating-flight-duration-model-pipeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cross validating flight duration model pipeline<a class="anchor-link" href="#Cross-validating-flight-duration-model-pipeline"> </a>
+</h3>
+<p>The cross-validated model that you just built was simple, using <code>km</code> alone to predict <code>duration</code>.</p>
+<p>Another important predictor of flight duration is the origin airport. Flights generally take longer to get into the air from busy airports. Let's see if adding this predictor improves the model!</p>
+<p>In this exercise you'll add the <code>org</code> field to the model. However, since <code>org</code> is categorical, there's more work to be done before it can be included: it must first be transformed to an index and then one-hot encoded before being assembled with <code>km</code> and used to build the regression model. We'll wrap these operations up in a pipeline.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create an empty paramter grid</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">ParamGridBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="c1"># Create regression model</span>
+<span class="n">regression</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">'duration'</span><span class="p">)</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">'duration'</span><span class="p">)</span>
+
+<span class="c1"># Create an indexer for the org field</span>
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'org'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'org_idx'</span><span class="p">)</span>
+
+<span class="c1"># Create an one-hot encoder for the indexed org field</span>
+<span class="n">onehot</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s1">'org_idx'</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'org_dummy'</span><span class="p">)</span>
+
+<span class="c1"># Assemble the km and one-hot encoded fields</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">'km'</span><span class="p">,</span> <span class="s1">'org_dummy'</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'features'</span><span class="p">)</span>
+
+<span class="c1"># Create a pipeline and cross-validator</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">indexer</span><span class="p">,</span> <span class="n">onehot</span><span class="p">,</span> <span class="n">assembler</span><span class="p">,</span> <span class="n">regression</span><span class="p">])</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">CrossValidator</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+                    <span class="n">estimatorParamMaps</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                    <span class="n">evaluator</span><span class="o">=</span><span class="n">evaluator</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Grid-Search">
+<a class="anchor" href="#Grid-Search" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grid Search<a class="anchor-link" href="#Grid-Search"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Optimizing-flights-linear-regression">
+<a class="anchor" href="#Optimizing-flights-linear-regression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Optimizing flights linear regression<a class="anchor-link" href="#Optimizing-flights-linear-regression"> </a>
+</h3>
+<p>Up until now you've been using the default hyper-parameters when building your models. In this exercise you'll use cross validation to choose an optimal (or close to optimal) set of model hyper-parameters.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create parameter grid</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">ParamGridBuilder</span><span class="p">()</span>
+
+<span class="c1"># Add grids for two parameters</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">regression</span><span class="o">.</span><span class="n">regParam</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">])</span>\
+               <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">regression</span><span class="o">.</span><span class="n">elasticNetParam</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+
+<span class="c1"># Build the parameter grid</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Number of models to be tested: '</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+
+<span class="c1"># Create cross-validator</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">CrossValidator</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">estimatorParamMaps</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> 
+                    <span class="n">evaluator</span><span class="o">=</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">numFolds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Number of models to be tested:  12
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dissecting-the-best-flight-duration-model">
+<a class="anchor" href="#Dissecting-the-best-flight-duration-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dissecting the best flight duration model<a class="anchor-link" href="#Dissecting-the-best-flight-duration-model"> </a>
+</h3>
+<p>You just set up a <code>CrossValidator</code> to find good parameters for the linear regression model predicting flight duration.</p>
+<p>Now you're going to take a closer look at the resulting model, split out the stages and use it to make predictions on the testing data.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Drop the existed feature column</span>
+<span class="n">flights_train</span><span class="p">,</span> <span class="n">flights_test</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'features'</span><span class="p">)</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+
+<span class="c1"># Train the data</span>
+<span class="n">cvModel</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+
+<span class="c1"># Get the best model from cross validation</span>
+<span class="n">best_model</span> <span class="o">=</span> <span class="n">cvModel</span><span class="o">.</span><span class="n">bestModel</span>
+
+<span class="c1"># Look at the stages in the best model</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">best_model</span><span class="o">.</span><span class="n">stages</span><span class="p">)</span>
+
+<span class="c1"># Get the parameters for the LinearRegression object in the best model</span>
+<span class="n">best_model</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">extractParamMap</span><span class="p">()</span>
+
+<span class="c1"># Generate predictions on test data using the best model then calculate RMSE</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">best_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">)</span>
+<span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[StringIndexerModel: uid=StringIndexer_e6270b361418, handleInvalid=error, OneHotEncoderModel: uid=OneHotEncoder_f0cb230aef6c, dropLast=true, handleInvalid=error, VectorAssembler_7f7413ad3499, LinearRegressionModel: uid=LinearRegression_61f3d4b255f6, numFeatures=8]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>11.217337853713733</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="SMS-spam-optimized">
+<a class="anchor" href="#SMS-spam-optimized" aria-hidden="true"><span class="octicon octicon-link"></span></a>SMS spam optimized<a class="anchor-link" href="#SMS-spam-optimized"> </a>
+</h3>
+<p>The pipeline you built earlier for the SMS spam model used the default parameters for all of the elements in the pipeline. It's very unlikely that these parameters will give a particularly good model though.</p>
+<p>In this exercise you'll set up a parameter grid which can be used with cross validation to choose a good set of parameters for the SMS spam classifier.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create parameter grid</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">ParamGridBuilder</span><span class="p">()</span>
+
+<span class="c1"># Add grid for hashing trick parameters</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">hasher</span><span class="o">.</span><span class="n">numFeatures</span><span class="p">,</span> <span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">16384</span><span class="p">))</span>\
+               <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">hasher</span><span class="o">.</span><span class="n">binary</span><span class="p">,</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
+<span class="c1"># Add grid for logistic regression parameters</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">logistic</span><span class="o">.</span><span class="n">regParam</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>\
+               <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">logistic</span><span class="o">.</span><span class="n">elasticNetParam</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+<span class="c1"># Build parameter grid</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Number of models to be tested: '</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Number of models to be tested:  72
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Ensemble">
+<a class="anchor" href="#Ensemble" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ensemble<a class="anchor-link" href="#Ensemble"> </a>
+</h2>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/ensemble_spark.png" alt="ensemble"></p>
+<ul>
+<li>collection of models</li>
+<li>
+<strong>Wisdom of the Crowd</strong> - collective opinion of a group better than that of a single expert</li>
+<li>Random Forest<ul>
+<li>an ensemble of Decision Tree</li>
+<li>Creating model diversity<ul>
+<li>each tree trained on random subset of data</li>
+<li>random subset of features used for splitting at each node</li>
+</ul>
+</li>
+<li>No two trees in the forest should be the same</li>
+</ul>
+</li>
+<li>Gradient-Boosted Trees<ul>
+<li>Iterative boosting algorithm:<ol>
+<li>Build a Decision Tree and add to ensemble</li>
+<li>Predict label for each training instance using ensemble</li>
+<li>Compare predictions with known labels</li>
+<li>Emphasize training instances with incorrect predictions</li>
+<li>return to 1.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Delayed-flights-with-Gradient-Boosted-Trees">
+<a class="anchor" href="#Delayed-flights-with-Gradient-Boosted-Trees" aria-hidden="true"><span class="octicon octicon-link"></span></a>Delayed flights with Gradient-Boosted Trees<a class="anchor-link" href="#Delayed-flights-with-Gradient-Boosted-Trees"> </a>
+</h3>
+<p>You've previously built a classifier for flights likely to be delayed using a Decision Tree. In this exercise you'll compare a Decision Tree model to a Gradient-Boosted Trees model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span><span class="p">,</span> <span class="n">GBTClassifier</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="kn">import</span> <span class="n">BinaryClassificationEvaluator</span>
+
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">'mon'</span><span class="p">,</span> <span class="s1">'depart'</span><span class="p">,</span> <span class="s1">'duration'</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s1">'features'</span><span class="p">)</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'features'</span><span class="p">))</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">'label'</span><span class="p">,</span> <span class="p">(</span><span class="n">flights</span><span class="o">.</span><span class="n">delay</span> <span class="o">&gt;=</span> <span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s1">'integer'</span><span class="p">))</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">'mon'</span><span class="p">,</span> <span class="s1">'depart'</span><span class="p">,</span> <span class="s1">'duration'</span><span class="p">,</span> <span class="s1">'features'</span><span class="p">,</span> <span class="s1">'label'</span><span class="p">)</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="n">flights</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+------+--------+-----------------+-----+
+|mon|depart|duration|         features|label|
++---+------+--------+-----------------+-----+
+| 10|  8.18|      51| [10.0,8.18,51.0]|    1|
+| 11|  7.17|     127|[11.0,7.17,127.0]|    0|
+|  2| 21.17|     365|[2.0,21.17,365.0]|    1|
+|  5| 12.92|      85| [5.0,12.92,85.0]|    1|
+|  3| 13.33|     182|[3.0,13.33,182.0]|    1|
++---+------+--------+-----------------+-----+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span><span class="p">,</span> <span class="n">GBTClassifier</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="kn">import</span> <span class="n">BinaryClassificationEvaluator</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="n">flights_train</span><span class="p">,</span> <span class="n">flights_test</span> <span class="o">=</span> <span class="n">flights</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+
+<span class="c1"># Create model objects and train on training data</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+<span class="n">gbt</span> <span class="o">=</span> <span class="n">GBTClassifier</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+
+<span class="c1"># Compare AUC on test data</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">()</span>
+<span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">))</span>
+<span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">gbt</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">))</span>
+
+<span class="c1"># Find the number of trees and the relative importance of features</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">gbt</span><span class="o">.</span><span class="n">trees</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gbt</span><span class="o">.</span><span class="n">featureImportances</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[DecisionTreeRegressionModel: uid=dtr_ec0910e25dea, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_fca176dc37a4, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_ff05809a5d0d, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_c0178826c7f2, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_e3d7c7cf801d, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_b28386703df3, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_236a1b0a44cc, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_5702ac9781e9, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_1294cc0afc51, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_9c3a2c2f669c, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_ba4aef54784c, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_760d589922ac, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_6d07166b635b, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_c807be867213, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_ef74f5e2c3b4, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_858147b5b20b, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_f0ff74220975, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_958292546340, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_e387146dd7b3, depth=5, numNodes=63, numFeatures=3,
+ DecisionTreeRegressionModel: uid=dtr_1d883b4c0434, depth=5, numNodes=63, numFeatures=3]
+(3,[0,1,2],[0.3996945565930914,0.3279675109854171,0.27233793242149146])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Delayed-flights-with-a-Random-Forest">
+<a class="anchor" href="#Delayed-flights-with-a-Random-Forest" aria-hidden="true"><span class="octicon octicon-link"></span></a>Delayed flights with a Random Forest<a class="anchor-link" href="#Delayed-flights-with-a-Random-Forest"> </a>
+</h3>
+<p>In this exercise you'll bring together cross validation and ensemble methods. You'll be training a Random Forest classifier to predict delayed flights, using cross validation to choose the best values for model parameters.</p>
+<p>You'll find good values for the following parameters:</p>
+<ul>
+<li>
+<code>featureSubsetStrategy</code> — the number of features to consider for splitting at each node and</li>
+<li>
+<code>maxDepth</code> — the maximum number of splits along any branch.</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="c1"># Create a random forest classifier</span>
+<span class="n">forest</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">()</span>
+
+<span class="c1"># Create a parameter grid</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">ParamGridBuilder</span><span class="p">()</span> \
+        <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">forest</span><span class="o">.</span><span class="n">featureSubsetStrategy</span><span class="p">,</span> <span class="p">[</span><span class="s1">'all'</span><span class="p">,</span> <span class="s1">'onethird'</span><span class="p">,</span> <span class="s1">'sqrt'</span><span class="p">,</span> <span class="s1">'log2'</span><span class="p">])</span> \
+        <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">forest</span><span class="o">.</span><span class="n">maxDepth</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span> \
+        <span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="c1"># Create a binary classification evaluator</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">()</span>
+
+<span class="c1"># Create a cross-validator</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">CrossValidator</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">forest</span><span class="p">,</span> <span class="n">estimatorParamMaps</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> 
+                    <span class="n">evaluator</span><span class="o">=</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">numFolds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluating-Random-Forest">
+<a class="anchor" href="#Evaluating-Random-Forest" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluating Random Forest<a class="anchor-link" href="#Evaluating-Random-Forest"> </a>
+</h3>
+<p>In this final exercise you'll be evaluating the results of cross-validation on a Random Forest model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cvModel</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">flights_train</span><span class="p">)</span>
+
+<span class="c1"># Average AUC for each parameter combination in grid</span>
+<span class="n">avg_auc</span> <span class="o">=</span> <span class="n">cvModel</span><span class="o">.</span><span class="n">avgMetrics</span>
+
+<span class="c1"># Average AUC for the best model</span>
+<span class="n">best_model_auc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">avg_auc</span><span class="p">)</span>
+
+<span class="c1"># What's the optimal paramter value?</span>
+<span class="n">opt_max_depth</span> <span class="o">=</span> <span class="n">cvModel</span><span class="o">.</span><span class="n">bestModel</span><span class="o">.</span><span class="n">explainParam</span><span class="p">(</span><span class="s1">'maxDepth'</span><span class="p">)</span>
+<span class="n">opt_feat_substrat</span> <span class="o">=</span> <span class="n">cvModel</span><span class="o">.</span><span class="n">bestModel</span><span class="o">.</span><span class="n">explainParam</span><span class="p">(</span><span class="s1">'featureSubsetStrategy'</span><span class="p">)</span>
+
+<span class="c1"># AUC for best model on test data</span>
+<span class="n">best_auc</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">cvModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">flights_test</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">best_auc</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6844690961353807
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/pyspark/machine_learning/2020/08/11/02-Ensembles-and-Pipelines-in-PySpark.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
