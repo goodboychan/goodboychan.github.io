@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Decorrelating your data and dimension reduction | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Decorrelating your data and dimension reduction" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Unsupervised Learning with scikit-learn”, via datacamp" />
+<meta property="og:description" content="A Summary of lecture “Unsupervised Learning with scikit-learn”, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/02/01-Decorrelating-your-data-and-dimension-reduction.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/02/01-Decorrelating-your-data-and-dimension-reduction.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/pca-arrow.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-02T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Decorrelating your data and dimension reduction","description":"A Summary of lecture “Unsupervised Learning with scikit-learn”, via datacamp","datePublished":"2020-06-02T00:00:00-05:00","dateModified":"2020-06-02T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/pca-arrow.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/02/01-Decorrelating-your-data-and-dimension-reduction.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/02/01-Decorrelating-your-data-and-dimension-reduction.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Decorrelating your data and dimension reduction | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Decorrelating your data and dimension reduction" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Unsupervised Learning with scikit-learn”, via datacamp" />
+<meta property="og:description" content="A Summary of lecture “Unsupervised Learning with scikit-learn”, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/02/01-Decorrelating-your-data-and-dimension-reduction.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/02/01-Decorrelating-your-data-and-dimension-reduction.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/pca-arrow.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-02T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Decorrelating your data and dimension reduction","description":"A Summary of lecture “Unsupervised Learning with scikit-learn”, via datacamp","datePublished":"2020-06-02T00:00:00-05:00","dateModified":"2020-06-02T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/pca-arrow.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/02/01-Decorrelating-your-data-and-dimension-reduction.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/02/01-Decorrelating-your-data-and-dimension-reduction.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Decorrelating your data and dimension reduction</h1><p class="page-description">A Summary of lecture "Unsupervised Learning with scikit-learn", via datacamp</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-06-02T00:00:00-05:00" itemprop="datePublished">
+        Jun 2, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-06-02-01-Decorrelating-your-data-and-dimension-reduction.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-06-02-01-Decorrelating-your-data-and-dimension-reduction.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-06-02-01-Decorrelating-your-data-and-dimension-reduction.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Visualizing-the-PCA-transformation">Visualizing the PCA transformation </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Correlated-data-in-nature">Correlated data in nature </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Preprocess">Preprocess </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Decorrelating-the-grain-measurements-with-PCA">Decorrelating the grain measurements with PCA </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Intrinsic-dimension">Intrinsic dimension </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#The-first-principal-component">The first principal component </a></li>
+<li class="toc-entry toc-h3"><a href="#Variance-of-the-PCA-features">Variance of the PCA features </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Preprocess">Preprocess </a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Dimension-reduction-with-PCA">Dimension reduction with PCA </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Dimension-reduction-of-the-fish-measurements">Dimension reduction of the fish measurements </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Preprocess">Preprocess </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#A-tf-idf-word-frequency-array">A tf-idf word-frequency array </a></li>
+<li class="toc-entry toc-h3"><a href="#Clustering-Wikipedia-part-I">Clustering Wikipedia part I </a></li>
+<li class="toc-entry toc-h3"><a href="#Clustering-Wikipedia-part-II">Clustering Wikipedia part II </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Preprocess">Preprocess </a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-06-02-01-Decorrelating-your-data-and-dimension-reduction.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Visualizing-the-PCA-transformation">
+<a class="anchor" href="#Visualizing-the-PCA-transformation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Visualizing the PCA transformation<a class="anchor-link" href="#Visualizing-the-PCA-transformation"> </a>
+</h2>
+<ul>
+<li>Dimension reduction<ul>
+<li>More efficient storage and computation</li>
+<li>Remove less-informative "noise" features, which cause problems for prediction tasks, e.g. classification, regression.</li>
+</ul>
+</li>
+<li>Principal Component Analysis (PCA)<ul>
+<li>Fundamental dimension reduction technique<ul>
+<li>"Decorrelation"</li>
+<li>Reduce dimension</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>PCA aligns data with axes<ul>
+<li>Rotates data samples to be aligned with axes</li>
+<li>Shifts data samples so they have mean 0</li>
+<li>No information is lost</li>
+</ul>
+</li>
+<li>PCA features<ul>
+<li>Rows : samples</li>
+<li>Columns : PCA features</li>
+<li>Row gives PCA feature values of corresponding sample</li>
+</ul>
+</li>
+<li>Pearson Correlation<ul>
+<li>Measures linear correlation of features</li>
+<li>Value between -1 and 1</li>
+<li>Value of 0 means no linear correlation</li>
+</ul>
+</li>
+<li>Principal components<ul>
+<li>directions of variance</li>
+<li>PCA aligns principal components with the axes</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Correlated-data-in-nature">
+<a class="anchor" href="#Correlated-data-in-nature" aria-hidden="true"><span class="octicon octicon-link"></span></a>Correlated data in nature<a class="anchor-link" href="#Correlated-data-in-nature"> </a>
+</h3>
+<p>You are given an array <code>grains</code> giving the width and length of samples of grain. You suspect that width and length will be correlated. To confirm this, make a scatter plot of width vs length and measure their Pearson correlation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Preprocess">
+<a class="anchor" href="#Preprocess" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocess<a class="anchor-link" href="#Preprocess"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/seeds-width-vs-length.csv'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3.312</td>
+      <td>5.763</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3.333</td>
+      <td>5.554</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3.337</td>
+      <td>5.291</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3.379</td>
+      <td>5.324</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3.562</td>
+      <td>5.658</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">grains</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">pearsonr</span>
+
+<span class="c1"># Assign the 0th column of grains: width</span>
+<span class="n">width</span> <span class="o">=</span> <span class="n">grains</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Assign the 1st column of grains: length</span>
+<span class="n">length</span> <span class="o">=</span> <span class="n">grains</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># Scatter plot width vs length</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'equal'</span><span class="p">);</span>
+
+<span class="c1"># Calculate the Pearson correlation</span>
+<span class="n">correlation</span><span class="p">,</span> <span class="n">pvalue</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+
+<span class="c1"># Display the correlation</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.8604149377143466
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Decorrelating-the-grain-measurements-with-PCA">
+<a class="anchor" href="#Decorrelating-the-grain-measurements-with-PCA" aria-hidden="true"><span class="octicon octicon-link"></span></a>Decorrelating the grain measurements with PCA<a class="anchor-link" href="#Decorrelating-the-grain-measurements-with-PCA"> </a>
+</h3>
+<p>You observed in the previous exercise that the width and length measurements of the grain are correlated. Now, you'll use PCA to decorrelate these measurements, then plot the decorrelated points and measure their Pearson correlation.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+
+<span class="c1"># Create a PCA instance: model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">()</span>
+
+<span class="c1"># Apply the fit_transform method of model to grains: pca_features</span>
+<span class="n">pca_features</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">grains</span><span class="p">)</span>
+
+<span class="c1"># Assign 0th column of pca_features: xs</span>
+<span class="n">xs</span> <span class="o">=</span> <span class="n">pca_features</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Assign 1st column of pca_features: ys</span>
+<span class="n">ys</span> <span class="o">=</span> <span class="n">pca_features</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># Scatter plot xs vs ys</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'equal'</span><span class="p">);</span>
+
+<span class="c1"># Calculate the Pearson correlation of xs and ys</span>
+<span class="n">correlation</span><span class="p">,</span> <span class="n">pvalue</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+
+<span class="c1"># Display the correlation</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">correlation</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>4.85722573273506e-17
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Intrinsic-dimension">
+<a class="anchor" href="#Intrinsic-dimension" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intrinsic dimension<a class="anchor-link" href="#Intrinsic-dimension"> </a>
+</h2>
+<ul>
+<li>Intrinsic dimension<ul>
+<li>Intrinsic dimension = number of features needed to approximate the dataset</li>
+<li>Essential idea behind dimension reduction</li>
+<li>What is the most compact representation of the samples?</li>
+<li>Can be detected with PCA</li>
+</ul>
+</li>
+<li>PCA identifies intrinsic dimension<ul>
+<li>Scatter plots work only if samples have 2 or 3 features</li>
+<li>PCA identifies intrinsic dimension when samples have any number of features</li>
+<li>Intrinsic dimension = <strong>number of PCA features with signficant variance</strong>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-first-principal-component">
+<a class="anchor" href="#The-first-principal-component" aria-hidden="true"><span class="octicon octicon-link"></span></a>The first principal component<a class="anchor-link" href="#The-first-principal-component"> </a>
+</h3>
+<p>The first principal component of the data is the direction in which the data varies the most. In this exercise, your job is to use PCA to find the first principal component of the length and width measurements of the grain samples, and represent it as an arrow on the scatter plot.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Make a scatter plot of the untransformed points</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">grains</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">grains</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># Create a PCA instance: model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">()</span>
+
+<span class="c1"># Fit model to points</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">grains</span><span class="p">)</span>
+
+<span class="c1"># Get the mean of the grain samples: mean</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">mean_</span>
+
+<span class="c1"># Get the first principal component: first_pc</span>
+<span class="n">first_pc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">components_</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+
+<span class="c1"># Plot first_pc as an arrow, starting at mean</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">mean</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mean</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">first_pc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">first_pc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="c1"># keep axes on same scale</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'equal'</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'../images/pca-arrow.png'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Variance-of-the-PCA-features">
+<a class="anchor" href="#Variance-of-the-PCA-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Variance of the PCA features<a class="anchor-link" href="#Variance-of-the-PCA-features"> </a>
+</h3>
+<p>The fish dataset is 6-dimensional. But what is its intrinsic dimension? Make a plot of the variances of the PCA features to find out. As before, <code>samples</code> is a 2D array, where each row represents a fish. You'll need to standardize the features first.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Preprocess">
+<a class="anchor" href="#Preprocess" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocess<a class="anchor-link" href="#Preprocess"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/fish.csv'</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Bream</td>
+      <td>242.0</td>
+      <td>23.2</td>
+      <td>25.4</td>
+      <td>30.0</td>
+      <td>38.4</td>
+      <td>13.4</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Bream</td>
+      <td>290.0</td>
+      <td>24.0</td>
+      <td>26.3</td>
+      <td>31.2</td>
+      <td>40.0</td>
+      <td>13.8</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Bream</td>
+      <td>340.0</td>
+      <td>23.9</td>
+      <td>26.5</td>
+      <td>31.1</td>
+      <td>39.8</td>
+      <td>15.1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Bream</td>
+      <td>363.0</td>
+      <td>26.3</td>
+      <td>29.0</td>
+      <td>33.5</td>
+      <td>38.0</td>
+      <td>13.3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Bream</td>
+      <td>430.0</td>
+      <td>26.5</td>
+      <td>29.0</td>
+      <td>34.0</td>
+      <td>36.6</td>
+      <td>15.1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">samples</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span>
+
+<span class="c1"># Create scaler: scaler</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+
+<span class="c1"># Create a PCA instance: pca</span>
+<span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">()</span>
+
+<span class="c1"># Create pipeline: pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">scaler</span><span class="p">,</span> <span class="n">pca</span><span class="p">)</span>
+
+<span class="c1"># Fit the pipeline to 'samples'</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+
+<span class="c1"># Plot the explained variances</span>
+<span class="n">features</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">pca</span><span class="o">.</span><span class="n">n_components_</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">pca</span><span class="o">.</span><span class="n">explained_variance_</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'PCA feature'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'variance'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">features</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Dimension-reduction-with-PCA">
+<a class="anchor" href="#Dimension-reduction-with-PCA" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dimension reduction with PCA<a class="anchor-link" href="#Dimension-reduction-with-PCA"> </a>
+</h2>
+<ul>
+<li>Dimension reduction<ul>
+<li>Represent same data, using less features</li>
+<li>Important part of machine-learning pipelines</li>
+<li>Can be performed using PCA</li>
+</ul>
+</li>
+<li>Dimension reduction with PCA<ul>
+<li>PCA features are in decreasing order of variance</li>
+<li>Assumes the low variance features are "noise", and high variance features are informative</li>
+<li>Specify how many features to keep</li>
+<li>Intrinsic dimension is a good choice</li>
+</ul>
+</li>
+<li>Word frequency arrays<ul>
+<li>Rows represent documents, columns represent words</li>
+<li>Entries measure presence of each word in each document, measure using "tf-idf"</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dimension-reduction-of-the-fish-measurements">
+<a class="anchor" href="#Dimension-reduction-of-the-fish-measurements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dimension reduction of the fish measurements<a class="anchor-link" href="#Dimension-reduction-of-the-fish-measurements"> </a>
+</h3>
+<p>In a previous exercise, you saw that 2 was a reasonable choice for the "intrinsic dimension" of the fish measurements. Now use PCA for dimensionality reduction of the fish measurements, retaining only the 2 most important components.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Preprocess">
+<a class="anchor" href="#Preprocess" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocess<a class="anchor-link" href="#Preprocess"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">scaled_samples</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a PCA model with 2 components: pca</span>
+<span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Fit the PCA instance to the scaled samples</span>
+<span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">scaled_samples</span><span class="p">)</span>
+
+<span class="c1"># Transform the scaled samples: pca_features</span>
+<span class="n">pca_features</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">scaled_samples</span><span class="p">)</span>
+
+<span class="c1"># Print the shape of pca_features</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pca_features</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(85, 2)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="A-tf-idf-word-frequency-array">
+<a class="anchor" href="#A-tf-idf-word-frequency-array" aria-hidden="true"><span class="octicon octicon-link"></span></a>A tf-idf word-frequency array<a class="anchor-link" href="#A-tf-idf-word-frequency-array"> </a>
+</h3>
+<p>In this exercise, you'll create a tf-idf word frequency array for a toy collection of documents. For this, use the <code>TfidfVectorizer</code> from sklearn. It transforms a list of documents into a word frequency array, which it outputs as a csr_matrix. It has <code>fit()</code> and <code>transform()</code> methods like other sklearn objects.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">documents</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'cats say meow'</span><span class="p">,</span> <span class="s1">'dogs say woof'</span><span class="p">,</span> <span class="s1">'dogs chase cats'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+
+<span class="c1"># Create a TfidfVectorizer: tfidf</span>
+<span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">()</span>
+
+<span class="c1"># Apply fit_transform to document: csr_mat</span>
+<span class="n">csr_mat</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+<span class="c1"># Print result of toarray() method</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">csr_mat</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
+
+<span class="c1"># Get the word: words</span>
+<span class="n">words</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span>
+
+<span class="c1"># Print words</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[0.51785612 0.         0.         0.68091856 0.51785612 0.        ]
+ [0.         0.         0.51785612 0.         0.51785612 0.68091856]
+ [0.51785612 0.68091856 0.51785612 0.         0.         0.        ]]
+['cats', 'chase', 'dogs', 'meow', 'say', 'woof']
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Clustering-Wikipedia-part-I">
+<a class="anchor" href="#Clustering-Wikipedia-part-I" aria-hidden="true"><span class="octicon octicon-link"></span></a>Clustering Wikipedia part I<a class="anchor-link" href="#Clustering-Wikipedia-part-I"> </a>
+</h3>
+<p>You saw in the video that <code>TruncatedSVD</code> is able to perform PCA on sparse arrays in csr_matrix format, such as word-frequency arrays. Combine your knowledge of TruncatedSVD and k-means to cluster some popular pages from Wikipedia. In this exercise, build the pipeline. In the next exercise, you'll apply it to the word-frequency array of some Wikipedia articles.</p>
+<p>Create a Pipeline object consisting of a TruncatedSVD followed by KMeans. (This time, we've precomputed the word-frequency matrix for you, so there's no need for a TfidfVectorizer).</p>
+<p>The Wikipedia dataset you will be working with was obtained from <a href="https://blog.lateral.io/2015/06/the-unknown-perils-of-mining-wikipedia/">here</a>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">TruncatedSVD</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span>
+
+<span class="c1"># Create a TruncatedSVD instance: svd</span>
+<span class="n">svd</span> <span class="o">=</span> <span class="n">TruncatedSVD</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="c1"># Create a KMeans instance: kmeans</span>
+<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="c1"># Create a pipeline: pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">svd</span><span class="p">,</span> <span class="n">kmeans</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Clustering-Wikipedia-part-II">
+<a class="anchor" href="#Clustering-Wikipedia-part-II" aria-hidden="true"><span class="octicon octicon-link"></span></a>Clustering Wikipedia part II<a class="anchor-link" href="#Clustering-Wikipedia-part-II"> </a>
+</h3>
+<p>It is now time to put your pipeline from the previous exercise to work! You are given an array articles of tf-idf word-frequencies of some popular Wikipedia articles, and a list titles of their titles. Use your pipeline to cluster the Wikipedia articles.</p>
+<p>A solution to the previous exercise has been pre-loaded for you, so a Pipeline pipeline chaining TruncatedSVD with KMeans is available.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Preprocess">
+<a class="anchor" href="#Preprocess" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocess<a class="anchor-link" href="#Preprocess"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csc_matrix</span>
+
+<span class="n">documents</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/wikipedia-vectors.csv'</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">titles</span> <span class="o">=</span> <span class="n">documents</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">articles</span> <span class="o">=</span> <span class="n">csc_matrix</span><span class="p">(</span><span class="n">documents</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">articles</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>scipy.sparse.csr.csr_matrix</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">articles</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(13125, 60)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fit the pipeline to articles</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">articles</span><span class="p">)</span>
+
+<span class="c1"># Calculate the cluster labels: labels</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">articles</span><span class="p">)</span>
+
+<span class="c1"># Create a DataFrame aligning labels and titles: df</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'label'</span><span class="p">:</span> <span class="n">labels</span><span class="p">,</span> <span class="s1">'article'</span><span class="p">:</span> <span class="n">titles</span><span class="p">})</span>
+
+<span class="c1"># Display df sorted by cluster label</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'label'</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>    label                                        article
+38      0                                         Neymar
+36      0              2014 FIFA World Cup qualification
+35      0                Colombia national football team
+34      0                             Zlatan Ibrahimović
+33      0                                 Radamel Falcao
+32      0                                   Arsenal F.C.
+31      0                              Cristiano Ronaldo
+30      0                  France national football team
+39      0                                  Franck Ribéry
+37      0                                       Football
+18      1  2010 United Nations Climate Change Conference
+17      1  Greenhouse gas emissions by the United States
+16      1                                        350.org
+15      1                                 Kyoto Protocol
+19      1  2007 United Nations Climate Change Conference
+13      1                               Connie Hedegaard
+12      1                                   Nigel Lawson
+11      1       Nationally Appropriate Mitigation Action
+10      1                                 Global warming
+47      1                                          Fever
+14      1                                 Climate change
+28      2                                  Anne Hathaway
+27      2                                 Dakota Fanning
+25      2                                  Russell Crowe
+26      2                                     Mila Kunis
+23      2                           Catherine Zeta-Jones
+22      2                              Denzel Washington
+21      2                             Michael Fassbender
+20      2                                 Angelina Jolie
+24      2                                   Jessica Biel
+29      2                               Jennifer Aniston
+50      3                                   Chad Kroeger
+51      3                                     Nate Ruess
+52      3                                     The Wanted
+53      3                                   Stevie Nicks
+54      3                                 Arctic Monkeys
+55      3                                  Black Sabbath
+56      3                                       Skrillex
+57      3                          Red Hot Chili Peppers
+59      3                                    Adam Levine
+58      3                                         Sepsis
+40      4                                    Tonsillitis
+48      4                                     Gabapentin
+46      4                                     Prednisone
+45      4                                    Hepatitis C
+49      4                                       Lymphoma
+43      4                                       Leukemia
+42      4                                    Doxycycline
+41      4                                    Hepatitis B
+44      4                                           Gout
+9       5                                       LinkedIn
+8       5                                        Firefox
+7       5                                  Social search
+6       5                    Hypertext Transfer Protocol
+5       5                                         Tumblr
+4       5                                  Google Search
+3       5                                    HTTP cookie
+2       5                              Internet Explorer
+1       5                                 Alexa Internet
+0       5                                       HTTP 404
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine_learning/2020/06/02/01-Decorrelating-your-data-and-dimension-reduction.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

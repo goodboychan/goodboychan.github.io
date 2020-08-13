@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Boosting | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Boosting" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Machine Learning with Tree-Based Models in Python" />
+<meta property="og:description" content="A Summary of lecture “Machine Learning with Tree-Based Models in Python" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/02-Boosting.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/02-Boosting.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/sgb_train.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-04T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Boosting","description":"A Summary of lecture “Machine Learning with Tree-Based Models in Python","datePublished":"2020-06-04T00:00:00-05:00","dateModified":"2020-06-04T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/sgb_train.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/02-Boosting.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/02-Boosting.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Boosting | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Boosting" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Machine Learning with Tree-Based Models in Python" />
+<meta property="og:description" content="A Summary of lecture “Machine Learning with Tree-Based Models in Python" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/02-Boosting.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/02-Boosting.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/sgb_train.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-04T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Boosting","description":"A Summary of lecture “Machine Learning with Tree-Based Models in Python","datePublished":"2020-06-04T00:00:00-05:00","dateModified":"2020-06-04T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/sgb_train.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/02-Boosting.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/02-Boosting.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Boosting</h1><p class="page-description">A Summary of lecture "Machine Learning with Tree-Based Models in Python</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-06-04T00:00:00-05:00" itemprop="datePublished">
+        Jun 4, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-06-04-02-Boosting.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-06-04-02-Boosting.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-06-04-02-Boosting.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Adaboost">Adaboost </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Define-the-AdaBoost-classifier">Define the AdaBoost classifier </a></li>
+<li class="toc-entry toc-h3"><a href="#Train-the-AdaBoost-classifier">Train the AdaBoost classifier </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-AdaBoost-classifier">Evaluate the AdaBoost classifier </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Gradient-Boosting-(GB)">Gradient Boosting (GB) </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Define-the-GB-regressor">Define the GB regressor </a></li>
+<li class="toc-entry toc-h3"><a href="#Train-the-GB-regressor">Train the GB regressor </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-GB-regressor">Evaluate the GB regressor </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Stochastic-Gradient-Boosting-(SGB)">Stochastic Gradient Boosting (SGB) </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Regression-with-SGB">Regression with SGB </a></li>
+<li class="toc-entry toc-h3"><a href="#Train-the-SGB-regressor">Train the SGB regressor </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-SGB-regressor">Evaluate the SGB regressor </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-06-04-02-Boosting.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Adaboost">
+<a class="anchor" href="#Adaboost" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adaboost<a class="anchor-link" href="#Adaboost"> </a>
+</h2>
+<ul>
+<li>Boosting: Ensemble method combining several weak learners to form a strong learner.<ul>
+<li>Weak learner: Model doing slightly better than random guessing<ul>
+<li>E.g., Dicision stump (CART whose maximum depth is 1)</li>
+</ul>
+</li>
+<li>Train an ensemble of predictors sequentially.</li>
+<li>Each predictor tries to correct its predecessor</li>
+<li>Most popular boosting methods:<ul>
+<li>AdaBoost</li>
+<li>Gradient Boosting</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>AdaBoost<ul>
+<li>Stands for <strong>Ada</strong>ptive <strong>Boost</strong>ing</li>
+<li>Each predictor pays more attention to the instances wrongly predicted by its predecessor.</li>
+<li>Achieved by changing the weights of training instances.</li>
+<li>Each predictor is assigned a coefficient $\alpha$ that depends on the predictor's training error</li>
+</ul>
+</li>
+<li>AdaBoost: Training
+<img src="/chans_jupyter/images/copied_from_nb/image/adaboost_train.png" alt="adaboost_train"><ul>
+<li>Learning rate: $0 &lt; \eta &lt; 1$</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Define-the-AdaBoost-classifier">
+<a class="anchor" href="#Define-the-AdaBoost-classifier" aria-hidden="true"><span class="octicon octicon-link"></span></a>Define the AdaBoost classifier<a class="anchor-link" href="#Define-the-AdaBoost-classifier"> </a>
+</h3>
+<p>In the following exercises you'll revisit the <a href="https://www.kaggle.com/uciml/indian-liver-patient-records">Indian Liver Patient</a> dataset which was introduced in a previous chapter. Your task is to predict whether a patient suffers from a liver disease using 10 features including Albumin, age and gender. However, this time, you'll be training an AdaBoost ensemble to perform the classification task. In addition, given that this dataset is imbalanced, you'll be using the ROC AUC score as a metric instead of accuracy.</p>
+<p>As a first step, you'll start by instantiating an AdaBoost classifier.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Preprocess</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">indian</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./datasets/indian_liver_patient_preprocessed.csv'</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">indian</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Age_std</th>
+      <th>Total_Bilirubin_std</th>
+      <th>Direct_Bilirubin_std</th>
+      <th>Alkaline_Phosphotase_std</th>
+      <th>Alamine_Aminotransferase_std</th>
+      <th>Aspartate_Aminotransferase_std</th>
+      <th>Total_Protiens_std</th>
+      <th>Albumin_std</th>
+      <th>Albumin_and_Globulin_Ratio_std</th>
+      <th>Is_male_std</th>
+      <th>Liver_disease</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.247403</td>
+      <td>-0.420320</td>
+      <td>-0.495414</td>
+      <td>-0.428870</td>
+      <td>-0.355832</td>
+      <td>-0.319111</td>
+      <td>0.293722</td>
+      <td>0.203446</td>
+      <td>-0.147390</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.062306</td>
+      <td>1.218936</td>
+      <td>1.423518</td>
+      <td>1.675083</td>
+      <td>-0.093573</td>
+      <td>-0.035962</td>
+      <td>0.939655</td>
+      <td>0.077462</td>
+      <td>-0.648461</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.062306</td>
+      <td>0.640375</td>
+      <td>0.926017</td>
+      <td>0.816243</td>
+      <td>-0.115428</td>
+      <td>-0.146459</td>
+      <td>0.478274</td>
+      <td>0.203446</td>
+      <td>-0.178707</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.815511</td>
+      <td>-0.372106</td>
+      <td>-0.388807</td>
+      <td>-0.449416</td>
+      <td>-0.366760</td>
+      <td>-0.312205</td>
+      <td>0.293722</td>
+      <td>0.329431</td>
+      <td>0.165780</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.679294</td>
+      <td>0.093956</td>
+      <td>0.179766</td>
+      <td>-0.395996</td>
+      <td>-0.295731</td>
+      <td>-0.177537</td>
+      <td>0.755102</td>
+      <td>-0.930414</td>
+      <td>-1.713237</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">indian</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'Liver_disease'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">indian</span><span class="p">[</span><span class="s1">'Liver_disease'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">AdaBoostClassifier</span>
+
+<span class="c1"># Instantiate dt</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Instantiate ada</span>
+<span class="n">ada</span> <span class="o">=</span> <span class="n">AdaBoostClassifier</span><span class="p">(</span><span class="n">base_estimator</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">n_estimators</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Train-the-AdaBoost-classifier">
+<a class="anchor" href="#Train-the-AdaBoost-classifier" aria-hidden="true"><span class="octicon octicon-link"></span></a>Train the AdaBoost classifier<a class="anchor-link" href="#Train-the-AdaBoost-classifier"> </a>
+</h3>
+<p>Now that you've instantiated the AdaBoost classifier ada, it's time train it. You will also predict the probabilities of obtaining the positive class in the test set. This can be done as follows:</p>
+<p>Once the classifier <code>ada</code> is trained, call the <code>.predict_proba()</code> method by passing <code>X_test</code> as a parameter and extract these probabilities by slicing all the values in the second column as follows:</p>
+<div class="highlight"><pre><span></span><span class="n">ada</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fit ada to the training set</span>
+<span class="n">ada</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Compute the probabilities of obtaining the positive class</span>
+<span class="n">y_pred_proba</span> <span class="o">=</span> <span class="n">ada</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-AdaBoost-classifier">
+<a class="anchor" href="#Evaluate-the-AdaBoost-classifier" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the AdaBoost classifier<a class="anchor-link" href="#Evaluate-the-AdaBoost-classifier"> </a>
+</h3>
+<p>Now that you're done training <code>ada</code> and predicting the probabilities of obtaining the positive class in the test set, it's time to evaluate <code>ada</code>'s ROC AUC score. Recall that the ROC AUC score of a binary classifier can be determined using the <code>roc_auc_score()</code> function from <code>sklearn.metrics</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+
+<span class="c1"># Evaluate test-set roc_auc_score</span>
+<span class="n">ada_roc_auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_proba</span><span class="p">)</span>
+
+<span class="c1"># Print roc_auc_score</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'ROC AUC score: </span><span class="si">{:.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ada_roc_auc</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ROC AUC score: 0.63
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Gradient-Boosting-(GB)">
+<a class="anchor" href="#Gradient-Boosting-(GB)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gradient Boosting (GB)<a class="anchor-link" href="#Gradient-Boosting-(GB)"> </a>
+</h2>
+<ul>
+<li>Gradient Boosted Trees<ul>
+<li>Sequential correction of predecessor's errors</li>
+<li>Does not tweak the weights of training instances</li>
+<li>Fit each predictor is trained using its predecessor's residual errors as labels</li>
+<li>Gradient Boosted Trees: a CART is used as a base learner.</li>
+</ul>
+</li>
+<li>Gradient Boosted Trees for Regression: Training
+<img src="/chans_jupyter/images/copied_from_nb/image/gb_train.png" alt="gb_train"><ul>
+<li>$\eta$ (shrinkage)<ul>
+<li>Ensemble is shrinked after it is multiplied by a learning rate</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Define-the-GB-regressor">
+<a class="anchor" href="#Define-the-GB-regressor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Define the GB regressor<a class="anchor-link" href="#Define-the-GB-regressor"> </a>
+</h3>
+<p>You'll now revisit the <a href="https://www.kaggle.com/c/bike-sharing-demand">Bike Sharing Demand</a> dataset that was introduced in the previous chapter. Recall that your task is to predict the bike rental demand using historical weather data from the Capital Bikeshare program in Washington, D.C.. For this purpose, you'll be using a gradient boosting regressor.</p>
+<p>As a first step, you'll start by instantiating a gradient boosting regressor which you will train in the next exercise.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Preprocess</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bike</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./datasets/bikes.csv'</span><span class="p">)</span>
+<span class="n">bike</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>hr</th>
+      <th>holiday</th>
+      <th>workingday</th>
+      <th>temp</th>
+      <th>hum</th>
+      <th>windspeed</th>
+      <th>cnt</th>
+      <th>instant</th>
+      <th>mnth</th>
+      <th>yr</th>
+      <th>Clear to partly cloudy</th>
+      <th>Light Precipitation</th>
+      <th>Misty</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.76</td>
+      <td>0.66</td>
+      <td>0.0000</td>
+      <td>149</td>
+      <td>13004</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.74</td>
+      <td>0.70</td>
+      <td>0.1343</td>
+      <td>93</td>
+      <td>13005</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.72</td>
+      <td>0.74</td>
+      <td>0.0896</td>
+      <td>90</td>
+      <td>13006</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.72</td>
+      <td>0.84</td>
+      <td>0.1343</td>
+      <td>33</td>
+      <td>13007</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.70</td>
+      <td>0.79</td>
+      <td>0.1940</td>
+      <td>4</td>
+      <td>13008</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">bike</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'cnt'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">bike</span><span class="p">[</span><span class="s1">'cnt'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">GradientBoostingRegressor</span>
+
+<span class="c1"># Instantiate gb</span>
+<span class="n">gb</span> <span class="o">=</span> <span class="n">GradientBoostingRegressor</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_estimators</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Train-the-GB-regressor">
+<a class="anchor" href="#Train-the-GB-regressor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Train the GB regressor<a class="anchor-link" href="#Train-the-GB-regressor"> </a>
+</h3>
+<p>You'll now train the gradient boosting regressor <code>gb</code> that you instantiated in the previous exercise and predict test set labels.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fit gb to the training set</span>
+<span class="n">gb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Predict test set labels</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">gb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-GB-regressor">
+<a class="anchor" href="#Evaluate-the-GB-regressor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the GB regressor<a class="anchor-link" href="#Evaluate-the-GB-regressor"> </a>
+</h3>
+<p>Now that the test set predictions are available, you can use them to evaluate the test set Root Mean Squared Error (RMSE) of <code>gb</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span> <span class="k">as</span> <span class="n">MSE</span>
+
+<span class="c1"># Compute MSE</span>
+<span class="n">mse_test</span> <span class="o">=</span> <span class="n">MSE</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+<span class="c1"># Compute RMSE</span>
+<span class="n">rmse_test</span> <span class="o">=</span> <span class="n">mse_test</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+<span class="c1"># Print RMSE</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Test set RMSE of gb: </span><span class="si">{:.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rmse_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Test set RMSE of gb: 49.537
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Stochastic-Gradient-Boosting-(SGB)">
+<a class="anchor" href="#Stochastic-Gradient-Boosting-(SGB)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stochastic Gradient Boosting (SGB)<a class="anchor-link" href="#Stochastic-Gradient-Boosting-(SGB)"> </a>
+</h2>
+<ul>
+<li>Gradient Boosting: Cons &amp; Pros<ul>
+<li>GB involves an exhaustive search procedure</li>
+<li>Each CART is trained to find the best split points and features.</li>
+<li>May lead to CARTs using the same split points and maybe the same features.</li>
+</ul>
+</li>
+<li>Stochastic Gradient Boosting<ul>
+<li>Each tree is trained on a random subset of rows of the training data.</li>
+<li>The sampled instances (40%-80% of the training set) are sampled without replacement.</li>
+<li>Features are sampled (without replacement) when choosing split points</li>
+<li>Result: further ensemble diversity.</li>
+<li>Effect: adding further variance to the ensemble of trees.</li>
+</ul>
+</li>
+<li>Stochastic Gradient Boosting: Training
+<img src="/chans_jupyter/images/copied_from_nb/image/sgb_train.png" alt="sgb_train"><ul>
+<li>Residual errors are multiplied by the learning rate $\eta$ and are fed to the next tree in ensemble.</li>
+<li>Process is repeated sequentially until all the trees in the ensemble are trained.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Regression-with-SGB">
+<a class="anchor" href="#Regression-with-SGB" aria-hidden="true"><span class="octicon octicon-link"></span></a>Regression with SGB<a class="anchor-link" href="#Regression-with-SGB"> </a>
+</h3>
+<p>As in the exercises from the previous lesson, you'll be working with the <a href="https://www.kaggle.com/c/bike-sharing-demand">Bike Sharing Demand</a> dataset. In the following set of exercises, you'll solve this bike count regression problem using stochastic gradient boosting.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">GradientBoostingRegressor</span>
+
+<span class="c1"># Instantiate sgbr</span>
+<span class="n">sgbr</span> <span class="o">=</span> <span class="n">GradientBoostingRegressor</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_estimators</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> 
+                                 <span class="n">max_features</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Train-the-SGB-regressor">
+<a class="anchor" href="#Train-the-SGB-regressor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Train the SGB regressor<a class="anchor-link" href="#Train-the-SGB-regressor"> </a>
+</h3>
+<p>In this exercise, you'll train the SGBR <code>sgbr</code> instantiated in the previous exercise and predict the test set labels.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fit sgbr to the training set</span>
+<span class="n">sgbr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Predict test set labels</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">sgbr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-SGB-regressor">
+<a class="anchor" href="#Evaluate-the-SGB-regressor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the SGB regressor<a class="anchor-link" href="#Evaluate-the-SGB-regressor"> </a>
+</h3>
+<p>You have prepared the ground to determine the test set RMSE of <code>sgbr</code> which you shall evaluate in this exercise.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span> <span class="k">as</span> <span class="n">MSE</span>
+
+<span class="c1"># Compute test set MSE</span>
+<span class="n">mse_test</span> <span class="o">=</span> <span class="n">MSE</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+<span class="c1"># Compute test set RMSE</span>
+<span class="n">rmse_test</span> <span class="o">=</span> <span class="n">mse_test</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+<span class="c1"># Print rmse_test</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Test set RMSE of sgbr: </span><span class="si">{:.3f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rmse_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Test set RMSE of sgbr: 47.260
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine_learning/2020/06/04/02-Boosting.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

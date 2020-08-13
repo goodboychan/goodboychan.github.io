@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Model Tuning | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Model Tuning" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Machine Learning with Tree-Based Models in Python”, via datacamp" />
+<meta property="og:description" content="A Summary of lecture “Machine Learning with Tree-Based Models in Python”, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/03-Model-Tuning.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/03-Model-Tuning.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-04T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Model Tuning","description":"A Summary of lecture “Machine Learning with Tree-Based Models in Python”, via datacamp","datePublished":"2020-06-04T00:00:00-05:00","dateModified":"2020-06-04T00:00:00-05:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/03-Model-Tuning.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/03-Model-Tuning.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Model Tuning | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Model Tuning" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Machine Learning with Tree-Based Models in Python”, via datacamp" />
+<meta property="og:description" content="A Summary of lecture “Machine Learning with Tree-Based Models in Python”, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/03-Model-Tuning.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/03-Model-Tuning.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-04T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Model Tuning","description":"A Summary of lecture “Machine Learning with Tree-Based Models in Python”, via datacamp","datePublished":"2020-06-04T00:00:00-05:00","dateModified":"2020-06-04T00:00:00-05:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/03-Model-Tuning.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/06/04/03-Model-Tuning.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Model Tuning</h1><p class="page-description">A Summary of lecture "Machine Learning with Tree-Based Models in Python", via datacamp</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-06-04T00:00:00-05:00" itemprop="datePublished">
+        Jun 4, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-06-04-03-Model-Tuning.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-06-04-03-Model-Tuning.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-06-04-03-Model-Tuning.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Tuning-a-CART's-Hyperparameters">Tuning a CART&#39;s Hyperparameters </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Tree-hyperparameters">Tree hyperparameters </a></li>
+<li class="toc-entry toc-h3"><a href="#Set-the-tree's-hyperparameter-grid">Set the tree&#39;s hyperparameter grid </a></li>
+<li class="toc-entry toc-h3"><a href="#Search-for-the-optimal-tree">Search for the optimal tree </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-optimal-tree">Evaluate the optimal tree </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Tuning-a-RF's-Hyperparameters">Tuning a RF&#39;s Hyperparameters </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Random-forests-hyperparameters">Random forests hyperparameters </a></li>
+<li class="toc-entry toc-h3"><a href="#Set-the-hyperparameter-grid-of-RF">Set the hyperparameter grid of RF </a></li>
+<li class="toc-entry toc-h3"><a href="#Search-for-the-optimal-forest">Search for the optimal forest </a></li>
+<li class="toc-entry toc-h3"><a href="#Evaluate-the-optimal-forest">Evaluate the optimal forest </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-06-04-03-Model-Tuning.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tuning-a-CART's-Hyperparameters">
+<a class="anchor" href="#Tuning-a-CART's-Hyperparameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tuning a CART's Hyperparameters<a class="anchor-link" href="#Tuning-a-CART's-Hyperparameters"> </a>
+</h2>
+<ul>
+<li>Hyperparameters<ul>
+<li>Machine learning model:<ul>
+<li>parameters: learned from data<ul>
+<li>CART example: split-point of a node, split-feature of a node, ...</li>
+</ul>
+</li>
+<li>hyperparameters: not learned from data, set prior to training<ul>
+<li>CART example: <code>max_depth</code>, <code>min_samples_leaf</code>, splitting criterion, ...</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>What is hyperparameter tuning?<ul>
+<li>Problem: search for a set of optimal hyperparameters for a learning algorithm.</li>
+<li>Solution: find a set of optimal hyperparameters that results in an optimal model.</li>
+<li>Optimal model: yields an optimal score</li>
+<li>Score : defaults to accuracy (classification) and $R^2$ (regression)</li>
+<li>Cross-validation is used to estimate the generalization performance.</li>
+</ul>
+</li>
+<li>Approaches to hyperparameter tuning<ul>
+<li>Grid Search</li>
+<li>Random Search</li>
+<li>Bayesian Optimization</li>
+<li>Genetic Algorithm</li>
+<li>...</li>
+</ul>
+</li>
+<li>Grid search cross validation<ul>
+<li>Manually set a grid of discrete hyperparameter values.</li>
+<li>Set a metric for scoring model performance.</li>
+<li>Search exhaustively through the grid.</li>
+<li>For each set of hyperparameters, evaluate each model's CV score</li>
+<li>The optimal hyperparameters are those of the model achieving the best CV score.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Tree-hyperparameters">
+<a class="anchor" href="#Tree-hyperparameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tree hyperparameters<a class="anchor-link" href="#Tree-hyperparameters"> </a>
+</h3>
+<p>In the following exercises you'll revisit the <a href="https://www.kaggle.com/uciml/indian-liver-patient-records">Indian Liver Patient</a> dataset which was introduced in a previous chapter.</p>
+<p>Your task is to tune the hyperparameters of a classification tree. Given that this dataset is imbalanced, you'll be using the ROC AUC score as a metric instead of accuracy.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Preprocess</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">indian</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./datasets/indian_liver_patient_preprocessed.csv'</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">indian</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Age_std</th>
+      <th>Total_Bilirubin_std</th>
+      <th>Direct_Bilirubin_std</th>
+      <th>Alkaline_Phosphotase_std</th>
+      <th>Alamine_Aminotransferase_std</th>
+      <th>Aspartate_Aminotransferase_std</th>
+      <th>Total_Protiens_std</th>
+      <th>Albumin_std</th>
+      <th>Albumin_and_Globulin_Ratio_std</th>
+      <th>Is_male_std</th>
+      <th>Liver_disease</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.247403</td>
+      <td>-0.420320</td>
+      <td>-0.495414</td>
+      <td>-0.428870</td>
+      <td>-0.355832</td>
+      <td>-0.319111</td>
+      <td>0.293722</td>
+      <td>0.203446</td>
+      <td>-0.147390</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.062306</td>
+      <td>1.218936</td>
+      <td>1.423518</td>
+      <td>1.675083</td>
+      <td>-0.093573</td>
+      <td>-0.035962</td>
+      <td>0.939655</td>
+      <td>0.077462</td>
+      <td>-0.648461</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.062306</td>
+      <td>0.640375</td>
+      <td>0.926017</td>
+      <td>0.816243</td>
+      <td>-0.115428</td>
+      <td>-0.146459</td>
+      <td>0.478274</td>
+      <td>0.203446</td>
+      <td>-0.178707</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.815511</td>
+      <td>-0.372106</td>
+      <td>-0.388807</td>
+      <td>-0.449416</td>
+      <td>-0.366760</td>
+      <td>-0.312205</td>
+      <td>0.293722</td>
+      <td>0.329431</td>
+      <td>0.165780</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.679294</td>
+      <td>0.093956</td>
+      <td>0.179766</td>
+      <td>-0.395996</td>
+      <td>-0.295731</td>
+      <td>-0.177537</td>
+      <td>0.755102</td>
+      <td>-0.930414</td>
+      <td>-1.713237</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">indian</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'Liver_disease'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">indian</span><span class="p">[</span><span class="s1">'Liver_disease'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
+
+<span class="c1"># Instantiate dt</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
+
+<span class="c1"># Check default hyperparameter</span>
+<span class="n">dt</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'ccp_alpha': 0.0,
+ 'class_weight': None,
+ 'criterion': 'gini',
+ 'max_depth': None,
+ 'max_features': None,
+ 'max_leaf_nodes': None,
+ 'min_impurity_decrease': 0.0,
+ 'min_impurity_split': None,
+ 'min_samples_leaf': 1,
+ 'min_samples_split': 2,
+ 'min_weight_fraction_leaf': 0.0,
+ 'presort': 'deprecated',
+ 'random_state': None,
+ 'splitter': 'best'}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Set-the-tree's-hyperparameter-grid">
+<a class="anchor" href="#Set-the-tree's-hyperparameter-grid" aria-hidden="true"><span class="octicon octicon-link"></span></a>Set the tree's hyperparameter grid<a class="anchor-link" href="#Set-the-tree's-hyperparameter-grid"> </a>
+</h3>
+<p>In this exercise, you'll manually set the grid of hyperparameters that will be used to tune the classification tree <code>dt</code> and find the optimal classifier in the next exercise.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define params_dt</span>
+<span class="n">params_dt</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'max_depth'</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="s1">'min_samples_leaf'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Search-for-the-optimal-tree">
+<a class="anchor" href="#Search-for-the-optimal-tree" aria-hidden="true"><span class="octicon octicon-link"></span></a>Search for the optimal tree<a class="anchor-link" href="#Search-for-the-optimal-tree"> </a>
+</h3>
+<p>In this exercise, you'll perform grid search using 5-fold cross validation to find <code>dt</code>'s optimal hyperparameters. Note that because grid search is an exhaustive process, it may take a lot time to train the model. Here you'll only be instantiating the <code>GridSearchCV</code> object without fitting it to the training set. As discussed in the video, you can train such an object similar to any scikit-learn estimator by using the <code>.fit()</code> method:</p>
+<div class="highlight"><pre><span></span><span class="n">grid_object</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="c1"># Instantiate grid_dt</span>
+<span class="n">grid_dt</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">params_dt</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">'roc_auc'</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">grid_dt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>GridSearchCV(cv=5, error_score=nan,
+             estimator=DecisionTreeClassifier(ccp_alpha=0.0, class_weight=None,
+                                              criterion='gini', max_depth=None,
+                                              max_features=None,
+                                              max_leaf_nodes=None,
+                                              min_impurity_decrease=0.0,
+                                              min_impurity_split=None,
+                                              min_samples_leaf=1,
+                                              min_samples_split=2,
+                                              min_weight_fraction_leaf=0.0,
+                                              presort='deprecated',
+                                              random_state=None,
+                                              splitter='best'),
+             iid='deprecated', n_jobs=-1,
+             param_grid={'max_depth': [2, 3, 4],
+                         'min_samples_leaf': [0.12, 0.14, 0.16, 0.18]},
+             pre_dispatch='2*n_jobs', refit=True, return_train_score=False,
+             scoring='roc_auc', verbose=0)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-optimal-tree">
+<a class="anchor" href="#Evaluate-the-optimal-tree" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the optimal tree<a class="anchor-link" href="#Evaluate-the-optimal-tree"> </a>
+</h3>
+<p>In this exercise, you'll evaluate the test set ROC AUC score of grid_dt's optimal model.</p>
+<p>In order to do so, you will first determine the probability of obtaining the positive label for each test set observation. You can use the method <code>predict_proba()</code> of an sklearn classifier to compute a 2D array containing the probabilities of the negative and positive class-labels respectively along columns.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+
+<span class="c1"># Extract the best estimator</span>
+<span class="n">best_model</span> <span class="o">=</span> <span class="n">grid_dt</span><span class="o">.</span><span class="n">best_estimator_</span>
+
+<span class="c1"># Predict the test set probabilities of the positive class</span>
+<span class="n">y_pred_proba</span> <span class="o">=</span> <span class="n">best_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># Compute test_roc_auc</span>
+<span class="n">test_roc_auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_proba</span><span class="p">)</span>
+
+<span class="c1"># Print test_roc_auc</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Test set ROC AUC score: </span><span class="si">{:.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_roc_auc</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Test set ROC AUC score: 0.681
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tuning-a-RF's-Hyperparameters">
+<a class="anchor" href="#Tuning-a-RF's-Hyperparameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tuning a RF's Hyperparameters<a class="anchor-link" href="#Tuning-a-RF's-Hyperparameters"> </a>
+</h2>
+<ul>
+<li>Random Forest Hyperparameters<ul>
+<li>CART hyperparameters</li>
+<li>number of estimators</li>
+<li>Whether it uses bootstrapping or not</li>
+<li>...</li>
+</ul>
+</li>
+<li>Tuning is expensive<ul>
+<li>Hyperparameter tuning:<ul>
+<li>Computationally expensive,</li>
+<li>sometimes leads to very slight improvement</li>
+</ul>
+</li>
+<li>Weight the impact of tuning on the whole project</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Random-forests-hyperparameters">
+<a class="anchor" href="#Random-forests-hyperparameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Random forests hyperparameters<a class="anchor-link" href="#Random-forests-hyperparameters"> </a>
+</h3>
+<p>In the following exercises, you'll be revisiting the <a href="https://www.kaggle.com/c/bike-sharing-demand">Bike Sharing Demand</a> dataset that was introduced in a previous chapter. Recall that your task is to predict the bike rental demand using historical weather data from the Capital Bikeshare program in Washington, D.C.. For this purpose, you'll be tuning the hyperparameters of a Random Forests regressor.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>Preprocess</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bike</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./datasets/bikes.csv'</span><span class="p">)</span>
+<span class="n">bike</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>hr</th>
+      <th>holiday</th>
+      <th>workingday</th>
+      <th>temp</th>
+      <th>hum</th>
+      <th>windspeed</th>
+      <th>cnt</th>
+      <th>instant</th>
+      <th>mnth</th>
+      <th>yr</th>
+      <th>Clear to partly cloudy</th>
+      <th>Light Precipitation</th>
+      <th>Misty</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.76</td>
+      <td>0.66</td>
+      <td>0.0000</td>
+      <td>149</td>
+      <td>13004</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.74</td>
+      <td>0.70</td>
+      <td>0.1343</td>
+      <td>93</td>
+      <td>13005</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.72</td>
+      <td>0.74</td>
+      <td>0.0896</td>
+      <td>90</td>
+      <td>13006</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.72</td>
+      <td>0.84</td>
+      <td>0.1343</td>
+      <td>33</td>
+      <td>13007</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.70</td>
+      <td>0.79</td>
+      <td>0.1940</td>
+      <td>4</td>
+      <td>13008</td>
+      <td>7</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">bike</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'cnt'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">bike</span><span class="p">[</span><span class="s1">'cnt'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="c1"># Instantiate rf</span>
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">()</span>
+
+<span class="c1"># Get hyperparameters</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{'bootstrap': True,
+ 'ccp_alpha': 0.0,
+ 'criterion': 'mse',
+ 'max_depth': None,
+ 'max_features': 'auto',
+ 'max_leaf_nodes': None,
+ 'max_samples': None,
+ 'min_impurity_decrease': 0.0,
+ 'min_impurity_split': None,
+ 'min_samples_leaf': 1,
+ 'min_samples_split': 2,
+ 'min_weight_fraction_leaf': 0.0,
+ 'n_estimators': 100,
+ 'n_jobs': None,
+ 'oob_score': False,
+ 'random_state': None,
+ 'verbose': 0,
+ 'warm_start': False}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Set-the-hyperparameter-grid-of-RF">
+<a class="anchor" href="#Set-the-hyperparameter-grid-of-RF" aria-hidden="true"><span class="octicon octicon-link"></span></a>Set the hyperparameter grid of RF<a class="anchor-link" href="#Set-the-hyperparameter-grid-of-RF"> </a>
+</h3>
+<p>In this exercise, you'll manually set the grid of hyperparameters that will be used to tune <code>rf</code>'s hyperparameters and find the optimal regressor. For this purpose, you will be constructing a grid of hyperparameters and tune the number of estimators, the maximum number of features used when splitting each node and the minimum number of samples (or fraction) per leaf.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define the dicrionary 'params_rf'</span>
+<span class="n">params_rf</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'n_estimators'</span><span class="p">:</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span>
+    <span class="s1">'max_features'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'log2'</span><span class="p">,</span> <span class="s1">'auto'</span><span class="p">,</span> <span class="s1">'sqrt'</span><span class="p">],</span>
+    <span class="s1">'min_samples_leaf'</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Search-for-the-optimal-forest">
+<a class="anchor" href="#Search-for-the-optimal-forest" aria-hidden="true"><span class="octicon octicon-link"></span></a>Search for the optimal forest<a class="anchor-link" href="#Search-for-the-optimal-forest"> </a>
+</h3>
+<p>In this exercise, you'll perform grid search using 3-fold cross validation to find <code>rf</code>'s optimal hyperparameters. To evaluate each model in the grid, you'll be using the negative mean squared error metric.</p>
+<p>Note that because grid search is an exhaustive search process, it may take a lot time to train the model. Here you'll only be instantiating the <code>GridSearchCV</code> object without fitting it to the training set. As discussed in the video, you can train such an object similar to any scikit-learn estimator by using the <code>.fit()</code> method:</p>
+<div class="highlight"><pre><span></span><span class="n">grid_object</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="c1"># Instantiate grid_rf</span>
+<span class="n">grid_rf</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">rf</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">params_rf</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">'neg_mean_squared_error'</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                      <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># fit model</span>
+<span class="n">grid_rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting 3 folds for each of 27 candidates, totalling 81 fits
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=-1)]: Using backend LokyBackend with 24 concurrent workers.
+[Parallel(n_jobs=-1)]: Done   2 tasks      | elapsed:    1.6s
+[Parallel(n_jobs=-1)]: Done  81 out of  81 | elapsed:    3.7s finished
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>GridSearchCV(cv=3, error_score=nan,
+             estimator=RandomForestRegressor(bootstrap=True, ccp_alpha=0.0,
+                                             criterion='mse', max_depth=None,
+                                             max_features='auto',
+                                             max_leaf_nodes=None,
+                                             max_samples=None,
+                                             min_impurity_decrease=0.0,
+                                             min_impurity_split=None,
+                                             min_samples_leaf=1,
+                                             min_samples_split=2,
+                                             min_weight_fraction_leaf=0.0,
+                                             n_estimators=100, n_jobs=None,
+                                             oob_score=False, random_state=None,
+                                             verbose=0, warm_start=False),
+             iid='deprecated', n_jobs=-1,
+             param_grid={'max_features': ['log2', 'auto', 'sqrt'],
+                         'min_samples_leaf': [2, 10, 30],
+                         'n_estimators': [100, 350, 500]},
+             pre_dispatch='2*n_jobs', refit=True, return_train_score=False,
+             scoring='neg_mean_squared_error', verbose=1)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluate-the-optimal-forest">
+<a class="anchor" href="#Evaluate-the-optimal-forest" aria-hidden="true"><span class="octicon octicon-link"></span></a>Evaluate the optimal forest<a class="anchor-link" href="#Evaluate-the-optimal-forest"> </a>
+</h3>
+<p>In this last exercise of the course, you'll evaluate the test set RMSE of <code>grid_rf</code>'s optimal model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span> <span class="k">as</span> <span class="n">MSE</span>
+
+<span class="c1"># Extract the best estimator</span>
+<span class="n">best_model</span> <span class="o">=</span> <span class="n">grid_rf</span><span class="o">.</span><span class="n">best_estimator_</span>
+
+<span class="c1"># Predict test set labels</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">best_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Compute rmse_test</span>
+<span class="n">rmse_test</span> <span class="o">=</span> <span class="n">MSE</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+<span class="c1"># Print rmse_test</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Test RMSE of best model: </span><span class="si">{:.3f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rmse_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Test RMSE of best model: 54.358
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine_learning/2020/06/04/03-Model-Tuning.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

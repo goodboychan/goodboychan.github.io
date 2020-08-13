@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Analyzing the effect of weather on policing | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Analyzing the effect of weather on policing" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Analyzing Police Activity with pandas, via datacamp" />
+<meta property="og:description" content="A Summary of lecture “Analyzing Police Activity with pandas, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/data_science/2020/05/26/01-Analyzing-the-effect-of-weather-on-policing.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/data_science/2020/05/26/01-Analyzing-the-effect-of-weather-on-policing.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/tmin-boxplot.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-26T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Analyzing the effect of weather on policing","description":"A Summary of lecture “Analyzing Police Activity with pandas, via datacamp","datePublished":"2020-05-26T00:00:00-05:00","dateModified":"2020-05-26T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/tmin-boxplot.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/data_science/2020/05/26/01-Analyzing-the-effect-of-weather-on-policing.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/data_science/2020/05/26/01-Analyzing-the-effect-of-weather-on-policing.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Analyzing the effect of weather on policing | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Analyzing the effect of weather on policing" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Summary of lecture “Analyzing Police Activity with pandas, via datacamp" />
+<meta property="og:description" content="A Summary of lecture “Analyzing Police Activity with pandas, via datacamp" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/data_science/2020/05/26/01-Analyzing-the-effect-of-weather-on-policing.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/data_science/2020/05/26/01-Analyzing-the-effect-of-weather-on-policing.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/tmin-boxplot.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-26T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Analyzing the effect of weather on policing","description":"A Summary of lecture “Analyzing Police Activity with pandas, via datacamp","datePublished":"2020-05-26T00:00:00-05:00","dateModified":"2020-05-26T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/tmin-boxplot.png","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/data_science/2020/05/26/01-Analyzing-the-effect-of-weather-on-policing.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/data_science/2020/05/26/01-Analyzing-the-effect-of-weather-on-policing.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Analyzing the effect of weather on policing</h1><p class="page-description">A Summary of lecture "Analyzing Police Activity with pandas, via datacamp</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-05-26T00:00:00-05:00" itemprop="datePublished">
+        May 26, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Data_Science">Data_Science</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-05-26-01-Analyzing-the-effect-of-weather-on-policing.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-05-26-01-Analyzing-the-effect-of-weather-on-policing.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-05-26-01-Analyzing-the-effect-of-weather-on-policing.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Exploring-the-weather-dataset">Exploring the weather dataset </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Plotting-the-temperature">Plotting the temperature </a></li>
+<li class="toc-entry toc-h3"><a href="#Plotting-the-temperature-difference">Plotting the temperature difference </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Categorizing-the-weather">Categorizing the weather </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Counting-bad-weather-conditions">Counting bad weather conditions </a></li>
+<li class="toc-entry toc-h3"><a href="#Rating-the-weather-conditions">Rating the weather conditions </a></li>
+<li class="toc-entry toc-h3"><a href="#Changing-the-data-type-to-category">Changing the data type to category </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Merging-datasets">Merging datasets </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Preparing-the-DataFrames">Preparing the DataFrames </a></li>
+<li class="toc-entry toc-h3"><a href="#Merging-the-DataFrames">Merging the DataFrames </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Does-weather-affect-the-arrest-rate?">Does weather affect the arrest rate? </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Comparing-arrest-rates-by-weather-rating">Comparing arrest rates by weather rating </a></li>
+<li class="toc-entry toc-h3"><a href="#Selecting-from-a-multi-indexed-Series">Selecting from a multi-indexed Series </a></li>
+<li class="toc-entry toc-h3"><a href="#Reshaping-the-arrest-rate-data">Reshaping the arrest rate data </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-05-26-01-Analyzing-the-effect-of-weather-on-policing.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Exploring-the-weather-dataset">
+<a class="anchor" href="#Exploring-the-weather-dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exploring the weather dataset<a class="anchor-link" href="#Exploring-the-weather-dataset"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Plotting-the-temperature">
+<a class="anchor" href="#Plotting-the-temperature" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plotting the temperature<a class="anchor-link" href="#Plotting-the-temperature"> </a>
+</h3>
+<p>In this exercise, you'll examine the temperature columns from the weather dataset to assess whether the data seems trustworthy. First you'll print the summary statistics, and then you'll visualize the data using a box plot.</p>
+<p>When deciding whether the values seem reasonable, keep in mind that the temperature is measured in degrees Fahrenheit, not Celsius!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Read 'weather.csv' into a DataFrame named 'weather'</span>
+<span class="n">weather</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/weather.csv'</span><span class="p">)</span>
+
+<span class="c1"># Describe the temperature columns</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">weather</span><span class="p">[[</span><span class="s1">'TMIN'</span><span class="p">,</span> <span class="s1">'TAVG'</span><span class="p">,</span> <span class="s1">'TMAX'</span><span class="p">]]</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+
+<span class="c1"># Create a box plot of the temperature columns</span>
+<span class="n">weather</span><span class="p">[[</span><span class="s1">'TMIN'</span><span class="p">,</span> <span class="s1">'TAVG'</span><span class="p">,</span> <span class="s1">'TMAX'</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">'box'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'../images/tmin-boxplot.png'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>              TMIN         TAVG         TMAX
+count  4017.000000  1217.000000  4017.000000
+mean     43.484441    52.493016    61.268608
+std      17.020298    17.830714    18.199517
+min      -5.000000     6.000000    15.000000
+25%      30.000000    39.000000    47.000000
+50%      44.000000    54.000000    62.000000
+75%      58.000000    68.000000    77.000000
+max      77.000000    86.000000   102.000000
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Plotting-the-temperature-difference">
+<a class="anchor" href="#Plotting-the-temperature-difference" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plotting the temperature difference<a class="anchor-link" href="#Plotting-the-temperature-difference"> </a>
+</h3>
+<p>In this exercise, you'll continue to assess whether the dataset seems trustworthy by plotting the difference between the maximum and minimum temperatures.</p>
+<p>What do you notice about the resulting histogram? Does it match your expectations, or do you see anything unusual?</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a 'TDIFF' column that represents temperature difference</span>
+<span class="n">weather</span><span class="p">[</span><span class="s1">'TDIFF'</span><span class="p">]</span> <span class="o">=</span> <span class="n">weather</span><span class="o">.</span><span class="n">TMAX</span> <span class="o">-</span> <span class="n">weather</span><span class="o">.</span><span class="n">TMIN</span>
+
+<span class="c1"># Describe the 'TDIFF' column</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">weather</span><span class="o">.</span><span class="n">TDIFF</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+
+<span class="c1"># Create a histogram with 20 bins to visualize 'TDIFF'</span>
+<span class="n">weather</span><span class="o">.</span><span class="n">TDIFF</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">'hist'</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>count    4017.000000
+mean       17.784167
+std         6.350720
+min         2.000000
+25%        14.000000
+50%        18.000000
+75%        22.000000
+max        43.000000
+Name: TDIFF, dtype: float64
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f454980add0&gt;</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Categorizing-the-weather">
+<a class="anchor" href="#Categorizing-the-weather" aria-hidden="true"><span class="octicon octicon-link"></span></a>Categorizing the weather<a class="anchor-link" href="#Categorizing-the-weather"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Counting-bad-weather-conditions">
+<a class="anchor" href="#Counting-bad-weather-conditions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Counting bad weather conditions<a class="anchor-link" href="#Counting-bad-weather-conditions"> </a>
+</h3>
+<p>The weather DataFrame contains 20 columns that start with 'WT', each of which represents a bad weather condition. For example:</p>
+<ul>
+<li>WT05 indicates "Hail"</li>
+<li>WT11 indicates "High or damaging winds"</li>
+<li>WT17 indicates "Freezing rain"</li>
+</ul>
+<p>For every row in the dataset, each WT column contains either a 1 (meaning the condition was present that day) or NaN (meaning the condition was not present).</p>
+<p>In this exercise, you'll quantify "how bad" the weather was each day by counting the number of 1 values in each row.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Copy 'WT01' through 'WT22' to a new DataFrame</span>
+<span class="n">WT</span> <span class="o">=</span> <span class="n">weather</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">'WT01'</span><span class="p">:</span><span class="s1">'WT22'</span><span class="p">]</span>
+
+<span class="c1"># Calculate the sum of each row in 'WT'</span>
+<span class="n">weather</span><span class="p">[</span><span class="s1">'bad_conditions'</span><span class="p">]</span> <span class="o">=</span> <span class="n">WT</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'columns'</span><span class="p">)</span>
+
+<span class="c1"># Replace missing values in 'bad_conditions' with 0</span>
+<span class="n">weather</span><span class="p">[</span><span class="s1">'bad_conditions'</span><span class="p">]</span> <span class="o">=</span> <span class="n">weather</span><span class="o">.</span><span class="n">bad_conditions</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'int'</span><span class="p">)</span>
+
+<span class="c1"># Create a histogram to visualist 'bad_conditions'</span>
+<span class="n">weather</span><span class="p">[</span><span class="s1">'bad_conditions'</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">'hist'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f45455a6f50&gt;</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Rating-the-weather-conditions">
+<a class="anchor" href="#Rating-the-weather-conditions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rating the weather conditions<a class="anchor-link" href="#Rating-the-weather-conditions"> </a>
+</h3>
+<p>In the previous exercise, you counted the number of bad weather conditions each day. In this exercise, you'll use the counts to create a rating system for the weather.</p>
+<p>The counts range from 0 to 9, and should be converted to ratings as follows:</p>
+<ul>
+<li>Convert 0 to 'good'</li>
+<li>Convert 1 through 4 to 'bad'</li>
+<li>Convert 5 through 9 to 'worse'</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Count the unique values in 'bad_conditions' and sort the index</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">weather</span><span class="o">.</span><span class="n">bad_conditions</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">())</span>
+
+<span class="c1"># Create a dictionary that maps integers to strings</span>
+<span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">'good'</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s1">'bad'</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s1">'bad'</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s1">'bad'</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s1">'bad'</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span><span class="s1">'worse'</span><span class="p">,</span> 
+           <span class="mi">6</span><span class="p">:</span><span class="s1">'worse'</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span><span class="s1">'worse'</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span><span class="s1">'worse'</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span><span class="s1">'worse'</span><span class="p">}</span>
+
+<span class="c1"># Convert the 'bad_conditions' integers to strings using the 'mapping'</span>
+<span class="n">weather</span><span class="p">[</span><span class="s1">'rating'</span><span class="p">]</span> <span class="o">=</span> <span class="n">weather</span><span class="o">.</span><span class="n">bad_conditions</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
+
+<span class="c1"># Count the unique values in 'rating'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">weather</span><span class="o">.</span><span class="n">rating</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0    1749
+1     613
+2     367
+3     380
+4     476
+5     282
+6     101
+7      41
+8       4
+9       4
+Name: bad_conditions, dtype: int64
+bad      1836
+good     1749
+worse     432
+Name: rating, dtype: int64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Changing-the-data-type-to-category">
+<a class="anchor" href="#Changing-the-data-type-to-category" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changing the data type to category<a class="anchor-link" href="#Changing-the-data-type-to-category"> </a>
+</h3>
+<p>Since the rating column only has a few possible values, you'll change its data type to category in order to store the data more efficiently. You'll also specify a logical order for the categories, which will be useful for future exercises.</p>
+<p><strong>NOTE</strong> : in pandas 1.0.3, ordered categories must be defined with <code>pd.api.types.CategoricalDtype</code></p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a list of weather ratings in logical order</span>
+<span class="n">cats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">CategoricalDtype</span><span class="p">(</span><span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s1">'good'</span><span class="p">,</span> <span class="s1">'bad'</span><span class="p">,</span> <span class="s1">'worse'</span><span class="p">],</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Change the data type of 'rating' to category</span>
+<span class="n">weather</span><span class="p">[</span><span class="s1">'rating'</span><span class="p">]</span> <span class="o">=</span> <span class="n">weather</span><span class="o">.</span><span class="n">rating</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">cats</span><span class="p">)</span>
+
+<span class="c1"># Examine the head of 'rating'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">weather</span><span class="o">.</span><span class="n">rating</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0    bad
+1    bad
+2    bad
+3    bad
+4    bad
+Name: rating, dtype: category
+Categories (3, object): [good &lt; bad &lt; worse]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Merging-datasets">
+<a class="anchor" href="#Merging-datasets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Merging datasets<a class="anchor-link" href="#Merging-datasets"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preparing-the-DataFrames">
+<a class="anchor" href="#Preparing-the-DataFrames" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preparing the DataFrames<a class="anchor-link" href="#Preparing-the-DataFrames"> </a>
+</h3>
+<p>In this exercise, you'll prepare the traffic stop and weather rating DataFrames so that they're ready to be merged:</p>
+<ol>
+<li>With the ri DataFrame, you'll move the stop_datetime index to a column since the index will be lost during the merge.</li>
+<li>With the weather DataFrame, you'll select the DATE and rating columns and put them in a new DataFrame.</li>
+</ol>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ri</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/police.csv'</span><span class="p">)</span>
+
+<span class="n">combined</span> <span class="o">=</span> <span class="n">ri</span><span class="o">.</span><span class="n">stop_date</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">ri</span><span class="o">.</span><span class="n">stop_time</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">' '</span><span class="p">)</span>
+
+<span class="n">ri</span><span class="p">[</span><span class="s1">'stop_datetime'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
+<span class="n">ri</span><span class="p">[</span><span class="s1">'is_arrested'</span><span class="p">]</span> <span class="o">=</span> <span class="n">ri</span><span class="p">[</span><span class="s1">'is_arrested'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Reset the index of 'ri'</span>
+<span class="n">ri</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Examine the head of 'ri'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+
+<span class="c1"># Create a DataFrame from the 'DATE' and 'rating' columns</span>
+<span class="n">weather_rating</span> <span class="o">=</span> <span class="n">weather</span><span class="p">[[</span><span class="s1">'DATE'</span><span class="p">,</span> <span class="s1">'rating'</span><span class="p">]]</span>
+
+<span class="c1"># Examine the head of 'weather_rating'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">weather_rating</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>   index state   stop_date stop_time  county_name driver_gender driver_race  \
+0      0    RI  2005-01-04     12:55          NaN             M       White   
+1      1    RI  2005-01-23     23:15          NaN             M       White   
+2      2    RI  2005-02-17     04:15          NaN             M       White   
+3      3    RI  2005-02-20     17:15          NaN             M       White   
+4      4    RI  2005-02-24     01:20          NaN             F       White   
+
+                    violation_raw  violation  search_conducted search_type  \
+0  Equipment/Inspection Violation  Equipment             False         NaN   
+1                        Speeding   Speeding             False         NaN   
+2                        Speeding   Speeding             False         NaN   
+3                Call for Service      Other             False         NaN   
+4                        Speeding   Speeding             False         NaN   
+
+    stop_outcome  is_arrested stop_duration  drugs_related_stop district  \
+0       Citation        False      0-15 Min               False  Zone X4   
+1       Citation        False      0-15 Min               False  Zone K3   
+2       Citation        False      0-15 Min               False  Zone X4   
+3  Arrest Driver         True     16-30 Min               False  Zone X1   
+4       Citation        False      0-15 Min               False  Zone X3   
+
+        stop_datetime  
+0 2005-01-04 12:55:00  
+1 2005-01-23 23:15:00  
+2 2005-02-17 04:15:00  
+3 2005-02-20 17:15:00  
+4 2005-02-24 01:20:00  
+         DATE rating
+0  2005-01-01    bad
+1  2005-01-02    bad
+2  2005-01-03    bad
+3  2005-01-04    bad
+4  2005-01-05    bad
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Merging-the-DataFrames">
+<a class="anchor" href="#Merging-the-DataFrames" aria-hidden="true"><span class="octicon octicon-link"></span></a>Merging the DataFrames<a class="anchor-link" href="#Merging-the-DataFrames"> </a>
+</h3>
+<p>In this exercise, you'll merge the ri and weather_rating DataFrames into a new DataFrame, ri_weather.</p>
+<p>The DataFrames will be joined using the stop_date column from ri and the DATE column from weather_rating. Thankfully the date formatting matches exactly, which is not always the case!</p>
+<p>Once the merge is complete, you'll set stop_datetime as the index, which is the column you saved in the previous exercise.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Examine the shape of 'ri'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Merge 'ri' and 'weather_rating' using left join</span>
+<span class="n">ri_weather</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">ri</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">weather_rating</span><span class="p">,</span> 
+                      <span class="n">left_on</span><span class="o">=</span><span class="s1">'stop_date'</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">'DATE'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+
+<span class="c1"># Examine the shape of 'ri_weather'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri_weather</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Set 'stop_datetime' as the index of 'ri_weather'</span>
+<span class="n">ri_weather</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'stop_datetime'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(91741, 17)
+(91741, 19)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Does-weather-affect-the-arrest-rate?">
+<a class="anchor" href="#Does-weather-affect-the-arrest-rate?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Does weather affect the arrest rate?<a class="anchor-link" href="#Does-weather-affect-the-arrest-rate?"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Comparing-arrest-rates-by-weather-rating">
+<a class="anchor" href="#Comparing-arrest-rates-by-weather-rating" aria-hidden="true"><span class="octicon octicon-link"></span></a>Comparing arrest rates by weather rating<a class="anchor-link" href="#Comparing-arrest-rates-by-weather-rating"> </a>
+</h3>
+<p>Do police officers arrest drivers more often when the weather is bad? Find out below!</p>
+<ul>
+<li>First, you'll calculate the overall arrest rate.</li>
+<li>Then, you'll calculate the arrest rate for each of the weather ratings you previously assigned.</li>
+<li>Finally, you'll add violation type as a second factor in the analysis, to see if that accounts for any differences in the arrest rate.</li>
+</ul>
+<p>Since you previously defined a logical order for the weather categories, good &lt; bad &lt; worse, they will be sorted that way in the results.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ri_weather</span><span class="o">.</span><span class="n">is_arrested</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ri_weather</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'rating'</span><span class="p">)</span><span class="o">.</span><span class="n">is_arrested</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+<span class="c1"># Calculate the arrest rate for each 'violation' and 'rating'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri_weather</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'violation'</span><span class="p">,</span> <span class="s1">'rating'</span><span class="p">])</span><span class="o">.</span><span class="n">is_arrested</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.09025408486936048
+rating
+good     0.086842
+bad      0.090479
+worse    0.106527
+Name: is_arrested, dtype: float64
+violation            rating
+Equipment            good      0.058995
+                     bad       0.066311
+                     worse     0.097357
+Moving violation     good      0.056227
+                     bad       0.058050
+                     worse     0.065860
+Other                good      0.076923
+                     bad       0.087443
+                     worse     0.062893
+Registration/plates  good      0.081574
+                     bad       0.098160
+                     worse     0.115625
+Seat belt            good      0.028587
+                     bad       0.022493
+                     worse     0.000000
+Speeding             good      0.013404
+                     bad       0.013314
+                     worse     0.016886
+Name: is_arrested, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Selecting-from-a-multi-indexed-Series">
+<a class="anchor" href="#Selecting-from-a-multi-indexed-Series" aria-hidden="true"><span class="octicon octicon-link"></span></a>Selecting from a multi-indexed Series<a class="anchor-link" href="#Selecting-from-a-multi-indexed-Series"> </a>
+</h3>
+<p>The output of a single .groupby() operation on multiple columns is a Series with a MultiIndex. Working with this type of object is similar to working with a DataFrame:</p>
+<ul>
+<li>The outer index level is like the DataFrame rows.</li>
+<li>The inner index level is like the DataFrame columns.</li>
+</ul>
+<p>In this exercise, you'll practice accessing data from a multi-indexed Series using the .loc[] accessor.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Save the output of the groupby operation from the last exercise</span>
+<span class="n">arrest_rate</span> <span class="o">=</span> <span class="n">ri_weather</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'violation'</span><span class="p">,</span> <span class="s1">'rating'</span><span class="p">])</span><span class="o">.</span><span class="n">is_arrested</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="c1"># Print the 'arrest_rate' Series</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">arrest_rate</span><span class="p">)</span>
+
+<span class="c1"># Print the arrest rate for moving violations in bad weather</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">arrest_rate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'Moving violation'</span><span class="p">,</span> <span class="s1">'bad'</span><span class="p">])</span>
+
+<span class="c1"># Print the arrest rates for speeding violations in all three weather condtions</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">arrest_rate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'Speeding'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>violation            rating
+Equipment            good      0.058995
+                     bad       0.066311
+                     worse     0.097357
+Moving violation     good      0.056227
+                     bad       0.058050
+                     worse     0.065860
+Other                good      0.076923
+                     bad       0.087443
+                     worse     0.062893
+Registration/plates  good      0.081574
+                     bad       0.098160
+                     worse     0.115625
+Seat belt            good      0.028587
+                     bad       0.022493
+                     worse     0.000000
+Speeding             good      0.013404
+                     bad       0.013314
+                     worse     0.016886
+Name: is_arrested, dtype: float64
+0.05804964058049641
+rating
+good     0.013404
+bad      0.013314
+worse    0.016886
+Name: is_arrested, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Reshaping-the-arrest-rate-data">
+<a class="anchor" href="#Reshaping-the-arrest-rate-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reshaping the arrest rate data<a class="anchor-link" href="#Reshaping-the-arrest-rate-data"> </a>
+</h3>
+<p>In this exercise, you'll start by reshaping the arrest_rate Series into a DataFrame. This is a useful step when working with any multi-indexed Series, since it enables you to access the full range of DataFrame methods.</p>
+<p>Then, you'll create the exact same DataFrame using a pivot table. This is a great example of how pandas often gives you more than one way to reach the same result!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Unstack the 'arrest_rate' Series into a DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">arrest_rate</span><span class="o">.</span><span class="n">unstack</span><span class="p">())</span>
+
+<span class="c1"># Create the same DataFrame using a pivot table</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ri_weather</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'violation'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'rating'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'is_arrested'</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>rating                   good       bad     worse
+violation                                        
+Equipment            0.058995  0.066311  0.097357
+Moving violation     0.056227  0.058050  0.065860
+Other                0.076923  0.087443  0.062893
+Registration/plates  0.081574  0.098160  0.115625
+Seat belt            0.028587  0.022493  0.000000
+Speeding             0.013404  0.013314  0.016886
+rating                   good       bad     worse
+violation                                        
+Equipment            0.058995  0.066311  0.097357
+Moving violation     0.056227  0.058050  0.065860
+Other                0.076923  0.087443  0.062893
+Registration/plates  0.081574  0.098160  0.115625
+Seat belt            0.028587  0.022493  0.000000
+Speeding             0.013404  0.013314  0.016886
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/data_science/2020/05/26/01-Analyzing-the-effect-of-weather-on-policing.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

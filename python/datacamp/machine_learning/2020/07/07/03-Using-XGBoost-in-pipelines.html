@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Using XGBoost in pipelines | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Using XGBoost in pipelines" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Take your XGBoost skills to the next level by incorporating your models into two end-to-end machine learning pipelines. You’ll learn how to tune the most important XGBoost hyperparameters efficiently within a pipeline, and get an introduction to some more advanced preprocessing techniques. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp." />
+<meta property="og:description" content="Take your XGBoost skills to the next level by incorporating your models into two end-to-end machine learning pipelines. You’ll learn how to tune the most important XGBoost hyperparameters efficiently within a pipeline, and get an introduction to some more advanced preprocessing techniques. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/07/03-Using-XGBoost-in-pipelines.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/07/03-Using-XGBoost-in-pipelines.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-07T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Using XGBoost in pipelines","description":"Take your XGBoost skills to the next level by incorporating your models into two end-to-end machine learning pipelines. You’ll learn how to tune the most important XGBoost hyperparameters efficiently within a pipeline, and get an introduction to some more advanced preprocessing techniques. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp.","datePublished":"2020-07-07T00:00:00-05:00","dateModified":"2020-07-07T00:00:00-05:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/07/03-Using-XGBoost-in-pipelines.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/07/03-Using-XGBoost-in-pipelines.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Using XGBoost in pipelines | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Using XGBoost in pipelines" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Take your XGBoost skills to the next level by incorporating your models into two end-to-end machine learning pipelines. You’ll learn how to tune the most important XGBoost hyperparameters efficiently within a pipeline, and get an introduction to some more advanced preprocessing techniques. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp." />
+<meta property="og:description" content="Take your XGBoost skills to the next level by incorporating your models into two end-to-end machine learning pipelines. You’ll learn how to tune the most important XGBoost hyperparameters efficiently within a pipeline, and get an introduction to some more advanced preprocessing techniques. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/07/03-Using-XGBoost-in-pipelines.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/07/03-Using-XGBoost-in-pipelines.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-07T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"headline":"Using XGBoost in pipelines","description":"Take your XGBoost skills to the next level by incorporating your models into two end-to-end machine learning pipelines. You’ll learn how to tune the most important XGBoost hyperparameters efficiently within a pipeline, and get an introduction to some more advanced preprocessing techniques. This is the Summary of lecture “Extreme Gradient Boosting with XGBoost”, via datacamp.","datePublished":"2020-07-07T00:00:00-05:00","dateModified":"2020-07-07T00:00:00-05:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/07/03-Using-XGBoost-in-pipelines.html"},"url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/07/03-Using-XGBoost-in-pipelines.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Using XGBoost in pipelines</h1><p class="page-description">Take your XGBoost skills to the next level by incorporating your models into two end-to-end machine learning pipelines. You'll learn how to tune the most important XGBoost hyperparameters efficiently within a pipeline, and get an introduction to some more advanced preprocessing techniques. This is the Summary of lecture "Extreme Gradient Boosting with XGBoost", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-07T00:00:00-05:00" itemprop="datePublished">
+        Jul 7, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      15 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-07-07-03-Using-XGBoost-in-pipelines.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-07-07-03-Using-XGBoost-in-pipelines.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-07-07-03-Using-XGBoost-in-pipelines.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Review-of-pipelines-using-sklearn">Review of pipelines using sklearn </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Encoding-categorical-columns-I---LabelEncoder">Encoding categorical columns I - LabelEncoder </a></li>
+<li class="toc-entry toc-h3"><a href="#Encoding-categorical-columns-II---OneHotEncoder">Encoding categorical columns II - OneHotEncoder </a></li>
+<li class="toc-entry toc-h3"><a href="#Encoding-categorical-columns-III:-DictVectorizer">Encoding categorical columns III: DictVectorizer </a></li>
+<li class="toc-entry toc-h3"><a href="#Preprocessing-within-a-pipeline">Preprocessing within a pipeline </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Incorporating-XGBoost-into-pipelines">Incorporating XGBoost into pipelines </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Cross-validating-your-XGBoost-model">Cross-validating your XGBoost model </a></li>
+<li class="toc-entry toc-h3"><a href="#Kidney-disease-case-study-I---Categorical-Imputer">Kidney disease case study I - Categorical Imputer </a></li>
+<li class="toc-entry toc-h3"><a href="#Kidney-disease-case-study-II---Feature-Union">Kidney disease case study II - Feature Union </a></li>
+<li class="toc-entry toc-h3"><a href="#Kidney-disease-case-study-III---Full-pipeline">Kidney disease case study III - Full pipeline </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Tuning-XGBoost-hyperparameters">Tuning XGBoost hyperparameters </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Bringing-it-all-together">Bringing it all together </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Final-Thoughts">Final Thoughts </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-07-03-Using-XGBoost-in-pipelines.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Review-of-pipelines-using-sklearn">
+<a class="anchor" href="#Review-of-pipelines-using-sklearn" aria-hidden="true"><span class="octicon octicon-link"></span></a>Review of pipelines using sklearn<a class="anchor-link" href="#Review-of-pipelines-using-sklearn"> </a>
+</h2>
+<ul>
+<li>Pipeline review<ul>
+<li>Takes a list of 2-tuples (name, pipeline_step) as input</li>
+<li>Tuples can contain any arbitrary scikit-learn compatible estimator or transformer object</li>
+<li>Pipeline implements fit/predict methods</li>
+<li>Can be used as input estimator into grid/randomized search and <code>cross_val_score</code> methods</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Encoding-categorical-columns-I---LabelEncoder">
+<a class="anchor" href="#Encoding-categorical-columns-I---LabelEncoder" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoding categorical columns I - LabelEncoder<a class="anchor-link" href="#Encoding-categorical-columns-I---LabelEncoder"> </a>
+</h3>
+<p>Now that you've seen what will need to be done to get the housing data ready for XGBoost, let's go through the process step-by-step.</p>
+<p>First, you will need to fill in missing values - as you saw previously, the column LotFrontage has many missing values. Then, you will need to encode any categorical columns in the dataset using one-hot encoding so that they are encoded numerically.</p>
+<p>The data has five categorical columns: MSZoning, PavedDrive, Neighborhood, BldgType, and HouseStyle. Scikit-learn has a <a href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html">LabelEncoder</a> function that converts the values in each categorical column into integers. You'll practice using this here.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/ames_unprocessed_data.csv'</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MSSubClass</th>
+      <th>MSZoning</th>
+      <th>LotFrontage</th>
+      <th>LotArea</th>
+      <th>Neighborhood</th>
+      <th>BldgType</th>
+      <th>HouseStyle</th>
+      <th>OverallQual</th>
+      <th>OverallCond</th>
+      <th>YearBuilt</th>
+      <th>...</th>
+      <th>GrLivArea</th>
+      <th>BsmtFullBath</th>
+      <th>BsmtHalfBath</th>
+      <th>FullBath</th>
+      <th>HalfBath</th>
+      <th>BedroomAbvGr</th>
+      <th>Fireplaces</th>
+      <th>GarageArea</th>
+      <th>PavedDrive</th>
+      <th>SalePrice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>60</td>
+      <td>RL</td>
+      <td>65.0</td>
+      <td>8450</td>
+      <td>CollgCr</td>
+      <td>1Fam</td>
+      <td>2Story</td>
+      <td>7</td>
+      <td>5</td>
+      <td>2003</td>
+      <td>...</td>
+      <td>1710</td>
+      <td>1</td>
+      <td>0</td>
+      <td>2</td>
+      <td>1</td>
+      <td>3</td>
+      <td>0</td>
+      <td>548</td>
+      <td>Y</td>
+      <td>208500</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>20</td>
+      <td>RL</td>
+      <td>80.0</td>
+      <td>9600</td>
+      <td>Veenker</td>
+      <td>1Fam</td>
+      <td>1Story</td>
+      <td>6</td>
+      <td>8</td>
+      <td>1976</td>
+      <td>...</td>
+      <td>1262</td>
+      <td>0</td>
+      <td>1</td>
+      <td>2</td>
+      <td>0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>460</td>
+      <td>Y</td>
+      <td>181500</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>60</td>
+      <td>RL</td>
+      <td>68.0</td>
+      <td>11250</td>
+      <td>CollgCr</td>
+      <td>1Fam</td>
+      <td>2Story</td>
+      <td>7</td>
+      <td>5</td>
+      <td>2001</td>
+      <td>...</td>
+      <td>1786</td>
+      <td>1</td>
+      <td>0</td>
+      <td>2</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>608</td>
+      <td>Y</td>
+      <td>223500</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>70</td>
+      <td>RL</td>
+      <td>60.0</td>
+      <td>9550</td>
+      <td>Crawfor</td>
+      <td>1Fam</td>
+      <td>2Story</td>
+      <td>7</td>
+      <td>5</td>
+      <td>1915</td>
+      <td>...</td>
+      <td>1717</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>642</td>
+      <td>Y</td>
+      <td>140000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>60</td>
+      <td>RL</td>
+      <td>84.0</td>
+      <td>14260</td>
+      <td>NoRidge</td>
+      <td>1Fam</td>
+      <td>2Story</td>
+      <td>8</td>
+      <td>5</td>
+      <td>2000</td>
+      <td>...</td>
+      <td>2198</td>
+      <td>1</td>
+      <td>0</td>
+      <td>2</td>
+      <td>1</td>
+      <td>4</td>
+      <td>1</td>
+      <td>836</td>
+      <td>Y</td>
+      <td>250000</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 21 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash flash-error">
+    <svg class="octicon octicon-alert" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 000 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 00.01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg>
+    <strong>Warning: </strong>Below Method is depreciated. Instead, Use ColumnTransformer
+</div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+
+<span class="c1"># Fill missing values with 0</span>
+<span class="n">df</span><span class="o">.</span><span class="n">LotFrontage</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">LotFrontage</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Create a boolean mask for categorical columns</span>
+<span class="n">categorical_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">dtypes</span> <span class="o">==</span> <span class="s1">'object'</span><span class="p">)</span>
+
+<span class="c1"># Get list of categorical columns names</span>
+<span class="n">categorical_columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">categorical_mask</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="c1"># Print the head of the categorical columns</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">categorical_columns</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+
+<span class="c1"># Create LabelEncoder object: le</span>
+<span class="n">le</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+
+<span class="c1"># Apply LabelEncode to categorical columns</span>
+<span class="n">df</span><span class="p">[</span><span class="n">categorical_columns</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">categorical_columns</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="c1"># Print the head of the LabelEncoded categorical columns</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">categorical_columns</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  MSZoning Neighborhood BldgType HouseStyle PavedDrive
+0       RL      CollgCr     1Fam     2Story          Y
+1       RL      Veenker     1Fam     1Story          Y
+2       RL      CollgCr     1Fam     2Story          Y
+3       RL      Crawfor     1Fam     2Story          Y
+4       RL      NoRidge     1Fam     2Story          Y
+   MSZoning  Neighborhood  BldgType  HouseStyle  PavedDrive
+0         3             5         0           5           2
+1         3            24         0           2           2
+2         3             5         0           5           2
+3         3             6         0           5           2
+4         3            15         0           5           2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Encoding-categorical-columns-II---OneHotEncoder">
+<a class="anchor" href="#Encoding-categorical-columns-II---OneHotEncoder" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoding categorical columns II - OneHotEncoder<a class="anchor-link" href="#Encoding-categorical-columns-II---OneHotEncoder"> </a>
+</h3>
+<p>Okay - so you have your categorical columns encoded numerically. Can you now move onto using pipelines and XGBoost? Not yet! In the categorical columns of this dataset, there is no natural ordering between the entries. As an example: Using <code>LabelEncoder</code>, the CollgCr Neighborhood was encoded as 5, while the Veenker Neighborhood was encoded as 24, and Crawfor as 6. Is Veenker "greater" than Crawfor and CollgCr? No - and allowing the model to assume this natural ordering may result in poor performance.</p>
+<p>As a result, there is another step needed: You have to apply a one-hot encoding to create binary, or "dummy" variables. You can do this using scikit-learn's <a href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html">OneHotEncoder</a>.
+</p>
+<div class="flash flash-error">
+    <svg class="octicon octicon-alert octicon octicon-alert" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 000 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 00.01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg>
+    <strong>Warning: </strong>Instead using LabelEncoder, use make_column_transformer
+</div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">OneHotEncoder</span>
+<span class="kn">from</span> <span class="nn">sklearn.compose</span> <span class="kn">import</span> <span class="n">make_column_transformer</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/ames_unprocessed_data.csv'</span><span class="p">)</span>
+
+<span class="c1"># Fill missing values with 0</span>
+<span class="n">df</span><span class="o">.</span><span class="n">LotFrontage</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">LotFrontage</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Create a boolean mask for categorical columns</span>
+<span class="n">categorical_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">dtypes</span> <span class="o">==</span> <span class="s1">'object'</span><span class="p">)</span>
+
+<span class="c1"># Get list of categorical columns names</span>
+<span class="n">categorical_columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">categorical_mask</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="c1"># Generate unique list of each categorical columns</span>
+<span class="n">unique_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">categorical_columns</span><span class="p">]</span>
+
+<span class="c1"># Create OneHotEncoder: ohe</span>
+<span class="n">ohe</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">categories</span><span class="o">=</span><span class="n">unique_list</span><span class="p">)</span>
+
+<span class="c1"># Create preprocess object for onehotencoding</span>
+<span class="n">preprocess</span> <span class="o">=</span> <span class="n">make_column_transformer</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">ohe</span><span class="p">,</span> <span class="n">categorical_columns</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'passthrough'</span><span class="p">,</span> <span class="n">categorical_mask</span><span class="p">[</span><span class="o">~</span><span class="n">categorical_mask</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="p">)</span>
+
+<span class="c1"># apply OneHotEncoder to categorical columns - output is no longer a dataframe: df_encoded</span>
+<span class="n">df_encoded</span> <span class="o">=</span> <span class="n">preprocess</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># Print first 5 rows of the resulting dataset - again, this will no longer be a pandas dataframe</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_encoded</span><span class="p">[:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:])</span>
+
+<span class="c1"># Print the shape fo the original DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Print the shape of the transformed array</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_encoded</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 1.000e+00 0.000e+00 0.000e+00 6.000e+01 6.500e+01 8.450e+03
+  7.000e+00 5.000e+00 2.003e+03 0.000e+00 1.710e+03 1.000e+00 0.000e+00
+  2.000e+00 1.000e+00 3.000e+00 0.000e+00 5.480e+02 2.085e+05]
+ [1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 1.000e+00 0.000e+00 0.000e+00 2.000e+01 8.000e+01 9.600e+03
+  6.000e+00 8.000e+00 1.976e+03 0.000e+00 1.262e+03 0.000e+00 1.000e+00
+  2.000e+00 0.000e+00 3.000e+00 1.000e+00 4.600e+02 1.815e+05]
+ [1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 1.000e+00 0.000e+00 0.000e+00 6.000e+01 6.800e+01 1.125e+04
+  7.000e+00 5.000e+00 2.001e+03 1.000e+00 1.786e+03 1.000e+00 0.000e+00
+  2.000e+00 1.000e+00 3.000e+00 1.000e+00 6.080e+02 2.235e+05]
+ [1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 1.000e+00 0.000e+00 0.000e+00 7.000e+01 6.000e+01 9.550e+03
+  7.000e+00 5.000e+00 1.915e+03 1.000e+00 1.717e+03 1.000e+00 0.000e+00
+  1.000e+00 0.000e+00 3.000e+00 1.000e+00 6.420e+02 1.400e+05]
+ [1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 1.000e+00 0.000e+00 0.000e+00 6.000e+01 8.400e+01 1.426e+04
+  8.000e+00 5.000e+00 2.000e+03 0.000e+00 2.198e+03 1.000e+00 0.000e+00
+  2.000e+00 1.000e+00 4.000e+00 1.000e+00 8.360e+02 2.500e+05]]
+(1460, 21)
+(1460, 62)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Encoding-categorical-columns-III:-DictVectorizer">
+<a class="anchor" href="#Encoding-categorical-columns-III:-DictVectorizer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoding categorical columns III: DictVectorizer<a class="anchor-link" href="#Encoding-categorical-columns-III:-DictVectorizer"> </a>
+</h3>
+<p>Alright, one final trick before you dive into pipelines. The two step process you just went through - <code>LabelEncoder</code> followed by <code>OneHotEncoder</code> - can be simplified by using a <a href="http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.DictVectorizer.html">DictVectorizer</a>.</p>
+<p>Using a <code>DictVectorizer</code> on a DataFrame that has been converted to a dictionary allows you to get label encoding as well as one-hot encoding in one go.</p>
+<p>Your task is to work through this strategy in this exercise!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction</span> <span class="kn">import</span> <span class="n">DictVectorizer</span>
+
+<span class="c1"># Convert df into a dictionary: df_dict</span>
+<span class="n">df_dict</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">"records"</span><span class="p">)</span>
+
+<span class="c1"># Create the DictVectorizer object: dv</span>
+<span class="n">dv</span> <span class="o">=</span> <span class="n">DictVectorizer</span><span class="p">(</span><span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Apply dv on df: df_encoded</span>
+<span class="n">df_encoded2</span> <span class="o">=</span> <span class="n">dv</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df_dict</span><span class="p">)</span>
+
+<span class="c1"># Print the resulting first five rows</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_encoded2</span><span class="p">[:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:])</span>
+
+<span class="c1"># Print the vocabulary</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dv</span><span class="o">.</span><span class="n">vocabulary_</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[3.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 0.000e+00 2.000e+00 5.480e+02 1.710e+03 1.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00
+  8.450e+03 6.500e+01 6.000e+01 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 5.000e+00 7.000e+00
+  0.000e+00 0.000e+00 1.000e+00 0.000e+00 2.085e+05 2.003e+03]
+ [3.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  1.000e+00 1.000e+00 2.000e+00 4.600e+02 1.262e+03 0.000e+00 0.000e+00
+  0.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  9.600e+03 8.000e+01 2.000e+01 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00 8.000e+00 6.000e+00
+  0.000e+00 0.000e+00 1.000e+00 0.000e+00 1.815e+05 1.976e+03]
+ [3.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 1.000e+00 2.000e+00 6.080e+02 1.786e+03 1.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00
+  1.125e+04 6.800e+01 6.000e+01 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 5.000e+00 7.000e+00
+  0.000e+00 0.000e+00 1.000e+00 1.000e+00 2.235e+05 2.001e+03]
+ [3.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 1.000e+00 1.000e+00 6.420e+02 1.717e+03 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00
+  9.550e+03 6.000e+01 7.000e+01 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 5.000e+00 7.000e+00
+  0.000e+00 0.000e+00 1.000e+00 1.000e+00 1.400e+05 1.915e+03]
+ [4.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 1.000e+00 2.000e+00 8.360e+02 2.198e+03 1.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00
+  1.426e+04 8.400e+01 6.000e+01 0.000e+00 0.000e+00 0.000e+00 1.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 1.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+  0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 5.000e+00 8.000e+00
+  0.000e+00 0.000e+00 1.000e+00 0.000e+00 2.500e+05 2.000e+03]]
+{'MSSubClass': 23, 'MSZoning=RL': 27, 'LotFrontage': 22, 'LotArea': 21, 'Neighborhood=CollgCr': 34, 'BldgType=1Fam': 1, 'HouseStyle=2Story': 18, 'OverallQual': 55, 'OverallCond': 54, 'YearBuilt': 61, 'Remodeled': 59, 'GrLivArea': 11, 'BsmtFullBath': 6, 'BsmtHalfBath': 7, 'FullBath': 9, 'HalfBath': 12, 'BedroomAbvGr': 0, 'Fireplaces': 8, 'GarageArea': 10, 'PavedDrive=Y': 58, 'SalePrice': 60, 'Neighborhood=Veenker': 53, 'HouseStyle=1Story': 15, 'Neighborhood=Crawfor': 35, 'Neighborhood=NoRidge': 44, 'Neighborhood=Mitchel': 40, 'HouseStyle=1.5Fin': 13, 'Neighborhood=Somerst': 50, 'Neighborhood=NWAmes': 43, 'MSZoning=RM': 28, 'Neighborhood=OldTown': 46, 'Neighborhood=BrkSide': 32, 'BldgType=2fmCon': 2, 'HouseStyle=1.5Unf': 14, 'Neighborhood=Sawyer': 48, 'Neighborhood=NridgHt': 45, 'Neighborhood=NAmes': 41, 'BldgType=Duplex': 3, 'Neighborhood=SawyerW': 49, 'Neighborhood=IDOTRR': 38, 'PavedDrive=N': 56, 'Neighborhood=MeadowV': 39, 'BldgType=TwnhsE': 5, 'MSZoning=C (all)': 24, 'Neighborhood=Edwards': 36, 'Neighborhood=Timber': 52, 'PavedDrive=P': 57, 'HouseStyle=SFoyer': 19, 'MSZoning=FV': 25, 'Neighborhood=Gilbert': 37, 'HouseStyle=SLvl': 20, 'BldgType=Twnhs': 4, 'Neighborhood=StoneBr': 51, 'HouseStyle=2.5Unf': 17, 'Neighborhood=ClearCr': 33, 'Neighborhood=NPkVill': 42, 'HouseStyle=2.5Fin': 16, 'Neighborhood=Blmngtn': 29, 'Neighborhood=BrDale': 31, 'Neighborhood=SWISU': 47, 'MSZoning=RH': 26, 'Neighborhood=Blueste': 30}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Besides simplifying the process into one step, DictVectorizer has useful attributes such as vocabulary_ which maps the names of the features to their indices. With the data preprocessed, it's time to move onto pipelines!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preprocessing-within-a-pipeline">
+<a class="anchor" href="#Preprocessing-within-a-pipeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>Preprocessing within a pipeline<a class="anchor-link" href="#Preprocessing-within-a-pipeline"> </a>
+</h3>
+<p>Now that you've seen what steps need to be taken individually to properly process the Ames housing data, let's use the much cleaner and more succinct DictVectorizer approach and put it alongside an XGBoostRegressor inside of a scikit-learn pipeline.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/ames_unprocessed_data.csv'</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+
+<span class="c1"># Fill LotFrontage missing values with 0</span>
+<span class="n">X</span><span class="o">.</span><span class="n">LotFrontage</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">LotFrontage</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Setup the pipeline steps: steps</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">'ohe_onestep'</span><span class="p">,</span> <span class="n">DictVectorizer</span><span class="p">(</span><span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
+         <span class="p">(</span><span class="s1">'xgb_model'</span><span class="p">,</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">())]</span>
+
+<span class="c1"># Create the pipeline: xgb_pipeline</span>
+<span class="n">xgb_pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+<span class="c1"># Fit the pipeline</span>
+<span class="n">xgb_pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">"records"</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Pipeline(memory=None,
+         steps=[('ohe_onestep',
+                 DictVectorizer(dtype=&lt;class 'numpy.float64'&gt;, separator='=',
+                                sort=True, sparse=False)),
+                ('xgb_model',
+                 XGBRegressor(base_score=0.5, booster='gbtree',
+                              colsample_bylevel=1, colsample_bynode=1,
+                              colsample_bytree=1, gamma=0, gpu_id=-1,
+                              importance_type='gain',
+                              interaction_constraints='',
+                              learning_rate=0.300000012, max_delta_step=0,
+                              max_depth=6, min_child_weight=1, missing=nan,
+                              monotone_constraints='()', n_estimators=100,
+                              n_jobs=0, num_parallel_tree=1,
+                              objective='reg:squarederror', random_state=0,
+                              reg_alpha=0, reg_lambda=1, scale_pos_weight=1,
+                              subsample=1, tree_method='exact',
+                              validate_parameters=1, verbosity=None))],
+         verbose=False)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Incorporating-XGBoost-into-pipelines">
+<a class="anchor" href="#Incorporating-XGBoost-into-pipelines" aria-hidden="true"><span class="octicon octicon-link"></span></a>Incorporating XGBoost into pipelines<a class="anchor-link" href="#Incorporating-XGBoost-into-pipelines"> </a>
+</h2>
+<ul>
+<li>Additional components introduced for pipelines<ul>
+<li>
+<code>sklearn_pandas</code>:<ul>
+<li>
+<code>DataFrameMapper</code> - Interoperability between pandas and scikit-learn</li>
+<li>
+<code>CategoricalImputer</code> - Allow for imputation of categorical variables before conversion to integers</li>
+</ul>
+</li>
+<li>
+<code>sklearn.preprocessing</code>:<ul>
+<li>
+<code>Imputer</code> - Native imputation of numerical columns in scikit-learn</li>
+</ul>
+</li>
+<li>
+<code>sklearn.pipeline</code>:<ul>
+<li>
+<code>FeatureUnion</code> - combine multiple pipelines of features into a single pipeline of features</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Cross-validating-your-XGBoost-model">
+<a class="anchor" href="#Cross-validating-your-XGBoost-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cross-validating your XGBoost model<a class="anchor-link" href="#Cross-validating-your-XGBoost-model"> </a>
+</h3>
+<p>In this exercise, you'll go one step further by using the pipeline you've created to preprocess and cross-validate your model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/ames_unprocessed_data.csv'</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction</span> <span class="kn">import</span> <span class="n">DictVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">cross_val_score</span>
+
+<span class="c1"># Fill LotFrontage missing values with 0</span>
+<span class="n">X</span><span class="o">.</span><span class="n">LotFrontage</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">LotFrontage</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Setup the pipeline steps: steps</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"ohe_onestep"</span><span class="p">,</span> <span class="n">DictVectorizer</span><span class="p">(</span><span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
+         <span class="p">(</span><span class="s2">"xgb_model"</span><span class="p">,</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">objective</span><span class="o">=</span><span class="s1">'reg:squarederror'</span><span class="p">))]</span>
+
+<span class="c1"># Create the pipeline: xgb_pipeline</span>
+<span class="n">xgb_pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+<span class="c1"># Cross-validate the model</span>
+<span class="n">cross_val_scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">xgb_pipeline</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s1">'records'</span><span class="p">),</span> <span class="n">y</span><span class="p">,</span> 
+                                   <span class="n">scoring</span><span class="o">=</span><span class="s1">'neg_mean_squared_error'</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Print the 10-fold RMSE</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"10-fold RMSE: "</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cross_val_scores</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>10-fold RMSE:  27683.04157118635
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Kidney-disease-case-study-I---Categorical-Imputer">
+<a class="anchor" href="#Kidney-disease-case-study-I---Categorical-Imputer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Kidney disease case study I - Categorical Imputer<a class="anchor-link" href="#Kidney-disease-case-study-I---Categorical-Imputer"> </a>
+</h3>
+<p>You'll now continue your exploration of using pipelines with a dataset that requires significantly more wrangling. The <a href="https://archive.ics.uci.edu/ml/datasets/chronic_kidney_disease">chronic kidney disease dataset</a> contains both categorical and numeric features, but contains lots of missing values. The goal here is to predict who has chronic kidney disease given various blood indicators as features.</p>
+<p>As Sergey mentioned in the video, you'll be introduced to a new library, <a href="https://github.com/pandas-dev/sklearn-pandas">sklearn_pandas</a>, that allows you to chain many more processing steps inside of a pipeline than are currently supported in scikit-learn. Specifically, you'll be able to impute missing categorical values directly using the <code>Categorical_Imputer()</code> class in sklearn_pandas, and the <code>DataFrameMapper()</code> class to apply any arbitrary sklearn-compatible transformer on DataFrame columns, where the resulting output can be either a NumPy array or DataFrame.</p>
+<p>We've also created a transformer called a <code>Dictifier</code> that encapsulates converting a DataFrame using <code>.to_dict("records")</code> without you having to do it explicitly (and so that it works in a pipeline). Finally, we've also provided the list of feature names in kidney_feature_names, the target name in kidney_target_name, the features in X, and the target in y.</p>
+<p>In this exercise, your task is to apply the <code>CategoricalImputer</code> to impute all of the categorical columns in the dataset. You can refer to how the numeric imputation mapper was created as a template. Notice the keyword arguments <code>input_df=True</code> and <code>df_out=True</code>? This is so that you can work with DataFrames instead of arrays. By default, the transformers are passed a numpy array of the selected columns as input, and as a result, the output of the DataFrame mapper is also an array. Scikit-learn transformers have historically been designed to work with numpy arrays, not pandas DataFrames, even though their basic indexing interfaces are similar.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/chronic_kidney_X.csv'</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/chronic_kidney_y.csv'</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn_pandas</span> <span class="kn">import</span> <span class="n">DataFrameMapper</span><span class="p">,</span> <span class="n">CategoricalImputer</span>
+<span class="kn">from</span> <span class="nn">sklearn.impute</span> <span class="kn">import</span> <span class="n">SimpleImputer</span>
+
+<span class="c1"># Check number of nulls in each feature columns</span>
+<span class="n">nulls_per_column</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nulls_per_column</span><span class="p">)</span>
+
+<span class="c1"># Create a boolean mask for categorical columns</span>
+<span class="n">categorical_feature_mask</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">dtypes</span> <span class="o">==</span> <span class="nb">object</span>
+
+<span class="c1"># Get list of categorical column names</span>
+<span class="n">categorical_columns</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">categorical_feature_mask</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="c1"># Get list of non-categorical column names</span>
+<span class="n">non_categorical_columns</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">~</span><span class="n">categorical_feature_mask</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="c1"># Apply numeric imputer</span>
+<span class="n">numeric_imputation_mapper</span> <span class="o">=</span> <span class="n">DataFrameMapper</span><span class="p">(</span>
+    <span class="p">[([</span><span class="n">numeric_feature</span><span class="p">],</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s1">'median'</span><span class="p">))</span> 
+     <span class="k">for</span> <span class="n">numeric_feature</span> <span class="ow">in</span> <span class="n">non_categorical_columns</span><span class="p">],</span>
+    <span class="n">input_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">df_out</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Apply categorical imputer</span>
+<span class="n">categorical_imputation_mapper</span> <span class="o">=</span> <span class="n">DataFrameMapper</span><span class="p">(</span>
+    <span class="p">[(</span><span class="n">category_feature</span><span class="p">,</span> <span class="n">CategoricalImputer</span><span class="p">())</span> 
+     <span class="k">for</span> <span class="n">category_feature</span> <span class="ow">in</span> <span class="n">categorical_columns</span><span class="p">],</span>
+    <span class="n">input_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">df_out</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>age        9
+bp        12
+sg        47
+al        46
+su        49
+bgr       44
+bu        19
+sc        17
+sod       87
+pot       88
+hemo      52
+pcv       71
+wc       106
+rc       131
+rbc      152
+pc        65
+pcc        4
+ba         4
+htn        2
+dm         2
+cad        2
+appet      1
+pe         1
+ane        1
+dtype: int64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Kidney-disease-case-study-II---Feature-Union">
+<a class="anchor" href="#Kidney-disease-case-study-II---Feature-Union" aria-hidden="true"><span class="octicon octicon-link"></span></a>Kidney disease case study II - Feature Union<a class="anchor-link" href="#Kidney-disease-case-study-II---Feature-Union"> </a>
+</h3>
+<p>Having separately imputed numeric as well as categorical columns, your task is now to use scikit-learn's <a href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.FeatureUnion.html">FeatureUnion</a> to concatenate their results, which are contained in two separate transformer objects - <code>numeric_imputation_mapper</code>, and <code>categorical_imputation_mapper</code>, respectively.</p>
+<p>Just like with pipelines, you have to pass it a list of <code>(string, transformer)</code> tuples, where the first half of each tuple is the name of the transformer.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">FeatureUnion</span>
+
+<span class="c1"># Combine the numeric and categorical transformations</span>
+<span class="n">numeric_categorical_union</span> <span class="o">=</span> <span class="n">FeatureUnion</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"num_mapper"</span><span class="p">,</span> <span class="n">numeric_imputation_mapper</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"cat_mapper"</span><span class="p">,</span> <span class="n">categorical_imputation_mapper</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Kidney-disease-case-study-III---Full-pipeline">
+<a class="anchor" href="#Kidney-disease-case-study-III---Full-pipeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>Kidney disease case study III - Full pipeline<a class="anchor-link" href="#Kidney-disease-case-study-III---Full-pipeline"> </a>
+</h3>
+<p>It's time to piece together all of the transforms along with an <code>XGBClassifier</code> to build the full pipeline!</p>
+<p>Besides the <code>numeric_categorical_union</code> that you created in the previous exercise, there are two other transforms needed: the <code>Dictifier()</code> transform which we created for you, and the <code>DictVectorizer()</code>.</p>
+<p>After creating the pipeline, your task is to cross-validate it to see how well it performs.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+
+<span class="c1"># Define Dictifier class to turn df into dictionary as part of pipeline</span>
+<span class="k">class</span> <span class="nc">Dictifier</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>       
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">"records"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">"records"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create full pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"featureunion"</span><span class="p">,</span> <span class="n">numeric_categorical_union</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"dictifier"</span><span class="p">,</span> <span class="n">Dictifier</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s2">"vectorizer"</span><span class="p">,</span> <span class="n">DictVectorizer</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">"clf"</span><span class="p">,</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="c1"># Perform cross-validation</span>
+<span class="n">cross_val_scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">'roc_auc'</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Print avg. AUC</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"3-fold AUC: "</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cross_val_scores</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>3-fold AUC:  0.998237712755785
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tuning-XGBoost-hyperparameters">
+<a class="anchor" href="#Tuning-XGBoost-hyperparameters" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tuning XGBoost hyperparameters<a class="anchor-link" href="#Tuning-XGBoost-hyperparameters"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Bringing-it-all-together">
+<a class="anchor" href="#Bringing-it-all-together" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bringing it all together<a class="anchor-link" href="#Bringing-it-all-together"> </a>
+</h3>
+<p>Alright, it's time to bring together everything you've learned so far! In this final exercise of the course, you will combine your work from the previous exercises into one end-to-end XGBoost pipeline to really cement your understanding of preprocessing and pipelines in XGBoost.</p>
+<p>Your work from the previous 3 exercises, where you preprocessed the data and set up your pipeline, has been pre-loaded. Your job is to perform a randomized search and identify the best hyperparameters.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">RandomizedSearchCV</span>
+
+<span class="c1"># Create the parameter grid</span>
+<span class="n">gbm_param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'clf__learning_rate'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
+    <span class="s1">'clf__max_depth'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="s1">'clf__n_estimators'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># Perform RandomizedSearchCV</span>
+<span class="n">randomized_roc_auc</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">param_distributions</span><span class="o">=</span><span class="n">gbm_param_grid</span><span class="p">,</span>
+                                        <span class="n">n_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="s1">'roc_auc'</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Fit the estimator</span>
+<span class="n">randomized_roc_auc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Compute metrics</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Score: '</span><span class="p">,</span> <span class="n">randomized_roc_auc</span><span class="o">.</span><span class="n">best_score_</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Estimator: '</span><span class="p">,</span> <span class="n">randomized_roc_auc</span><span class="o">.</span><span class="n">best_estimator_</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting 2 folds for each of 2 candidates, totalling 4 fits
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=1)]: Using backend SequentialBackend with 1 concurrent workers.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Score:  0.9979733333333333
+Estimator:  Pipeline(memory=None,
+         steps=[('featureunion',
+                 FeatureUnion(n_jobs=None,
+                              transformer_list=[('num_mapper',
+                                                 DataFrameMapper(default=False,
+                                                                 df_out=True,
+                                                                 features=[(['age'],
+                                                                            SimpleImputer(add_indicator=False,
+                                                                                          copy=True,
+                                                                                          fill_value=None,
+                                                                                          missing_values=nan,
+                                                                                          strategy='median',
+                                                                                          verbose=0)),
+                                                                           (['bp'],
+                                                                            SimpleImputer(add_indicator=False,
+                                                                                          copy=True,
+                                                                                          fill_value=None,
+                                                                                          missing_val...
+                               interaction_constraints='',
+                               learning_rate=0.15000000000000002,
+                               max_delta_step=0, max_depth=6,
+                               min_child_weight=1, missing=nan,
+                               monotone_constraints='()', n_estimators=50,
+                               n_jobs=0, num_parallel_tree=1,
+                               objective='binary:logistic', random_state=0,
+                               reg_alpha=0, reg_lambda=1, scale_pos_weight=1,
+                               subsample=1, tree_method='exact',
+                               validate_parameters=1, verbosity=None))],
+         verbose=False)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=1)]: Done   4 out of   4 | elapsed:    0.5s finished
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Final-Thoughts">
+<a class="anchor" href="#Final-Thoughts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Final Thoughts<a class="anchor-link" href="#Final-Thoughts"> </a>
+</h2>
+<ul>
+<li>Advanced Topic<ul>
+<li>Using XGBoost for ranking/recommandation problems (Netflix/Amazon problem)</li>
+<li>Using more sophisticated hyperparamter tuning strategies for tuning XGBoost model (Bayesian Optimization)</li>
+<li>Using XGBoost as part of an ensemble of other models for regression/classification</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine_learning/2020/07/07/03-Using-XGBoost-in-pipelines.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
