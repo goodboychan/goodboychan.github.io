@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Feature Engineering | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Feature Engineering" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this section you’ll learn about feature engineering. You’ll explore different ways to create new, more useful, features from the ones already in your dataset. You’ll see how to encode, aggregate, and extract information from both numerical and textual features. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp." />
+<meta property="og:description" content="In this section you’ll learn about feature engineering. You’ll explore different ways to create new, more useful, features from the ones already in your dataset. You’ll see how to encode, aggregate, and extract information from both numerical and textual features. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/04-Feature-Engineering.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/04-Feature-Engineering.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-09T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this section you’ll learn about feature engineering. You’ll explore different ways to create new, more useful, features from the ones already in your dataset. You’ll see how to encode, aggregate, and extract information from both numerical and textual features. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Feature Engineering","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/04-Feature-Engineering.html","datePublished":"2020-07-09T00:00:00-05:00","dateModified":"2020-07-09T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/04-Feature-Engineering.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Feature Engineering | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Feature Engineering" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this section you’ll learn about feature engineering. You’ll explore different ways to create new, more useful, features from the ones already in your dataset. You’ll see how to encode, aggregate, and extract information from both numerical and textual features. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp." />
+<meta property="og:description" content="In this section you’ll learn about feature engineering. You’ll explore different ways to create new, more useful, features from the ones already in your dataset. You’ll see how to encode, aggregate, and extract information from both numerical and textual features. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/04-Feature-Engineering.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/04-Feature-Engineering.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-09T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this section you’ll learn about feature engineering. You’ll explore different ways to create new, more useful, features from the ones already in your dataset. You’ll see how to encode, aggregate, and extract information from both numerical and textual features. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Feature Engineering","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/04-Feature-Engineering.html","datePublished":"2020-07-09T00:00:00-05:00","dateModified":"2020-07-09T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/04-Feature-Engineering.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Feature Engineering</h1><p class="page-description">In this section you'll learn about feature engineering. You'll explore different ways to create new, more useful, features from the ones already in your dataset. You'll see how to encode, aggregate, and extract information from both numerical and textual features. This is the Summary of lecture "Preprocessing for Machine Learning in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-09T00:00:00-05:00" itemprop="datePublished">
+        Jul 9, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-07-09-04-Feature-Engineering.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-07-09-04-Feature-Engineering.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-07-09-04-Feature-Engineering.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Feature-engineering">Feature engineering </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Identifying-areas-for-feature-engineering">Identifying areas for feature engineering </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Encoding-categorical-variables">Encoding categorical variables </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Encoding-categorical-variables---binary">Encoding categorical variables - binary </a></li>
+<li class="toc-entry toc-h3"><a href="#Encoding-categorical-variables---one-hot">Encoding categorical variables - one-hot </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Engineering-numerical-features">Engineering numerical features </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Engineering-numerical-features---taking-an-average">Engineering numerical features - taking an average </a></li>
+<li class="toc-entry toc-h3"><a href="#Engineering-numerical-features---datetime">Engineering numerical features - datetime </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Text-classification">Text classification </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Engineering-features-from-strings---extraction">Engineering features from strings - extraction </a></li>
+<li class="toc-entry toc-h3"><a href="#Engineering-features-from-strings---tf/idf">Engineering features from strings - tf/idf </a></li>
+<li class="toc-entry toc-h3"><a href="#Text-classification-using-tf/idf-vectors">Text classification using tf/idf vectors </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-09-04-Feature-Engineering.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Feature-engineering">
+<a class="anchor" href="#Feature-engineering" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature engineering<a class="anchor-link" href="#Feature-engineering"> </a>
+</h2>
+<ul>
+<li>Creation of new features based on existing features</li>
+<li>Insight into relationships between features</li>
+<li>Extract and expand data</li>
+<li>Dataset-dependent</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Identifying-areas-for-feature-engineering">
+<a class="anchor" href="#Identifying-areas-for-feature-engineering" aria-hidden="true"><span class="octicon octicon-link"></span></a>Identifying areas for feature engineering<a class="anchor-link" href="#Identifying-areas-for-feature-engineering"> </a>
+</h3>
+<p>Take an exploratory look at the <code>volunteer</code> dataset, using the variable of that name. Which of the following columns would you want to perform a feature engineering task on?</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">volunteer</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/volunteer_opportunities.csv'</span><span class="p">)</span>
+<span class="n">volunteer</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>opportunity_id</th>
+      <th>content_id</th>
+      <th>vol_requests</th>
+      <th>event_time</th>
+      <th>title</th>
+      <th>hits</th>
+      <th>summary</th>
+      <th>is_priority</th>
+      <th>category_id</th>
+      <th>category_desc</th>
+      <th>...</th>
+      <th>end_date_date</th>
+      <th>status</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Community Board</th>
+      <th>Community Council</th>
+      <th>Census Tract</th>
+      <th>BIN</th>
+      <th>BBL</th>
+      <th>NTA</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>4996</td>
+      <td>37004</td>
+      <td>50</td>
+      <td>0</td>
+      <td>Volunteers Needed For Rise Up &amp; Stay Put! Home...</td>
+      <td>737</td>
+      <td>Building on successful events last summer and ...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>July 30 2011</td>
+      <td>approved</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>5008</td>
+      <td>37036</td>
+      <td>2</td>
+      <td>0</td>
+      <td>Web designer</td>
+      <td>22</td>
+      <td>Build a website for an Afghan business</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>Strengthening Communities</td>
+      <td>...</td>
+      <td>February 01 2011</td>
+      <td>approved</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>5016</td>
+      <td>37143</td>
+      <td>20</td>
+      <td>0</td>
+      <td>Urban Adventures - Ice Skating at Lasker Rink</td>
+      <td>62</td>
+      <td>Please join us and the students from Mott Hall...</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>Strengthening Communities</td>
+      <td>...</td>
+      <td>January 29 2011</td>
+      <td>approved</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>5022</td>
+      <td>37237</td>
+      <td>500</td>
+      <td>0</td>
+      <td>Fight global hunger and support women farmers ...</td>
+      <td>14</td>
+      <td>The Oxfam Action Corps is a group of dedicated...</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>Strengthening Communities</td>
+      <td>...</td>
+      <td>March 31 2012</td>
+      <td>approved</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5055</td>
+      <td>37425</td>
+      <td>15</td>
+      <td>0</td>
+      <td>Stop 'N' Swap</td>
+      <td>31</td>
+      <td>Stop 'N' Swap reduces NYC's waste by finding n...</td>
+      <td>NaN</td>
+      <td>4.0</td>
+      <td>Environment</td>
+      <td>...</td>
+      <td>February 05 2011</td>
+      <td>approved</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 35 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Encoding-categorical-variables">
+<a class="anchor" href="#Encoding-categorical-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoding categorical variables<a class="anchor-link" href="#Encoding-categorical-variables"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Encoding-categorical-variables---binary">
+<a class="anchor" href="#Encoding-categorical-variables---binary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoding categorical variables - binary<a class="anchor-link" href="#Encoding-categorical-variables---binary"> </a>
+</h3>
+<p>Take a look at the <code>hiking</code> dataset. There are several columns here that need encoding, one of which is the <code>Accessible</code> column, which needs to be encoded in order to be modeled. Accessible is a binary feature, so it has two values - either <code>Y</code> or <code>N</code> - so it needs to be encoded into 1s and 0s. Use scikit-learn's <code>LabelEncoder</code> method to do that transformation.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">hiking</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="s1">'./dataset/hiking.json'</span><span class="p">)</span>
+<span class="n">hiking</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Prop_ID</th>
+      <th>Name</th>
+      <th>Location</th>
+      <th>Park_Name</th>
+      <th>Length</th>
+      <th>Difficulty</th>
+      <th>Other_Details</th>
+      <th>Accessible</th>
+      <th>Limited_Access</th>
+      <th>lat</th>
+      <th>lon</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>B057</td>
+      <td>Salt Marsh Nature Trail</td>
+      <td>Enter behind the Salt Marsh Nature Center, loc...</td>
+      <td>Marine Park</td>
+      <td>0.8 miles</td>
+      <td>None</td>
+      <td>&lt;p&gt;The first half of this mile-long trail foll...</td>
+      <td>Y</td>
+      <td>N</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>B073</td>
+      <td>Lullwater</td>
+      <td>Enter Park at Lincoln Road and Ocean Avenue en...</td>
+      <td>Prospect Park</td>
+      <td>1.0 mile</td>
+      <td>Easy</td>
+      <td>Explore the Lullwater to see how nature thrive...</td>
+      <td>N</td>
+      <td>N</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>B073</td>
+      <td>Midwood</td>
+      <td>Enter Park at Lincoln Road and Ocean Avenue en...</td>
+      <td>Prospect Park</td>
+      <td>0.75 miles</td>
+      <td>Easy</td>
+      <td>Step back in time with a walk through Brooklyn...</td>
+      <td>N</td>
+      <td>N</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>B073</td>
+      <td>Peninsula</td>
+      <td>Enter Park at Lincoln Road and Ocean Avenue en...</td>
+      <td>Prospect Park</td>
+      <td>0.5 miles</td>
+      <td>Easy</td>
+      <td>Discover how the Peninsula has changed over th...</td>
+      <td>N</td>
+      <td>N</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>B073</td>
+      <td>Waterfall</td>
+      <td>Enter Park at Lincoln Road and Ocean Avenue en...</td>
+      <td>Prospect Park</td>
+      <td>0.5 miles</td>
+      <td>Easy</td>
+      <td>Trace the source of the Lake on the Waterfall ...</td>
+      <td>N</td>
+      <td>N</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+
+<span class="c1"># Set up the LabelEncoder object</span>
+<span class="n">enc</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+
+<span class="c1"># Apply the encoding to the "Accessible" column</span>
+<span class="n">hiking</span><span class="p">[</span><span class="s1">'Accessible_enc'</span><span class="p">]</span> <span class="o">=</span> <span class="n">enc</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">hiking</span><span class="p">[</span><span class="s1">'Accessible'</span><span class="p">])</span>
+
+<span class="c1"># Compare the two columns</span>
+<span class="n">hiking</span><span class="p">[[</span><span class="s1">'Accessible'</span><span class="p">,</span> <span class="s1">'Accessible_enc'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Accessible</th>
+      <th>Accessible_enc</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Y</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>N</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>N</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>N</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>N</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Encoding-categorical-variables---one-hot">
+<a class="anchor" href="#Encoding-categorical-variables---one-hot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Encoding categorical variables - one-hot<a class="anchor-link" href="#Encoding-categorical-variables---one-hot"> </a>
+</h3>
+<p>One of the columns in the <code>volunteer</code> dataset, <code>category_desc</code>, gives category descriptions for the volunteer opportunities listed. Because it is a categorical variable with more than two categories, we need to use one-hot encoding to transform this column numerically. Use Pandas' <code>get_dummies()</code> function to do so.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transform the category_desc column</span>
+<span class="n">category_enc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">volunteer</span><span class="p">[</span><span class="s1">'category_desc'</span><span class="p">])</span>
+
+<span class="c1"># Take a look at the encoded columns</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">category_enc</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>   Education  Emergency Preparedness  Environment  Health  \
+0          0                       0            0       0   
+1          0                       0            0       0   
+2          0                       0            0       0   
+3          0                       0            0       0   
+4          0                       0            1       0   
+
+   Helping Neighbors in Need  Strengthening Communities  
+0                          0                          0  
+1                          0                          1  
+2                          0                          1  
+3                          0                          1  
+4                          0                          0  
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Engineering-numerical-features">
+<a class="anchor" href="#Engineering-numerical-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Engineering numerical features<a class="anchor-link" href="#Engineering-numerical-features"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Engineering-numerical-features---taking-an-average">
+<a class="anchor" href="#Engineering-numerical-features---taking-an-average" aria-hidden="true"><span class="octicon octicon-link"></span></a>Engineering numerical features - taking an average<a class="anchor-link" href="#Engineering-numerical-features---taking-an-average"> </a>
+</h3>
+<p>A good use case for taking an aggregate statistic to create a new feature is to take the mean of columns. Here, you have a DataFrame of running times named <code>running_times_5k</code>. For each <code>name</code> in the dataset, take the mean of their 5 run times.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">running_times_5k</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/running_times_5k.csv'</span><span class="p">)</span>
+<span class="n">running_times_5k</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>run1</th>
+      <th>run2</th>
+      <th>run3</th>
+      <th>run4</th>
+      <th>run5</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Sue</td>
+      <td>20.1</td>
+      <td>18.5</td>
+      <td>19.6</td>
+      <td>20.3</td>
+      <td>18.3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Mark</td>
+      <td>16.5</td>
+      <td>17.1</td>
+      <td>16.9</td>
+      <td>17.6</td>
+      <td>17.3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Sean</td>
+      <td>23.5</td>
+      <td>25.1</td>
+      <td>25.2</td>
+      <td>24.6</td>
+      <td>23.9</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Erin</td>
+      <td>21.7</td>
+      <td>21.1</td>
+      <td>20.9</td>
+      <td>22.1</td>
+      <td>22.2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Jenny</td>
+      <td>25.8</td>
+      <td>27.1</td>
+      <td>26.1</td>
+      <td>26.7</td>
+      <td>26.9</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Russell</td>
+      <td>30.9</td>
+      <td>29.6</td>
+      <td>31.4</td>
+      <td>30.4</td>
+      <td>29.9</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a list of the columns to average</span>
+<span class="n">run_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'run1'</span><span class="p">,</span> <span class="s1">'run2'</span><span class="p">,</span> <span class="s1">'run3'</span><span class="p">,</span> <span class="s1">'run4'</span><span class="p">,</span> <span class="s1">'run5'</span><span class="p">]</span>
+
+<span class="c1"># Use apply to create a mean column</span>
+<span class="n">running_times_5k</span><span class="p">[</span><span class="s1">'mean'</span><span class="p">]</span> <span class="o">=</span> <span class="n">running_times_5k</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="n">run_columns</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Take a look at the results</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">running_times_5k</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>      name  run1  run2  run3  run4  run5   mean
+0      Sue  20.1  18.5  19.6  20.3  18.3  19.36
+1     Mark  16.5  17.1  16.9  17.6  17.3  17.08
+2     Sean  23.5  25.1  25.2  24.6  23.9  24.46
+3     Erin  21.7  21.1  20.9  22.1  22.2  21.60
+4    Jenny  25.8  27.1  26.1  26.7  26.9  26.52
+5  Russell  30.9  29.6  31.4  30.4  29.9  30.44
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Engineering-numerical-features---datetime">
+<a class="anchor" href="#Engineering-numerical-features---datetime" aria-hidden="true"><span class="octicon octicon-link"></span></a>Engineering numerical features - datetime<a class="anchor-link" href="#Engineering-numerical-features---datetime"> </a>
+</h3>
+<p>There are several columns in the <code>volunteer</code> dataset comprised of datetimes. Let's take a look at the <code>start_date_date</code> column and extract just the month to use as a feature for modeling.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># First, convert string column to date column</span>
+<span class="n">volunteer</span><span class="p">[</span><span class="s1">'start_date_converted'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">volunteer</span><span class="p">[</span><span class="s1">'start_date_date'</span><span class="p">])</span>
+
+<span class="c1"># Extract just the month from the converted column</span>
+<span class="n">volunteer</span><span class="p">[</span><span class="s1">'start_date_month'</span><span class="p">]</span> <span class="o">=</span> <span class="n">volunteer</span><span class="p">[</span><span class="s1">'start_date_converted'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">month</span><span class="p">)</span>
+
+<span class="c1"># Take a look at the converted and new month columns</span>
+<span class="n">volunteer</span><span class="p">[[</span><span class="s1">'start_date_converted'</span><span class="p">,</span> <span class="s1">'start_date_month'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>start_date_converted</th>
+      <th>start_date_month</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2011-07-30</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2011-02-01</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2011-01-29</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2011-02-14</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2011-02-05</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Text-classification">
+<a class="anchor" href="#Text-classification" aria-hidden="true"><span class="octicon octicon-link"></span></a>Text classification<a class="anchor-link" href="#Text-classification"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Engineering-features-from-strings---extraction">
+<a class="anchor" href="#Engineering-features-from-strings---extraction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Engineering features from strings - extraction<a class="anchor-link" href="#Engineering-features-from-strings---extraction"> </a>
+</h3>
+<p>The <code>Length</code> column in the <code>hiking</code> dataset is a column of strings, but contained in the column is the mileage for the hike. We're going to extract this mileage using regular expressions, and then use a lambda in Pandas to apply the extraction to the DataFrame.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1"># Write a pattern to extract numbers and decimals</span>
+<span class="k">def</span> <span class="nf">return_mileage</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">'\d+\.\d+'</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    
+    <span class="c1"># Search the text for matches</span>
+    <span class="n">mile</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+    
+    <span class="c1"># If a value is returned, use group(0) to return the found value</span>
+    <span class="k">if</span> <span class="n">mile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">mile</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    
+<span class="c1"># Apply the function to the Length column and take a look at both columns</span>
+<span class="n">hiking</span><span class="p">[</span><span class="s1">'Length_num'</span><span class="p">]</span> <span class="o">=</span> <span class="n">hiking</span><span class="p">[</span><span class="s1">'Length'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">return_mileage</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+<span class="n">hiking</span><span class="p">[[</span><span class="s1">'Length'</span><span class="p">,</span> <span class="s1">'Length_num'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Length</th>
+      <th>Length_num</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.8 miles</td>
+      <td>0.80</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.0 mile</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.75 miles</td>
+      <td>0.75</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.5 miles</td>
+      <td>0.50</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.5 miles</td>
+      <td>0.50</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Engineering-features-from-strings---tf/idf">
+<a class="anchor" href="#Engineering-features-from-strings---tf/idf" aria-hidden="true"><span class="octicon octicon-link"></span></a>Engineering features from strings - tf/idf<a class="anchor-link" href="#Engineering-features-from-strings---tf/idf"> </a>
+</h3>
+<p>Let's transform the <code>volunteer</code> dataset's <code>title</code> column into a text vector, to use in a prediction task in the next exercise.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+
+<span class="c1"># Need to drop NaN for train_test_split</span>
+<span class="n">volunteer</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/volunteer_opportunities.csv'</span><span class="p">)</span>
+<span class="n">volunteer</span> <span class="o">=</span> <span class="n">volunteer</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'category_desc'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Take the title text</span>
+<span class="n">title_text</span> <span class="o">=</span> <span class="n">volunteer</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span>
+
+<span class="c1"># Create the vectorizer method</span>
+<span class="n">tfidf_vec</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">()</span>
+
+<span class="c1"># Transform the text into tf-idf vectors</span>
+<span class="n">text_tfidf</span> <span class="o">=</span> <span class="n">tfidf_vec</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">title_text</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Text-classification-using-tf/idf-vectors">
+<a class="anchor" href="#Text-classification-using-tf/idf-vectors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Text classification using tf/idf vectors<a class="anchor-link" href="#Text-classification-using-tf/idf-vectors"> </a>
+</h3>
+<p>Now that we've encoded the <code>volunteer</code> dataset's <code>title</code> column into tf/idf vectors, let's use those vectors to try to predict the <code>category_desc</code> column.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">GaussianNB</span>
+
+<span class="n">nb</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">()</span>
+
+<span class="c1"># Split the dataset according to the class distribution of category_desc</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">volunteer</span><span class="p">[</span><span class="s1">'category_desc'</span><span class="p">]</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">text_tfidf</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span> <span class="n">y</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Fit the model to the training data</span>
+<span class="n">nb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Print out the model's accuracy</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.5225806451612903
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine_learning/2020/07/09/04-Feature-Engineering.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

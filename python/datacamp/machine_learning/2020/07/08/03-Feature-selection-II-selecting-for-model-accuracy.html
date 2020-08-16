@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Feature selection II - selecting for model accuracy | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Feature selection II - selecting for model accuracy" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this second chapter on feature selection, you’ll learn how to let models help you find the most important features in a dataset for predicting a particular target feature. In the final lesson of this chapter, you’ll combine the advice of multiple, different, models to decide on which features are worth keeping. This is the Summary of lecture “Dimensionality Reduction in Python”, via datacamp." />
+<meta property="og:description" content="In this second chapter on feature selection, you’ll learn how to let models help you find the most important features in a dataset for predicting a particular target feature. In the final lesson of this chapter, you’ll combine the advice of multiple, different, models to decide on which features are worth keeping. This is the Summary of lecture “Dimensionality Reduction in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/08/03-Feature-selection-II-selecting-for-model-accuracy.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/08/03-Feature-selection-II-selecting-for-model-accuracy.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/mse.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-08T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this second chapter on feature selection, you’ll learn how to let models help you find the most important features in a dataset for predicting a particular target feature. In the final lesson of this chapter, you’ll combine the advice of multiple, different, models to decide on which features are worth keeping. This is the Summary of lecture “Dimensionality Reduction in Python”, via datacamp.","@type":"BlogPosting","headline":"Feature selection II - selecting for model accuracy","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/08/03-Feature-selection-II-selecting-for-model-accuracy.html","datePublished":"2020-07-08T00:00:00-05:00","dateModified":"2020-07-08T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/mse.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/08/03-Feature-selection-II-selecting-for-model-accuracy.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Feature selection II - selecting for model accuracy | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Feature selection II - selecting for model accuracy" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this second chapter on feature selection, you’ll learn how to let models help you find the most important features in a dataset for predicting a particular target feature. In the final lesson of this chapter, you’ll combine the advice of multiple, different, models to decide on which features are worth keeping. This is the Summary of lecture “Dimensionality Reduction in Python”, via datacamp." />
+<meta property="og:description" content="In this second chapter on feature selection, you’ll learn how to let models help you find the most important features in a dataset for predicting a particular target feature. In the final lesson of this chapter, you’ll combine the advice of multiple, different, models to decide on which features are worth keeping. This is the Summary of lecture “Dimensionality Reduction in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/08/03-Feature-selection-II-selecting-for-model-accuracy.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/08/03-Feature-selection-II-selecting-for-model-accuracy.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/mse.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-08T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this second chapter on feature selection, you’ll learn how to let models help you find the most important features in a dataset for predicting a particular target feature. In the final lesson of this chapter, you’ll combine the advice of multiple, different, models to decide on which features are worth keeping. This is the Summary of lecture “Dimensionality Reduction in Python”, via datacamp.","@type":"BlogPosting","headline":"Feature selection II - selecting for model accuracy","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/08/03-Feature-selection-II-selecting-for-model-accuracy.html","datePublished":"2020-07-08T00:00:00-05:00","dateModified":"2020-07-08T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/mse.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/08/03-Feature-selection-II-selecting-for-model-accuracy.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Feature selection II - selecting for model accuracy</h1><p class="page-description">In this second chapter on feature selection, you'll learn how to let models help you find the most important features in a dataset for predicting a particular target feature. In the final lesson of this chapter, you'll combine the advice of multiple, different, models to decide on which features are worth keeping. This is the Summary of lecture "Dimensionality Reduction in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-08T00:00:00-05:00" itemprop="datePublished">
+        Jul 8, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      13 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-07-08-03-Feature-selection-II-selecting-for-model-accuracy.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-07-08-03-Feature-selection-II-selecting-for-model-accuracy.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-07-08-03-Feature-selection-II-selecting-for-model-accuracy.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Selecting-features-for-model-performance">Selecting features for model performance </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Building-a-diabetes-classifier">Building a diabetes classifier </a></li>
+<li class="toc-entry toc-h3"><a href="#Manual-Recursive-Feature-Elimination">Manual Recursive Feature Elimination </a></li>
+<li class="toc-entry toc-h3"><a href="#Automatic-Recursive-Feature-Elimination">Automatic Recursive Feature Elimination </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Tree-based-feature-selection">Tree-based feature selection </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Building-a-random-forest-model">Building a random forest model </a></li>
+<li class="toc-entry toc-h3"><a href="#Random-forest-for-feature-selection">Random forest for feature selection </a></li>
+<li class="toc-entry toc-h3"><a href="#Recursive-Feature-Elimination-with-random-forests">Recursive Feature Elimination with random forests </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Regularized-linear-regression">Regularized linear regression </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Creating-a-LASSO-regressor">Creating a LASSO regressor </a></li>
+<li class="toc-entry toc-h3"><a href="#Lasso-model-results">Lasso model results </a></li>
+<li class="toc-entry toc-h3"><a href="#Adjusting-the-regularization-strength">Adjusting the regularization strength </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Combining-feature-selectors">Combining feature selectors </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Creating-a-LassoCV-regressor">Creating a LassoCV regressor </a></li>
+<li class="toc-entry toc-h3"><a href="#Ensemble-models-for-extra-votes">Ensemble models for extra votes </a></li>
+<li class="toc-entry toc-h3"><a href="#Combining-3-feature-selectors">Combining 3 feature selectors </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-08-03-Feature-selection-II-selecting-for-model-accuracy.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Selecting-features-for-model-performance">
+<a class="anchor" href="#Selecting-features-for-model-performance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Selecting features for model performance<a class="anchor-link" href="#Selecting-features-for-model-performance"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Building-a-diabetes-classifier">
+<a class="anchor" href="#Building-a-diabetes-classifier" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a diabetes classifier<a class="anchor-link" href="#Building-a-diabetes-classifier"> </a>
+</h3>
+<p>You'll be using the Pima Indians diabetes dataset to predict whether a person has diabetes using logistic regression. There are 8 features and one target in this dataset.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">diabetes_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/PimaIndians.csv'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">diabetes_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">diabetes_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fit the scaler on the training features and transform these in one go</span>
+<span class="n">X_train_std</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="c1"># Fit the logistic regression model on the scaled training data</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_std</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Scaler the test features</span>
+<span class="n">X_test_std</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Predict diabetes presence on the scaled test set</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_std</span><span class="p">)</span>
+
+<span class="c1"># Print accuracy metrics and feature coefficients</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">{0:.1%}</span><span class="s2"> accuracy on test set."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)))</span>
+<span class="n">pprint</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>83.9% accuracy on test set.
+{'age': 0.21,
+ 'bmi': 0.17,
+ 'diastolic': 0.12,
+ 'family': 0.22,
+ 'glucose': 1.13,
+ 'insulin': 0.11,
+ 'pregnant': 0.29,
+ 'triceps': 0.28}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We get almost 80% accuracy on the test set. Take a look at the differences in model coefficients for the different features.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Manual-Recursive-Feature-Elimination">
+<a class="anchor" href="#Manual-Recursive-Feature-Elimination" aria-hidden="true"><span class="octicon octicon-link"></span></a>Manual Recursive Feature Elimination<a class="anchor-link" href="#Manual-Recursive-Feature-Elimination"> </a>
+</h3>
+<p>Now that we've created a diabetes classifier, let's see if we can reduce the number of features without hurting the model accuracy too much.</p>
+<p>On the second line of code the features are selected from the original dataframe. Adjust this selection.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Remove the feature with the lowest model coefficient</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">diabetes_df</span><span class="p">[[</span><span class="s1">'pregnant'</span><span class="p">,</span> <span class="s1">'glucose'</span><span class="p">,</span> <span class="s1">'triceps'</span><span class="p">,</span>
+                 <span class="s1">'insulin'</span><span class="p">,</span> <span class="s1">'bmi'</span><span class="p">,</span> <span class="s1">'family'</span><span class="p">,</span> <span class="s1">'age'</span><span class="p">]]</span>
+
+<span class="c1"># Performs a 25-75% train test split</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Scales features and fits the logistic regression model</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">),</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Calculate the accuracy on the test set and prints coefficients</span>
+<span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">{0: .1%}</span><span class="s2"> accuracy on test set."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span>
+<span class="n">pprint</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> 80.6% accuracy on test set.
+{'age': 0.35,
+ 'bmi': 0.39,
+ 'family': 0.34,
+ 'glucose': 1.24,
+ 'insulin': 0.2,
+ 'pregnant': 0.05,
+ 'triceps': 0.24}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Remove the 2 features with the lowest model coefficients</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">diabetes_df</span><span class="p">[[</span><span class="s1">'glucose'</span><span class="p">,</span> <span class="s1">'triceps'</span><span class="p">,</span> <span class="s1">'bmi'</span><span class="p">,</span> <span class="s1">'family'</span><span class="p">,</span> <span class="s1">'age'</span><span class="p">]]</span>
+
+<span class="c1"># Performs a 25-75% train test split</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Scales features and fits the logistic regression model</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">),</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Calculates the accuracy on the test set and prints coefficients</span>
+<span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">{0:.1%}</span><span class="s2"> accuracy on test set."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span> 
+<span class="n">pprint</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>79.6% accuracy on test set.
+{'age': 0.37, 'bmi': 0.34, 'family': 0.34, 'glucose': 1.13, 'triceps': 0.25}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Only keep the feature with the highest coefficient</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">diabetes_df</span><span class="p">[[</span><span class="s1">'glucose'</span><span class="p">]]</span>
+
+<span class="c1"># Performs a 25-75% train test split</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Scales features and fits the logistic regression model to the data</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">),</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Calculates the accuracy on the test set and prints coefficients</span>
+<span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">{0:.1%}</span><span class="s2"> accuracy on test set."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span> 
+<span class="nb">print</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>75.5% accuracy on test set.
+{'glucose': 1.28}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Automatic-Recursive-Feature-Elimination">
+<a class="anchor" href="#Automatic-Recursive-Feature-Elimination" aria-hidden="true"><span class="octicon octicon-link"></span></a>Automatic Recursive Feature Elimination<a class="anchor-link" href="#Automatic-Recursive-Feature-Elimination"> </a>
+</h3>
+<p>Now let's automate this recursive process. Wrap a Recursive Feature Eliminator (RFE) around our logistic regression estimator and pass it the desired number of features.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">diabetes_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">diabetes_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+
+<span class="c1"># Fit the scaler on the training features and transform these in one go</span>
+<span class="n">X_train_std</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="c1"># Fit the logistic regression model on the scaled training data</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_std</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Scaler the test features</span>
+<span class="n">X_test_std</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFE</span>
+
+<span class="c1"># Create the RFE a LogisticRegression estimator and 3 features to select</span>
+<span class="n">rfe</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">LogisticRegression</span><span class="p">(),</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Fits the eliminator to the data</span>
+<span class="n">rfe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_std</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Print the features and their ranking (high = dropped early on)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">rfe</span><span class="o">.</span><span class="n">ranking_</span><span class="p">)))</span>
+
+<span class="c1"># Print the features that are not elimiated</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">rfe</span><span class="o">.</span><span class="n">support_</span><span class="p">])</span>
+
+<span class="c1"># CAlculates the test set accuracy</span>
+<span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">rfe</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_std</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">{0:.1%}</span><span class="s2"> accuracy on test set."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting estimator with 8 features.
+Fitting estimator with 7 features.
+Fitting estimator with 6 features.
+Fitting estimator with 5 features.
+Fitting estimator with 4 features.
+{'pregnant': 3, 'glucose': 1, 'diastolic': 4, 'triceps': 6, 'insulin': 5, 'bmi': 2, 'family': 1, 'age': 1}
+Index(['glucose', 'family', 'age'], dtype='object')
+75.4% accuracy on test set.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tree-based-feature-selection">
+<a class="anchor" href="#Tree-based-feature-selection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tree-based feature selection<a class="anchor-link" href="#Tree-based-feature-selection"> </a>
+</h2>
+<ul>
+<li>Random forest classifier
+<img src="/chans_jupyter/images/copied_from_nb/image/rfc.png" alt="rf classifier">
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Building-a-random-forest-model">
+<a class="anchor" href="#Building-a-random-forest-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building a random forest model<a class="anchor-link" href="#Building-a-random-forest-model"> </a>
+</h3>
+<p>You'll again work on the Pima Indians dataset to predict whether an individual has diabetes. This time using a random forest classifier. You'll fit the model on the training data after performing the train-test split and consult the feature importance values.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="c1"># Perform a 75% training and 25% test data split</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Fit the random forest model to the training data</span>
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Calculate the accuracy</span>
+<span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))</span>
+
+<span class="c1"># Print the importances per feature</span>
+<span class="n">pprint</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">))))</span>
+
+<span class="c1"># Print accuracy</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">{0:.1%}</span><span class="s2"> accuracy on test set."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{'age': 0.13,
+ 'bmi': 0.12,
+ 'diastolic': 0.09,
+ 'family': 0.12,
+ 'glucose': 0.25,
+ 'insulin': 0.14,
+ 'pregnant': 0.07,
+ 'triceps': 0.09}
+79.6% accuracy on test set.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Random-forest-for-feature-selection">
+<a class="anchor" href="#Random-forest-for-feature-selection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Random forest for feature selection<a class="anchor-link" href="#Random-forest-for-feature-selection"> </a>
+</h3>
+<p>Now lets use the fitted random model to select the most important features from our input dataset <code>X</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a mask for features importances above the threshold</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span> <span class="o">&gt;</span> <span class="mf">0.15</span>
+
+<span class="c1"># Prints out the mask</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+
+<span class="c1"># Apply the mask to the feature dataset X</span>
+<span class="n">reduced_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span>
+
+<span class="c1"># Prints out the selected column names</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reduced_X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[False  True False False False False False False]
+Index(['glucose'], dtype='object')
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Recursive-Feature-Elimination-with-random-forests">
+<a class="anchor" href="#Recursive-Feature-Elimination-with-random-forests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Recursive Feature Elimination with random forests<a class="anchor-link" href="#Recursive-Feature-Elimination-with-random-forests"> </a>
+</h3>
+<p>You'll wrap a Recursive Feature Eliminator around a random forest model to remove features step by step. This method is more conservative compared to selecting features after applying a single importance threshold. Since dropping one feature can influence the relative importances of the others.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Wrap the feature eliminator around the random forest model</span>
+<span class="n">rfe</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">RandomForestClassifier</span><span class="p">(),</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Fit the model to the training data</span>
+<span class="n">rfe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Create a mask using an attribute of rfe</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">rfe</span><span class="o">.</span><span class="n">support_</span>
+
+<span class="c1"># Apply the mask to the feature dataset X and print the result</span>
+<span class="n">reduced_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reduced_X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting estimator with 8 features.
+Fitting estimator with 7 features.
+Fitting estimator with 6 features.
+Fitting estimator with 5 features.
+Fitting estimator with 4 features.
+Fitting estimator with 3 features.
+Index(['glucose', 'bmi'], dtype='object')
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Wrap the feature eliminator around the random forest model</span>
+<span class="n">rfe</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">RandomForestClassifier</span><span class="p">(),</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Fit the model to the training data</span>
+<span class="n">rfe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Create a mask using an attribute of rfe</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">rfe</span><span class="o">.</span><span class="n">support_</span>
+
+<span class="c1"># Apply the mask to the feature dataset X and print the result</span>
+<span class="n">reduced_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reduced_X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting estimator with 8 features.
+Fitting estimator with 6 features.
+Fitting estimator with 4 features.
+Index(['glucose', 'age'], dtype='object')
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Compared to the quick and dirty single threshold method from the previous exercise one of the selected features is different.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Regularized-linear-regression">
+<a class="anchor" href="#Regularized-linear-regression" aria-hidden="true"><span class="octicon octicon-link"></span></a>Regularized linear regression<a class="anchor-link" href="#Regularized-linear-regression"> </a>
+</h2>
+<ul>
+<li>Loss function: Mean Squared Error
+<img src="/chans_jupyter/images/copied_from_nb/image/mse.png" alt="mse">
+</li>
+<li>Adding regularization
+
+$$ \text{MSE} + \overbrace{\alpha(\vert \beta_1 \vert + \vert \beta_2 \vert + \vert \beta_3 \vert)}^{\text{Regularization term}} $$
+<ul>
+<li>MSE tries to make model accurate</li>
+<li>Regularization term tries to make model simple</li>
+<li>$\alpha$, when it's too low, the model might overfit. when it's too high, the model might become too simple and inaccurate. One linear model that includes this type of regularization is called <strong>Lasso</strong>, for <strong>L</strong>east <strong>A</strong>bsolute <strong>S</strong>hrinkage and <strong>S</strong>election.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Creating-a-LASSO-regressor">
+<a class="anchor" href="#Creating-a-LASSO-regressor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a LASSO regressor<a class="anchor-link" href="#Creating-a-LASSO-regressor"> </a>
+</h3>
+<p>You'll be working on the numeric ANSUR body measurements dataset to predict a persons Body Mass Index (BMI) using the <code>Lasso()</code> regressor. BMI is a metric derived from body height and weight but those two features have been removed from the dataset to give the model a challenge.</p>
+<p>You'll standardize the data first using the <code>StandardScaler()</code> that has been instantiated for you as scaler to make sure all coefficients face a comparable regularizing force trying to bring them down.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ansur_male</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/ANSUR_II_MALE.csv'</span><span class="p">)</span>
+
+<span class="n">ansur_df</span> <span class="o">=</span> <span class="n">ansur_male</span>
+<span class="c1"># unused columns in the dataset</span>
+<span class="n">unused</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Gender'</span><span class="p">,</span> <span class="s1">'Branch'</span><span class="p">,</span> <span class="s1">'Component'</span><span class="p">,</span> <span class="s1">'BMI_class'</span><span class="p">,</span> <span class="s1">'Height_class'</span><span class="p">,</span> <span class="s1">'weight_kg'</span><span class="p">,</span> <span class="s1">'stature_m'</span><span class="p">]</span>
+
+<span class="c1"># Drop the non-numeric columns from df</span>
+<span class="n">ansur_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">unused</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">ansur_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'BMI'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">ansur_df</span><span class="p">[</span><span class="s1">'BMI'</span><span class="p">]</span>
+
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Lasso</span>
+
+<span class="c1"># Set the test size to 30% to get a 70-30% train test split</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Fit the scaler on the training features and transform these in one go</span>
+<span class="n">X_train_std</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+<span class="c1"># Create the Lasso model</span>
+<span class="n">la</span> <span class="o">=</span> <span class="n">Lasso</span><span class="p">()</span>
+
+<span class="c1"># Fit it to the standardized training data</span>
+<span class="n">la</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_std</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Lasso(alpha=1.0, copy_X=True, fit_intercept=True, max_iter=1000,
+      normalize=False, positive=False, precompute=False, random_state=None,
+      selection='cyclic', tol=0.0001, warm_start=False)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Lasso-model-results">
+<a class="anchor" href="#Lasso-model-results" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lasso model results<a class="anchor-link" href="#Lasso-model-results"> </a>
+</h3>
+<p>Now that you've trained the Lasso model, you'll score its predictive capacity ($R^2$) on the test set and count how many features are ignored because their coefficient is reduced to zero.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transform the test set with the pre-fitted scaler</span>
+<span class="n">X_test_std</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Calculate the coefficient of determination (R squared) on X_test_std</span>
+<span class="n">r_squared</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test_std</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The model can predict </span><span class="si">{0:.1%}</span><span class="s2"> of the variance in the test set."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r_squared</span><span class="p">))</span>
+
+<span class="c1"># Create a list that has True values when coefficients equal 0</span>
+<span class="n">zero_coef</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">coef_</span> <span class="o">==</span> <span class="mi">0</span>
+
+<span class="c1"># Calculate how many features have a zero coefficient</span>
+<span class="n">n_ignored</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">zero_coef</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The model has ignored </span><span class="si">{}</span><span class="s2"> out of </span><span class="si">{}</span><span class="s2"> features."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_ignored</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">la</span><span class="o">.</span><span class="n">coef_</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The model can predict 84.7% of the variance in the test set.
+The model has ignored 82 out of 91 features.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can predict almost 85% of the variance in the BMI value using just 9 out of 91 of the features. The $R^2$ could be higher though.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Adjusting-the-regularization-strength">
+<a class="anchor" href="#Adjusting-the-regularization-strength" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adjusting the regularization strength<a class="anchor-link" href="#Adjusting-the-regularization-strength"> </a>
+</h3>
+<p>Your current Lasso model has an $R^2$ score of 84.7%. When a model applies overly powerful regularization it can suffer from high bias, hurting its predictive power.</p>
+<p>Let's improve the balance between predictive power and model simplicity by tweaking the <code>alpha</code> parameter.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">alpha_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]</span>
+<span class="n">max_r</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">max_alpha</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="n">alpha_list</span><span class="p">:</span>
+    <span class="c1"># Find the highest alpha value with R-squared above 98%</span>
+    <span class="n">la</span> <span class="o">=</span> <span class="n">Lasso</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Fits the model and calculates performance stats</span>
+    <span class="n">la</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_std</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">r_squared</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test_std</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+    <span class="n">n_ignored_features</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">la</span><span class="o">.</span><span class="n">coef_</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Print peformance stats </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"The model can predict </span><span class="si">{0:.1%}</span><span class="s2"> of the variance in the test set."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r_squared</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">{}</span><span class="s2"> out of </span><span class="si">{}</span><span class="s2"> features were ignored."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_ignored_features</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">la</span><span class="o">.</span><span class="n">coef_</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">r_squared</span> <span class="o">&gt;</span> <span class="mf">0.98</span><span class="p">:</span>
+        <span class="n">max_r</span> <span class="o">=</span> <span class="n">r_squared</span>
+        <span class="n">max_alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="k">break</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Max R-squared: </span><span class="si">{}</span><span class="s2">, alpha: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_r</span><span class="p">,</span> <span class="n">max_alpha</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The model can predict 84.7% of the variance in the test set.
+82 out of 91 features were ignored.
+The model can predict 93.8% of the variance in the test set.
+79 out of 91 features were ignored.
+The model can predict 98.3% of the variance in the test set.
+64 out of 91 features were ignored.
+Max R-squared: 0.9828190248586458, alpha: 0.1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Combining-feature-selectors">
+<a class="anchor" href="#Combining-feature-selectors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Combining feature selectors<a class="anchor-link" href="#Combining-feature-selectors"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Creating-a-LassoCV-regressor">
+<a class="anchor" href="#Creating-a-LassoCV-regressor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a LassoCV regressor<a class="anchor-link" href="#Creating-a-LassoCV-regressor"> </a>
+</h3>
+<p>You'll be predicting biceps circumference on a subsample of the male ANSUR dataset using the <code>LassoCV()</code> regressor that automatically tunes the regularization strength (alpha value) using Cross-Validation.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">ansur_df</span><span class="p">[[</span><span class="s1">'acromialheight'</span><span class="p">,</span> <span class="s1">'axillaheight'</span><span class="p">,</span> <span class="s1">'bideltoidbreadth'</span><span class="p">,</span> <span class="s1">'buttockcircumference'</span><span class="p">,</span> <span class="s1">'buttockkneelength'</span><span class="p">,</span> <span class="s1">'buttockpopliteallength'</span><span class="p">,</span> <span class="s1">'cervicaleheight'</span><span class="p">,</span> <span class="s1">'chestcircumference'</span><span class="p">,</span> <span class="s1">'chestheight'</span><span class="p">,</span>
+       <span class="s1">'earprotrusion'</span><span class="p">,</span> <span class="s1">'footbreadthhorizontal'</span><span class="p">,</span> <span class="s1">'forearmcircumferenceflexed'</span><span class="p">,</span> <span class="s1">'handlength'</span><span class="p">,</span> <span class="s1">'headbreadth'</span><span class="p">,</span> <span class="s1">'heelbreadth'</span><span class="p">,</span> <span class="s1">'hipbreadth'</span><span class="p">,</span> <span class="s1">'iliocristaleheight'</span><span class="p">,</span> <span class="s1">'interscyeii'</span><span class="p">,</span>
+       <span class="s1">'lateralfemoralepicondyleheight'</span><span class="p">,</span> <span class="s1">'lateralmalleolusheight'</span><span class="p">,</span> <span class="s1">'neckcircumferencebase'</span><span class="p">,</span> <span class="s1">'radialestylionlength'</span><span class="p">,</span> <span class="s1">'shouldercircumference'</span><span class="p">,</span> <span class="s1">'shoulderelbowlength'</span><span class="p">,</span> <span class="s1">'sleeveoutseam'</span><span class="p">,</span>
+       <span class="s1">'thighcircumference'</span><span class="p">,</span> <span class="s1">'thighclearance'</span><span class="p">,</span> <span class="s1">'verticaltrunkcircumferenceusa'</span><span class="p">,</span> <span class="s1">'waistcircumference'</span><span class="p">,</span> <span class="s1">'waistdepth'</span><span class="p">,</span> <span class="s1">'wristheight'</span><span class="p">,</span> <span class="s1">'BMI'</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">ansur_df</span><span class="p">[</span><span class="s1">'bicepscircumferenceflexed'</span><span class="p">]</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LassoCV</span>
+
+<span class="c1"># Create and fit the LassoCV model on the training set</span>
+<span class="n">lcv</span> <span class="o">=</span> <span class="n">LassoCV</span><span class="p">()</span>
+<span class="n">lcv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Optimal alpha = </span><span class="si">{0:.3f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lcv</span><span class="o">.</span><span class="n">alpha_</span><span class="p">))</span>
+
+<span class="c1"># Calculate R squared on the test set</span>
+<span class="n">r_squared</span> <span class="o">=</span> <span class="n">lcv</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The model explains </span><span class="si">{0:.1%}</span><span class="s1"> of the test set variance'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r_squared</span><span class="p">))</span>
+
+<span class="c1"># Create a mask for coefficients not equal to zero</span>
+<span class="n">lcv_mask</span> <span class="o">=</span> <span class="n">lcv</span><span class="o">.</span><span class="n">coef_</span> <span class="o">!=</span> <span class="mi">0</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="si">{}</span><span class="s1"> features out of </span><span class="si">{}</span><span class="s1"> selected'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">lcv_mask</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">lcv_mask</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Optimal alpha = 0.035
+The model explains 85.6% of the test set variance
+24 features out of 32 selected
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Ensemble-models-for-extra-votes">
+<a class="anchor" href="#Ensemble-models-for-extra-votes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ensemble models for extra votes<a class="anchor-link" href="#Ensemble-models-for-extra-votes"> </a>
+</h3>
+<p>The LassoCV() model selected 24 out of 32 features. Not bad, but not a spectacular dimensionality reduction either. Let's use two more models to select the 10 features they consider most important using the Recursive Feature Eliminator (RFE).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFE</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">GradientBoostingRegressor</span>
+
+<span class="c1"># Select 10 features with RFE on a GradientBoostingRegressor, drop 3 features on each step</span>
+<span class="n">rfe_gb</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">GradientBoostingRegressor</span><span class="p">(),</span>
+            <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rfe_gb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Calculate the R squared on the test set</span>
+<span class="n">r_squared</span> <span class="o">=</span> <span class="n">rfe_gb</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The model can explain </span><span class="si">{0:.1%}</span><span class="s1"> of the variance in the test set'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r_squared</span><span class="p">))</span>
+
+<span class="c1"># Assign the support array to gb_mask</span>
+<span class="n">gb_mask</span> <span class="o">=</span> <span class="n">rfe_gb</span><span class="o">.</span><span class="n">support_</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting estimator with 32 features.
+Fitting estimator with 29 features.
+Fitting estimator with 26 features.
+Fitting estimator with 23 features.
+Fitting estimator with 20 features.
+Fitting estimator with 17 features.
+Fitting estimator with 14 features.
+Fitting estimator with 11 features.
+The model can explain 83.3% of the variance in the test set
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="c1"># Select 10 features with RFE on a RandomForestRegressor, drop 3 features on each step</span>
+<span class="n">rfe_rf</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">RandomForestRegressor</span><span class="p">(),</span>
+            <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rfe_rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Calculate the R squared on the test set</span>
+<span class="n">r_squared</span> <span class="o">=</span> <span class="n">rfe_rf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The model can explain </span><span class="si">{0:.1%}</span><span class="s1"> of the variance in the test set'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r_squared</span><span class="p">))</span>
+
+<span class="c1"># Assign the support array to rf_mask</span>
+<span class="n">rf_mask</span> <span class="o">=</span> <span class="n">rfe_rf</span><span class="o">.</span><span class="n">support_</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting estimator with 32 features.
+Fitting estimator with 29 features.
+Fitting estimator with 26 features.
+Fitting estimator with 23 features.
+Fitting estimator with 20 features.
+Fitting estimator with 17 features.
+Fitting estimator with 14 features.
+Fitting estimator with 11 features.
+The model can explain 82.3% of the variance in the test set
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Inluding the Lasso linear model from the previous exercise, we now have the votes from 3 models on which features are important.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Combining-3-feature-selectors">
+<a class="anchor" href="#Combining-3-feature-selectors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Combining 3 feature selectors<a class="anchor-link" href="#Combining-3-feature-selectors"> </a>
+</h3>
+<p>We'll combine the votes of the 3 models you built in the previous exercises, to decide which features are important into a meta mask. We'll then use this mask to reduce dimensionality and see how a simple linear regressor performs on the reduced dataset.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Sum the votes of the three models</span>
+<span class="n">votes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">lcv_mask</span><span class="p">,</span> <span class="n">rf_mask</span><span class="p">,</span> <span class="n">gb_mask</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">votes</span><span class="p">)</span>
+
+<span class="c1"># Create a mask for features selected by all 3 models</span>
+<span class="n">meta_mask</span> <span class="o">=</span> <span class="n">votes</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">meta_mask</span><span class="p">)</span>
+
+<span class="c1"># Apply the dimensionality reduction on X</span>
+<span class="n">X_reduced</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">meta_mask</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X_reduced</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0 1 3 3 0 1 1 3 1 1 1 3 1 1 1 0 0 1 0 1 1 1 3 3 0 3 2 2 1 2 0 3]
+[False False  True  True False False False  True False False False  True
+ False False False False False False False False False False  True  True
+ False  True False False False False False  True]
+Index(['bideltoidbreadth', 'buttockcircumference', 'chestcircumference',
+       'forearmcircumferenceflexed', 'shouldercircumference',
+       'shoulderelbowlength', 'thighcircumference', 'BMI'],
+      dtype='object')
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">lm</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+
+<span class="c1"># Plug the reduced data into a linear regression pipeline</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_reduced</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">),</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">r_squared</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">),</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The model can explain </span><span class="si">{0:.1%}</span><span class="s1"> of the variance in the test set using </span><span class="si">{1:}</span><span class="s1"> features.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r_squared</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lm</span><span class="o">.</span><span class="n">coef_</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The model can explain 84.0% of the variance in the test set using 8 features.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Using the votes from 3 models you were able to select just 7 features that allowed a simple linear model to get a high accuracy!</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine_learning/2020/07/08/03-Feature-selection-II-selecting-for-model-accuracy.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

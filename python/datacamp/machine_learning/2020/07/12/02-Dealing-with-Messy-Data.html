@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Dealing with Messy Data | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Dealing with Messy Data" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter introduces you to the reality of messy and incomplete data. You will learn how to find where your data has missing values and explore multiple approaches on how to deal with them. You will also use string manipulation techniques to deal with unwanted characters in your dataset. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp." />
+<meta property="og:description" content="This chapter introduces you to the reality of messy and incomplete data. You will learn how to find where your data has missing values and explore multiple approaches on how to deal with them. You will also use string manipulation techniques to deal with unwanted characters in your dataset. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/12/02-Dealing-with-Messy-Data.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/12/02-Dealing-with-Messy-Data.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-12T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter introduces you to the reality of messy and incomplete data. You will learn how to find where your data has missing values and explore multiple approaches on how to deal with them. You will also use string manipulation techniques to deal with unwanted characters in your dataset. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Dealing with Messy Data","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/12/02-Dealing-with-Messy-Data.html","datePublished":"2020-07-12T00:00:00-05:00","dateModified":"2020-07-12T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/12/02-Dealing-with-Messy-Data.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Dealing with Messy Data | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Dealing with Messy Data" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter introduces you to the reality of messy and incomplete data. You will learn how to find where your data has missing values and explore multiple approaches on how to deal with them. You will also use string manipulation techniques to deal with unwanted characters in your dataset. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp." />
+<meta property="og:description" content="This chapter introduces you to the reality of messy and incomplete data. You will learn how to find where your data has missing values and explore multiple approaches on how to deal with them. You will also use string manipulation techniques to deal with unwanted characters in your dataset. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/12/02-Dealing-with-Messy-Data.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/12/02-Dealing-with-Messy-Data.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-12T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter introduces you to the reality of messy and incomplete data. You will learn how to find where your data has missing values and explore multiple approaches on how to deal with them. You will also use string manipulation techniques to deal with unwanted characters in your dataset. This is the Summary of lecture “Feature Engineering for Machine Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Dealing with Messy Data","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/12/02-Dealing-with-Messy-Data.html","datePublished":"2020-07-12T00:00:00-05:00","dateModified":"2020-07-12T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/12/02-Dealing-with-Messy-Data.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Dealing with Messy Data</h1><p class="page-description">This chapter introduces you to the reality of messy and incomplete data. You will learn how to find where your data has missing values and explore multiple approaches on how to deal with them. You will also use string manipulation techniques to deal with unwanted characters in your dataset. This is the Summary of lecture "Feature Engineering for Machine Learning in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-12T00:00:00-05:00" itemprop="datePublished">
+        Jul 12, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-07-12-02-Dealing-with-Messy-Data.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-07-12-02-Dealing-with-Messy-Data.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-07-12-02-Dealing-with-Messy-Data.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Why-do-missing-values-exist?">Why do missing values exist? </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#How-sparse-is-my-data?">How sparse is my data? </a></li>
+<li class="toc-entry toc-h3"><a href="#Finding-the-missing-values">Finding the missing values </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Dealing-with-missing-values-(I)">Dealing with missing values (I) </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Listwise-deletion">Listwise deletion </a></li>
+<li class="toc-entry toc-h3"><a href="#Replacing-missing-values-with-constants">Replacing missing values with constants </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Dealing-with-missing-values-(II)">Dealing with missing values (II) </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Filling-continuous-missing-values">Filling continuous missing values </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Dealing-with-other-data-issues">Dealing with other data issues </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Dealing-with-stray-characters-(I)">Dealing with stray characters (I) </a></li>
+<li class="toc-entry toc-h3"><a href="#Dealing-with-stray-characters-(II)">Dealing with stray characters (II) </a></li>
+<li class="toc-entry toc-h3"><a href="#Method-chaining">Method chaining </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-12-02-Dealing-with-Messy-Data.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Why-do-missing-values-exist?">
+<a class="anchor" href="#Why-do-missing-values-exist?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why do missing values exist?<a class="anchor-link" href="#Why-do-missing-values-exist?"> </a>
+</h2>
+<ul>
+<li>How gaps in data occur<ul>
+<li>Data not being collected properly</li>
+<li>Collection and management errors</li>
+<li>Data intentionally being omitted</li>
+<li>Could be created due to transformations of the data</li>
+</ul>
+</li>
+<li>Why we care?<ul>
+<li>Some models cannot work with missing data (Nulls/NaN)</li>
+<li>Missing data may be a sign a wider data issue</li>
+<li>Missing data can be a useful feature</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="How-sparse-is-my-data?">
+<a class="anchor" href="#How-sparse-is-my-data?" aria-hidden="true"><span class="octicon octicon-link"></span></a>How sparse is my data?<a class="anchor-link" href="#How-sparse-is-my-data?"> </a>
+</h3>
+<p>Most data sets contain missing values, often represented as NaN (Not a Number). If you are working with Pandas you can easily check how many missing values exist in each column.</p>
+<p>Let's find out how many of the developers taking the survey chose to enter their age (found in the <code>Age</code> column of <code>so_survey_df</code>) and their gender (<code>Gender</code> column of <code>so_survey_df</code>).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">so_survey_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/Combined_DS_v10.csv'</span><span class="p">)</span>
+<span class="n">so_survey_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>SurveyDate</th>
+      <th>FormalEducation</th>
+      <th>ConvertedSalary</th>
+      <th>Hobby</th>
+      <th>Country</th>
+      <th>StackOverflowJobsRecommend</th>
+      <th>VersionControl</th>
+      <th>Age</th>
+      <th>Years Experience</th>
+      <th>Gender</th>
+      <th>RawSalary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2/28/18 20:20</td>
+      <td>Bachelor's degree (BA. BS. B.Eng.. etc.)</td>
+      <td>NaN</td>
+      <td>Yes</td>
+      <td>South Africa</td>
+      <td>NaN</td>
+      <td>Git</td>
+      <td>21</td>
+      <td>13</td>
+      <td>Male</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>6/28/18 13:26</td>
+      <td>Bachelor's degree (BA. BS. B.Eng.. etc.)</td>
+      <td>70841.0</td>
+      <td>Yes</td>
+      <td>Sweeden</td>
+      <td>7.0</td>
+      <td>Git;Subversion</td>
+      <td>38</td>
+      <td>9</td>
+      <td>Male</td>
+      <td>70,841.00</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>6/6/18 3:37</td>
+      <td>Bachelor's degree (BA. BS. B.Eng.. etc.)</td>
+      <td>NaN</td>
+      <td>No</td>
+      <td>Sweeden</td>
+      <td>8.0</td>
+      <td>Git</td>
+      <td>45</td>
+      <td>11</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>5/9/18 1:06</td>
+      <td>Some college/university study without earning ...</td>
+      <td>21426.0</td>
+      <td>Yes</td>
+      <td>Sweeden</td>
+      <td>NaN</td>
+      <td>Zip file back-ups</td>
+      <td>46</td>
+      <td>12</td>
+      <td>Male</td>
+      <td>21,426.00</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4/12/18 22:41</td>
+      <td>Bachelor's degree (BA. BS. B.Eng.. etc.)</td>
+      <td>41671.0</td>
+      <td>Yes</td>
+      <td>UK</td>
+      <td>8.0</td>
+      <td>Git</td>
+      <td>39</td>
+      <td>7</td>
+      <td>Male</td>
+      <td>£41,671.00</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Subset the DataFrame</span>
+<span class="n">sub_df</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="p">[[</span><span class="s1">'Age'</span><span class="p">,</span> <span class="s1">'Gender'</span><span class="p">]]</span>
+
+<span class="c1"># Print the number of non-missing values</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sub_df</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Age       999
+Gender    693
+dtype: int64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Finding-the-missing-values">
+<a class="anchor" href="#Finding-the-missing-values" aria-hidden="true"><span class="octicon octicon-link"></span></a>Finding the missing values<a class="anchor-link" href="#Finding-the-missing-values"> </a>
+</h3>
+<p>While having a summary of how much of your data is missing can be useful, often you will need to find the exact locations of these missing values. Using the same subset of the StackOverflow data from the last exercise (<code>sub_df</code>), you will show how a value can be flagged as missing.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the top 10 entries of the DataFrame</span>
+<span class="n">sub_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Age</th>
+      <th>Gender</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>21</td>
+      <td>Male</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>38</td>
+      <td>Male</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>45</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>46</td>
+      <td>Male</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>39</td>
+      <td>Male</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>39</td>
+      <td>Male</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>34</td>
+      <td>Male</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>24</td>
+      <td>Female</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>23</td>
+      <td>Male</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>36</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the locations of the missing values</span>
+<span class="n">sub_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Age</th>
+      <th>Gender</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>False</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>False</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the locations of the missing values</span>
+<span class="n">sub_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Age</th>
+      <th>Gender</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>True</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>True</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>True</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>True</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>True</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>True</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>True</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>True</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>True</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Dealing-with-missing-values-(I)">
+<a class="anchor" href="#Dealing-with-missing-values-(I)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dealing with missing values (I)<a class="anchor-link" href="#Dealing-with-missing-values-(I)"> </a>
+</h2>
+<ul>
+<li>Issues with deletion<ul>
+<li>It deletes vaild data points</li>
+<li>Relies on randomness</li>
+<li>Reduces information</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Listwise-deletion">
+<a class="anchor" href="#Listwise-deletion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Listwise deletion<a class="anchor-link" href="#Listwise-deletion"> </a>
+</h3>
+<p>The simplest way to deal with missing values in your dataset when they are occurring entirely at random is to remove those rows, also called <strong>'listwise deletion'</strong>.</p>
+<p>Depending on the use case, you will sometimes want to remove all missing values in your data while other times you may want to only remove a particular column if too many values are missing in that column.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the number of rows and columns</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">so_survey_df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(999, 11)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a new DataFrame dropping all incomplete rows</span>
+<span class="n">no_missing_values_rows</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="c1"># Print the shape of the new DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">no_missing_values_rows</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(264, 11)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a new DataFrame dropping all columns with incomplete rows</span>
+<span class="n">no_missing_values_cols</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Print the shape fo the new DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">no_missing_values_cols</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(999, 7)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Drop all rows where Gender is missing</span>
+<span class="n">no_gender</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'Gender'</span><span class="p">])</span>
+
+<span class="c1"># Print the shape of the new DataFrame</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">no_gender</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(693, 11)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Replacing-missing-values-with-constants">
+<a class="anchor" href="#Replacing-missing-values-with-constants" aria-hidden="true"><span class="octicon octicon-link"></span></a>Replacing missing values with constants<a class="anchor-link" href="#Replacing-missing-values-with-constants"> </a>
+</h3>
+<p>While removing missing data entirely maybe a correct approach in many situations, this may result in a lot of information being omitted from your models.</p>
+<p>You may find categorical columns where the missing value is a valid piece of information in itself, such as someone refusing to answer a question in a survey. In these cases, you can fill all missing values with a new category entirely, for example 'No response given'.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the count of occurrence</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'Gender'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Male                                                                         632
+Female                                                                        53
+Transgender                                                                    2
+Female;Male                                                                    2
+Non-binary. genderqueer. or gender non-conforming                              1
+Male;Non-binary. genderqueer. or gender non-conforming                         1
+Female;Male;Transgender;Non-binary. genderqueer. or gender non-conforming      1
+Female;Transgender                                                             1
+Name: Gender, dtype: int64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Replace missing values</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'Gender'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">'Not Given'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Print the count of each value</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'Gender'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Male                                                                         632
+Not Given                                                                    306
+Female                                                                        53
+Transgender                                                                    2
+Female;Male                                                                    2
+Non-binary. genderqueer. or gender non-conforming                              1
+Male;Non-binary. genderqueer. or gender non-conforming                         1
+Female;Male;Transgender;Non-binary. genderqueer. or gender non-conforming      1
+Female;Transgender                                                             1
+Name: Gender, dtype: int64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Dealing-with-missing-values-(II)">
+<a class="anchor" href="#Dealing-with-missing-values-(II)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dealing with missing values (II)<a class="anchor-link" href="#Dealing-with-missing-values-(II)"> </a>
+</h2>
+<ul>
+<li>Deleting missing values<ul>
+<li>Can't delete rows with missing values in the test set</li>
+</ul>
+</li>
+<li>What else can you do?<ul>
+<li>Categorical columns: Replace missing values with the most common occurring value or with a string that flags missing values such as 'None'</li>
+<li>Numerical columns: Replace missing values with a suitable value</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Filling-continuous-missing-values">
+<a class="anchor" href="#Filling-continuous-missing-values" aria-hidden="true"><span class="octicon octicon-link"></span></a>Filling continuous missing values<a class="anchor-link" href="#Filling-continuous-missing-values"> </a>
+</h3>
+<p>In the last lesson, you dealt with different methods of removing data missing values and filling in missing values with a fixed string. These approaches are valid in many cases, particularly when dealing with categorical columns but have limited use when working with continuous values. In these cases, it may be most valid to fill the missing values in the column with a value calculated from the entries present in the column.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the first five rows of StackOverflowJobsRecommend column</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'StackOverflowJobsRecommend'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0    NaN
+1    7.0
+2    8.0
+3    NaN
+4    8.0
+Name: StackOverflowJobsRecommend, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fill missing values with the mean</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'StackOverflowJobsRecommend'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'StackOverflowJobsRecommend'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> 
+                                                  <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Round the StackOverflowJobsRecommend values</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'StackOverflowJobsRecommend'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'StackOverflowJobsRecommend'</span><span class="p">])</span>
+
+<span class="c1"># Print the first five rows of StackOverflowJobsRecommend column</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'StackOverflowJobsRecommend'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0    7.0
+1    7.0
+2    8.0
+3    7.0
+4    8.0
+Name: StackOverflowJobsRecommend, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Dealing-with-other-data-issues">
+<a class="anchor" href="#Dealing-with-other-data-issues" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dealing with other data issues<a class="anchor-link" href="#Dealing-with-other-data-issues"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dealing-with-stray-characters-(I)">
+<a class="anchor" href="#Dealing-with-stray-characters-(I)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dealing with stray characters (I)<a class="anchor-link" href="#Dealing-with-stray-characters-(I)"> </a>
+</h3>
+<p>In this exercise, you will work with the <code>RawSalary</code> column of <code>so_survey_df</code> which contains the wages of the respondents along with the currency symbols and commas, such as <code>$42,000</code>. When importing data from Microsoft Excel, more often that not you will come across data in this form.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Remove the commas in the column</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">','</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
+
+<span class="c1"># Remove the dollar signs in the column</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'$'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dealing-with-stray-characters-(II)">
+<a class="anchor" href="#Dealing-with-stray-characters-(II)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dealing with stray characters (II)<a class="anchor-link" href="#Dealing-with-stray-characters-(II)"> </a>
+</h3>
+<p>In the last exercise, you could tell quickly based off of the <code>df.head()</code> call which characters were causing an issue. In many cases this will not be so apparent. There will often be values deep within a column that are preventing you from casting a column as a numeric type so that it can be used in a model or further feature engineering.</p>
+<p>One approach to finding these values is to force the column to the data type desired using <code>pd.to_numeric()</code>, coercing any values causing issues to NaN, Then filtering the DataFrame by just the rows containing the NaN values.</p>
+<p>Try to cast the <code>RawSalary</code> column as a float and it will fail as an additional character can now be found in it. Find the character and remove it so the column can be cast as a float.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Attempt to convert the column to numeric values</span>
+<span class="n">numeric_vals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'coerce'</span><span class="p">)</span>
+
+<span class="c1"># find the indexes of missing values</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+
+<span class="c1"># Print the relevant raws</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">][</span><span class="n">idx</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0      NaN
+2      NaN
+6      NaN
+8      NaN
+11     NaN
+      ... 
+989    NaN
+990    NaN
+992    NaN
+994    NaN
+997    NaN
+Name: RawSalary, Length: 334, dtype: object
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Replace the offending characters</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'£'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
+
+<span class="c1"># Convert the column to float</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="c1"># Print the column</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0            NaN
+1        70841.0
+2            NaN
+3        21426.0
+4        41671.0
+         ...    
+994          NaN
+995      58746.0
+996      55000.0
+997          NaN
+998    1000000.0
+Name: RawSalary, Length: 999, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Method-chaining">
+<a class="anchor" href="#Method-chaining" aria-hidden="true"><span class="octicon octicon-link"></span></a>Method chaining<a class="anchor-link" href="#Method-chaining"> </a>
+</h3>
+<p>When applying multiple operations on the same column (like in the previous exercises), you made the changes in several steps, assigning the results back in each step. However, when applying multiple successive operations on the same column, you can "chain" these operations together for clarity and ease of management. This can be achieved by calling multiple methods sequentially:</p>
+<div class="highlight"><pre><span></span><span class="c1"># Method chaining</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span><span class="o">.</span><span class="n">method1</span><span class="p">()</span><span class="o">.</span><span class="n">method2</span><span class="p">()</span><span class="o">.</span><span class="n">method3</span><span class="p">()</span>
+
+<span class="c1"># Same as </span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span><span class="o">.</span><span class="n">method1</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span><span class="o">.</span><span class="n">method2</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'column'</span><span class="p">]</span><span class="o">.</span><span class="n">method3</span><span class="p">()</span>
+</pre></div>
+<p>In this exercise you will repeat the steps you performed in the last two exercises, but do so using method chaining.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">so_survey_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/Combined_DS_v10.csv'</span><span class="p">)</span>
+<span class="c1"># Use method chaining</span>
+<span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span> <span class="o">=</span> <span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">]</span>\
+                            <span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">','</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>\
+                            <span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'$'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>\
+                            <span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'£'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>\
+                            <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="c1"># Print the RawSalary column</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">so_survey_df</span><span class="p">[</span><span class="s1">'RawSalary'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0            NaN
+1        70841.0
+2            NaN
+3        21426.0
+4        41671.0
+         ...    
+994          NaN
+995      58746.0
+996      55000.0
+997          NaN
+998    1000000.0
+Name: RawSalary, Length: 999, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine_learning/2020/07/12/02-Dealing-with-Messy-Data.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

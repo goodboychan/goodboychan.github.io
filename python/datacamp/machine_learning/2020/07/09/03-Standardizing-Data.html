@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Standardizing Data | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Standardizing Data" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter is all about standardizing data. Often a model will make some assumptions about the distribution or scale of your features. Standardization is a way to make your data fit these assumptions and improve the algorithm’s performance. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp." />
+<meta property="og:description" content="This chapter is all about standardizing data. Often a model will make some assumptions about the distribution or scale of your features. Standardization is a way to make your data fit these assumptions and improve the algorithm’s performance. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/03-Standardizing-Data.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/03-Standardizing-Data.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-09T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter is all about standardizing data. Often a model will make some assumptions about the distribution or scale of your features. Standardization is a way to make your data fit these assumptions and improve the algorithm’s performance. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Standardizing Data","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/03-Standardizing-Data.html","datePublished":"2020-07-09T00:00:00-05:00","dateModified":"2020-07-09T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/03-Standardizing-Data.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Standardizing Data | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Standardizing Data" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter is all about standardizing data. Often a model will make some assumptions about the distribution or scale of your features. Standardization is a way to make your data fit these assumptions and improve the algorithm’s performance. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp." />
+<meta property="og:description" content="This chapter is all about standardizing data. Often a model will make some assumptions about the distribution or scale of your features. Standardization is a way to make your data fit these assumptions and improve the algorithm’s performance. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/03-Standardizing-Data.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/03-Standardizing-Data.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-09T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter is all about standardizing data. Often a model will make some assumptions about the distribution or scale of your features. Standardization is a way to make your data fit these assumptions and improve the algorithm’s performance. This is the Summary of lecture “Preprocessing for Machine Learning in Python”, via datacamp.","@type":"BlogPosting","headline":"Standardizing Data","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/03-Standardizing-Data.html","datePublished":"2020-07-09T00:00:00-05:00","dateModified":"2020-07-09T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/09/03-Standardizing-Data.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Standardizing Data</h1><p class="page-description">This chapter is all about standardizing data. Often a model will make some assumptions about the distribution or scale of your features. Standardization is a way to make your data fit these assumptions and improve the algorithm's performance. This is the Summary of lecture "Preprocessing for Machine Learning in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-09T00:00:00-05:00" itemprop="datePublished">
+        Jul 9, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      5 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-07-09-03-Standardizing-Data.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-07-09-03-Standardizing-Data.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-07-09-03-Standardizing-Data.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Standardizing-Data">Standardizing Data </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Modeling-without-normalizing">Modeling without normalizing </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Log-normalization">Log normalization </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Checking-the-variance">Checking the variance </a></li>
+<li class="toc-entry toc-h3"><a href="#Log-normalization-in-Python">Log normalization in Python </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Scaling-data-for-feature-comparison">Scaling data for feature comparison </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Scaling-data---investigating-columns">Scaling data - investigating columns </a></li>
+<li class="toc-entry toc-h3"><a href="#Scaling-data---standardizing-columns">Scaling data - standardizing columns </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Standardized-data-and-modeling">Standardized data and modeling </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#KNN-on-non-scaled-data">KNN on non-scaled data </a></li>
+<li class="toc-entry toc-h3"><a href="#KNN-on-scaled-data">KNN on scaled data </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-09-03-Standardizing-Data.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Standardizing-Data">
+<a class="anchor" href="#Standardizing-Data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Standardizing Data<a class="anchor-link" href="#Standardizing-Data"> </a>
+</h2>
+<ul>
+<li>Standardization<ul>
+<li>Preprocessing method used to transform continuous data to make it look normally distributed</li>
+<li>Scikit-learn models assume normally distributed data<ul>
+<li>Log normalization</li>
+<li>feature Scaling</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>When to standardize: models<ul>
+<li>Model in linear space</li>
+<li>Dataset features have high variance</li>
+<li>Dataset features are continuous and on different scales</li>
+<li>Linearity assumptions</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Modeling-without-normalizing">
+<a class="anchor" href="#Modeling-without-normalizing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modeling without normalizing<a class="anchor-link" href="#Modeling-without-normalizing"> </a>
+</h3>
+<p>Let's take a look at what might happen to your model's accuracy if you try to model data without doing some sort of standardization first. Here we have a subset of the wine dataset. One of the columns, <code>Proline</code>, has an extremely high variance compared to the other columns. This is an example of where a technique like log normalization would come in handy, which you'll learn about in the next section.</p>
+<p>The scikit-learn model training process should be familiar to you at this point, so we won't go too in-depth with it. You already have a k-nearest neighbors model available (<code>knn</code>) as well as the <code>X</code> and <code>y</code> sets you need to fit and score on.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wine</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/wine_types.csv'</span><span class="p">)</span>
+<span class="n">wine</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Alcohol</th>
+      <th>Malic acid</th>
+      <th>Ash</th>
+      <th>Alcalinity of ash</th>
+      <th>Magnesium</th>
+      <th>Total phenols</th>
+      <th>Flavanoids</th>
+      <th>Nonflavanoid phenols</th>
+      <th>Proanthocyanins</th>
+      <th>Color intensity</th>
+      <th>Hue</th>
+      <th>OD280/OD315 of diluted wines</th>
+      <th>Proline</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>14.23</td>
+      <td>1.71</td>
+      <td>2.43</td>
+      <td>15.6</td>
+      <td>127</td>
+      <td>2.80</td>
+      <td>3.06</td>
+      <td>0.28</td>
+      <td>2.29</td>
+      <td>5.64</td>
+      <td>1.04</td>
+      <td>3.92</td>
+      <td>1065</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>13.20</td>
+      <td>1.78</td>
+      <td>2.14</td>
+      <td>11.2</td>
+      <td>100</td>
+      <td>2.65</td>
+      <td>2.76</td>
+      <td>0.26</td>
+      <td>1.28</td>
+      <td>4.38</td>
+      <td>1.05</td>
+      <td>3.40</td>
+      <td>1050</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>13.16</td>
+      <td>2.36</td>
+      <td>2.67</td>
+      <td>18.6</td>
+      <td>101</td>
+      <td>2.80</td>
+      <td>3.24</td>
+      <td>0.30</td>
+      <td>2.81</td>
+      <td>5.68</td>
+      <td>1.03</td>
+      <td>3.17</td>
+      <td>1185</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>14.37</td>
+      <td>1.95</td>
+      <td>2.50</td>
+      <td>16.8</td>
+      <td>113</td>
+      <td>3.85</td>
+      <td>3.49</td>
+      <td>0.24</td>
+      <td>2.18</td>
+      <td>7.80</td>
+      <td>0.86</td>
+      <td>3.45</td>
+      <td>1480</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>13.24</td>
+      <td>2.59</td>
+      <td>2.87</td>
+      <td>21.0</td>
+      <td>118</td>
+      <td>2.80</td>
+      <td>2.69</td>
+      <td>0.39</td>
+      <td>1.82</td>
+      <td>4.32</td>
+      <td>1.04</td>
+      <td>2.93</td>
+      <td>735</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">wine</span><span class="p">[[</span><span class="s1">'Proline'</span><span class="p">,</span> <span class="s1">'Total phenols'</span><span class="p">,</span> <span class="s1">'Hue'</span><span class="p">,</span> <span class="s1">'Nonflavanoid phenols'</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">wine</span><span class="p">[</span><span class="s1">'Type'</span><span class="p">]</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+
+<span class="n">knn</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+
+<span class="c1"># Split the dataset and labels into training and test sets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Fit the k-nearest neighbors model to the training data</span>
+<span class="n">knn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># SCore the model on the test data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">knn</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6888888888888889
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Log-normalization">
+<a class="anchor" href="#Log-normalization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Log normalization<a class="anchor-link" href="#Log-normalization"> </a>
+</h2>
+<ul>
+<li>Applies log transformation</li>
+<li>Natural log using the constant $e$ (2.718)</li>
+<li>Captures relative changes, the magnitude of change, and keeps everything in the positive space</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Checking-the-variance">
+<a class="anchor" href="#Checking-the-variance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Checking the variance<a class="anchor-link" href="#Checking-the-variance"> </a>
+</h3>
+<p>Check the variance of the columns in the <code>wine</code> dataset.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wine</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Alcohol</th>
+      <th>Malic acid</th>
+      <th>Ash</th>
+      <th>Alcalinity of ash</th>
+      <th>Magnesium</th>
+      <th>Total phenols</th>
+      <th>Flavanoids</th>
+      <th>Nonflavanoid phenols</th>
+      <th>Proanthocyanins</th>
+      <th>Color intensity</th>
+      <th>Hue</th>
+      <th>OD280/OD315 of diluted wines</th>
+      <th>Proline</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>1.938202</td>
+      <td>13.000618</td>
+      <td>2.336348</td>
+      <td>2.366517</td>
+      <td>19.494944</td>
+      <td>99.741573</td>
+      <td>2.295112</td>
+      <td>2.029270</td>
+      <td>0.361854</td>
+      <td>1.590899</td>
+      <td>5.058090</td>
+      <td>0.957449</td>
+      <td>2.611685</td>
+      <td>746.893258</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.775035</td>
+      <td>0.811827</td>
+      <td>1.117146</td>
+      <td>0.274344</td>
+      <td>3.339564</td>
+      <td>14.282484</td>
+      <td>0.625851</td>
+      <td>0.998859</td>
+      <td>0.124453</td>
+      <td>0.572359</td>
+      <td>2.318286</td>
+      <td>0.228572</td>
+      <td>0.709990</td>
+      <td>314.907474</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>1.000000</td>
+      <td>11.030000</td>
+      <td>0.740000</td>
+      <td>1.360000</td>
+      <td>10.600000</td>
+      <td>70.000000</td>
+      <td>0.980000</td>
+      <td>0.340000</td>
+      <td>0.130000</td>
+      <td>0.410000</td>
+      <td>1.280000</td>
+      <td>0.480000</td>
+      <td>1.270000</td>
+      <td>278.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>1.000000</td>
+      <td>12.362500</td>
+      <td>1.602500</td>
+      <td>2.210000</td>
+      <td>17.200000</td>
+      <td>88.000000</td>
+      <td>1.742500</td>
+      <td>1.205000</td>
+      <td>0.270000</td>
+      <td>1.250000</td>
+      <td>3.220000</td>
+      <td>0.782500</td>
+      <td>1.937500</td>
+      <td>500.500000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>2.000000</td>
+      <td>13.050000</td>
+      <td>1.865000</td>
+      <td>2.360000</td>
+      <td>19.500000</td>
+      <td>98.000000</td>
+      <td>2.355000</td>
+      <td>2.135000</td>
+      <td>0.340000</td>
+      <td>1.555000</td>
+      <td>4.690000</td>
+      <td>0.965000</td>
+      <td>2.780000</td>
+      <td>673.500000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>3.000000</td>
+      <td>13.677500</td>
+      <td>3.082500</td>
+      <td>2.557500</td>
+      <td>21.500000</td>
+      <td>107.000000</td>
+      <td>2.800000</td>
+      <td>2.875000</td>
+      <td>0.437500</td>
+      <td>1.950000</td>
+      <td>6.200000</td>
+      <td>1.120000</td>
+      <td>3.170000</td>
+      <td>985.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>3.000000</td>
+      <td>14.830000</td>
+      <td>5.800000</td>
+      <td>3.230000</td>
+      <td>30.000000</td>
+      <td>162.000000</td>
+      <td>3.880000</td>
+      <td>5.080000</td>
+      <td>0.660000</td>
+      <td>3.580000</td>
+      <td>13.000000</td>
+      <td>1.710000</td>
+      <td>4.000000</td>
+      <td>1680.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <code>Proline</code> column has an extremely high variance.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Log-normalization-in-Python">
+<a class="anchor" href="#Log-normalization-in-Python" aria-hidden="true"><span class="octicon octicon-link"></span></a>Log normalization in Python<a class="anchor-link" href="#Log-normalization-in-Python"> </a>
+</h3>
+<p>Now that we know that the <code>Proline</code> column in our wine dataset has a large amount of variance, let's log normalize it.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print out the variance of the Proline column</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wine</span><span class="p">[</span><span class="s1">'Proline'</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
+
+<span class="c1"># Apply the log normalization function to the Proline column</span>
+<span class="n">wine</span><span class="p">[</span><span class="s1">'Proline_log'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">wine</span><span class="p">[</span><span class="s1">'Proline'</span><span class="p">])</span>
+
+<span class="c1"># Check the variance of the normalized Proline column</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wine</span><span class="p">[</span><span class="s1">'Proline_log'</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>99166.71735542428
+0.17231366191842018
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Scaling-data-for-feature-comparison">
+<a class="anchor" href="#Scaling-data-for-feature-comparison" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scaling data for feature comparison<a class="anchor-link" href="#Scaling-data-for-feature-comparison"> </a>
+</h2>
+<ul>
+<li>Features on different scales</li>
+<li>Model with linear characteristics</li>
+<li>Center features around 0 and transform to unit variance(1)</li>
+<li>Transforms to approximately normal distribution</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Scaling-data---investigating-columns">
+<a class="anchor" href="#Scaling-data---investigating-columns" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scaling data - investigating columns<a class="anchor-link" href="#Scaling-data---investigating-columns"> </a>
+</h3>
+<p>We want to use the <code>Ash</code>, <code>Alcalinity of ash</code>, and <code>Magnesium</code> columns in the <code>wine</code> dataset to train a linear model, but it's possible that these columns are all measured in different ways, which would bias a linear model. Using <code>describe()</code> to return descriptive statistics about this dataset, which of the following statements are true about the scale of data in these columns?</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wine</span><span class="p">[[</span><span class="s1">'Ash'</span><span class="p">,</span> <span class="s1">'Alcalinity of ash'</span><span class="p">,</span> <span class="s1">'Magnesium'</span><span class="p">]]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Ash</th>
+      <th>Alcalinity of ash</th>
+      <th>Magnesium</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>178.000000</td>
+      <td>178.000000</td>
+      <td>178.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>2.366517</td>
+      <td>19.494944</td>
+      <td>99.741573</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.274344</td>
+      <td>3.339564</td>
+      <td>14.282484</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>1.360000</td>
+      <td>10.600000</td>
+      <td>70.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>2.210000</td>
+      <td>17.200000</td>
+      <td>88.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>2.360000</td>
+      <td>19.500000</td>
+      <td>98.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>2.557500</td>
+      <td>21.500000</td>
+      <td>107.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>3.230000</td>
+      <td>30.000000</td>
+      <td>162.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Scaling-data---standardizing-columns">
+<a class="anchor" href="#Scaling-data---standardizing-columns" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scaling data - standardizing columns<a class="anchor-link" href="#Scaling-data---standardizing-columns"> </a>
+</h3>
+<p>Since we know that the <code>Ash</code>, <code>Alcalinity of ash</code>, and <code>Magnesium</code> columns in the <code>wine</code> dataset are all on different scales, let's standardize them in a way that allows for use in a linear model.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+
+<span class="c1"># Create the scaler</span>
+<span class="n">ss</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+
+<span class="c1"># Take a subset of the DataFrame you want to scale</span>
+<span class="n">wine_subset</span> <span class="o">=</span> <span class="n">wine</span><span class="p">[[</span><span class="s1">'Ash'</span><span class="p">,</span> <span class="s1">'Alcalinity of ash'</span><span class="p">,</span> <span class="s1">'Magnesium'</span><span class="p">]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">wine_subset</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+
+<span class="c1"># Apply the scaler to the DataFrame subset</span>
+<span class="n">wine_subset_scaled</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">wine_subset</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">wine_subset_scaled</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>    Ash  Alcalinity of ash  Magnesium
+0  2.43               15.6        127
+1  2.14               11.2        100
+2  2.67               18.6        101
+[[ 0.23205254 -1.16959318  1.91390522]
+ [-0.82799632 -2.49084714  0.01814502]
+ [ 1.10933436 -0.2687382   0.08835836]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Standardized-data-and-modeling">
+<a class="anchor" href="#Standardized-data-and-modeling" aria-hidden="true"><span class="octicon octicon-link"></span></a>Standardized data and modeling<a class="anchor-link" href="#Standardized-data-and-modeling"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="KNN-on-non-scaled-data">
+<a class="anchor" href="#KNN-on-non-scaled-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>KNN on non-scaled data<a class="anchor-link" href="#KNN-on-non-scaled-data"> </a>
+</h3>
+<p>Let's first take a look at the accuracy of a K-nearest neighbors model on the <code>wine</code> dataset without standardizing the data. The <code>knn</code> model as well as the <code>X</code> and <code>y</code> data and labels sets have been created already. Most of this process of creating models in scikit-learn should look familiar to you.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wine</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/wine_types.csv'</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">wine</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'Type'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">wine</span><span class="p">[</span><span class="s1">'Type'</span><span class="p">]</span> 
+
+<span class="n">knn</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the dataset and labels into training and test sets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Fit the k-nearest neighbors model to the training data</span>
+<span class="n">knn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Score the model on the test data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">knn</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.7555555555555555
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="KNN-on-scaled-data">
+<a class="anchor" href="#KNN-on-scaled-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>KNN on scaled data<a class="anchor-link" href="#KNN-on-scaled-data"> </a>
+</h3>
+<p>The accuracy score on the unscaled wine dataset was decent, but we can likely do better if we scale the dataset. The process is mostly the same as the previous exercise, with the added step of scaling the data.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">knn</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+
+<span class="c1"># Create the scaling method</span>
+<span class="n">ss</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+
+<span class="c1"># Apply the scaling method to the dataset used for modeling</span>
+<span class="n">X_scaled</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_scaled</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Fit the k-nearest neighbors model to the training data.</span>
+<span class="n">knn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Score the model on the test data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">knn</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.9555555555555556
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine_learning/2020/07/09/03-Standardizing-Data.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

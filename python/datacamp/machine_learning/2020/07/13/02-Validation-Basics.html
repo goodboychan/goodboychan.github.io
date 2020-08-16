@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Validation Basics | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Validation Basics" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter focuses on the basics of model validation. From splitting data into training, validation, and testing datasets, to creating an understanding of the bias-variance tradeoff, we build the foundation for the techniques of K-Fold and Leave-One-Out validation practiced in chapter three. This is the Summary of lecture “Model Validation in Python”, via datacamp." />
+<meta property="og:description" content="This chapter focuses on the basics of model validation. From splitting data into training, validation, and testing datasets, to creating an understanding of the bias-variance tradeoff, we build the foundation for the techniques of K-Fold and Leave-One-Out validation practiced in chapter three. This is the Summary of lecture “Model Validation in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/13/02-Validation-Basics.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/13/02-Validation-Basics.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/train_test_score.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-13T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter focuses on the basics of model validation. From splitting data into training, validation, and testing datasets, to creating an understanding of the bias-variance tradeoff, we build the foundation for the techniques of K-Fold and Leave-One-Out validation practiced in chapter three. This is the Summary of lecture “Model Validation in Python”, via datacamp.","@type":"BlogPosting","headline":"Validation Basics","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/13/02-Validation-Basics.html","datePublished":"2020-07-13T00:00:00-05:00","dateModified":"2020-07-13T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/train_test_score.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/13/02-Validation-Basics.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Validation Basics | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Validation Basics" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This chapter focuses on the basics of model validation. From splitting data into training, validation, and testing datasets, to creating an understanding of the bias-variance tradeoff, we build the foundation for the techniques of K-Fold and Leave-One-Out validation practiced in chapter three. This is the Summary of lecture “Model Validation in Python”, via datacamp." />
+<meta property="og:description" content="This chapter focuses on the basics of model validation. From splitting data into training, validation, and testing datasets, to creating an understanding of the bias-variance tradeoff, we build the foundation for the techniques of K-Fold and Leave-One-Out validation practiced in chapter three. This is the Summary of lecture “Model Validation in Python”, via datacamp." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/13/02-Validation-Basics.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/13/02-Validation-Basics.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/train_test_score.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-13T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"This chapter focuses on the basics of model validation. From splitting data into training, validation, and testing datasets, to creating an understanding of the bias-variance tradeoff, we build the foundation for the techniques of K-Fold and Leave-One-Out validation practiced in chapter three. This is the Summary of lecture “Model Validation in Python”, via datacamp.","@type":"BlogPosting","headline":"Validation Basics","url":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/13/02-Validation-Basics.html","datePublished":"2020-07-13T00:00:00-05:00","dateModified":"2020-07-13T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/train_test_score.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/datacamp/machine_learning/2020/07/13/02-Validation-Basics.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Validation Basics</h1><p class="page-description">This chapter focuses on the basics of model validation. From splitting data into training, validation, and testing datasets, to creating an understanding of the bias-variance tradeoff, we build the foundation for the techniques of K-Fold and Leave-One-Out validation practiced in chapter three. This is the Summary of lecture "Model Validation in Python", via datacamp.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-13T00:00:00-05:00" itemprop="datePublished">
+        Jul 13, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      13 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Datacamp">Datacamp</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-07-13-02-Validation-Basics.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-07-13-02-Validation-Basics.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-07-13-02-Validation-Basics.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Creating-train,test,-and-validation-datasets">Creating train,test, and validation datasets </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Create-one-holdout-set">Create one holdout set </a></li>
+<li class="toc-entry toc-h3"><a href="#Create-two-holdout-sets">Create two holdout sets </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Accuracy-metrics:-regression-models">Accuracy metrics: regression models </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Mean-absolute-error">Mean absolute error </a></li>
+<li class="toc-entry toc-h3"><a href="#Mean-squared-error">Mean squared error </a></li>
+<li class="toc-entry toc-h3"><a href="#Performance-on-data-subsets">Performance on data subsets </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Classification-metrics">Classification metrics </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Confusion-matrices">Confusion matrices </a></li>
+<li class="toc-entry toc-h3"><a href="#Confusion-matrices,-again">Confusion matrices, again </a></li>
+<li class="toc-entry toc-h3"><a href="#Precision-vs.-recall">Precision vs. recall </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#The-bias-variance-tradeoff">The bias-variance tradeoff </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Error-due-to-under/over-fitting">Error due to under/over-fitting </a></li>
+<li class="toc-entry toc-h3"><a href="#Am-I-underfitting?">Am I underfitting? </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-13-02-Validation-Basics.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Creating-train,test,-and-validation-datasets">
+<a class="anchor" href="#Creating-train,test,-and-validation-datasets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating train,test, and validation datasets<a class="anchor-link" href="#Creating-train,test,-and-validation-datasets"> </a>
+</h2>
+<ul>
+<li>Traditional train/test split<ul>
+<li>Seen data (used for training)</li>
+<li>Unseen data (unavailable for training)
+<img src="/chans_jupyter/images/copied_from_nb/image/holdout.png" alt="holdout">
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Create-one-holdout-set">
+<a class="anchor" href="#Create-one-holdout-set" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create one holdout set<a class="anchor-link" href="#Create-one-holdout-set"> </a>
+</h3>
+<p>Your boss has asked you to create a simple random forest model on the <code>tic_tac_toe</code> dataset. She doesn't want you to spend much time selecting parameters; rather she wants to know how well the model will perform on future data. For future Tic-Tac-Toe games, it would be nice to know if your model can predict which player will win.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tic_tac_toe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/tic-tac-toe.csv'</span><span class="p">)</span>
+<span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Top-Left</th>
+      <th>Top-Middle</th>
+      <th>Top-Right</th>
+      <th>Middle-Left</th>
+      <th>Middle-Middle</th>
+      <th>Middle-Right</th>
+      <th>Bottom-Left</th>
+      <th>Bottom-Middle</th>
+      <th>Bottom-Right</th>
+      <th>Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>o</td>
+      <td>o</td>
+      <td>x</td>
+      <td>o</td>
+      <td>o</td>
+      <td>positive</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>o</td>
+      <td>o</td>
+      <td>o</td>
+      <td>x</td>
+      <td>o</td>
+      <td>positive</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>o</td>
+      <td>o</td>
+      <td>o</td>
+      <td>o</td>
+      <td>x</td>
+      <td>positive</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>o</td>
+      <td>o</td>
+      <td>o</td>
+      <td>b</td>
+      <td>b</td>
+      <td>positive</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>x</td>
+      <td>o</td>
+      <td>o</td>
+      <td>b</td>
+      <td>o</td>
+      <td>b</td>
+      <td>positive</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="c1"># Create dummy variables using pandas</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">9</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">9</span><span class="p">]</span>
+
+<span class="c1"># Create training and testing datasets, Use 10% for the test set</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Create-two-holdout-sets">
+<a class="anchor" href="#Create-two-holdout-sets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create two holdout sets<a class="anchor-link" href="#Create-two-holdout-sets"> </a>
+</h3>
+<p>You recently created a simple random forest model to predict Tic-Tac-Toe game wins for your boss, and at her request, you did not do any parameter tuning. Unfortunately, the overall model accuracy was too low for her standards. This time around, she has asked you to focus on model performance.</p>
+<p>Before you start testing different models and parameter sets, you will need to split the data into training, validation, and testing datasets. Remember that after splitting the data into training and testing datasets, the validation dataset is created by splitting the training dataset.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create temporary training and final testing datasets</span>
+<span class="n">X_temp</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_temp</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">)</span>
+
+<span class="c1"># Create the final training and validation datasets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_temp</span><span class="p">,</span> <span class="n">y_temp</span><span class="p">,</span> 
+                                                  <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You now have training, validation, and testing datasets, but do you know when you need both validation and testing datasets?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Accuracy-metrics:-regression-models">
+<a class="anchor" href="#Accuracy-metrics:-regression-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Accuracy metrics: regression models<a class="anchor-link" href="#Accuracy-metrics:-regression-models"> </a>
+</h2>
+<ul>
+<li>Mean absolute error (MAE)
+
+$$ \text{MAE} = \frac{\sum_{i=1}^{n} \vert y_i - \hat{y_i} \vert}{n} $$
+<ul>
+<li>Simplest and most intuitive metric</li>
+<li>Treats all points equally</li>
+<li>Not sensitive to outliers</li>
+</ul>
+</li>
+<li>Mean squared error (MSE)
+
+$$ \text{MSE} = \frac{\sum_{i=1}^{n}(y_i - \hat{y_i})^2}{n} $$
+<ul>
+<li>Most widely used regression metric</li>
+<li>Allows outlier errors to contribute more to the overall error</li>
+<li>Random family road trips could lead to large errors in predictions</li>
+</ul>
+</li>
+<li>MAE vs. MSE<ul>
+<li>Accuracy metrics are always application apecific</li>
+<li>MAE and MSE error terms are in different units and should not be compared</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Mean-absolute-error">
+<a class="anchor" href="#Mean-absolute-error" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mean absolute error<a class="anchor-link" href="#Mean-absolute-error"> </a>
+</h3>
+<p>Communicating modeling results can be difficult. However, most clients understand that on average, a predictive model was off by some number. This makes explaining the mean absolute error easy. For example, when predicting the number of wins for a basketball team, if you predict 42, and they end up with 40, you can easily explain that the error was two wins.</p>
+<p>In this exercise, you are interviewing for a new position and are provided with two arrays. <code>y_test</code>, the true number of wins for all 30 NBA teams in 2017 and <code>predictions</code>, which contains a prediction for each team. To test your understanding, you are asked to both manually calculate the MAE and use <code>sklearn</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">53</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">61</span><span class="p">,</span>
+       <span class="mi">55</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">24</span><span class="p">])</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">60</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span>
+       <span class="mi">60</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">24</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span>
+
+<span class="c1"># Manually calculate the MAE</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="n">mae_one</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">y_test</span> <span class="o">-</span> <span class="n">predictions</span><span class="p">))</span> <span class="o">/</span> <span class="n">n</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'With a manual calculation, the error is </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae_one</span><span class="p">))</span>
+
+<span class="c1"># Use scikit-learn to calculate the MAE</span>
+<span class="n">mae_two</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Using scikit-learn, the error is </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae_two</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>With a manual calculation, the error is 5.9
+Using scikit-learn, the error is 5.9
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These predictions were about six wins off on average. This isn't too bad considering NBA teams play 82 games a year. Let's see how these errors would look if you used the mean squared error instead.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Mean-squared-error">
+<a class="anchor" href="#Mean-squared-error" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mean squared error<a class="anchor-link" href="#Mean-squared-error"> </a>
+</h3>
+<p>Let's focus on the 2017 NBA predictions again. Every year, there are at least a couple of NBA teams that win way more games than expected. If you use the MAE, this accuracy metric does not reflect the bad predictions as much as if you use the MSE. Squaring the large errors from bad predictions will make the accuracy look worse.</p>
+<p>In this example, NBA executives want to better predict team wins. You will use the mean squared error to calculate the prediction error. The actual wins are loaded as <code>y_test</code> and the <code>predictions</code> as predictions.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="c1"># Finish the manual calculation of the MSE</span>
+<span class="n">mse_one</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">y_test</span> <span class="o">-</span> <span class="n">predictions</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'With a manual calculation, the error is </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mse_one</span><span class="p">))</span>
+
+<span class="c1"># Use the scikit-learn function to calculate MSE</span>
+<span class="n">mse_two</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Using scikit-learn, the error is </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mse_two</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>With a manual calculation, the error is 49.1
+Using scikit-learn, the error is 49.1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you run any additional models, you will try to beat an MSE of 49.1, which is the average squared error of using your model. Although the MSE is not as interpretable as the MAE, it will help us select a model that has fewer 'large' errors.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Performance-on-data-subsets">
+<a class="anchor" href="#Performance-on-data-subsets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Performance on data subsets<a class="anchor-link" href="#Performance-on-data-subsets"> </a>
+</h3>
+<p>In professional basketball, there are two conferences, the East and the West. Coaches and fans often only care about how teams in their own conference will do this year.</p>
+<p>You have been working on an NBA prediction model and would like to determine if the predictions were better for the East or West conference. You added a third array to your data called <code>labels</code>, which contains an "E" for the East teams, and a "W" for the West. <code>y_test</code> and <code>predictions</code> have again been loaded for your use.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span>
+       <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'E'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span>
+       <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span> <span class="k">as</span> <span class="n">mae</span>
+
+<span class="c1"># Find the East conference teams</span>
+<span class="n">east_teams</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="s1">'E'</span>
+
+<span class="c1"># Create arrays for the true and predicted values</span>
+<span class="n">true_east</span> <span class="o">=</span> <span class="n">y_test</span><span class="p">[</span><span class="n">east_teams</span><span class="p">]</span>
+<span class="n">preds_east</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[</span><span class="n">east_teams</span><span class="p">]</span>
+
+<span class="n">west_teams</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="s1">'W'</span>
+<span class="n">true_west</span> <span class="o">=</span> <span class="n">y_test</span><span class="p">[</span><span class="n">west_teams</span><span class="p">]</span>
+<span class="n">preds_west</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[</span><span class="n">west_teams</span><span class="p">]</span>
+
+<span class="c1"># Print the accuracy metrics</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The MAE for East teams is </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae</span><span class="p">(</span><span class="n">true_east</span><span class="p">,</span> <span class="n">preds_east</span><span class="p">)))</span>
+
+<span class="c1"># Print the west accuracy</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The MAE for West teams is </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae</span><span class="p">(</span><span class="n">true_west</span><span class="p">,</span> <span class="n">preds_west</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The MAE for East teams is 6.733333333333333
+The MAE for West teams is 5.066666666666666
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It looks like the Western conference predictions were about two games better on average. Over the past few seasons, the Western teams have generally won the same number of games as the experts have predicted. Teams in the East are just not as predictable as those in the West.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Classification-metrics">
+<a class="anchor" href="#Classification-metrics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification metrics<a class="anchor-link" href="#Classification-metrics"> </a>
+</h2>
+<ul>
+<li>Types:<ul>
+<li>Precision</li>
+<li>Recall (also called sensitivity)</li>
+<li>Accuracy</li>
+<li>Specificity</li>
+<li>F1-score and its variations</li>
+</ul>
+</li>
+<li>Confusion Matrix<ul>
+<li>True Positive: Predict/Actual are both 1</li>
+<li>True Negative: Predict/Actual are both 0</li>
+<li>False Positive: Predicted 1, actual 0</li>
+<li>False Negative: Predicted 0, actual 1</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Confusion-matrices">
+<a class="anchor" href="#Confusion-matrices" aria-hidden="true"><span class="octicon octicon-link"></span></a>Confusion matrices<a class="anchor-link" href="#Confusion-matrices"> </a>
+</h3>
+<p>Confusion matrices are a great way to start exploring your model's accuracy. They provide the values needed to calculate a wide range of metrics, including sensitivity, specificity, and the F1-score.</p>
+<p>You have built a classification model to predict if a person has a broken arm based on an X-ray image. On the testing set, you have the following confusion matrix:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Prediction: 0</th>
+<th>Prediction: 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Actual: 0</td>
+<td>324 (TN)</td>
+<td>15 (FP)</td>
+</tr>
+<tr>
+<td>Actual: 1</td>
+<td>123 (FN)</td>
+<td>491(TP)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate and print the accuracy</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="p">(</span><span class="mi">324</span> <span class="o">+</span> <span class="mi">491</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">953</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The overall accuracy is </span><span class="si">{0: 0.2f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+
+<span class="c1"># Calculate and print the precision</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="p">(</span><span class="mi">491</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">15</span> <span class="o">+</span> <span class="mi">491</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The precision is </span><span class="si">{0: 0.2f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">precision</span><span class="p">))</span>
+
+<span class="c1"># Calculate and print the recall</span>
+<span class="n">recall</span> <span class="o">=</span> <span class="p">(</span><span class="mi">491</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">123</span> <span class="o">+</span> <span class="mi">491</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The recall is </span><span class="si">{0: 0.2f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">recall</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The overall accuracy is  0.86
+The precision is  0.97
+The recall is  0.80
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this case, a true positive is a picture of an actual broken arm that was also predicted to be broken. Doctors are okay with a few additional false positives (predicted broken, not actually broken), as long as you don't miss anyone who needs immediate medical attention.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Confusion-matrices,-again">
+<a class="anchor" href="#Confusion-matrices,-again" aria-hidden="true"><span class="octicon octicon-link"></span></a>Confusion matrices, again<a class="anchor-link" href="#Confusion-matrices,-again"> </a>
+</h3>
+<p>Creating a confusion matrix in Python is simple. The biggest challenge will be making sure you understand the orientation of the matrix. This exercise makes sure you understand the <code>sklearn</code> implementation of confusion matrices. Here, you have created a random forest model using the <code>tic_tac_toe</code> dataset <code>rfc</code> to predict outcomes of 0 (loss) or 1 (a win) for Player One.</p>
+<p>Note: If you read about confusion matrices on another website or for another programming language, the values might be reversed.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tic_tac_toe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/tic-tac-toe.csv'</span><span class="p">)</span>
+<span class="c1"># Create dummy variables using pandas</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">9</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">9</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tic_tac_toe</span><span class="p">[</span><span class="s1">'Class'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">'positive'</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Create training and testing datasets, Use 10% for the test set</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="n">rfc</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">)</span>
+<span class="n">rfc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
+                       criterion='gini', max_depth=None, max_features='auto',
+                       max_leaf_nodes=None, max_samples=None,
+                       min_impurity_decrease=0.0, min_impurity_split=None,
+                       min_samples_leaf=1, min_samples_split=2,
+                       min_weight_fraction_leaf=0.0, n_estimators=500,
+                       n_jobs=None, oob_score=False, random_state=1111,
+                       verbose=0, warm_start=False)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span>
+
+<span class="c1"># Create predictions</span>
+<span class="n">test_predictions</span> <span class="o">=</span> <span class="n">rfc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Create and print the confusion matrix</span>
+<span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+
+<span class="c1"># Print the true positives (actual 1s that were predicted 1s)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'the number of true positives is: </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cm</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[28  2]
+ [ 0 66]]
+the number of true positives is: 66
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Row 1, column 1 represents the number of actual 1s that were predicted 1s (the true positives). Always make sure you understand the orientation of the confusion matrix before you start using it!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Precision-vs.-recall">
+<a class="anchor" href="#Precision-vs.-recall" aria-hidden="true"><span class="octicon octicon-link"></span></a>Precision vs. recall<a class="anchor-link" href="#Precision-vs.-recall"> </a>
+</h3>
+<p>The accuracy metrics you use to evaluate your model should always be based on the specific application. For this example, let's assume you are a really sore loser when it comes to playing Tic-Tac-Toe, but only when you are certain that you are going to win.</p>
+<p>Choose the most appropriate accuracy metric, either precision or recall, to complete this example. But remember, if you think you are going to win, you better win!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">precision_score</span><span class="p">,</span> <span class="n">recall_score</span>
+
+<span class="n">test_predictions</span> <span class="o">=</span> <span class="n">rfc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Create precision score based on the metric</span>
+<span class="n">p_score</span> <span class="o">=</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">)</span>
+<span class="n">r_score</span> <span class="o">=</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">)</span>
+
+<span class="c1"># Print the final result</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The precision value is </span><span class="si">{0:.2f}</span><span class="s1">, The recall value is </span><span class="si">{1:.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_score</span><span class="p">,</span> <span class="n">r_score</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The precision value is 0.97, The recall value is 1.00
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-bias-variance-tradeoff">
+<a class="anchor" href="#The-bias-variance-tradeoff" aria-hidden="true"><span class="octicon octicon-link"></span></a>The bias-variance tradeoff<a class="anchor-link" href="#The-bias-variance-tradeoff"> </a>
+</h2>
+<ul>
+<li>Variance<ul>
+<li>Following the training data too closely</li>
+<li>Fails to generalize to the test data</li>
+<li>Low training error but high test error</li>
+<li>Occurs when models are overfit and have high complexity</li>
+<li>High variance makes over-fitting</li>
+</ul>
+</li>
+<li>Bias<ul>
+<li>Failing to find the relationship between the data and the response</li>
+<li>High training/test error</li>
+<li>Occurs when models are underfit</li>
+<li>High bias makes under-fitting</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Error-due-to-under/over-fitting">
+<a class="anchor" href="#Error-due-to-under/over-fitting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Error due to under/over-fitting<a class="anchor-link" href="#Error-due-to-under/over-fitting"> </a>
+</h3>
+<p>The candy dataset is prime for overfitting. With only 85 observations, if you use 20% for the testing dataset, you are losing a lot of vital data that could be used for modeling. Imagine the scenario where most of the chocolate candies ended up in the training data and very few in the holdout sample. Our model might only see that chocolate is a vital factor, but fail to find that other attributes are also important. In this exercise, you'll explore how using too many features (columns) in a random forest model can lead to overfitting.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">candy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./dataset/candy-data.csv'</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">candy</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">'competitorname'</span><span class="p">,</span> <span class="s1">'winpercent'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">candy</span><span class="p">[</span><span class="s1">'winpercent'</span><span class="p">]</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="c1"># Update the rfr model</span>
+<span class="n">rfr</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">,</span> <span class="n">max_features</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">rfr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Print the training and test accuracy</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The training error is </span><span class="si">{0:.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">rfr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The testing error is </span><span class="si">{0:.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">rfr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The training error is 3.88
+The testing error is 9.15
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Update the rfr model</span>
+<span class="n">rfr</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">,</span> <span class="n">max_features</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+
+<span class="n">rfr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Print the training and test accuracy</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The training error is </span><span class="si">{0:.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">rfr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The testing error is </span><span class="si">{0:.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">rfr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The training error is 3.57
+The testing error is 10.05
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Update the rfr model</span>
+<span class="n">rfr</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">,</span> <span class="n">max_features</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">rfr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Print the training and test accuracy</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The training error is </span><span class="si">{0:.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">rfr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'The testing error is </span><span class="si">{0:.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mae</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">rfr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The training error is 3.60
+The testing error is 8.79
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Am-I-underfitting?">
+<a class="anchor" href="#Am-I-underfitting?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Am I underfitting?<a class="anchor-link" href="#Am-I-underfitting?"> </a>
+</h3>
+<p>You are creating a random forest model to predict if you will win a future game of Tic-Tac-Toe. Using the <code>tic_tac_toe</code> dataset, you have created training and testing datasets, <code>X_train</code>, <code>X_test</code>, <code>y_train</code>, and <code>y_test</code>.</p>
+<p>You have decided to create a bunch of random forest models with varying amounts of trees (1, 2, 3, 4, 5, 10, 20, and 50). The more trees you use, the longer your random forest model will take to run. However, if you don't use enough trees, you risk underfitting. You have created a for loop to test your model at the different number of trees.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create dummy variables using pandas</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">9</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tic_tac_toe</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">9</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tic_tac_toe</span><span class="p">[</span><span class="s1">'Class'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">'positive'</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Create training and testing datasets, Use 10% for the test set</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+
+<span class="n">test_scores</span><span class="p">,</span> <span class="n">train_scores</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">]:</span>
+    <span class="n">rfc</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1111</span><span class="p">)</span>
+    <span class="n">rfc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    
+    <span class="c1"># Create predictions for the X_train and X_test datasets</span>
+    <span class="n">train_predictions</span> <span class="o">=</span> <span class="n">rfc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+    <span class="n">test_predictions</span> <span class="o">=</span> <span class="n">rfc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    
+    <span class="c1"># Append the accuracy score for the test and train predictions</span>
+    <span class="n">train_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">train_predictions</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">test_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+    
+<span class="c1"># Print the train and test scores</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The training scores were: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">train_scores</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The testing scores were: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_scores</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The training scores were: [0.94, 0.93, 0.98, 0.97, 0.99, 1.0, 1.0, 1.0]
+The testing scores were: [0.83, 0.79, 0.89, 0.91, 0.91, 0.93, 0.97, 0.98]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice that with only one tree, both the train and test scores are low. As you add more trees, both errors improve. Even at 50 trees, this still might not be enough. Every time you use more trees, you achieve higher accuracy. At some point though, more trees increase training time, but do not decrease testing error.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'x'</span><span class="p">:</span><span class="n">x</span><span class="p">,</span> <span class="s1">'training'</span><span class="p">:</span><span class="n">train_scores</span><span class="p">,</span> <span class="s1">'test'</span><span class="p">:</span><span class="n">test_scores</span><span class="p">})</span>
+<span class="n">tmp</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tmp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">'train/test score for n_estimators'</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/datacamp/machine_learning/2020/07/13/02-Validation-Basics.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
