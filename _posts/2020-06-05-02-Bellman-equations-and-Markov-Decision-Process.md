@@ -2,7 +2,7 @@
 toc: true
 layout: post
 description: A summary of "Understanding deep reinforcement learning"
-categories: [Reinforcement Learning]
+categories: [Reinforcement_Learning]
 title: Bellman equations and Markov decision process
 ---
 # Bellman equations and Markov decision process

@@ -2,7 +2,7 @@
 toc: true
 layout: post
 description: A summary of "Understanding deep reinforcement learning"
-categories: [Reinforcement Learning]
+categories: [Reinforcement_Learning]
 title: Policy Evaluation
 image: images/backup_diagram_for_v.png
 ---

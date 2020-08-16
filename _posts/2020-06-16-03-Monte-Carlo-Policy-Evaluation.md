@@ -2,7 +2,7 @@
 toc: true
 layout: post
 description: A summary of "Understanding Deep Reinforcement Learning"
-categories: [Reinforcement Learning]
+categories: [Reinforcement_Learning]
 title: Monte Carlo Policy Evaluation
 classes: wide
 image: 

@@ -2,7 +2,7 @@
 toc: true
 layout: post
 description: A summary of "Understanding deep reinforcement learning"
-categories: [Reinforcement Learning]
+categories: [Reinforcement_Learning]
 title: Monte Carlo method - Intro
 image: 
 ---
