@@ -48,4 +48,6 @@ To utilize this formula (TD(0)), it is required to gather some informations ($s_
   $$ \alpha_i = \frac{1}{i} \qquad \sum_{i=1}^{\infty} \frac{1}{i} = \infty \qquad \sum_{i=1}^{\infty} \frac{1}{i^2} < \infty $$
 
 ## n-step SARSA
-Consider the following n-step returns for $n=1, 2, \dots \infty$: 
+Consider the following n-step returns for $n=1, 2, \dots \infty$
+
+
