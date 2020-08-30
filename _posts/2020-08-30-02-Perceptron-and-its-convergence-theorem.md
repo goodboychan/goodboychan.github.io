@@ -147,6 +147,14 @@ $$ k^2 \gamma^2 \leq \Vert W_{k+1} \Vert^2 \leq k R^2 $$
 
 Then, we can get the upper bound for the number of update $k$
 
-$$ k \leq \frac{R^2}{\gamma^2} \qquad (\text{The lower bound of } \Vert W_{k+1} \Vert)
+$$ k \leq \frac{R^2}{\gamma^2} \qquad (\text{The lower bound of } \Vert W_{k+1} \Vert) $$
 
 As you can see, the boundary is existed in some range. So we can find out that perceptron algorithm has finite update in the training process.
+
+One hyperplane separates the space into 2 half-space. But if the data is not linearly separable, althought the task is binary classification, one hyperplane cannot discriminate labels. In this case, more perceptrons are required to get better result. More effective way to handle is to add the depth(meaning a set of perceptrons) with non-linear function (also known as **activation function**) We call it Multi Layer Perceptron (MLP) or neural network. If you want the visualization of neural network, check out the following links
+- [Karpathy's convnetjs](https://cs.stanford.edu/people/karpathy/convnetjs/demo/classify2d.html)
+- [Tensorflow Playground](http://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.65392&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)
+
+## Summary
+
+In this post, it introduced the perceptron algorithm which trains the hyperplane, and tried to look the update rule in the perceptron. Also, we prove the theorem related to convergence for the perceptron.
