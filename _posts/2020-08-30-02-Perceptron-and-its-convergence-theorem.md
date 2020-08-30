@@ -11,7 +11,7 @@ image: images/perceptron.png
 
 ## Motivation
 
-![lion]({{site.baseurl}}/_post/image/lion_and_tiger.png "")
+![lion]({{site.baseurl}}/assets/image/lion_and_tiger.png "")
 
 There are lion and tiger. How can we discriminate Lion and Tiger? Someone said that:
 - Tiger has **stripe** on its head
@@ -19,7 +19,7 @@ There are lion and tiger. How can we discriminate Lion and Tiger? Someone said t
 
 This information such as striped pattern and the mane is called features in the machine learning.
 
-![feature]({{site.baseurl}}/_post/image/lion_tiger_feature.png "") 
+![feature]({{site.baseurl}}/assets/image/lion_tiger_feature.png "") 
 
 How can we make Intelligence to classify Lion and Tiger automatically? If we can map each creature into feature space, we can divide them with a line and classify as lion for the data above the line, and classify as tiger for the data below the line. At this case, the line regards as an intelligence distinguishing lion and tiger.
 
@@ -47,11 +47,11 @@ $$ f(X) = \begin{bmatrix} 1 -1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bma
 
 And we can call $W$ as normal vector of the hyperplane (unnormalized)
 
-![feature]({{site.baseurl}}/_post/image/hyperplane_ex.png "")
+![feature]({{site.baseurl}}/assets/image/hyperplane_ex.png "")
 
 The red line is normal vector, and blue line is hyperplane. As you can see this, the normal vector is orthogonal ($90^\circ$) to any vector or data point lying on the hyperplane. As a result, hyperplane is defined by an normal vector and bias.
 
-![feature2]({{site.baseurl}}/_post/image/hyperplane_color.png "")
+![feature2]({{site.baseurl}}/assets/image/hyperplane_color.png "")
 
 We can color the region based on the sign of the output of the hyperplane. In the previous example, the hyperplane itself has 0. So it is also called **decision boundary**
 
@@ -61,7 +61,7 @@ So we found out that to handle binary classification, we need to find hyperplane
 
 One answer is **Perceptron**. Perceptron is an algorithm for supervised learning of binary classification problem. It requires the training dataset that includes Input $X$ and Corresponding label $y$.
 
-![perceptron]({{site.baseurl}}/_post/image/perceptron.png "")
+![perceptron]({{site.baseurl}}/assets/image/perceptron.png "")
 
 From the figure, we can guess the prediction process of the perceptron briefly. The sign of sum of all value becomes the predicted label. In details, the sum of value is decomposed by inner product between the weight of the perceptron and the input vector, and adding bias.
 
@@ -69,7 +69,7 @@ This process is similar with the definition of the hyperplane. So we can use thi
 
 For example,
 
-![perceptron2]({{site.baseurl}}/_post/image/perceptron_ex.png "")
+![perceptron2]({{site.baseurl}}/assets/image/perceptron_ex.png "")
 
 Given training dataset,
 $$(X_1, y_1), (X_2, y_2), \dots , (X_{10}, y_{10}) \\ \text{where } \quad X_i = [x_1 \quad x_2]^T, y_i \in \{-1, 1\} $$
@@ -95,7 +95,7 @@ To use perceptron,
 2. If $y_n \neq f(X_n)$, then update $W = W + y_n x_n$
 else, leave $W$ unchanged.
 
-![update]({{site.baseurl}}/_post/image/update_w.png "update_w")
+![update]({{site.baseurl}}/assets/image/update_w.png "update_w")
 
 ## Convergence for the perceptron
 
