@@ -4,7 +4,7 @@ layout: post
 description: Perceptron algorithm is used for supervised learning of binary classification. In this post, it will cover the basic concept of hyperplane and the principle of perceptron based on the hyperplane. And explains the convergence theorem of perceptron and its proof. This post is the summary of "Mathematical principles in Machine Learning"
 categories: [Machine_Learning]
 title: Perceptron and its convergence theorem
-image: 
+image: images/perceptron.png
 ---
 
 # Perceptron and convergence theorem
