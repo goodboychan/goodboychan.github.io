@@ -11,7 +11,7 @@ image: images/perceptron.png
 
 ## Motivation
 
-![lion]({{site.baseurl}}/assets/image/lion_and_tiger.png "")
+![lion]({{site.baseurl}}/assets/image/lion_and_tiger.png "lion and tiger")
 
 There are lion and tiger. How can we discriminate Lion and Tiger? Someone said that:
 - Tiger has **stripe** on its head
@@ -19,7 +19,7 @@ There are lion and tiger. How can we discriminate Lion and Tiger? Someone said t
 
 This information such as striped pattern and the mane is called features in the machine learning.
 
-![feature]({{site.baseurl}}/assets/image/lion_tiger_feature.png "") 
+![feature]({{site.baseurl}}/assets/image/lion_tiger_feature.png "lion and tiger in feature space") 
 
 How can we make Intelligence to classify Lion and Tiger automatically? If we can map each creature into feature space, we can divide them with a line and classify as lion for the data above the line, and classify as tiger for the data below the line. At this case, the line regards as an intelligence distinguishing lion and tiger.
 
@@ -47,11 +47,11 @@ $$ f(X) = \begin{bmatrix} 1 -1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bma
 
 And we can call $W$ as normal vector of the hyperplane (unnormalized)
 
-![feature]({{site.baseurl}}/assets/image/hyperplane_ex.png "")
+![feature]({{site.baseurl}}/assets/image/hyperplane_ex.png "hyperplane example")
 
 The red line is normal vector, and blue line is hyperplane. As you can see this, the normal vector is orthogonal ($90^\circ$) to any vector or data point lying on the hyperplane. As a result, hyperplane is defined by an normal vector and bias.
 
-![feature2]({{site.baseurl}}/assets/image/hyperplane_color.png "")
+![feature2]({{site.baseurl}}/assets/image/hyperplane_color.png "hyperplane with color")
 
 We can color the region based on the sign of the output of the hyperplane. In the previous example, the hyperplane itself has 0. So it is also called **decision boundary**
 
@@ -61,7 +61,7 @@ So we found out that to handle binary classification, we need to find hyperplane
 
 One answer is **Perceptron**. Perceptron is an algorithm for supervised learning of binary classification problem. It requires the training dataset that includes Input $X$ and Corresponding label $y$.
 
-![perceptron]({{site.baseurl}}/assets/image/perceptron.png "")
+![perceptron]({{site.baseurl}}/assets/image/perceptron.png "perceptron")
 
 From the figure, we can guess the prediction process of the perceptron briefly. The sign of sum of all value becomes the predicted label. In details, the sum of value is decomposed by inner product between the weight of the perceptron and the input vector, and adding bias.
 
@@ -69,7 +69,7 @@ This process is similar with the definition of the hyperplane. So we can use thi
 
 For example,
 
-![perceptron2]({{site.baseurl}}/assets/image/perceptron_ex.png "")
+![perceptron2]({{site.baseurl}}/assets/image/perceptron_ex.png "perceptron_example")
 
 Given training dataset,
 $$(X_1, y_1), (X_2, y_2), \dots , (X_{10}, y_{10}) \\ \text{where } \quad X_i = [x_1 \quad x_2]^T, y_i \in \{-1, 1\} $$
@@ -151,7 +151,8 @@ $$ k \leq \frac{R^2}{\gamma^2} \qquad (\text{The lower bound of } \Vert W_{k+1} 
 
 As you can see, the boundary is existed in some range. So we can find out that perceptron algorithm has finite update in the training process.
 
-One hyperplane separates the space into 2 half-space. But if the data is not linearly separable, althought the task is binary classification, one hyperplane cannot discriminate labels. In this case, more perceptrons are required to get better result. More effective way to handle is to add the depth(meaning a set of perceptrons) with non-linear function (also known as **activation function**) We call it Multi Layer Perceptron (MLP) or neural network. If you want the visualization of neural network, check out the following links
+One hyperplane separates the space into 2 half-space. But if the data is not linearly separable, althought the task is binary classification, one hyperplane cannot discriminate labels. In this case, more perceptrons are required to get better result. More effective way to handle is to add the depth(meaning a set of perceptrons) with non-linear function (also known as **activation function**) We call it Multi Layer Perceptron (MLP) or neural network. If you want the visualization of neural network, check out the following links:
+
 - [Karpathy's convnetjs](https://cs.stanford.edu/people/karpathy/convnetjs/demo/classify2d.html)
 - [Tensorflow Playground](http://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.65392&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)
 
