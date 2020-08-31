@@ -4,7 +4,7 @@ layout: post
 description: In this post, it will cover the concept of Margin in the linear hypothesis model, and how it is used to build the model. This post is the summary of "Mathematical principles in Machine Learning"
 categories: [Machine_Learning]
 title: Maximum Margin Principle and Soft Margin Hard Margin
-image: images/perceptron.png
+image: images/soft_margin_hyperplane.png
 ---
 
 # Maximum Margin Principle and Soft Margin Hard Margin
