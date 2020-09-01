@@ -4,7 +4,7 @@ layout: post
 description: In this post, it will cover the theoretical analysis on classificatios with linear hyperplanes. This post is the summary of "Mathematical principles in Machine Learning" offered from UNIST
 categories: [Machine_Learning]
 title: Convexity of Linear Hypothesis and Margin Bound of Linear Classifiers
-image: 
+image: images/vc_dim_example.png
 ---
 
 # Convexity of Linear Hypothesis and Margin Bound of Linear Classifiers
