@@ -39,7 +39,7 @@ $$ VC(\text{intervals in }\mathbb{R}) = 2 $$
 
 That is, 2 real numbers are fully shattered by the set of intervals.
 
-![VCdim]({{site.baseurl}}/assets/image/shattering_3_example.png "Fig 3. Example of VC-dimension")
+![VCdim]({{site.baseurl}}/assets/image/vc_dim_example.png "Fig 3. Example of VC-dimension")
 
 In the example figure, any three non-colinear(meaning that no points are in the same line) can be shattered in 2D. It can just separate 2 and 1 or 3 and 0, and it cannot separate the point individually. Thus, 
 
