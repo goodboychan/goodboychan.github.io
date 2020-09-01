@@ -88,7 +88,7 @@ here, $\Lambda$ is related to the margin of the hyperplane.
 
 ![derive VC dim]({{site.baseurl}}/assets/image/vc_dim_hyperplane.png "Fig 5. VC-dimension of the set of canonical hyperplane")
 
-$S$ is subset of circle which has $r$ radius. Of course, maxium value of $S$ will be on the boundary of circle. So we can derive the upper bound of VC-dimension with margin factor $\Lambda$ and radius $r$ of the sphere containing the data. (Check the details for proof [here](https://math.arizona.edu/~hzhang/math574m/Read/vapnik.pdf))
+$S$ is subset of circle which has $r$ radius. Of course, maximum value of $S$ will be on the boundary of circle. So we can derive the upper bound of VC-dimension with margin factor $\Lambda$ and radius $r$ of the sphere containing the data. (Check the details for proof [here](https://math.arizona.edu/~hzhang/math574m/Read/vapnik.pdf))
 
 $$ VC \leq r^2 \Lambda^2 $$
 
