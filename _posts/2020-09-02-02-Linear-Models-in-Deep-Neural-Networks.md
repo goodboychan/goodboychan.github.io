@@ -4,7 +4,7 @@ layout: post
 description: In this post, it will learn how linear models are used in deep neural networks. This post is the summary of "Mathematical principles in Machine Learning" offered from UNIST
 categories: [Machine_Learning]
 title: Linear models in Deep Neural Networks
-image: 
+image: images/1layer.gif
 ---
 
 # Linear models in Deep Neural Networks
