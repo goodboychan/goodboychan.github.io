@@ -51,4 +51,4 @@ Affine transformation is the point-wise application of a monotone non-linear act
 
 In this post, it explains the rule of linear model in deep neural network. The simple neural network (or perceptron) cannot handle the raw represention of data. But with hidden layer (and activation function), it can transform the dataset to be linear separable, so it works for classification.
 
-[^1] [^2] [^3]: Figure from [christopher olah's post](https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/)
+[^1] [^2] [^3]: Figure from [christopher olah's post](https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/) 
