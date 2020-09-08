@@ -38,7 +38,7 @@ $$ \Vert x \Vert_p = \Big( \sum_{i=1}^d \vert x_i \vert^p \Big)^{1/p} = (\vert x
 Consider about this simple case. If we have $x=(0, -2, 0, 1, 0, 3)$, we can define the norm in terms of $p$:
 
 | p | calculation &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  | $\Vert x \Vert_p$ |
-| -- | --- | --- |
+| ------------ | ---------------- | -------------------- |
 | 0 | $\Vert x \Vert_0 = \sharp \{i \vert x_i \neq 0\}$ | 3 |
 | 1 | $\Vert x \Vert_1 = (\vert 0 \vert + \vert -2 \vert + \vert 0 \vert + \vert 1 \vert + \vert 0 \vert + \vert 3 \vert)$ | 6 |
 | 2 | $\Vert x \Vert_2 = (\vert 0 \vert^2 + \vert -2 \vert^2 + \vert 0 \vert^2 + \vert 1 \vert^2 + \vert 0 \vert^2 + \vert 3 \vert^2)^{1/2}$ | $\sqrt{14}$ |
