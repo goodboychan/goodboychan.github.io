@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Multi-variable Linear Regression | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Multi-variable Linear Regression" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, it will cover the basic concept of Multi-variable Linear Regression. Unlike Simple Linear Regression, Multi-variable Linear Regression have several dependent variables, so its hypothesis is different from we saw in previous posts." />
+<meta property="og:description" content="In this post, it will cover the basic concept of Multi-variable Linear Regression. Unlike Simple Linear Regression, Multi-variable Linear Regression have several dependent variables, so its hypothesis is different from we saw in previous posts." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/08/01-Multi-variable-Linear-Regression.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/08/01-Multi-variable-Linear-Regression.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-08T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this post, it will cover the basic concept of Multi-variable Linear Regression. Unlike Simple Linear Regression, Multi-variable Linear Regression have several dependent variables, so its hypothesis is different from we saw in previous posts.","@type":"BlogPosting","headline":"Multi-variable Linear Regression","url":"https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/08/01-Multi-variable-Linear-Regression.html","datePublished":"2020-09-08T00:00:00-05:00","dateModified":"2020-09-08T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/08/01-Multi-variable-Linear-Regression.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Multi-variable Linear Regression | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Multi-variable Linear Regression" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, it will cover the basic concept of Multi-variable Linear Regression. Unlike Simple Linear Regression, Multi-variable Linear Regression have several dependent variables, so its hypothesis is different from we saw in previous posts." />
+<meta property="og:description" content="In this post, it will cover the basic concept of Multi-variable Linear Regression. Unlike Simple Linear Regression, Multi-variable Linear Regression have several dependent variables, so its hypothesis is different from we saw in previous posts." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/08/01-Multi-variable-Linear-Regression.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/08/01-Multi-variable-Linear-Regression.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-08T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this post, it will cover the basic concept of Multi-variable Linear Regression. Unlike Simple Linear Regression, Multi-variable Linear Regression have several dependent variables, so its hypothesis is different from we saw in previous posts.","@type":"BlogPosting","headline":"Multi-variable Linear Regression","url":"https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/08/01-Multi-variable-Linear-Regression.html","datePublished":"2020-09-08T00:00:00-05:00","dateModified":"2020-09-08T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/08/01-Multi-variable-Linear-Regression.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Multi-variable Linear Regression</h1><p class="page-description">In this post, it will cover the basic concept of Multi-variable Linear Regression. Unlike Simple Linear Regression, Multi-variable Linear Regression have several dependent variables, so its hypothesis is different from we saw in previous posts.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-09-08T00:00:00-05:00" itemprop="datePublished">
+        Sep 8, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      5 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow">Tensorflow</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-09-08-01-Multi-variable-Linear-Regression.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-09-08-01-Multi-variable-Linear-Regression.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-09-08-01-Multi-variable-Linear-Regression.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Hypothesis">Hypothesis </a></li>
+<li class="toc-entry toc-h2"><a href="#Multi-variables">Multi-variables </a></li>
+<li class="toc-entry toc-h2"><a href="#Multi-variable-Linear-Regression-in-Tensorflow">Multi-variable Linear Regression in Tensorflow </a></li>
+<li class="toc-entry toc-h2"><a href="#Summary">Summary </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-09-08-01-Multi-variable-Linear-Regression.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">'seaborn'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Hypothesis">
+<a class="anchor" href="#Hypothesis" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hypothesis<a class="anchor-link" href="#Hypothesis"> </a>
+</h2>
+<p>In the simple Linear Regression, we expressed the hypothesis like this,</p>
+<p>
+$$ H(x) = W x + b $$
+</p>
+<p>But, most of real-world problem is related on various variables. For the case with 3 variables, hypothesis can be expanded with 3-variables,</p>
+<p>
+$$ H(x_1, x_2, x_3) = w_1 x_1 + w_2 x_2 + w_3 x_3 +b $$
+</p>
+<p>And also, cost function for this hypothesis will be different from the one we saw in previous post.</p>
+<p>
+$$ \text{cost}(W, b) = \frac{1}{m} \sum_{i=1}^{m} (H(x_1, x_2, x_3) - y_i)^2 $$
+</p>
+<h2 id="Multi-variables">
+<a class="anchor" href="#Multi-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multi-variables<a class="anchor-link" href="#Multi-variables"> </a>
+</h2>
+<p>In general, if we have $n$ variables for regression, the hypothesis will be,</p>
+<p>
+$$ H(x_1, x_2, x_3, \dots, x_n) = w_1 x_1 + w_2 x_2 + w_3 x_3 + \dots + w_n x_n + b $$
+</p>
+<p>If we express with mathematical form, it is hard to display it in one line. Instead, we can express it with matrix multiplication form. Suppose $X$ is the vector of $x$, and $W$ is the vector of $w$, hypothesis with matrix form will be like this,</p>
+<p>
+$$ H(X) =  W \cdot X = \begin{bmatrix} w_1 &amp; w_2 &amp; \dots &amp; w_n \end{bmatrix} \cdot \begin{bmatrix} x_1 \\ x_2 \\ \dots \\ x_n \end{bmatrix} = w_1 x_1 + w_2 x_2 + \dots + w_n x_n $$
+</p>
+<p>Or we can reverse the order of $W$ and $X$, (same notation)</p>
+<p>
+$$ H(X) =  X \cdot W = \begin{bmatrix} x_1 &amp; x_2 &amp; \dots &amp; x_n \end{bmatrix} \cdot \begin{bmatrix} w_1 \\ w_2 \\ \dots \\ w_n \end{bmatrix} = w_1 x_1 + w_2 x_2 + \dots + w_n x_n $$
+
+</p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>We omit the bias term($b$) for simplicity. If you really want to express the hypothesis with bias, just increase the shape by 1 and adding bias term,
+</div>
+
+$$ H(X) =  X \cdot W = \begin{bmatrix} x_1 &amp; x_2 &amp; \dots &amp; x_n &amp; 1 \end{bmatrix} \cdot \begin{bmatrix} w_1 \\ w_2 \\ \dots \\ w_n \\ b \end{bmatrix} = w_1 x_1 + w_2 x_2 + \dots + w_n x_n + b $$
+
+<p>The advantage of matrix multiplication is parallelization. In the previous example, we just express the formula with just one row of $X$. What if $X$ has lots of rows? It can also expand from previous formula.</p>
+<p>
+$$ H(X) =  X \cdot W = \begin{bmatrix} x_{11} &amp; x_{12} &amp; \dots &amp; x_{1n} \\ x_{21} &amp; x_{22} &amp; \dots &amp; x_{2n} \end{bmatrix} \cdot \begin{bmatrix} w_1 \\ w_2 \\ \dots \\ w_n \end{bmatrix} = \begin{bmatrix} w_1 x_{11} + w_2 x_{12} + \dots + w_n x_{1n} \\ w_1 x_{21} + w_2 x_{22} + \dots + w_n x_{2n} \end{bmatrix}$$
+</p>
+<p>Also, we can expand the dimension of weight term, meaning that there is another layer of weight vector. With matrix multiplication, we don't need to expand it manually, and usually GPU (short for Graphic Processing Unit) has an advantage to calculate the matrix multiplication thanks to its architecture.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Multi-variable-Linear-Regression-in-Tensorflow">
+<a class="anchor" href="#Multi-variable-Linear-Regression-in-Tensorflow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multi-variable Linear Regression in Tensorflow<a class="anchor-link" href="#Multi-variable-Linear-Regression-in-Tensorflow"> </a>
+</h2>
+<p>Suppose we have three dependent variable. Then, the hypothesis will be</p>
+<p>
+$$ H(x_1, x_2, x_3) = w_1 x_1 + w_2 x_2 + w_3 x_3 $$
+</p>
+<p>We have datasets and initialize the weights, and define the hypothesis in tensorflow.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Data</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">73.</span><span class="p">,</span> <span class="mf">93.</span><span class="p">,</span> <span class="mf">89.</span><span class="p">,</span> <span class="mf">96.</span><span class="p">,</span> <span class="mf">73.</span><span class="p">]</span>
+<span class="n">x2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">80.</span><span class="p">,</span> <span class="mf">88.</span><span class="p">,</span> <span class="mf">91.</span><span class="p">,</span> <span class="mf">98.</span><span class="p">,</span> <span class="mf">66.</span><span class="p">]</span>
+<span class="n">x3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">75.</span><span class="p">,</span> <span class="mf">93.</span><span class="p">,</span> <span class="mf">90.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mf">152.</span><span class="p">,</span> <span class="mf">185.</span><span class="p">,</span> <span class="mf">180.</span><span class="p">,</span> <span class="mf">196.</span><span class="p">,</span> <span class="mf">142.</span><span class="p">]</span>
+
+<span class="c1"># random weights</span>
+<span class="n">w1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">w2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">w3</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="c1"># Hypothesis</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">w1</span> <span class="o">*</span> <span class="n">x1</span> <span class="o">+</span> <span class="n">w2</span> <span class="o">*</span> <span class="n">x2</span> <span class="o">+</span> <span class="n">w3</span> <span class="o">*</span> <span class="n">x3</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can build the training process with Gradient Descent.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.00001</span>
+
+<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="c1"># Record the gradient history of the cost function</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">w1</span> <span class="o">*</span> <span class="n">x1</span> <span class="o">+</span> <span class="n">w2</span> <span class="o">*</span> <span class="n">x2</span> <span class="o">+</span> <span class="n">w3</span> <span class="o">*</span> <span class="n">x3</span> <span class="o">+</span> <span class="n">b</span>
+        <span class="n">cost</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">y</span><span class="p">))</span>
+    
+    <span class="c1"># Calculate the gradient of each weight</span>
+    <span class="n">w1_grad</span><span class="p">,</span> <span class="n">w2_grad</span><span class="p">,</span> <span class="n">w3_grad</span><span class="p">,</span> <span class="n">b_grad</span> <span class="o">=</span> <span class="n">tape</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="p">[</span><span class="n">w1</span><span class="p">,</span> <span class="n">w2</span><span class="p">,</span> <span class="n">w3</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span>
+    
+    <span class="c1"># update the weight</span>
+    <span class="n">w1</span><span class="o">.</span><span class="n">assign_sub</span><span class="p">(</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">w1_grad</span><span class="p">)</span>
+    <span class="n">w2</span><span class="o">.</span><span class="n">assign_sub</span><span class="p">(</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">w2_grad</span><span class="p">)</span>
+    <span class="n">w3</span><span class="o">.</span><span class="n">assign_sub</span><span class="p">(</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">w3_grad</span><span class="p">)</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">assign_sub</span><span class="p">(</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">b_grad</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">e</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"epoch: </span><span class="si">{:5}</span><span class="s2"> | cost: </span><span class="si">{:12.4f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">cost</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>epoch:     0 | cost:    7312.8384
+epoch:   100 | cost:      35.9158
+epoch:   200 | cost:      34.0776
+epoch:   300 | cost:      32.3360
+epoch:   400 | cost:      30.6861
+epoch:   500 | cost:      29.1231
+epoch:   600 | cost:      27.6422
+epoch:   700 | cost:      26.2393
+epoch:   800 | cost:      24.9103
+epoch:   900 | cost:      23.6510
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can express it with matrix multiplication form. To do this, the dataset is merged with one numpy array.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">73.</span><span class="p">,</span> <span class="mf">80.</span><span class="p">,</span> <span class="mf">75.</span><span class="p">,</span> <span class="mf">152.</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">93.</span><span class="p">,</span> <span class="mf">88.</span><span class="p">,</span> <span class="mf">93.</span><span class="p">,</span> <span class="mf">185.</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">89.</span><span class="p">,</span> <span class="mf">91.</span><span class="p">,</span> <span class="mf">90.</span><span class="p">,</span> <span class="mf">180.</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">96.</span><span class="p">,</span> <span class="mf">98.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">196.</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">73.</span><span class="p">,</span> <span class="mf">66.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">,</span> <span class="mf">142.</span> <span class="p">]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+<span class="n">W</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">]))</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="c1"># Replace hypothesis with predict function</span>
+<span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6.3 5.69a.942.942 0 01-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 01-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path></svg>
+    <strong>Note: </strong>it may be confused to make y from slicing with <code>[1]</code>. Because it must maintain the matrix form, we generate the y like that. 
+</div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(5,)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(5, 1)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Same learning process with gradient descent is applied,</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.00001</span>
+
+<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">):</span>
+    <span class="c1"># Record the gradient history of the cost function</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+        <span class="n">cost</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="n">y</span><span class="p">))</span>
+    
+    <span class="c1"># Calculate the gradient of each weight</span>
+    <span class="n">W_grad</span><span class="p">,</span> <span class="n">b_grad</span> <span class="o">=</span> <span class="n">tape</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="p">[</span><span class="n">W</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span>
+    
+    <span class="c1"># update the weight</span>
+    <span class="n">W</span><span class="o">.</span><span class="n">assign_sub</span><span class="p">(</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">W_grad</span><span class="p">)</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">assign_sub</span><span class="p">(</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">b_grad</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">e</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"epoch: </span><span class="si">{:5}</span><span class="s2"> | cost: </span><span class="si">{:12.4f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">cost</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>epoch:     0 | cost:  103242.9219
+epoch:   100 | cost:       1.8692
+epoch:   200 | cost:       1.8591
+epoch:   300 | cost:       1.8491
+epoch:   400 | cost:       1.8392
+epoch:   500 | cost:       1.8294
+epoch:   600 | cost:       1.8198
+epoch:   700 | cost:       1.8103
+epoch:   800 | cost:       1.8009
+epoch:   900 | cost:       1.7917
+epoch:  1000 | cost:       1.7825
+epoch:  1100 | cost:       1.7735
+epoch:  1200 | cost:       1.7645
+epoch:  1300 | cost:       1.7557
+epoch:  1400 | cost:       1.7469
+epoch:  1500 | cost:       1.7382
+epoch:  1600 | cost:       1.7296
+epoch:  1700 | cost:       1.7211
+epoch:  1800 | cost:       1.7127
+epoch:  1900 | cost:       1.7044
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see from the result, cost is decreased significantly while 100 epoch are passed. And you can also notice the advantage from matrix multiplication that we don't need to define weight vector manually. ($w_1, w_2, w_3 \to W$)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Summary">
+<a class="anchor" href="#Summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary<a class="anchor-link" href="#Summary"> </a>
+</h2>
+<p>In this post, we expand the linear regression from single variable to multi variables. And using matrix multiplication notation, it helps to operate gradient descent effectively.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/tensorflow/machine_learning/2020/09/08/01-Multi-variable-Linear-Regression.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
