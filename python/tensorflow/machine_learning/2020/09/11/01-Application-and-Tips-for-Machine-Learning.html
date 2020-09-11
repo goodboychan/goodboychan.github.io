@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Application and Tips for Machine Learning | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Application and Tips for Machine Learning" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, it will mentioned about the application and tips which can help to implement Machine Learning model. Also we will cover the overfitting problem and solution with example" />
+<meta property="og:description" content="In this post, it will mentioned about the application and tips which can help to implement Machine Learning model. Also we will cover the overfitting problem and solution with example" />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/11/01-Application-and-Tips-for-Machine-Learning.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/11/01-Application-and-Tips-for-Machine-Learning.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/learning_rate.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-11T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this post, it will mentioned about the application and tips which can help to implement Machine Learning model. Also we will cover the overfitting problem and solution with example","@type":"BlogPosting","headline":"Application and Tips for Machine Learning","url":"https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/11/01-Application-and-Tips-for-Machine-Learning.html","datePublished":"2020-09-11T00:00:00-05:00","dateModified":"2020-09-11T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/learning_rate.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/11/01-Application-and-Tips-for-Machine-Learning.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Application and Tips for Machine Learning</h1><p class="page-description">In this post, it will mentioned about the application and tips which can help to implement Machine Learning model. Also we will cover the overfitting problem and solution with example</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-09-11T00:00:00-05:00" itemprop="datePublished">
+        Sep 11, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow">Tensorflow</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-09-11-01-Application-and-Tips-for-Machine-Learning.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-09-11-01-Application-and-Tips-for-Machine-Learning.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-09-11-01-Application-and-Tips-for-Machine-Learning.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Learning-Rate">Learning Rate </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Good-and-Bad-learning-rate">Good and Bad learning rate </a></li>
+<li class="toc-entry toc-h3"><a href="#Annealing-the-learning-rate">Annealing the learning rate </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Data-Preprocessing">Data Preprocessing </a></li>
+<li class="toc-entry toc-h2"><a href="#Overfitting">Overfitting </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-09-11-01-Application-and-Tips-for-Machine-Learning.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'text.usetex'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">'font'</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Learning-Rate">
+<a class="anchor" href="#Learning-Rate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Learning Rate<a class="anchor-link" href="#Learning-Rate"> </a>
+</h2>
+<p>We used Gradient Descent method to find the weight making the cost minimum. Usually, at each step in training, element of weight vector updates its value by the direction of gradient decreasing.</p>
+<p>
+$$ \theta_j := \theta_j - \alpha \frac{\partial}{\partial \theta_j} J(\theta) $$
+</p>
+<p>Here, we can see the constant term, $\alpha$, also known as <strong>learning rate</strong>. Learning rate is a hyper-parameter that controls how much we are adjusting the weights with respect to the loss gradient. Simply speaking, it is a speed of finding the answer that we want to find.</p>
+<h3 id="Good-and-Bad-learning-rate">
+<a class="anchor" href="#Good-and-Bad-learning-rate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Good and Bad learning rate<a class="anchor-link" href="#Good-and-Bad-learning-rate"> </a>
+</h3>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/learning_rate.png" alt="learning_rate"></p>
+<p>Suppose the there is an optimal point, we want to find it by searching manually. If the speed is too fast, it may pass the optimal point. Then we need to go back and re-search it. Or maybe we can miss it, and keep going. Sometimes it may occur going forward and backward, repeatedly. If the speed it too slow, then it takes a long time to find it.</p>
+<p>Actually, there is no answer for optimial learning rate. It may be different on each case and environment, and even if the optimizer may take different learning rate. By andrej karpathy, $3e^4$ is best learning rate for Adam optimzier.</p>
+<h3 id="Annealing-the-learning-rate">
+<a class="anchor" href="#Annealing-the-learning-rate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Annealing the learning rate<a class="anchor-link" href="#Annealing-the-learning-rate"> </a>
+</h3>
+<p>So it is good approach of changing the learning rate per each epoch. It is called <strong>annealing (or decaying) the learning rate</strong>. In the example case we mentioned previously, there is the case that model tries to find the optimal point with going forward and backward repeatedly. If we can change the learning rate in that case, it can avoid to struggling in saddle point, and keep trying to find the point.</p>
+<p>There are various way to annealing the learning rate:</p>
+<ul>
+<li>Step Decay: Decay the rate per each N epochs.</li>
+<li>Exponential decay: Decay the rate with exponential function ($\alpha = \alpha_0 e^{-kt}$)</li>
+<li>${1 over t}$ decay: Decay the rate with fraction ($\alpha = \frac{\alpha_0}{1 + kt}$)</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-Preprocessing">
+<a class="anchor" href="#Data-Preprocessing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Preprocessing<a class="anchor-link" href="#Data-Preprocessing"> </a>
+</h2>
+<p>When we implement the logistic regression model for <a href="https://goodboychan.github.io/chans_jupyter/python/tensorflow/machine_learning/2020/09/09/03-Logistic-Regression-Classification.html#Logistic-Regression-with-diabetes-classification">finding diabetes</a>, we found out that the scale of each column is different from each other. In this dataset, it is hard to train it cause model understand the value itself. That is, sometime model could learn that large number of value is always good for prediction. And there is the case that the mean and variance is different from each columns. At this case, model may mis-understand the data, and interpret the valid data as an outlier.</p>
+<p>For this problem, we need to apply method so called <strong>Feature Scaling</strong>. Feature scaling makes the data re-arranging in same standard. There are two common ways for feature scaling:</p>
+<ul>
+<li>
+<strong>Standardization</strong> : If you take the statistic class, maybe you heard about standard normal distribution. And to make normal distribution to standard normal distribution, we calculate the <strong>Z-score</strong> (also known as Standard Score). Throught this, it makes the standard normal distribution with mean of 0 and standard deviation of 1. Same approach can be applied here. If we get dataset, and calculate the Z-score, we can make dataset to standard distribution. So here is how to calculate Z-score,</li>
+</ul>
+<p>
+$$ x_{new} = \frac{x - \mu}{\sigma} $$
+</p>
+<ul>
+<li>
+<strong>Normalization</strong> : Unlike Standardization, Normalization makes the dataset to have some finite range. such as 0 and 1. To do this, we consider the maximum value of dataset to be 1, and the minimum value of dataset to be 0. And calculate the ratio between the measured point and minimum value. So it is also called <strong>Min-Max Scaling</strong>.</li>
+</ul>
+<p>
+$$ x_{new} = \frac{x - x_{min}}{x_{max} - x_{min}} $$
+</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Overfitting">
+<a class="anchor" href="#Overfitting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overfitting<a class="anchor-link" href="#Overfitting"> </a>
+</h2>
+<p>Usually, the learning process with updating weight and bias is called <strong>fit</strong>. So training is also called <strong>fit the model</strong>. So what does it mean of <strong>overfitting</strong>?</p>
+<p>If we train the model with given data, we can see that the model is well-trained by monitoring the cost or loss on each epochs. The problem is that what if we input the unknown data to the trained model. Does it work? Actually, we don't know any information about unknown data, the mean, standard deviation, etc. Maybe it contains lots of outliers the model doesn't see while training.</p>
+<p>As a result, well-performed model must work well on not only training data, but also the unknown data. And that's why we separate the training dataset and test dataset in the data preprocessing step.</p>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/overfit_underfit.png" alt="overfit_underfit"></p>
+<p>Overfitting and underfitting is the problem we explained about. Overfitting is the situation that model works well on training dataset, but worst performance on test dataset. Usually, someone mentioned about <strong>high variance</strong>. In statistical view, high variance means that the model (or estimator) varies a lot depending on the data you get. And it occurs while the model has various of dependent variable.</p>
+<p>Underfitting is the situation that model doesn't work well on training dataset. It has <strong>high bias</strong> since the model doesn't have ability to handle the difference of dataset, and underfitting model have low number of dependent variables.</p>
+<p>So, to avoid the overfitting or underfitting, we need to control the number of dependent variables. Actually, the most effective way to handle both is to get more training data containing variety. But you know that it takes too much cost, and the amount of dataset is not infinite. Second approach is to apply Principle Component Analysis (PCA for short). PCA is one of unsupervised learning method for dimensionality reduction. Through this, we can reduce the number of features (of course, PCA selects the component which mainly affect the data distribution.) for handling high variance. If we suffered from underfitting, then we can add another features.</p>
+<p>Another way is to add regularization term for loss. Consider about the hypothesis and cost function for linear regression.</p>
+$$ H_{\theta}(x) = \theta_0 + \theta_1 x + \theta_2 x^2 + \dots \\
+ J(\theta) = {1 \over 2m} \sum_{i=1}^m (H_{\theta}(x_i) - y_i)^2 $$<p>We can the additional term for express the weight vector information to the cost function. So it modifies like this,</p>
+<p>
+$$ J(\theta) = {1 \over 2m} \sum_{i=1}^m (H_{\theta}(x_i) - y_i)^2 + {\lambda \over 2m} \sum_{j=1}^m \theta_j^2 $$
+</p>
+<p>Upper case is the example of L2 loss (squared error) with L2 regularization. If you want to use L1 loss (absolute error) with L1 regularization, you can express like this.</p>
+<p>
+$$ J(\theta) = {1 \over m} \sum_{i=1}^m \vert H_{\theta}(x_i) - y_i \vert + {\lambda \over m} \sum_{j=1}^m \vert \theta_j \vert $$
+</p>
+<p>It's up to you what you choose for lost function and regularization term.</p>
+<p>There is another way like data augmentation, dropout, and so on. Again, there is no optimal way to handle overfitting and underfitting. You need to try it with some feature, and tune the model based on error.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Work In Progress..</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/tensorflow/machine_learning/2020/09/11/01-Application-and-Tips-for-Machine-Learning.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
