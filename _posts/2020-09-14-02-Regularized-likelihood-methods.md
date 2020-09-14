@@ -7,7 +7,7 @@ title: Regularized likelihood methods
 image: images/lasso.png
 ---
 
-# Regularized likelihoood methods
+# Regularized likelihood methods
 
 ## Regulaization
 
