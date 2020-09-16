@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>XOR Problem in Deep Neural Network | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="XOR Problem in Deep Neural Network" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, it will be mentioned about Basic Concept of Deep Neural Network, and covered XOR problems with Deep Neural Network." />
+<meta property="og:description" content="In this post, it will be mentioned about Basic Concept of Deep Neural Network, and covered XOR problems with Deep Neural Network." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/deep_learning/2020/09/16/01-XOR-Problem-in-Deep-Neural-Network.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/deep_learning/2020/09/16/01-XOR-Problem-in-Deep-Neural-Network.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/linearly_separable_xor.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-16T00:00:00-05:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this post, it will be mentioned about Basic Concept of Deep Neural Network, and covered XOR problems with Deep Neural Network.","@type":"BlogPosting","headline":"XOR Problem in Deep Neural Network","url":"https://goodboychan.github.io/chans_jupyter/python/deep_learning/2020/09/16/01-XOR-Problem-in-Deep-Neural-Network.html","datePublished":"2020-09-16T00:00:00-05:00","dateModified":"2020-09-16T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/images/linearly_separable_xor.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/deep_learning/2020/09/16/01-XOR-Problem-in-Deep-Neural-Network.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">XOR Problem in Deep Neural Network</h1><p class="page-description">In this post, it will be mentioned about Basic Concept of Deep Neural Network, and covered XOR problems with Deep Neural Network.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-09-16T00:00:00-05:00" itemprop="datePublished">
+        Sep 16, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-09-16-01-XOR-Problem-in-Deep-Neural-Network.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-09-16-01-XOR-Problem-in-Deep-Neural-Network.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-09-16-01-XOR-Problem-in-Deep-Neural-Network.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Linearly-Separable">Linearly Separable </a></li>
+<li class="toc-entry toc-h2"><a href="#Backpropagation">Backpropagation </a></li>
+<li class="toc-entry toc-h2"><a href="#Convolutional-Neural-Networks">Convolutional Neural Networks </a></li>
+<li class="toc-entry toc-h2"><a href="#The-problems">The problems </a></li>
+<li class="toc-entry toc-h2"><a href="#Breakthrough">Breakthrough </a></li>
+<li class="toc-entry toc-h2"><a href="#Backpropagation-in-details">Backpropagation in details </a></li>
+<li class="toc-entry toc-h2"><a href="#Neural-Networks-for-XOR-in-tensorflow">Neural Networks for XOR in tensorflow </a></li>
+<li class="toc-entry toc-h2"><a href="#Summary">Summary </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-09-16-01-XOR-Problem-in-Deep-Neural-Network.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'text.usetex'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">'font'</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Linearly-Separable">
+<a class="anchor" href="#Linearly-Separable" aria-hidden="true"><span class="octicon octicon-link"></span></a>Linearly Separable<a class="anchor-link" href="#Linearly-Separable"> </a>
+</h2>
+<p>Neurons, one of the basic elements in Neural Network are very similar with its in biology. When the input or signal is entered into synapse, cell nucleus interprets the information contained in signals and generates the output through Axon. similiarily, almost same operation happens in neurons in Neural Network. When the other axon sends the output, that is the input of next neurons ($x$), cell body interprets its information with embedded weight vector and bias($W, b$). Then, activation function filters information and send it to next neuron.</p>
+<p>Actually, we already cover the concepts, and its implementation with tensorflow. But let's review the basic problem with simple examples.
+ If your major is from EECS, you may heard about Logic Gates. Basic logic is AND and OR gates and have a following properties,</p>
+<ul>
+<li>AND</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>$x_1$</th>
+<th>$x_2$</th>
+<th>$y$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>OR</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>$x_1$</th>
+<th>$x_2$</th>
+<th>$y$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>And we can draw the graph of AND/OR like this,</p>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/linearly_separable_and_or.png" alt="linearly_separable_and_or"></p>
+<p>Note that, black one is 1, white one is 0. Then if we want to separate it by two, we can easily do it by drawing the straight line, In this case, if we can separate the given data by drawing the line, we can call <strong>"the linearly separable"</strong>. But how about XOR case? (also known as eXclusive OR)</p>
+<ul>
+<li>XOR</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>$x_1$</th>
+<th>$x_2$</th>
+<th>$y$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>And the plot is like this,</p>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/linearly_separable_xor.png" alt="linearly_separable_xor"></p>
+<p>Can we separate it with same manner in linearly separable? Maybe you cannot. In this kind of <strong>Non-linearly separable</strong> data cannot be separated by the linear equation.</p>
+<p>For this purpose, <a href="https://en.wikipedia.org/wiki/Marvin_Minsky">Marvin Minsky</a>, the co-founder of the MIT AI Lab, proved that Machine Learning tools cannot solve the Non-linearly separable case through his book "perceptrons". Instead, the book said that it could be solved with the hierachical architecture of Multiple perceptrons, so called <strong>Multi-Layered Perceptron</strong>(MLP for short). But in that time, there was no concepts for training, such as updating weights and bias, and optimization methods, and so on. So most of one thought that it is impossible to train the network.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Backpropagation">
+<a class="anchor" href="#Backpropagation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Backpropagation<a class="anchor-link" href="#Backpropagation"> </a>
+</h2>
+<p>In 1970, <a href="https://en.wikipedia.org/wiki/Paul_Werbos">Paul Werbos</a> describes the <strong>backpropagation</strong> in his dissertation. And it helps to handle the problem mentioned previously.</p>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/training_inference1.png" alt="backpropagation">[^1]</p>
+<p>Backpropagation is one of approaches to update weights using error. When the input is coming into the input layer, the process is executed with forward direction and gets inference. There maybe some errors comparing inferenced output and actual output, Based on this error, the process is excuted with backward direction for the weight update. Then updated weight is used in next step.</p>
+<p>This approach is re-discovered by <a href="https://en.wikipedia.org/wiki/Geoffrey_Hinton">Geoffrey Hinton</a> in mid-80's.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Convolutional-Neural-Networks">
+<a class="anchor" href="#Convolutional-Neural-Networks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convolutional Neural Networks<a class="anchor-link" href="#Convolutional-Neural-Networks"> </a>
+</h2>
+<p>In other case, there is another approach to handle non-linearly separable problem, especially on visual data. Someone found out that there is some general patterns of cell operation in optics, Imitated from the process of optic cell, Yann LeCun introduced <strong>Convolutional Neural Network</strong> (CNN for short) with his network LeNet-5, and showed the efficiency in handwriting recognition.</p>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/LeNet_Original_Image.jpg" alt="lenet5"></p>
+<p>Unlike the operation in MLP, CNN compressed the input signal and handle it as a feature of visual data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-problems">
+<a class="anchor" href="#The-problems" aria-hidden="true"><span class="octicon octicon-link"></span></a>The problems<a class="anchor-link" href="#The-problems"> </a>
+</h2>
+<p>These approaches like backpropagation and CNN improves the AI technology, but still remains the problem in architecture. If we want to gather lots of information from the features, it requires some numbers of layers. But when the number of network layer is increased, the errors that need for backpropagation is vanished, so called <strong>Vanishing Gradient</strong>. Because each of the neural network's weight receive an update proportional to the partial derivate of the error function. If the number of layer is increased, the order of gradient is also increased, then error might be vanished.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Breakthrough">
+<a class="anchor" href="#Breakthrough" aria-hidden="true"><span class="octicon octicon-link"></span></a>Breakthrough<a class="anchor-link" href="#Breakthrough"> </a>
+</h2>
+<p>But in 2006, Hinton and Bengio found out that the neural networks with many layers could be trained well through <strong>weight initialization</strong>. Previously, there is no rule for weights, so usually it initialized randomly. Thanks to this approach, deep machine learning methods are more efficient for difficult problems than shallow models. Actually, The word <strong>"Deep"</strong> in Deep Learning means the learning architecture with some numbers of layers.</p>
+<p>So this is the beginning of AI era!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Backpropagation-in-details">
+<a class="anchor" href="#Backpropagation-in-details" aria-hidden="true"><span class="octicon octicon-link"></span></a>Backpropagation in details<a class="anchor-link" href="#Backpropagation-in-details"> </a>
+</h2>
+<p>Let's dive into backpropagation with simple example.</p>
+<p>As you saw from previous sections, model is executed with forward-propagation and update the weight and bias with backpropation. Suppose we have a single neuron,</p>
+<p>
+$$ f = WX + b $$
+</p>
+<p>but we can separte with two function $f$ and $g$,</p>
+<p>
+$$g = WX, \qquad f = g+b $$
+</p>
+<p>Can we update the weight with backpropagation? To do this, we need to differentiate the parameters, but function $f$ consists of some variables, not a single variable. In this case, we can apply the partial derivative for each variables. Partial derivative is differentiation method that consider other varibles as constants and just focus on specific variables. In case of $g$, there are two variables $W$ and $X$. So we can apply the partial derivative for each $W$ and $X$,</p>
+<p>
+$$ \frac{\partial g}{\partial W} =X, \qquad \frac{\partial g}{\partial X} = W $$
+</p>
+<p>Also, we can apply it with $f$ for each $g$ and $b$,</p>
+<p>
+$$ \frac{\partial f}{\partial g} = 1, \qquad \frac{\partial f}{\partial b} = 1 $$
+</p>
+<p>So how can we calculate the partial derivative of $f$ in terms of $W$? It's simple. Just multiply two terms,</p>
+<p>
+$$ \frac{\partial f}{\partial W} = \frac{\partial f}{\partial g} \cdot \frac{\partial g}{\partial W} = X $$
+</p>
+<p>This multiplication of partial derivatives is called <strong>chain rule</strong>. Of course, this is too easy case. We can directly apply function $g$ in $f$, and do partial derivatives of $f$ with respect to $W$. But what if the neural network consists of several numbers of layers? As you know, to solve the non-linearly separable classification requires neurons with layers. So directly applying the previous neurons into the next layer and applying the partial derivatives may be difficult.</p>
+<p>Thanks to the chain rule, we just need to calculate the differentiate of each layers and multiply it. this is the short introdunction of backpropagation.</p>
+<p>Actually, vanishing gradient problem occurs because of chain rules. When the number of layers is increased, the number of execution partial derivatives multiplication is also increased. Suppose that first order partial derivatives is less than 1, then multiplication with next step partial derivatives will go down, and finally it goes toward 0. We just want to know the differentiation of variables with respect to weight, but the overall partial derivative (after multiplying all derivatives) may be very small, and it is hard to update weight from error.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Neural-Networks-for-XOR-in-tensorflow">
+<a class="anchor" href="#Neural-Networks-for-XOR-in-tensorflow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Neural Networks for XOR in tensorflow<a class="anchor-link" href="#Neural-Networks-for-XOR-in-tensorflow"> </a>
+</h2>
+<p>So Let's implement it with tensorflow. In this example, we will build 2 layer neural network.</p>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/neural_network.png" alt="neural network"></p>
+<p>Implementation is like this,</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">neural_net</span><span class="p">(</span><span class="n">features</span><span class="p">):</span>
+    <span class="n">layer1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">W1</span><span class="p">)</span> <span class="o">+</span> <span class="n">b1</span><span class="p">)</span>
+    <span class="n">layer2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">W2</span><span class="p">)</span> <span class="o">+</span> <span class="n">b2</span><span class="p">)</span>
+    <span class="n">layer3</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">layer1</span><span class="p">,</span> <span class="n">layer2</span><span class="p">],</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">layer3</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">layer3</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">hypothesis</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layer3</span><span class="p">,</span> <span class="n">W3</span><span class="p">)</span> <span class="o">+</span> <span class="n">b3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hypothesis</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that the input of second layer are the output of previous layer, so it requires to concatenate each output by 1.</p>
+<p>Anyway, we generate the XOR dataset.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">'red'</span> <span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'^'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">'red'</span> <span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'^'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">'blue'</span> <span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'^'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">'blue'</span> <span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'^'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"x1"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"x2"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Convert iw with float32</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And initialize the weights and biases.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">777</span><span class="p">)</span>
+
+<span class="n">W1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'weight1'</span><span class="p">)</span>
+<span class="n">b1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'bias1'</span><span class="p">)</span>
+
+<span class="n">W2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'weight2'</span><span class="p">)</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'bias2'</span><span class="p">)</span>
+
+<span class="n">W3</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'weight3'</span><span class="p">)</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">'bias3'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, we build the loss function and training process.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Loss function</span>
+<span class="k">def</span> <span class="nf">loss_fn</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="o">-</span><span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">h</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cost</span>
+
+<span class="c1"># Gradient function</span>
+<span class="k">def</span> <span class="nf">grad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">neural_net</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tape</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">losses</span><span class="p">,</span> <span class="p">[</span><span class="n">W1</span><span class="p">,</span> <span class="n">W2</span><span class="p">,</span> <span class="n">W3</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">])</span>
+
+<span class="c1"># Accuracy function</span>
+<span class="k">def</span> <span class="nf">accuracy_fn</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">predict</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">h</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">predict</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">accuracy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Optimizer: Stochastic Gradient Descent with learning rate 0.01</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50000</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">grads</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">apply_gradients</span><span class="p">(</span><span class="n">grads_and_vars</span><span class="o">=</span><span class="nb">zip</span><span class="p">(</span><span class="n">grads</span><span class="p">,</span> <span class="p">[</span><span class="n">W1</span><span class="p">,</span> <span class="n">W2</span><span class="p">,</span> <span class="n">W3</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">e</span> <span class="o">%</span> <span class="mi">5000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Epoch: </span><span class="si">{}</span><span class="s2">, Loss: </span><span class="si">{:.4f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">neural_net</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Epoch: 0, Loss: 0.8487
+Epoch: 5000, Loss: 0.6847
+Epoch: 10000, Loss: 0.6610
+Epoch: 15000, Loss: 0.6154
+Epoch: 20000, Loss: 0.5722
+Epoch: 25000, Loss: 0.5433
+Epoch: 30000, Loss: 0.5211
+Epoch: 35000, Loss: 0.4911
+Epoch: 40000, Loss: 0.4416
+Epoch: 45000, Loss: 0.3313
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After training, we can get trained weight and bias, so we apply it with accuracy function</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_fn</span><span class="p">(</span><span class="n">neural_net</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Accuracy: </span><span class="si">{:.4f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Accuracy: 1.0000
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Summary">
+<a class="anchor" href="#Summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary<a class="anchor-link" href="#Summary"> </a>
+</h2>
+<p>Through this post, we covered the case of XOR problem, and it cannot handle with single perceptron. Through weight and bias update via backpropagation helps to solve this, and requires numbers of layers. Also we tried to implement in tensorflow for simple XOR problem.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="footnotes">
+<hr>
+<ol></ol>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/deep_learning/2020/09/16/01-XOR-Problem-in-Deep-Neural-Network.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
