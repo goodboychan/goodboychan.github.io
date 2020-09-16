@@ -1,4 +1,4 @@
-FROM hamelsmu/fastpages-nbdev
+FROM fastai/jekyll:2020-09-12
 
 WORKDIR /fastpages
 COPY . .
