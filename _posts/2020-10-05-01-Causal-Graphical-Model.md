@@ -4,7 +4,7 @@ layout: post
 description: In this post, it will be explained about the causal graphical model. Especially, we will learn about bayesian networks with aspect of conditional independence and its analysis tool "D-separation". Also we will cover bayesian networks with have different characteristics compared to formal bayesian networks. This post is the summary of "Mathematical principles in Machine Learning" offered from UNIST.
 categories: [Machine_Learning]
 title: Causal Graphical Model
-image: 
+image: images/causal_bayesian_network_ex2.png
 ---
 
 # Causal Graphical Model
@@ -159,6 +159,48 @@ If we are interested in causal relations, it is more natural to represent causal
 
 ![Causal Bayesian Network]({{site.baseurl}}/assets/image/causal_bayesian_network.png "Fig 11. Causal Bayesian Network")
 
-A bayesian network where each node represents a variable and the edges represent causal relations, it is called [Causal Bayesian Network](https://deepmind.com/blog/article/Causal_Bayesian_Networks) (CBN for short). It has stronger assumptions than bayesian networks, as all the relation should correspond to causal relations. 
+A bayesian network where each node represents a variable and the edges represent causal relations, it is called [Causal Bayesian Network](https://deepmind.com/blog/article/Causal_Bayesian_Networks) (CBN for short). It has stronger assumptions than bayesian networks, as all the relation should correspond to causal relations.
 
 CBN describes the causal relationships among variables.
+
+![Causal Bayesian Network Example]({{site.baseurl}}/assets/image/causal_bayesian_network_ex.png "Fig 12. Example of Causal Bayesian Network")
+
+For example, It often rains as hot weather and it makes see surface temperature to elevate, therefore it makes more vapor in the air. So season is a cause of rain.
+
+Also summer is a good time for agriculture. So we usually turn on sprinkler to make crops grow. In this case, season is cause of sprinkler.Both sprinkler and rain makes grass wet, and it makes grass to slippery.
+
+From these causal relations, we can build a CBN. The absence of a direct link between $X_1$ and $X_5$ shows that there is no direct influence of season on slippery.
+
+## Intervention
+
+To know the effect of something, we need to make something to change. We call it as **intervention**, the act of making something happen in causal model. In the previous post of [Causality](https://goodboychan.github.io/chans_jupyter/machine_learning/2020/10/01/01-Causality.html), we may see this notation,
+
+$$p(Y \vert do(X = x))$$
+
+Here, do operator represents the intervention, which is introduced by Judea Pearl through his book "Probabilistic Reasoning in Intelligent Systems: Networks of Plausible Inference". In previous example, we can express the intervention like this,
+
+$$ do(\text{Sprinkler} = \text{on}), do(\text{Wet grass} = \text{True}) $$
+
+So how can we use a Causal Bayesian Network for intervention? If our intervention is $do(\text{Sprinkler} = \text{on})$, then the result joint probability weill be defined in a new causal structure like this,
+
+$$ P_{\text{Sprinkler = on}}(\text{Season}, \text{Rain}, \text{Wet}, \text{Slippery}) $$
+
+Note that the difference between probability conditioned on intervention and observation. Conditional probability with intervention ($P(Y \vert do(X = 1))$) is called **Causal Conditioning**, where an action is taken to force a specific value $x$ to know the effect of action $x$. And conditional probability with observation ($P(Y \vert X = 1)$) is called **Bayesian Conditioning**, where $x$ is observed variable. In this case, we don't know if $X$ is a cause or just happening together.
+
+In Bayesian Network, conditional probability with observation will be like this,
+
+![Bayesian Network Example]({{site.baseurl}}/assets/image/bayesian_network_ex.png "Fig 13. Bayesian Network with observation")
+
+$$ \begin{aligned} & P(x_1, x_2, x_4, x_5 \vert (X_3 = \text{ON})) \\ &= \frac{P(x_1, x_2, X_3 = \text{ON}, x_4, x_5)}{P(X_3 = \text{ON})} \\ &= \frac{P(x_1) P(x_2 \vert x_1) P(X_3 = \text{ON} \vert x_1) P(x_4 \vert x_2, X_3 = \text{ON}) P(x_5 \vert x_4)}{P(X_3 = \text{ON})} \end{aligned} $$
+
+In Causal Bayesian Network, Conditional probability with intervention is,
+
+![Causal Bayesian Network Example2]({{site.baseurl}}/assets/image/causal_bayesian_network_ex2.png "Fig 14. Causal Bayesian Network with Intervention")
+
+$$ P(x_1, x_2, x_4, x_5 \vert do(X_3 = \text{ON})) \\ = P(x_1)P(x_2 \vert x_1) P(x_4 \vert x_2, X_3 = \text{ON}) P(x_5 \vert x_4) $$
+
+Here, it has simpler form than bayesian network since the connection between $X_3$ and $X_1$ is dropped in Causal Baysian Network. And actually $P(do(X_3 = \text{ON}) \vert x_1)$ is same as $P(do(X_3 = \text{ON}))$ so it is cancelled out. Therefore, causal bayesian network is better to infer the causal effect of each variable.
+
+## Summary
+
+In this post, we have covered what a bayesian network is, and how to infer conditional independency using concept of D-separation. Also, we learned about causal bayesian network and its causal relationships, and how to represent intervention and infer causal effect.
