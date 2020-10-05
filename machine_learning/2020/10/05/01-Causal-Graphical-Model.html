@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Causal Graphical Model | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Causal Graphical Model" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, it will be explained about the causal graphical model. Especially, we will learn about bayesian networks with aspect of conditional independence and its analysis tool “D-separation”. Also we will cover bayesian networks with have different characteristics compared to formal bayesian networks. This post is the summary of “Mathematical principles in Machine Learning” offered from UNIST." />
+<meta property="og:description" content="In this post, it will be explained about the causal graphical model. Especially, we will learn about bayesian networks with aspect of conditional independence and its analysis tool “D-separation”. Also we will cover bayesian networks with have different characteristics compared to formal bayesian networks. This post is the summary of “Mathematical principles in Machine Learning” offered from UNIST." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/machine_learning/2020/10/05/01-Causal-Graphical-Model.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/machine_learning/2020/10/05/01-Causal-Graphical-Model.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-10-05T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://goodboychan.github.io/chans_jupyter/machine_learning/2020/10/05/01-Causal-Graphical-Model.html","@type":"BlogPosting","headline":"Causal Graphical Model","dateModified":"2020-10-05T00:00:00-05:00","datePublished":"2020-10-05T00:00:00-05:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/machine_learning/2020/10/05/01-Causal-Graphical-Model.html"},"description":"In this post, it will be explained about the causal graphical model. Especially, we will learn about bayesian networks with aspect of conditional independence and its analysis tool “D-separation”. Also we will cover bayesian networks with have different characteristics compared to formal bayesian networks. This post is the summary of “Mathematical principles in Machine Learning” offered from UNIST.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Causal Graphical Model</h1><p class="page-description">In this post, it will be explained about the causal graphical model. Especially, we will learn about bayesian networks with aspect of conditional independence and its analysis tool "D-separation". Also we will cover bayesian networks with have different characteristics compared to formal bayesian networks. This post is the summary of "Mathematical principles in Machine Learning" offered from UNIST.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-10-05T00:00:00-05:00" itemprop="datePublished">
+        Oct 5, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      6 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Machine_Learning">Machine_Learning</a>
+        
+      
+      </p>
+    
+
+    </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#causal-graphical-model">Causal Graphical Model</a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#directed-acyclic-graph-dag">Directed Acyclic Graph (DAG)</a></li>
+<li class="toc-entry toc-h2"><a href="#conditional-dependency">Conditional Dependency</a></li>
+<li class="toc-entry toc-h2"><a href="#bayesian-networks">Bayesian Networks</a></li>
+<li class="toc-entry toc-h2"><a href="#dependency-in-bayesian-network">Dependency in Bayesian Network</a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#tail-to-tail">Tail-to-Tail</a></li>
+<li class="toc-entry toc-h3"><a href="#head-to-tail">Head-to-Tail</a></li>
+<li class="toc-entry toc-h3"><a href="#head-to-head">Head-to-Head</a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#d-separation">D-separation</a></li>
+<li class="toc-entry toc-h2"><a href="#association-vs-causation">Association vs. Causation</a></li>
+</ul>
+</li>
+</ul><h1 id="causal-graphical-model">
+<a class="anchor" href="#causal-graphical-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Causal Graphical Model</h1>
+
+<h2 id="directed-acyclic-graph-dag">
+<a class="anchor" href="#directed-acyclic-graph-dag" aria-hidden="true"><span class="octicon octicon-link"></span></a>Directed Acyclic Graph (DAG)</h2>
+
+<p>Graph is a visual notation of relationship among a set of nodes, or vertices, and a set of edges which connects between nodes. The expression “Directed” means that each nodes have direction. And if there is a path from a node, goes back to the starting node throught directed edges, the path is called <strong>Cyclic</strong>. Without this, it is called <a href="https://en.wikipedia.org/wiki/Directed_acyclic_graph">Directed Acyclic Graph</a>(DAG for short)</p>
+
+<p><img src="/chans_jupyter/assets/image/dag.png" alt="Directed Acyclic Graph" title="Fig 1. Example of Directed Acyclic Graph (ref. wikipedia)"></p>
+
+<p>Shown in figure, there is no path to return to the starting node throught directed edges, so this is DAG. Usually, we express them with hierarchical relationship, and the node placed in higher level is called ancestor, and node in lower level is called descendant.</p>
+
+<h2 id="conditional-dependency">
+<a class="anchor" href="#conditional-dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conditional Dependency</h2>
+
+<p>Suppose we have random variable $X$ and $Y$. Its conditional probability of $X$ on $Y$ is defined as a joint probability of $X$ and $Y$ over probability of $Y$.</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mi mathvariant="normal">∣</mi><mi>Y</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo separator="true">,</mo><mi>Y</mi><mo stretchy="false">)</mo></mrow><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>Y</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">P(X \vert Y) = \frac{P(X, Y)}{P(Y)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.363em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+
+<p>Here, we can assume $X$ and $Y$ are independent if these conditions are satisfied,</p>
+
+<ul>
+  <li>$P(X \vert Y) = P(X)$</li>
+  <li>$P(Y \vert X) = P(Y)$</li>
+  <li>$P(X, Y) = P(X) \cdot P(Y)$</li>
+</ul>
+
+<p>(actually those conditions are derived from the definition of conditional probability)</p>
+
+<p>And it can be represented with following mathematical symbol</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>⊥</mo><mi>Y</mi></mrow><annotation encoding="application/x-tex">X \perp Y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⊥</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span></span></span></span></span>
+
+<p>Let’s look at three random variables $X, Y, Z$. In this case, $X$ and $Y$ are indepedent conditioned on $Z$ if this condition is safisfied,</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo separator="true">,</mo><mi>Y</mi><mi mathvariant="normal">∣</mi><mi>Z</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mi mathvariant="normal">∣</mi><mi>Z</mi><mo stretchy="false">)</mo><mo>⋅</mo><mi>P</mi><mo stretchy="false">(</mo><mi>Y</mi><mi mathvariant="normal">∣</mi><mi>Z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(X, Y \vert Z) = P(X \vert Z) \cdot P(Y \vert Z)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="mclose">)</span></span></span></span></span>
+
+<h2 id="bayesian-networks">
+<a class="anchor" href="#bayesian-networks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bayesian Networks</h2>
+
+<p>Why should we review the concept of DAG and conditional probabilities? That’s because the bayesian network is implemented with DAG and have specific properties related with conditional probabilities.</p>
+
+<p><img src="/chans_jupyter/assets/image/bayesian_network.png" alt="Bayesian Network" title="Fig 2. DAG of Bayesian Network"></p>
+
+<p><a href="https://en.wikipedia.org/wiki/Bayesian_network">Bayesian Networks</a> is structured, graphical representation of probabilistic relationships between several random variables. Here, Nodes represent random variables and edges between nodes represent conditional dependency.</p>
+
+<p><img src="/chans_jupyter/assets/image/SimpleBayesNet.png" alt="Bayesian Network" title="Fig 3. Simple Bayesian Network (ref. Wikipedia)"></p>
+
+<p>We can draw the conditional probability table of each states. Using this, we calculates the probabilty of future states, like
+“What is probability of Grass Wet when it is raining and sprinkler is working?”. As shown in the example, the bayesian networks can represent a set of variables and their conditional dependence via a DAG. We can also think about the conditional independence. In this bayesian network.</p>
+
+<p>As a result, the joint probability can be factorized based on the conditional independence in the bayesian networks.</p>
+
+<h2 id="dependency-in-bayesian-network">
+<a class="anchor" href="#dependency-in-bayesian-network" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependency in Bayesian Network</h2>
+
+<p>Each nodes have the rule of either head and tail. If we have three nodes, $a, b, c$, we can define the relationship in views of rules.</p>
+
+<h3 id="tail-to-tail">
+<a class="anchor" href="#tail-to-tail" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tail-to-Tail</h3>
+
+<p><img src="/chans_jupyter/assets/image/tail_to_tail.png" alt="Tail to Tail" title="Fig 4. Tail-to-Tail dependency"></p>
+
+<p>In views of $c$, $a$ and $b$ are considered to tail. So it is called <strong>Tail-to-Tail</strong> dependency.</p>
+
+<ul>
+  <li>Joint Probability: $p(a, b, c) = p(a \vert c) p(b \vert c) p(c)$</li>
+  <li>Independence test: $p(a, b) = \sum_c p(a \vert c) p(b \vert c) p(c) \neq p(a) p(b)$</li>
+  <li>Notation: $a \not \perp b \vert \emptyset$</li>
+</ul>
+
+<p>In this case, it cannot be decomposed as product of probability of $a$ and probability of $b$ in general. Therefore, $a$ and $b$ are dependent.</p>
+
+<h3 id="head-to-tail">
+<a class="anchor" href="#head-to-tail" aria-hidden="true"><span class="octicon octicon-link"></span></a>Head-to-Tail</h3>
+
+<p><img src="/chans_jupyter/assets/image/head_to_tail.png" alt="Head to Tail" title="Fig 5. Head-to-Tail dependency"></p>
+
+<p>It is called <strong>Head-to-Tail</strong> dependency, since $a$ is considered as head, and $b$ is tail.</p>
+
+<ul>
+  <li>Joint Probability: $p(a, b, c) = p(a) p(c \vert a) p(b \vert c)$</li>
+  <li>Independence test: $p(a, b) = p(a) \sum_c p(c \vert a) p(b \vert c) = p(a) p(b \vert a) \neq p(a) p(b)$</li>
+  <li>Notation: $a \not \perp b \vert \emptyset$</li>
+</ul>
+
+<p>From the independence test, $a$ and $b$ are dependent, same as before.</p>
+
+<h3 id="head-to-head">
+<a class="anchor" href="#head-to-head" aria-hidden="true"><span class="octicon octicon-link"></span></a>Head-to-Head</h3>
+
+<p><img src="/chans_jupyter/assets/image/head_to_head.png" alt="Head to Head" title="Fig 6. Head-to-Head dependency"></p>
+
+<p><strong>Head-to-Head</strong> dependency is a little bit different from previous case. Here, $a$ and $b$ are not conditionally dependent on any node.</p>
+
+<ul>
+  <li>Joint Probability: $p(a, b, c) = p(a) p(b) p(c \vert a, b)$</li>
+  <li>Independence test: $p(a, b) = p(a)p(b)</li>
+  <li>Notation: $a \perp b \vert \emptyset$</li>
+</ul>
+
+<p>Thus, $a$ and $b$ are independent.</p>
+
+<p>What if we conditionalize $c$ by observing $c$ in all three cases?</p>
+
+<p><img src="/chans_jupyter/assets/image/tail_to_tail_ob.png" alt="Tail to Tail observed" title="Fig 7. Tail-to-Tail conditional dependency"></p>
+
+<p>In tail-to-tail case, we can define the joint probability,</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo><mo>=</mo><mi>p</mi><mo stretchy="false">(</mo><mi>a</mi><mi mathvariant="normal">∣</mi><mi>c</mi><mo stretchy="false">)</mo><mi>p</mi><mo stretchy="false">(</mo><mi>b</mi><mi mathvariant="normal">∣</mi><mi>c</mi><mo stretchy="false">)</mo><mi>p</mi><mo stretchy="false">(</mo><mi>c</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p(a, b, c) = p(a \vert c) p(b \vert c) p(c))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">b</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">c</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">a</span><span class="mord">∣</span><span class="mord mathdefault">c</span><span class="mclose">)</span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">b</span><span class="mord">∣</span><span class="mord mathdefault">c</span><span class="mclose">)</span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">c</span><span class="mclose">)</span><span class="mclose">)</span></span></span></span></span>
+
+<p>Using this, we can redo the independence test,</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable rowspacing="0.24999999999999992em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mi mathvariant="normal">∣</mi><mi>c</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mfrac><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>a</mi><mo separator="true">,</mo><mi>b</mi><mo separator="true">,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>c</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mfrac><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>a</mi><mi mathvariant="normal">∣</mi><mi>c</mi><mo stretchy="false">)</mo><mi>p</mi><mo stretchy="false">(</mo><mi>b</mi><mi mathvariant="normal">∣</mi><mi>c</mi><mo stretchy="false">)</mo><mi>p</mi><mo stretchy="false">(</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>c</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>p</mi><mo stretchy="false">(</mo><mi>a</mi><mi mathvariant="normal">∣</mi><mi>c</mi><mo stretchy="false">)</mo><mi>p</mi><mo stretchy="false">(</mo><mi>b</mi><mi mathvariant="normal">∣</mi><mi>c</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned} p(a, b \vert c) &amp;= \frac{p(a, b, c)}{p(c)} \\ &amp;= \frac{p(a \vert c) p(b \vert c) p(c)}{p(c)} \\ &amp;= p(a \vert c) p(b \vert c) \end{aligned}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:6.8260000000000005em;vertical-align:-3.1630000000000003em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.6630000000000003em;"><span style="top:-5.663em;"><span class="pstrut" style="height:3.427em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">b</span><span class="mord">∣</span><span class="mord mathdefault">c</span><span class="mclose">)</span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3.427em;"></span><span class="mord"></span></span><span style="top:-0.9239999999999999em;"><span class="pstrut" style="height:3.427em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.1630000000000003em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.6630000000000003em;"><span style="top:-5.663em;"><span class="pstrut" style="height:3.427em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">c</span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">a</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">b</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">c</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3.427em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">c</span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">a</span><span class="mord">∣</span><span class="mord mathdefault">c</span><span class="mclose">)</span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">b</span><span class="mord">∣</span><span class="mord mathdefault">c</span><span class="mclose">)</span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">c</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span><span style="top:-0.9239999999999999em;"><span class="pstrut" style="height:3.427em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">a</span><span class="mord">∣</span><span class="mord mathdefault">c</span><span class="mclose">)</span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">b</span><span class="mord">∣</span><span class="mord mathdefault">c</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.1630000000000003em;"><span></span></span></span></span></span></span></span></span></span></span></span>
+
+<p>In this case, $a$ and $b$ are (conditionally) independent given $c$.</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>⊥</mo><mi>b</mi><mi mathvariant="normal">∣</mi><mi>c</mi></mrow><annotation encoding="application/x-tex">a \perp b \vert c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">a</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">⊥</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">b</span><span class="mord">∣</span><span class="mord mathdefault">c</span></span></span></span></span>
+
+<p><img src="/chans_jupyter/assets/image/head_to_tail_ob.png" alt="Head to Tail observed" title="Fig 8. Head-to-Tail conditional dependency"></p>
+
+<p>In Head-to-tail case, same process is held,</p>
+
+<ul>
+  <li>Joint probability: $p(a, b, c) = p(a) p(c \vert a) p(b \vert c)$</li>
+  <li>Independence test: $\begin{aligned} p(a, b \vert c) &amp;= \frac{p(a, b, c)}{p(c)} \ &amp;= \frac{p(a) p(c \vert a) p(b \vert c)}{p(c)} = p(a \vert c) p(b \vert c) \end{aligned}$</li>
+</ul>
+
+<p>Same as before, $a$ and $b$ are conditionally independent given $c$.</p>
+
+<p><img src="/chans_jupyter/assets/image/head_to_head_ob.png" alt="Head to Head observed" title="Fig 9. Head-to-Head conditional dependency"></p>
+
+<p>In contrast of previous cases, head-to-head case $a$ and $b$ are not conditionally independent on $c$.</p>
+
+<ul>
+  <li>Joint probability: $p(a, b, c) = p(a) p(b) p(c \vert a, b)$</li>
+  <li>Independence test: $\begin{aligned} p(a, b \vert c) &amp;= \frac{p(a, b, c)}{p(c)} \ &amp;= \frac{p(a) p(b) p(c \vert a, b)}{p(c)} \neq p(a \vert c) p(b \vert c) \end{aligned}$</li>
+  <li>$a \not \perp b \vert c$</li>
+</ul>
+
+<h2 id="d-separation">
+<a class="anchor" href="#d-separation" aria-hidden="true"><span class="octicon octicon-link"></span></a>D-separation</h2>
+
+<p>From the result, if there is no connection (or path) between $a$ and $b$, A path from $a$ to $b$ is <strong>blocked</strong>. We saw the blocked cases in previous section,</p>
+
+<ul>
+  <li>Tail-to-Tail and observed case</li>
+  <li>Head-to-Tail and observed case</li>
+  <li>Head-to-Head and not observed case (including its descendents)</li>
+</ul>
+
+<p>If all paths from $a$ to $b$ is blocked by nodes in a set $C$, it is called that $a$ is <strong>D-separated</strong> from $b$ by set $C$. Here D-separation implies conditional independency.</p>
+
+<p><img src="/chans_jupyter/assets/image/d_separation.png" alt="D separation" title="Fig 10. Example of D-separation"></p>
+
+<p>Suppose we have two simple bayesian network, and we want to know if $a$ and $b$ are conditionally independent whether $c$ is observed or not. We can simply draw the path from $a$ to $b$.</p>
+
+<p>In figure (a), $c$ is observed. In this case, node $e$ shows head-to-head relation. If a node is in head-to-head relation, the node and its descendent should not be observed in order to block the path. (see the Head-to-Head blocked case). But node $c$, which is a descendent of $e$ is observed. So $e$ does not block the path.</p>
+
+<p>Node $f$ is in tail-to-tail relation, but it is not observed. As it doesnot satisfy the blocking condition, it does not block the path either.</p>
+
+<p>As a result, all nodes in path does not satifies the blocking condition, so the path from $a$ to $b$ is not blocked.</p>
+
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>⊥̸</mo><mi>b</mi><mi mathvariant="normal">∣</mi><mi>c</mi></mrow><annotation encoding="application/x-tex">a \not \perp b \vert c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">a</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel"><span class="mord"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="rlap"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="inner"><span class="mrel"></span></span><span class="fix"></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mrel">⊥</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">b</span><span class="mord">∣</span><span class="mord mathdefault">c</span></span></span></span></span>
+
+<p>In figure (b), $f$ is observed. In this case, the path is blocked by $f$, as $f$ is in tail-to-tail relation and $f$ is observed, it satifies the blocking condition. So we can conclude $a$ and $b$ are conditionally independent when $f$ is observed.</p>
+
+<h2 id="association-vs-causation">
+<a class="anchor" href="#association-vs-causation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Association vs. Causation</h2>
+
+<p>Causation implies association, but association does not necessarily imply causation, so usually conditionally probabilty rather represents association, than causation.</p>
+
+<p>If we are interested in causal relations, it is more natural to represent causal relations directly.</p>
+
+<p><img src="/chans_jupyter/assets/image/causal_bayesian_network.png" alt="Causal Bayesian Network" title="Fig 11. Causal Bayesian Network"></p>
+
+<p>A bayesian network where each node represents a variable and the edges represent causal relations, it is called <a href="https://deepmind.com/blog/article/Causal_Bayesian_Networks">Causal Bayesian Network</a> (CBN for short). It has stronger assumptions than bayesian networks, as all the relation should correspond to causal relations.</p>
+
+<p>CBN describes the causal relationships among variables.</p>
+
+  </div><a class="u-url" href="/chans_jupyter/machine_learning/2020/10/05/01-Causal-Graphical-Model.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
