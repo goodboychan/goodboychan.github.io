@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>CNN Basic | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="CNN Basic" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, We will dig into the basic operation of Convolutional Neural Network (CNN for short), and explain about what each layer look like. And we`ll simply implement the basic CNN archiecture with tensorflow." />
+<meta property="og:description" content="In this post, We will dig into the basic operation of Convolutional Neural Network (CNN for short), and explain about what each layer look like. And we`ll simply implement the basic CNN archiecture with tensorflow." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/deep_learning/2020/10/07/01-CNN-Basic.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/deep_learning/2020/10/07/01-CNN-Basic.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/image/cnn_stacked.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-10-07T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://goodboychan.github.io/chans_jupyter/python/deep_learning/2020/10/07/01-CNN-Basic.html","@type":"BlogPosting","headline":"CNN Basic","dateModified":"2020-10-07T00:00:00-05:00","datePublished":"2020-10-07T00:00:00-05:00","image":"https://goodboychan.github.io/chans_jupyter/image/cnn_stacked.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/deep_learning/2020/10/07/01-CNN-Basic.html"},"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this post, We will dig into the basic operation of Convolutional Neural Network (CNN for short), and explain about what each layer look like. And we`ll simply implement the basic CNN archiecture with tensorflow.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">CNN Basic</h1><p class="page-description">In this post, We will dig into the basic operation of Convolutional Neural Network (CNN for short), and explain about what each layer look like. And we`ll simply implement the basic CNN archiecture with tensorflow.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-10-07T00:00:00-05:00" itemprop="datePublished">
+        Oct 7, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      4 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-10-07-01-CNN-Basic.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-10-07-01-CNN-Basic.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-10-07-01-CNN-Basic.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Convolutional-Neural-Network">Convolutional Neural Network </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#(2D)-Convolution-Layer">(2D) Convolution Layer </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-10-07-01-CNN-Basic.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">'font'</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Convolutional-Neural-Network">
+<a class="anchor" href="#Convolutional-Neural-Network" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convolutional Neural Network<a class="anchor-link" href="#Convolutional-Neural-Network"> </a>
+</h2>
+<p><a href="https://en.wikipedia.org/wiki/Convolutional_neural_network">Convolutional Neural Network</a> (CNN for short) is the most widely used for image classification. Previously, we handled image classification problem (Fashion-MNIST) with Multi Layer Perceptron, and we found that works. At that time, the information containing each image is very simple, and definitely classified with several parameters. But if the dataset contains high resolution image and several channels, it may require huge amount of parameters with mlp in image classification. How can we effectively classify the image without huge amount of parameters? And that's why the CNN exists.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="image/cnn_example.png" alt="CNN example"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Fig 1. Example of Convolutional Neural Network</em></td>
+</tr>
+</tbody>
+</table>
+<p>Generally, it consists of <strong>Convolution layer</strong>, <strong>Pooling layer</strong>, and <strong>Fully-connected layer</strong>. Usually, Convolution layer and Pooling layer is used for feature extraction. Feature extraction means that it extract important features from image for classification, so that all pixels in images is not required. Through these layer, information of data is resampled, and refined, and go to the output node. Fully-connected (also known as FC) is used for classification.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="(2D)-Convolution-Layer">
+<a class="anchor" href="#(2D)-Convolution-Layer" aria-hidden="true"><span class="octicon octicon-link"></span></a>(2D) Convolution Layer<a class="anchor-link" href="#(2D)-Convolution-Layer"> </a>
+</h3>
+<p>To understand convolution layer, we need to see the shape of image and some elements to extract features called filters(also called kernel).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="image/conv_layer.png" alt="convolution layer"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>Fig 2. Image shape and filters</em></td>
+</tr>
+</tbody>
+</table>
+<p>In Fashion-MNIST example, the image containing dataset is grayscale. So the range of pixel value is from 0 to 255. But most of real-world image and all the things we see now is colorized. Technically, it can expressed with 3 base color, Red, Green, Blue. The color system which can express these 3 colors are called <strong>RGB</strong>, and each range of pixel value is also from 0 to 255, same as grayscaled pixel.
+</p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg>
+    <strong>Note: </strong>There are other color systems like RGBA (Red-Green-Blue-Alpha) or HSV (Hue-Saturation-Value), HSL (Hue-Saturation-Lightness), etc. In this post, we just assume that image has 3 channels (RGB)
+</div>
+So In the figure, this image has shape of 32x32 and 3 channels (RGB).
+<p>And Next one is the filter, which shape has 5x5x3. The number we need to focus on <strong>3</strong>. Filter always extend the full channel of the input volume. So it requires to set same number of channels in input nodes and filters.</p>
+<p>As you can see, filter has same channel with input image. And let's assume the notation of filter, $w$. Next thing we need to do is just slide th filter over the image spatially, and compute dot products, same as MLP operation (This operation is called <strong>convolution</strong>, and it's the reason why this layer is called Convolution layer). Simply speaking, we just focus on the range covered in filter and dot product like this,</p>
+<p>
+$$ w^T x + b $$
+</p>
+<p>Of course, we move the filter until it can operate convolution.</p>
+<p>
+    <img src="image/convolutions.gif" alt="">
+    <em>Fig 3. Animation of convolution operation</em>
+</p>
+<p>After that, (Assume we don't apply padding, and stride is 1), we can get output volume which shape has 28x28x1. There is formula to calculate the shape of output volume when the stride and filter is defined,</p>
+<p>
+$$ \frac{(\text{Height of input} - \text{Height of filter})}{\text{Stride}} + 1 $$
+</p>
+<p>We can substitute the number in this formula, then we can conclude the height of output volume is 28. The output the process convolution is called <strong>Feature Map</strong> (or Activation Map). One feature map gather from one filter, we can apply several filters in one input image. If we use 6 5x5 filters, we can get 6 separate feature maps. We can stack them into one object, then we get "new image" of size 28x28x6.</p>
+<p>
+    <img src="image/cnn_stacked.png" alt="">
+    <em>Fig 4. stacked output of convolution</em>
+</p>
+<p>Here, one number is need to focus, <strong>6</strong>. 6 means the number of filters we apply in this convolution layer.</p>
+<p>You may be curious about what filter looks like. Actually, filter was widely used from classic computer vision. For example, to extract the edge of object in image, we can apply the <em>canny edge filer</em>, and there is edge detection filter named <em>sobel filter</em>, and so on. We can bring the concept of filter in CNN here. In short, filter extract the feature like where the edge is, and convolution layer refine its feature.</p>
+<p>
+    <img src="image/convolution_op2.png" alt="">
+    <em>Fig 5. Applying filter for each pixel</em>
+</p>
+<p>Here, we just consider the one channel of image and apply it with 6 filters. And we can extend it in multi-channel, and lots of filters.</p>
+<p>
+    <img src="image/convolution_manychannel.png" alt="">
+    <em>Fig 6. Convolution operation in many channels and many filters</em>
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/deep_learning/2020/10/07/01-CNN-Basic.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
