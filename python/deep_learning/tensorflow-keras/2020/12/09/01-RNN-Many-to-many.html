@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>RNN - Many-to-many | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="RNN - Many-to-many" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, We will cover the many-to-many RNN model, which can be used for Part of Speech (POS) tagging and Named Entity Recognition (NER)." />
+<meta property="og:description" content="In this post, We will cover the many-to-many RNN model, which can be used for Part of Speech (POS) tagging and Named Entity Recognition (NER)." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/python/deep_learning/tensorflow-keras/2020/12/09/01-RNN-Many-to-many.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/python/deep_learning/tensorflow-keras/2020/12/09/01-RNN-Many-to-many.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/many-to-many-pos.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-12-09T00:00:00-06:00" />
+<script type="application/ld+json">
+{"url":"https://goodboychan.github.io/chans_jupyter/python/deep_learning/tensorflow-keras/2020/12/09/01-RNN-Many-to-many.html","@type":"BlogPosting","headline":"RNN - Many-to-many","dateModified":"2020-12-09T00:00:00-06:00","datePublished":"2020-12-09T00:00:00-06:00","image":"https://goodboychan.github.io/chans_jupyter/images/many-to-many-pos.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/python/deep_learning/tensorflow-keras/2020/12/09/01-RNN-Many-to-many.html"},"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this post, We will cover the many-to-many RNN model, which can be used for Part of Speech (POS) tagging and Named Entity Recognition (NER).","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">RNN - Many-to-many</h1><p class="page-description">In this post, We will cover the many-to-many RNN model, which can be used for Part of Speech (POS) tagging and Named Entity Recognition (NER).</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-12-09T00:00:00-06:00" itemprop="datePublished">
+        Dec 9, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Deep_Learning">Deep_Learning</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Tensorflow-Keras">Tensorflow-Keras</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-12-09-01-RNN-Many-to-many.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-12-09-01-RNN-Many-to-many.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-12-09-01-RNN-Many-to-many.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#What-is-"Many-to-many"?">What is &quot;Many-to-many&quot;? </a></li>
+<li class="toc-entry toc-h2"><a href="#Example---Part-of-Speech-Tagging">Example - Part of Speech Tagging </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Prepraring-Dataset">Prepraring Dataset </a></li>
+<li class="toc-entry toc-h3"><a href="#Model-implementation">Model implementation </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#Summary">Summary </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-12-09-01-RNN-Many-to-many.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Tensorflow: </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">__version__</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">'font'</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Tensorflow: 2.3.1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id='What-is-"Many-to-many"?'>
+<a class="anchor" href="#What-is-" many-to-many aria-hidden="true"><span class="octicon octicon-link"></span></a>What is "Many-to-many"?<a class="anchor-link" href="#What-is-%22Many-to-many%22?"> </a>
+</h2>
+<p>Previously, we covered 3 kinds of RNN model, one-to-one, many-to-one, and many-to-one with stacked model. Especially on many-to-one model, it gets an sequence data as an input, and generates the single output. So it can be used for classification, and previous example shows simple implementation of many-to-one model for word/sequence classification.</p>
+<p>Then, what is <strong>many-to-many</strong> model?</p>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/many-to-many.png" alt="many-to-many"> <sup id="fnref-1" class="footnote-ref"><a href="#fn-1">1</a></sup></p>
+<p>The concept is same as before. In many-to-one model, to generate the output, the final input must be entered into model. Unlike this, many-to-many model generates the output whenever each input is read. That is, many-to-many model can understand the feature of each token in input sequence.</p>
+<p><img src="/chans_jupyter/images/copied_from_nb/image/many-to-many-pos.png" alt="many-to-many-pos"></p>
+<p>One possible example is <a href="https://en.wikipedia.org/wiki/Part_of_speech"><strong>Part-of-Speech</strong></a> tagging, POS for short. POS is a category of words (or lexical items) that have similar grammatical properties. Common POS type are noun, verb, adjective, adverb, pronoun, etc. <sup id="fnref-2" class="footnote-ref"><a href="#fn-2">2</a></sup>. So POS tagging is automatically tagged POS of each token. Of course, it can manually handle with rule-based model, but many-to-many model is appropriate for doing this.</p>
+<p>For example, we have a sentence.
+
+$$ \text{tensorflow is very easy} $$
+</p>
+<p>In order to do POS tagging, word tokenization is processed on that sentence. After that, we can get</p>
+<p>
+$$ [\text{'tensorflow', 'is', 'very', 'easy'}] $$
+</p>
+<p>Then POS will be tagged on each token like this,</p>
+<p>
+$$[\text{'noun', 'verb', 'adverb', 'adjective'}]$$
+</p>
+<p>If the many-to-many model is well-trained, whole process will be happened well.</p>
+<p>Unlike many-to-one model, loss measure is also different in many-to-many model. In many-to-one model, it can measure the loss by comparing the prediction value($\hat{y}$) and actual value($y$). But in many-to-many model, each output node can measure the loss. There are many losses, so common ways to use it for training is by averaging whole losses. This kind of loss is called <strong>sequence loss</strong>. After that, specific optimizer (SGD or Adam) tries to minimize the loss with backpropagation.</p>
+<p>One thing we need to consider is handling padding tokens('<pad>'). As you saw from previous post, padding tokens are for formalize the various length of each sentence, it has no meaning. So it is required to remove (or "masking") padding tokens before training.&lt;/p&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Example---Part-of-Speech-Tagging">
+<a class="anchor" href="#Example---Part-of-Speech-Tagging" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example - Part of Speech Tagging<a class="anchor-link" href="#Example---Part-of-Speech-Tagging"> </a>
+</h2>
+<h3 id="Prepraring-Dataset">
+<a class="anchor" href="#Prepraring-Dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prepraring Dataset<a class="anchor-link" href="#Prepraring-Dataset"> </a>
+</h3>
+<p>In this section, we will implement the simple many-to-many model for POS tagging. Of course, there are two types of training data, sentence, and POS of that sentence. (Assume that we already tokenize each sentence.)</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sentences</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">'I'</span><span class="p">,</span> <span class="s1">'feel'</span><span class="p">,</span> <span class="s1">'hungry'</span><span class="p">],</span>
+             <span class="p">[</span><span class="s1">'tensorflow'</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="s1">'very'</span><span class="p">,</span> <span class="s1">'difficult'</span><span class="p">],</span>
+             <span class="p">[</span><span class="s1">'tensorflow'</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">,</span> <span class="s1">'framework'</span><span class="p">,</span> <span class="s1">'for'</span><span class="p">,</span> <span class="s1">'deep'</span><span class="p">,</span> <span class="s1">'learning'</span><span class="p">],</span>
+             <span class="p">[</span><span class="s1">'tensorflow'</span><span class="p">,</span> <span class="s1">'is'</span><span class="p">,</span> <span class="s1">'very'</span><span class="p">,</span> <span class="s1">'fast'</span><span class="p">,</span> <span class="s1">'changing'</span><span class="p">]]</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">'pronoun'</span><span class="p">,</span> <span class="s1">'verb'</span><span class="p">,</span> <span class="s1">'adjective'</span><span class="p">],</span> 
+       <span class="p">[</span><span class="s1">'noun'</span><span class="p">,</span> <span class="s1">'verb'</span><span class="p">,</span> <span class="s1">'adverb'</span><span class="p">,</span> <span class="s1">'adjective'</span><span class="p">],</span>
+       <span class="p">[</span><span class="s1">'noun'</span><span class="p">,</span> <span class="s1">'verb'</span><span class="p">,</span> <span class="s1">'determiner'</span><span class="p">,</span> <span class="s1">'noun'</span><span class="p">,</span> <span class="s1">'preposition'</span><span class="p">,</span> <span class="s1">'adjective'</span><span class="p">,</span> <span class="s1">'noun'</span><span class="p">],</span>
+       <span class="p">[</span><span class="s1">'noun'</span><span class="p">,</span> <span class="s1">'verb'</span><span class="p">,</span> <span class="s1">'adverb'</span><span class="p">,</span> <span class="s1">'adjective'</span><span class="p">,</span> <span class="s1">'verb'</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Same as previous example, we can build token dictionary. And additionally, we need to build POS dictionary.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">word_list</span> <span class="o">=</span><span class="p">[</span><span class="s1">'&lt;pad&gt;'</span><span class="p">]</span> <span class="o">+</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="p">[])))</span> 
+<span class="n">word2idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">word_list</span><span class="p">)}</span>
+<span class="n">idx2word</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span><span class="n">word</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">word_list</span><span class="p">)}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">word_list</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">word2idx</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">idx2word</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['&lt;pad&gt;', 'I', 'a', 'changing', 'deep', 'difficult', 'fast', 'feel', 'for', 'framework', 'hungry', 'is', 'learning', 'tensorflow', 'very']
+{'&lt;pad&gt;': 0, 'I': 1, 'a': 2, 'changing': 3, 'deep': 4, 'difficult': 5, 'fast': 6, 'feel': 7, 'for': 8, 'framework': 9, 'hungry': 10, 'is': 11, 'learning': 12, 'tensorflow': 13, 'very': 14}
+{0: '&lt;pad&gt;', 1: 'I', 2: 'a', 3: 'changing', 4: 'deep', 5: 'difficult', 6: 'fast', 7: 'feel', 8: 'for', 9: 'framework', 10: 'hungry', 11: 'is', 12: 'learning', 13: 'tensorflow', 14: 'very'}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pos_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'&lt;pad&gt;'</span><span class="p">]</span> <span class="o">+</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="p">[])))</span>
+<span class="n">pos2idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">pos</span><span class="p">:</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pos_list</span><span class="p">)}</span>
+<span class="n">idx2pos</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span><span class="n">pos</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pos_list</span><span class="p">)}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">pos_list</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pos2idx</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">idx2pos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['&lt;pad&gt;', 'adjective', 'adverb', 'determiner', 'noun', 'preposition', 'pronoun', 'verb']
+{'&lt;pad&gt;': 0, 'adjective': 1, 'adverb': 2, 'determiner': 3, 'noun': 4, 'preposition': 5, 'pronoun': 6, 'verb': 7}
+{0: '&lt;pad&gt;', 1: 'adjective', 2: 'adverb', 3: 'determiner', 4: 'noun', 5: 'preposition', 6: 'pronoun', 7: 'verb'}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We build the dictionary for dataset. Based on this, we can convert from sentence to numerical vector.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">sentence</span><span class="p">:</span> <span class="p">[</span><span class="n">word2idx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">sentence</span><span class="p">],</span> <span class="n">sentences</span><span class="p">))</span>
+<span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">sentence</span><span class="p">:</span> <span class="p">[</span><span class="n">pos2idx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">sentence</span><span class="p">],</span> <span class="n">pos</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[1, 7, 10], [13, 11, 14, 5], [13, 11, 2, 9, 8, 4, 12], [13, 11, 14, 6, 3]]
+[[6, 7, 1], [4, 7, 2, 1], [4, 7, 3, 4, 5, 1, 4], [4, 7, 2, 1, 7]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see, the length of each sentence is various. We can fix the the length with <code>pad_sequences</code>. Also, we need masking vector for filtering pad tokens. In order to this, we feed the length of each sentence without padding as an input.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.preprocessing.sequence</span> <span class="kn">import</span> <span class="n">pad_sequences</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s1">'post'</span><span class="p">)</span>
+<span class="n">X_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">X_len</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">((</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">sentence</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">),</span> <span class="n">sentences</span><span class="p">))),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X_mask</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X_len</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[ 1  7 10  0  0  0  0  0  0  0]
+ [13 11 14  5  0  0  0  0  0  0]
+ [13 11  2  9  8  4 12  0  0  0]
+ [13 11 14  6  3  0  0  0  0  0]]
+[[1. 1. 1. 0. 0. 0. 0. 0. 0. 0.]
+ [1. 1. 1. 1. 0. 0. 0. 0. 0. 0.]
+ [1. 1. 1. 1. 1. 1. 1. 0. 0. 0.]
+ [1. 1. 1. 1. 1. 0. 0. 0. 0. 0.]]
+[3. 4. 7. 5.]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s1">'post'</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[6 7 1 0 0 0 0 0 0 0]
+ [4 7 2 1 0 0 0 0 0 0]
+ [4 7 3 4 5 1 4 0 0 0]
+ [4 7 2 1 7 0 0 0 0 0]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_ds</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X_len</span><span class="p">))</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">buffer_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">train_ds</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;BatchDataset shapes: ((None, 10), (None, 10), (None,)), types: (tf.int32, tf.int32, tf.float32)&gt;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Model-implementation">
+<a class="anchor" href="#Model-implementation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model implementation<a class="anchor-link" href="#Model-implementation"> </a>
+</h3>
+<p>For many-to-many model, the output node must be number of classes. In our example, we need to predict the type of POS.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos2idx</span><span class="p">)</span>
+<span class="n">input_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word2idx</span><span class="p">)</span>
+<span class="n">output_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word2idx</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Embedding</span><span class="p">,</span> <span class="n">TimeDistributed</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">SimpleRNN</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">([</span>
+    <span class="n">Embedding</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="n">output_dim</span><span class="p">,</span>
+              <span class="n">mask_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">trainable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">input_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+              <span class="n">embeddings_initializer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">initializers</span><span class="o">.</span><span class="n">random_normal</span><span class="p">()),</span>
+    <span class="n">SimpleRNN</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">TimeDistributed</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="n">num_classes</span><span class="p">))</span>
+<span class="p">])</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding (Embedding)        (None, 10, 15)            225       
+_________________________________________________________________
+simple_rnn (SimpleRNN)       (None, 10, 10)            260       
+_________________________________________________________________
+time_distributed (TimeDistri (None, 10, 8)             88        
+=================================================================
+Total params: 573
+Trainable params: 348
+Non-trainable params: 225
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So, here is important section, the loss definition. As we saw before, we need to filter the pad tokens, and calculate the sequence loss with each POS losses. Actually, tensorflow has API for masking. (<code>sequence_mask</code>)</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">loss_fn</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x_len</span><span class="p">,</span> <span class="n">max_sequence</span><span class="p">):</span>
+    <span class="n">masking</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sequence_mask</span><span class="p">(</span><span class="n">x_len</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">sequence_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">sparse_categorical_crossentropy</span><span class="p">(</span>
+        <span class="n">y_true</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span> <span class="o">*</span> <span class="n">masking</span>
+    <span class="n">sequence_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">sequence_loss</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">x_len</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sequence_loss</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tr_loss_hist</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>
+    <span class="n">avg_tr_loss</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">tr_step</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">for</span> <span class="n">x_mb</span><span class="p">,</span> <span class="n">y_mb</span><span class="p">,</span> <span class="n">x_mb_len</span> <span class="ow">in</span> <span class="n">train_ds</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">GradientTape</span><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+            <span class="n">tr_loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x_mb</span><span class="p">,</span> <span class="n">y_mb</span><span class="p">,</span> <span class="n">x_mb_len</span><span class="p">,</span> <span class="n">max_sequence</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">grads</span> <span class="o">=</span> <span class="n">tape</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">tr_loss</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">trainable_variables</span><span class="p">)</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">apply_gradients</span><span class="p">(</span><span class="n">grads_and_vars</span><span class="o">=</span><span class="nb">zip</span><span class="p">(</span><span class="n">grads</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">trainable_variables</span><span class="p">))</span>
+        <span class="n">avg_tr_loss</span> <span class="o">+=</span> <span class="n">tr_loss</span>
+        <span class="n">tr_step</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">avg_tr_loss</span> <span class="o">/=</span> <span class="n">tr_step</span>
+    <span class="n">tr_loss_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">avg_tr_loss</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Epoch: </span><span class="si">{:3}</span><span class="s1">, tr_loss: </span><span class="si">{:.3f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">avg_tr_loss</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Epoch:   5, tr_loss: 0.177
+Epoch:  10, tr_loss: 0.038
+Epoch:  15, tr_loss: 0.010
+Epoch:  20, tr_loss: 0.005
+Epoch:  25, tr_loss: 0.004
+Epoch:  30, tr_loss: 0.003
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We trained the model with 0.003 loss. Then we can enter the X data into the model as an input.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">X_mask</span>
+
+<span class="n">y_pred</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[6., 7., 1., 0., 0., 0., 0., 0., 0., 0.],
+       [4., 7., 2., 1., 0., 0., 0., 0., 0., 0.],
+       [4., 7., 3., 4., 5., 1., 4., 0., 0., 0.],
+       [4., 7., 2., 1., 7., 0., 0., 0., 0., 0.]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To understand the model more visually, we can convert from numerical vector to POS with <code>idx2pos</code> dictionary.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="n">y_pred_pos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="p">[</span><span class="n">idx2pos</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span> <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">row</span><span class="p">],</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+
+<span class="n">pprint</span><span class="p">(</span><span class="n">y_pred_pos</span><span class="p">)</span>
+
+<span class="n">pprint</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[['pronoun',
+  'verb',
+  'adjective',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;'],
+ ['noun',
+  'verb',
+  'adverb',
+  'adjective',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;'],
+ ['noun',
+  'verb',
+  'determiner',
+  'noun',
+  'preposition',
+  'adjective',
+  'noun',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;'],
+ ['noun',
+  'verb',
+  'adverb',
+  'adjective',
+  'verb',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;',
+  '&lt;pad&gt;']]
+[['pronoun', 'verb', 'adjective'],
+ ['noun', 'verb', 'adverb', 'adjective'],
+ ['noun', 'verb', 'determiner', 'noun', 'preposition', 'adjective', 'noun'],
+ ['noun', 'verb', 'adverb', 'adjective', 'verb']]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tr_loss_hist</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Training loss for many-to-many model'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Summary">
+<a class="anchor" href="#Summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary<a class="anchor-link" href="#Summary"> </a>
+</h2>
+<p>Through this post, we tried to understand the basic concept of many-to-many RNN model, and how it can used for POS tagging. The main difference from previous ones is the output node is more than 2, not one, and measuring the sequence loss. We simply implement the many-to-many model, and it shows good performance as we expect. (Actually, we need to use validation data, not training data itself for performance measurement.)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="footnotes"><p id="fn-1">1. Reference from stanford CS231n lecture note<a href="#fnref-1" class="footnote footnotes">↩</a></p></div>
+<div class="footnotes"><p id="fn-2">2. Bring the definition from <a href="https://en.wikipedia.org/wiki/Part_of_speech">wikipedia</a><a href="#fnref-2" class="footnote footnotes">↩</a></p></div>
+
+</div>
+</div>
+</div>
+&lt;/div&gt;
+ 
+
+</pad></p>
+</div>
+</div></div>
+</div>
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/python/deep_learning/tensorflow-keras/2020/12/09/01-RNN-Many-to-many.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
