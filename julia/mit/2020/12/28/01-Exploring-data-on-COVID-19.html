@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Exploring data on COVID-19 | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Exploring data on COVID-19" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, We will cover the basic syntax of julia language, and explore the data related on COVID-19. This is the summary of lecture “Introduction to Computational Thinking with Julia, with applications to modeling the COVID-19 Pandemic” from MIT." />
+<meta property="og:description" content="In this post, We will cover the basic syntax of julia language, and explore the data related on COVID-19. This is the summary of lecture “Introduction to Computational Thinking with Julia, with applications to modeling the COVID-19 Pandemic” from MIT." />
+<link rel="canonical" href="https://goodboychan.github.io/chans_jupyter/julia/mit/2020/12/28/01-Exploring-data-on-COVID-19.html" />
+<meta property="og:url" content="https://goodboychan.github.io/chans_jupyter/julia/mit/2020/12/28/01-Exploring-data-on-COVID-19.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/chans_jupyter/images/US_data.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-12-28T00:00:00-06:00" />
+<script type="application/ld+json">
+{"url":"https://goodboychan.github.io/chans_jupyter/julia/mit/2020/12/28/01-Exploring-data-on-COVID-19.html","@type":"BlogPosting","headline":"Exploring data on COVID-19","dateModified":"2020-12-28T00:00:00-06:00","datePublished":"2020-12-28T00:00:00-06:00","image":"https://goodboychan.github.io/chans_jupyter/images/US_data.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/chans_jupyter/julia/mit/2020/12/28/01-Exploring-data-on-COVID-19.html"},"author":{"@type":"Person","name":"Chanseok Kang"},"description":"In this post, We will cover the basic syntax of julia language, and explore the data related on COVID-19. This is the summary of lecture “Introduction to Computational Thinking with Julia, with applications to modeling the COVID-19 Pandemic” from MIT.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/chans_jupyter/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/chans_jupyter/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create','UA-33905785-1','auto');ga('require','displayfeatures');ga('send','pageview');</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/chans_jupyter/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/chans_jupyter/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/chans_jupyter/about/">About Me</a><a class="page-link" href="/chans_jupyter/search/">Search</a><a class="page-link" href="/chans_jupyter/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Exploring data on COVID-19</h1><p class="page-description">In this post, We will cover the basic syntax of julia language, and explore the data related on COVID-19. This is the summary of lecture "Introduction to Computational Thinking with Julia, with applications to modeling the COVID-19 Pandemic" from MIT.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-12-28T00:00:00-06:00" itemprop="datePublished">
+        Dec 28, 2020
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      3 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#Julia">Julia</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/chans_jupyter/categories/#MIT">MIT</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/chans_jupyter/tree/main/_notebooks/2020-12-28-01-Exploring-data-on-COVID-19.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/chans_jupyter/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/chans_jupyter/main?filepath=_notebooks%2F2020-12-28-01-Exploring-data-on-COVID-19.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/chans_jupyter/blob/main/_notebooks/2020-12-28-01-Exploring-data-on-COVID-19.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/chans_jupyter/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Why-Julia?">Why Julia? </a></li>
+<li class="toc-entry toc-h2"><a href="#Julia">Julia </a></li>
+<li class="toc-entry toc-h2"><a href="#Grab-the-data">Grab the data </a></li>
+<li class="toc-entry toc-h2"><a href="#Install-Package">Install Package </a></li>
+<li class="toc-entry toc-h2"><a href="#Load-a-package">Load a package </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-12-28-01-Exploring-data-on-COVID-19.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Why-Julia?">
+<a class="anchor" href="#Why-Julia?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why Julia?<a class="anchor-link" href="#Why-Julia?"> </a>
+</h2>
+<ul>
+<li>Julia: Developed at MIT by Prof. Alan Edelman's group</li>
+<li>Released in 2012.</li>
+<li>
+<p>Current release: 1.4</p>
+</li>
+<li>
+<p>Free, open source software</p>
+</li>
+<li>developed by world-wide community on <a href="https://github.com/JuliaLang/julia">Github</a>
+</li>
+<li>Over 3000 registered packages in wide range of domains</li>
+</ul>
+<h2 id="Julia">
+<a class="anchor" href="#Julia" aria-hidden="true"><span class="octicon octicon-link"></span></a>Julia<a class="anchor-link" href="#Julia"> </a>
+</h2>
+<ul>
+<li>Modern, powerful language</li>
+<li>Interactive but high performance (fast) - previously mutually exclusive</li>
+<li>Syntax: similar to Python / Matlab / R</li>
+<li>But carefully designed for high-performance computational science &amp; engineering applications</li>
+<li>Design means that most of Julia is written in Julia itself</li>
+<li>Hence much easier to examine and modify algorithms</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="/chans_jupyter/images/copied_from_nb/image/US_data.png" alt="us_data"></p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s">"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">url</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>String</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="o">*</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>* (generic function with 357 methods)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="nb">im</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="nb">im</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1 + 7im</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="nd">@which</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span> <span class="mi">2</span><span class="nb">im</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="nb">im</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+*(z::<b>Complex</b>, w::<b>Complex</b>) in Base at <a href="https://github.com/JuliaLang/julia/tree/381693d3dfc9b7072707f6d544f82f6637fc5e7c/base/complex.jl#L277" target="_blank">complex.jl:277</a>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Grab-the-data">
+<a class="anchor" href="#Grab-the-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grab the data<a class="anchor-link" href="#Grab-the-data"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="s">"covid_data.csv"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>"covid_data.csv"</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">readdir</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>readdir (generic function with 2 methods)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">readdir</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>235-element Array{String,1}:
+ ".ipynb_checkpoints"
+ "2020-05-21-Software-Engineering-Practices-Pt-1.ipynb"
+ "2020-05-22-01-Decorator.ipynb"
+ "2020-05-22-02-More-On-Decorators.ipynb"
+ "2020-05-23-01-Read-clean-and-validate.ipynb"
+ "2020-05-23-02-Distributions.ipynb"
+ "2020-05-24-01-Relationships.ipynb"
+ "2020-05-24-02-Multivariate-Thinking.ipynb"
+ "2020-05-25-01-Preparing-the-data-for-analysis.ipynb"
+ "2020-05-25-02-Exploring-the-relationship-between-gender-and-policing.ipynb"
+ "2020-05-25-03-Visual-exploratory-data-analysis.ipynb"
+ "2020-05-25-04-Software-Engineering-Practices-Pt-2.ipynb"
+ "2020-05-26-01-Analyzing-the-effect-of-weather-on-policing.ipynb"
+ ⋮
+ "README.md"
+ "checkpoints"
+ "covid_data.csv"
+ "covid_data.csv')"
+ "dataset"
+ "html"
+ "image"
+ "models"
+ "my_icons"
+ "spark-warehouse"
+ "utils"
+ "video"</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Install-Package">
+<a class="anchor" href="#Install-Package" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Package<a class="anchor-link" href="#Install-Package"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">Pkg</span>   <span class="c"># built-in package manager in Julia: Pkg</span>
+<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">"CSV"</span><span class="p">)</span>   <span class="c"># calls the `add` function from the module Pkg.  This installs a package</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre><span class="ansi-green-intense-fg ansi-bold">   Updating</span> registry at `C:\Users\kcsgo\.julia\registries\General`
+<span class="ansi-green-intense-fg ansi-bold">   Updating</span> git-repo `https://github.com/JuliaRegistries/General.git`
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-cyan-intense-fg ansi-bold">Fetching:</span> [========================================&gt;]  100.0 %.0 %                             ]  26.4 %&gt;                ]  58.1 %           ]  71.4 %&gt;  ]  94.1 %</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre><span class="ansi-green-intense-fg ansi-bold">  Resolving</span> package versions...
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> DataValueInterfaces ───────── v1.0.0
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> TableTraits ───────────────── v1.0.0
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> ZeroMQ_jll ────────────────── v4.3.2+5
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> DataAPI ───────────────────── v1.4.0
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> IteratorInterfaceExtensions ─ v1.0.0
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> Tables ────────────────────── v1.2.2
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> JLLWrappers ───────────────── v1.1.3
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> Artifacts ─────────────────── v1.3.0
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> PooledArrays ──────────────── v0.5.3
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> SentinelArrays ────────────── v1.2.16
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> CSV ───────────────────────── v0.8.2
+<span class="ansi-green-intense-fg ansi-bold">   Updating</span> `C:\Users\kcsgo\.julia\environments\v1.4\Project.toml`
+ <span class="ansi-black-intense-fg"> [336ed68f]</span><span class="ansi-green-intense-fg"> + CSV v0.8.2</span>
+<span class="ansi-green-intense-fg ansi-bold">   Updating</span> `C:\Users\kcsgo\.julia\environments\v1.4\Manifest.toml`
+ <span class="ansi-black-intense-fg"> [56f22d72]</span><span class="ansi-green-intense-fg"> + Artifacts v1.3.0</span>
+ <span class="ansi-black-intense-fg"> [336ed68f]</span><span class="ansi-green-intense-fg"> + CSV v0.8.2</span>
+ <span class="ansi-black-intense-fg"> [9a962f9c]</span><span class="ansi-green-intense-fg"> + DataAPI v1.4.0</span>
+ <span class="ansi-black-intense-fg"> [e2d170a0]</span><span class="ansi-green-intense-fg"> + DataValueInterfaces v1.0.0</span>
+ <span class="ansi-black-intense-fg"> [82899510]</span><span class="ansi-green-intense-fg"> + IteratorInterfaceExtensions v1.0.0</span>
+ <span class="ansi-black-intense-fg"> [692b3bcd]</span><span class="ansi-green-intense-fg"> + JLLWrappers v1.1.3</span>
+ <span class="ansi-black-intense-fg"> [2dfb63ee]</span><span class="ansi-green-intense-fg"> + PooledArrays v0.5.3</span>
+ <span class="ansi-black-intense-fg"> [91c51154]</span><span class="ansi-green-intense-fg"> + SentinelArrays v1.2.16</span>
+ <span class="ansi-black-intense-fg"> [3783bdb8]</span><span class="ansi-green-intense-fg"> + TableTraits v1.0.0</span>
+ <span class="ansi-black-intense-fg"> [bd369af6]</span><span class="ansi-green-intense-fg"> + Tables v1.2.2</span>
+ <span class="ansi-black-intense-fg"> [8f1865be]</span><span class="ansi-yellow-intense-fg"> ↑ ZeroMQ_jll v4.3.2+2 ⇒ v4.3.2+5</span>
+ <span class="ansi-black-intense-fg"> [37e2e46d]</span><span class="ansi-green-intense-fg"> + LinearAlgebra </span>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">"DataFrames"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre><span class="ansi-green-intense-fg ansi-bold">  Resolving</span> package versions...
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> Missings ─────────── v0.4.4
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> Crayons ──────────── v4.0.4
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> InvertedIndices ──── v1.0.0
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> Formatting ───────── v0.4.2
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> OrderedCollections ─ v1.3.2
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> Reexport ─────────── v0.2.0
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> DataFrames ───────── v0.22.2
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> StructTypes ──────── v1.2.1
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> SortingAlgorithms ── v0.3.1
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> Compat ───────────── v3.25.0
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> PrettyTables ─────── v0.10.1
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> DataStructures ───── v0.18.8
+<span class="ansi-green-intense-fg ansi-bold">  Installed</span> CategoricalArrays ── v0.9.0
+<span class="ansi-green-intense-fg ansi-bold">   Updating</span> `C:\Users\kcsgo\.julia\environments\v1.4\Project.toml`
+ <span class="ansi-black-intense-fg"> [a93c6f00]</span><span class="ansi-green-intense-fg"> + DataFrames v0.22.2</span>
+<span class="ansi-green-intense-fg ansi-bold">   Updating</span> `C:\Users\kcsgo\.julia\environments\v1.4\Manifest.toml`
+ <span class="ansi-black-intense-fg"> [324d7699]</span><span class="ansi-green-intense-fg"> + CategoricalArrays v0.9.0</span>
+ <span class="ansi-black-intense-fg"> [34da2185]</span><span class="ansi-green-intense-fg"> + Compat v3.25.0</span>
+ <span class="ansi-black-intense-fg"> [a8cc5b0e]</span><span class="ansi-green-intense-fg"> + Crayons v4.0.4</span>
+ <span class="ansi-black-intense-fg"> [a93c6f00]</span><span class="ansi-green-intense-fg"> + DataFrames v0.22.2</span>
+ <span class="ansi-black-intense-fg"> [864edb3b]</span><span class="ansi-green-intense-fg"> + DataStructures v0.18.8</span>
+ <span class="ansi-black-intense-fg"> [59287772]</span><span class="ansi-green-intense-fg"> + Formatting v0.4.2</span>
+ <span class="ansi-black-intense-fg"> [41ab1584]</span><span class="ansi-green-intense-fg"> + InvertedIndices v1.0.0</span>
+ <span class="ansi-black-intense-fg"> [e1d29d7a]</span><span class="ansi-green-intense-fg"> + Missings v0.4.4</span>
+ <span class="ansi-black-intense-fg"> [bac558e1]</span><span class="ansi-green-intense-fg"> + OrderedCollections v1.3.2</span>
+ <span class="ansi-black-intense-fg"> [08abe8d2]</span><span class="ansi-green-intense-fg"> + PrettyTables v0.10.1</span>
+ <span class="ansi-black-intense-fg"> [189a3867]</span><span class="ansi-green-intense-fg"> + Reexport v0.2.0</span>
+ <span class="ansi-black-intense-fg"> [a2af1166]</span><span class="ansi-green-intense-fg"> + SortingAlgorithms v0.3.1</span>
+ <span class="ansi-black-intense-fg"> [856f2bd8]</span><span class="ansi-green-intense-fg"> + StructTypes v1.2.1</span>
+ <span class="ansi-black-intense-fg"> [8bb1440f]</span><span class="ansi-green-intense-fg"> + DelimitedFiles </span>
+ <span class="ansi-black-intense-fg"> [9fa8497b]</span><span class="ansi-green-intense-fg"> + Future </span>
+ <span class="ansi-black-intense-fg"> [1a1011a3]</span><span class="ansi-green-intense-fg"> + SharedArrays </span>
+ <span class="ansi-black-intense-fg"> [2f01184e]</span><span class="ansi-green-intense-fg"> + SparseArrays </span>
+ <span class="ansi-black-intense-fg"> [10745b16]</span><span class="ansi-green-intense-fg"> + Statistics </span>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Load-a-package">
+<a class="anchor" href="#Load-a-package" aria-hidden="true"><span class="octicon octicon-link"></span></a>Load a package<a class="anchor-link" href="#Load-a-package"> </a>
+</h2>
+<p>Load a package every time we run a Julia session:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="k">using</span> <span class="n">CSV</span><span class="p">,</span> <span class="n">DataFrames</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>┌ Info: Precompiling DataFrames [a93c6f00-e57d-5684-b7b6-d8193f3e46c0]
+└ @ Base loading.jl:1260
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">"./covid_data.csv"</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="data-frame">
+<thead>
+<tr>
+<th></th>
+<th>Province/State</th>
+<th>Country/Region</th>
+<th>Lat</th>
+<th>Long</th>
+<th>1/22/20</th>
+</tr>
+<tr>
+<th></th>
+<th>String?</th>
+<th>String</th>
+<th>Float64?</th>
+<th>Float64?</th>
+<th>Int64</th>
+</tr>
+</thead>
+<tbody>
+<p>271 rows × 345 columns (omitted printing of 340 columns)</p>
+<tr>
+<th>1</th>
+<td><em>missing</em></td>
+<td>Afghanistan</td>
+<td>33.9391</td>
+<td>67.71</td>
+<td>0</td>
+</tr>
+<tr>
+<th>2</th>
+<td><em>missing</em></td>
+<td>Albania</td>
+<td>41.1533</td>
+<td>20.1683</td>
+<td>0</td>
+</tr>
+<tr>
+<th>3</th>
+<td><em>missing</em></td>
+<td>Algeria</td>
+<td>28.0339</td>
+<td>1.6596</td>
+<td>0</td>
+</tr>
+<tr>
+<th>4</th>
+<td><em>missing</em></td>
+<td>Andorra</td>
+<td>42.5063</td>
+<td>1.5218</td>
+<td>0</td>
+</tr>
+<tr>
+<th>5</th>
+<td><em>missing</em></td>
+<td>Angola</td>
+<td>-11.2027</td>
+<td>17.8739</td>
+<td>0</td>
+</tr>
+<tr>
+<th>6</th>
+<td><em>missing</em></td>
+<td>Antigua and Barbuda</td>
+<td>17.0608</td>
+<td>-61.7964</td>
+<td>0</td>
+</tr>
+<tr>
+<th>7</th>
+<td><em>missing</em></td>
+<td>Argentina</td>
+<td>-38.4161</td>
+<td>-63.6167</td>
+<td>0</td>
+</tr>
+<tr>
+<th>8</th>
+<td><em>missing</em></td>
+<td>Armenia</td>
+<td>40.0691</td>
+<td>45.0382</td>
+<td>0</td>
+</tr>
+<tr>
+<th>9</th>
+<td>Australian Capital Territory</td>
+<td>Australia</td>
+<td>-35.4735</td>
+<td>149.012</td>
+<td>0</td>
+</tr>
+<tr>
+<th>10</th>
+<td>New South Wales</td>
+<td>Australia</td>
+<td>-33.8688</td>
+<td>151.209</td>
+<td>0</td>
+</tr>
+<tr>
+<th>11</th>
+<td>Northern Territory</td>
+<td>Australia</td>
+<td>-12.4634</td>
+<td>130.846</td>
+<td>0</td>
+</tr>
+<tr>
+<th>12</th>
+<td>Queensland</td>
+<td>Australia</td>
+<td>-27.4698</td>
+<td>153.025</td>
+<td>0</td>
+</tr>
+<tr>
+<th>13</th>
+<td>South Australia</td>
+<td>Australia</td>
+<td>-34.9285</td>
+<td>138.601</td>
+<td>0</td>
+</tr>
+<tr>
+<th>14</th>
+<td>Tasmania</td>
+<td>Australia</td>
+<td>-42.8821</td>
+<td>147.327</td>
+<td>0</td>
+</tr>
+<tr>
+<th>15</th>
+<td>Victoria</td>
+<td>Australia</td>
+<td>-37.8136</td>
+<td>144.963</td>
+<td>0</td>
+</tr>
+<tr>
+<th>16</th>
+<td>Western Australia</td>
+<td>Australia</td>
+<td>-31.9505</td>
+<td>115.861</td>
+<td>0</td>
+</tr>
+<tr>
+<th>17</th>
+<td><em>missing</em></td>
+<td>Austria</td>
+<td>47.5162</td>
+<td>14.5501</td>
+<td>0</td>
+</tr>
+<tr>
+<th>18</th>
+<td><em>missing</em></td>
+<td>Azerbaijan</td>
+<td>40.1431</td>
+<td>47.5769</td>
+<td>0</td>
+</tr>
+<tr>
+<th>19</th>
+<td><em>missing</em></td>
+<td>Bahamas</td>
+<td>25.0259</td>
+<td>-78.0359</td>
+<td>0</td>
+</tr>
+<tr>
+<th>20</th>
+<td><em>missing</em></td>
+<td>Bahrain</td>
+<td>26.0275</td>
+<td>50.55</td>
+<td>0</td>
+</tr>
+<tr>
+<th>21</th>
+<td><em>missing</em></td>
+<td>Bangladesh</td>
+<td>23.685</td>
+<td>90.3563</td>
+<td>0</td>
+</tr>
+<tr>
+<th>22</th>
+<td><em>missing</em></td>
+<td>Barbados</td>
+<td>13.1939</td>
+<td>-59.5432</td>
+<td>0</td>
+</tr>
+<tr>
+<th>23</th>
+<td><em>missing</em></td>
+<td>Belarus</td>
+<td>53.7098</td>
+<td>27.9534</td>
+<td>0</td>
+</tr>
+<tr>
+<th>24</th>
+<td><em>missing</em></td>
+<td>Belgium</td>
+<td>50.8333</td>
+<td>4.46994</td>
+<td>0</td>
+</tr>
+<tr>
+<th>25</th>
+<td><em>missing</em></td>
+<td>Belize</td>
+<td>17.1899</td>
+<td>-88.4976</td>
+<td>0</td>
+</tr>
+<tr>
+<th>26</th>
+<td><em>missing</em></td>
+<td>Benin</td>
+<td>9.3077</td>
+<td>2.3158</td>
+<td>0</td>
+</tr>
+<tr>
+<th>27</th>
+<td><em>missing</em></td>
+<td>Bhutan</td>
+<td>27.5142</td>
+<td>90.4336</td>
+<td>0</td>
+</tr>
+<tr>
+<th>28</th>
+<td><em>missing</em></td>
+<td>Bolivia</td>
+<td>-16.2902</td>
+<td>-63.5887</td>
+<td>0</td>
+</tr>
+<tr>
+<th>29</th>
+<td><em>missing</em></td>
+<td>Bosnia and Herzegovina</td>
+<td>43.9159</td>
+<td>17.6791</td>
+<td>0</td>
+</tr>
+<tr>
+<th>30</th>
+<td><em>missing</em></td>
+<td>Botswana</td>
+<td>-22.3285</td>
+<td>24.6849</td>
+<td>0</td>
+</tr>
+<tr>
+<th>&amp;vellip;</th>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">"covid_data.csv"</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+<span class="n">data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="data-frame">
+<thead>
+<tr>
+<th></th>
+<th>Province/State</th>
+<th>Country/Region</th>
+<th>Lat</th>
+<th>Long</th>
+<th>1/22/20</th>
+</tr>
+<tr>
+<th></th>
+<th>String?</th>
+<th>String</th>
+<th>Float64?</th>
+<th>Float64?</th>
+<th>Int64</th>
+</tr>
+</thead>
+<tbody>
+<p>271 rows × 345 columns (omitted printing of 340 columns)</p>
+<tr>
+<th>1</th>
+<td><em>missing</em></td>
+<td>Afghanistan</td>
+<td>33.9391</td>
+<td>67.71</td>
+<td>0</td>
+</tr>
+<tr>
+<th>2</th>
+<td><em>missing</em></td>
+<td>Albania</td>
+<td>41.1533</td>
+<td>20.1683</td>
+<td>0</td>
+</tr>
+<tr>
+<th>3</th>
+<td><em>missing</em></td>
+<td>Algeria</td>
+<td>28.0339</td>
+<td>1.6596</td>
+<td>0</td>
+</tr>
+<tr>
+<th>4</th>
+<td><em>missing</em></td>
+<td>Andorra</td>
+<td>42.5063</td>
+<td>1.5218</td>
+<td>0</td>
+</tr>
+<tr>
+<th>5</th>
+<td><em>missing</em></td>
+<td>Angola</td>
+<td>-11.2027</td>
+<td>17.8739</td>
+<td>0</td>
+</tr>
+<tr>
+<th>6</th>
+<td><em>missing</em></td>
+<td>Antigua and Barbuda</td>
+<td>17.0608</td>
+<td>-61.7964</td>
+<td>0</td>
+</tr>
+<tr>
+<th>7</th>
+<td><em>missing</em></td>
+<td>Argentina</td>
+<td>-38.4161</td>
+<td>-63.6167</td>
+<td>0</td>
+</tr>
+<tr>
+<th>8</th>
+<td><em>missing</em></td>
+<td>Armenia</td>
+<td>40.0691</td>
+<td>45.0382</td>
+<td>0</td>
+</tr>
+<tr>
+<th>9</th>
+<td>Australian Capital Territory</td>
+<td>Australia</td>
+<td>-35.4735</td>
+<td>149.012</td>
+<td>0</td>
+</tr>
+<tr>
+<th>10</th>
+<td>New South Wales</td>
+<td>Australia</td>
+<td>-33.8688</td>
+<td>151.209</td>
+<td>0</td>
+</tr>
+<tr>
+<th>11</th>
+<td>Northern Territory</td>
+<td>Australia</td>
+<td>-12.4634</td>
+<td>130.846</td>
+<td>0</td>
+</tr>
+<tr>
+<th>12</th>
+<td>Queensland</td>
+<td>Australia</td>
+<td>-27.4698</td>
+<td>153.025</td>
+<td>0</td>
+</tr>
+<tr>
+<th>13</th>
+<td>South Australia</td>
+<td>Australia</td>
+<td>-34.9285</td>
+<td>138.601</td>
+<td>0</td>
+</tr>
+<tr>
+<th>14</th>
+<td>Tasmania</td>
+<td>Australia</td>
+<td>-42.8821</td>
+<td>147.327</td>
+<td>0</td>
+</tr>
+<tr>
+<th>15</th>
+<td>Victoria</td>
+<td>Australia</td>
+<td>-37.8136</td>
+<td>144.963</td>
+<td>0</td>
+</tr>
+<tr>
+<th>16</th>
+<td>Western Australia</td>
+<td>Australia</td>
+<td>-31.9505</td>
+<td>115.861</td>
+<td>0</td>
+</tr>
+<tr>
+<th>17</th>
+<td><em>missing</em></td>
+<td>Austria</td>
+<td>47.5162</td>
+<td>14.5501</td>
+<td>0</td>
+</tr>
+<tr>
+<th>18</th>
+<td><em>missing</em></td>
+<td>Azerbaijan</td>
+<td>40.1431</td>
+<td>47.5769</td>
+<td>0</td>
+</tr>
+<tr>
+<th>19</th>
+<td><em>missing</em></td>
+<td>Bahamas</td>
+<td>25.0259</td>
+<td>-78.0359</td>
+<td>0</td>
+</tr>
+<tr>
+<th>20</th>
+<td><em>missing</em></td>
+<td>Bahrain</td>
+<td>26.0275</td>
+<td>50.55</td>
+<td>0</td>
+</tr>
+<tr>
+<th>21</th>
+<td><em>missing</em></td>
+<td>Bangladesh</td>
+<td>23.685</td>
+<td>90.3563</td>
+<td>0</td>
+</tr>
+<tr>
+<th>22</th>
+<td><em>missing</em></td>
+<td>Barbados</td>
+<td>13.1939</td>
+<td>-59.5432</td>
+<td>0</td>
+</tr>
+<tr>
+<th>23</th>
+<td><em>missing</em></td>
+<td>Belarus</td>
+<td>53.7098</td>
+<td>27.9534</td>
+<td>0</td>
+</tr>
+<tr>
+<th>24</th>
+<td><em>missing</em></td>
+<td>Belgium</td>
+<td>50.8333</td>
+<td>4.46994</td>
+<td>0</td>
+</tr>
+<tr>
+<th>25</th>
+<td><em>missing</em></td>
+<td>Belize</td>
+<td>17.1899</td>
+<td>-88.4976</td>
+<td>0</td>
+</tr>
+<tr>
+<th>26</th>
+<td><em>missing</em></td>
+<td>Benin</td>
+<td>9.3077</td>
+<td>2.3158</td>
+<td>0</td>
+</tr>
+<tr>
+<th>27</th>
+<td><em>missing</em></td>
+<td>Bhutan</td>
+<td>27.5142</td>
+<td>90.4336</td>
+<td>0</td>
+</tr>
+<tr>
+<th>28</th>
+<td><em>missing</em></td>
+<td>Bolivia</td>
+<td>-16.2902</td>
+<td>-63.5887</td>
+<td>0</td>
+</tr>
+<tr>
+<th>29</th>
+<td><em>missing</em></td>
+<td>Bosnia and Herzegovina</td>
+<td>43.9159</td>
+<td>17.6791</td>
+<td>0</td>
+</tr>
+<tr>
+<th>30</th>
+<td><em>missing</em></td>
+<td>Botswana</td>
+<td>-22.3285</td>
+<td>24.6849</td>
+<td>0</td>
+</tr>
+<tr>
+<th>&amp;vellip;</th>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">typeof</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>DataFrame</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can rename each column name.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">data_2</span> <span class="o">=</span> <span class="n">rename</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s">"province"</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s">"country"</span><span class="p">)</span>
+<span class="n">data_2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="data-frame">
+<thead>
+<tr>
+<th></th>
+<th>province</th>
+<th>country</th>
+<th>Lat</th>
+<th>Long</th>
+<th>1/22/20</th>
+</tr>
+<tr>
+<th></th>
+<th>String?</th>
+<th>String</th>
+<th>Float64?</th>
+<th>Float64?</th>
+<th>Int64</th>
+</tr>
+</thead>
+<tbody>
+<p>271 rows × 345 columns (omitted printing of 340 columns)</p>
+<tr>
+<th>1</th>
+<td><em>missing</em></td>
+<td>Afghanistan</td>
+<td>33.9391</td>
+<td>67.71</td>
+<td>0</td>
+</tr>
+<tr>
+<th>2</th>
+<td><em>missing</em></td>
+<td>Albania</td>
+<td>41.1533</td>
+<td>20.1683</td>
+<td>0</td>
+</tr>
+<tr>
+<th>3</th>
+<td><em>missing</em></td>
+<td>Algeria</td>
+<td>28.0339</td>
+<td>1.6596</td>
+<td>0</td>
+</tr>
+<tr>
+<th>4</th>
+<td><em>missing</em></td>
+<td>Andorra</td>
+<td>42.5063</td>
+<td>1.5218</td>
+<td>0</td>
+</tr>
+<tr>
+<th>5</th>
+<td><em>missing</em></td>
+<td>Angola</td>
+<td>-11.2027</td>
+<td>17.8739</td>
+<td>0</td>
+</tr>
+<tr>
+<th>6</th>
+<td><em>missing</em></td>
+<td>Antigua and Barbuda</td>
+<td>17.0608</td>
+<td>-61.7964</td>
+<td>0</td>
+</tr>
+<tr>
+<th>7</th>
+<td><em>missing</em></td>
+<td>Argentina</td>
+<td>-38.4161</td>
+<td>-63.6167</td>
+<td>0</td>
+</tr>
+<tr>
+<th>8</th>
+<td><em>missing</em></td>
+<td>Armenia</td>
+<td>40.0691</td>
+<td>45.0382</td>
+<td>0</td>
+</tr>
+<tr>
+<th>9</th>
+<td>Australian Capital Territory</td>
+<td>Australia</td>
+<td>-35.4735</td>
+<td>149.012</td>
+<td>0</td>
+</tr>
+<tr>
+<th>10</th>
+<td>New South Wales</td>
+<td>Australia</td>
+<td>-33.8688</td>
+<td>151.209</td>
+<td>0</td>
+</tr>
+<tr>
+<th>11</th>
+<td>Northern Territory</td>
+<td>Australia</td>
+<td>-12.4634</td>
+<td>130.846</td>
+<td>0</td>
+</tr>
+<tr>
+<th>12</th>
+<td>Queensland</td>
+<td>Australia</td>
+<td>-27.4698</td>
+<td>153.025</td>
+<td>0</td>
+</tr>
+<tr>
+<th>13</th>
+<td>South Australia</td>
+<td>Australia</td>
+<td>-34.9285</td>
+<td>138.601</td>
+<td>0</td>
+</tr>
+<tr>
+<th>14</th>
+<td>Tasmania</td>
+<td>Australia</td>
+<td>-42.8821</td>
+<td>147.327</td>
+<td>0</td>
+</tr>
+<tr>
+<th>15</th>
+<td>Victoria</td>
+<td>Australia</td>
+<td>-37.8136</td>
+<td>144.963</td>
+<td>0</td>
+</tr>
+<tr>
+<th>16</th>
+<td>Western Australia</td>
+<td>Australia</td>
+<td>-31.9505</td>
+<td>115.861</td>
+<td>0</td>
+</tr>
+<tr>
+<th>17</th>
+<td><em>missing</em></td>
+<td>Austria</td>
+<td>47.5162</td>
+<td>14.5501</td>
+<td>0</td>
+</tr>
+<tr>
+<th>18</th>
+<td><em>missing</em></td>
+<td>Azerbaijan</td>
+<td>40.1431</td>
+<td>47.5769</td>
+<td>0</td>
+</tr>
+<tr>
+<th>19</th>
+<td><em>missing</em></td>
+<td>Bahamas</td>
+<td>25.0259</td>
+<td>-78.0359</td>
+<td>0</td>
+</tr>
+<tr>
+<th>20</th>
+<td><em>missing</em></td>
+<td>Bahrain</td>
+<td>26.0275</td>
+<td>50.55</td>
+<td>0</td>
+</tr>
+<tr>
+<th>21</th>
+<td><em>missing</em></td>
+<td>Bangladesh</td>
+<td>23.685</td>
+<td>90.3563</td>
+<td>0</td>
+</tr>
+<tr>
+<th>22</th>
+<td><em>missing</em></td>
+<td>Barbados</td>
+<td>13.1939</td>
+<td>-59.5432</td>
+<td>0</td>
+</tr>
+<tr>
+<th>23</th>
+<td><em>missing</em></td>
+<td>Belarus</td>
+<td>53.7098</td>
+<td>27.9534</td>
+<td>0</td>
+</tr>
+<tr>
+<th>24</th>
+<td><em>missing</em></td>
+<td>Belgium</td>
+<td>50.8333</td>
+<td>4.46994</td>
+<td>0</td>
+</tr>
+<tr>
+<th>25</th>
+<td><em>missing</em></td>
+<td>Belize</td>
+<td>17.1899</td>
+<td>-88.4976</td>
+<td>0</td>
+</tr>
+<tr>
+<th>26</th>
+<td><em>missing</em></td>
+<td>Benin</td>
+<td>9.3077</td>
+<td>2.3158</td>
+<td>0</td>
+</tr>
+<tr>
+<th>27</th>
+<td><em>missing</em></td>
+<td>Bhutan</td>
+<td>27.5142</td>
+<td>90.4336</td>
+<td>0</td>
+</tr>
+<tr>
+<th>28</th>
+<td><em>missing</em></td>
+<td>Bolivia</td>
+<td>-16.2902</td>
+<td>-63.5887</td>
+<td>0</td>
+</tr>
+<tr>
+<th>29</th>
+<td><em>missing</em></td>
+<td>Bosnia and Herzegovina</td>
+<td>43.9159</td>
+<td>17.6791</td>
+<td>0</td>
+</tr>
+<tr>
+<th>30</th>
+<td><em>missing</em></td>
+<td>Botswana</td>
+<td>-22.3285</td>
+<td>24.6849</td>
+<td>0</td>
+</tr>
+<tr>
+<th>&amp;vellip;</th>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="n">rename!</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s">"province"</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s">"country"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<table class="data-frame">
+<thead>
+<tr>
+<th></th>
+<th>province</th>
+<th>country</th>
+<th>Lat</th>
+<th>Long</th>
+<th>1/22/20</th>
+</tr>
+<tr>
+<th></th>
+<th>String?</th>
+<th>String</th>
+<th>Float64?</th>
+<th>Float64?</th>
+<th>Int64</th>
+</tr>
+</thead>
+<tbody>
+<p>271 rows × 345 columns (omitted printing of 340 columns)</p>
+<tr>
+<th>1</th>
+<td><em>missing</em></td>
+<td>Afghanistan</td>
+<td>33.9391</td>
+<td>67.71</td>
+<td>0</td>
+</tr>
+<tr>
+<th>2</th>
+<td><em>missing</em></td>
+<td>Albania</td>
+<td>41.1533</td>
+<td>20.1683</td>
+<td>0</td>
+</tr>
+<tr>
+<th>3</th>
+<td><em>missing</em></td>
+<td>Algeria</td>
+<td>28.0339</td>
+<td>1.6596</td>
+<td>0</td>
+</tr>
+<tr>
+<th>4</th>
+<td><em>missing</em></td>
+<td>Andorra</td>
+<td>42.5063</td>
+<td>1.5218</td>
+<td>0</td>
+</tr>
+<tr>
+<th>5</th>
+<td><em>missing</em></td>
+<td>Angola</td>
+<td>-11.2027</td>
+<td>17.8739</td>
+<td>0</td>
+</tr>
+<tr>
+<th>6</th>
+<td><em>missing</em></td>
+<td>Antigua and Barbuda</td>
+<td>17.0608</td>
+<td>-61.7964</td>
+<td>0</td>
+</tr>
+<tr>
+<th>7</th>
+<td><em>missing</em></td>
+<td>Argentina</td>
+<td>-38.4161</td>
+<td>-63.6167</td>
+<td>0</td>
+</tr>
+<tr>
+<th>8</th>
+<td><em>missing</em></td>
+<td>Armenia</td>
+<td>40.0691</td>
+<td>45.0382</td>
+<td>0</td>
+</tr>
+<tr>
+<th>9</th>
+<td>Australian Capital Territory</td>
+<td>Australia</td>
+<td>-35.4735</td>
+<td>149.012</td>
+<td>0</td>
+</tr>
+<tr>
+<th>10</th>
+<td>New South Wales</td>
+<td>Australia</td>
+<td>-33.8688</td>
+<td>151.209</td>
+<td>0</td>
+</tr>
+<tr>
+<th>11</th>
+<td>Northern Territory</td>
+<td>Australia</td>
+<td>-12.4634</td>
+<td>130.846</td>
+<td>0</td>
+</tr>
+<tr>
+<th>12</th>
+<td>Queensland</td>
+<td>Australia</td>
+<td>-27.4698</td>
+<td>153.025</td>
+<td>0</td>
+</tr>
+<tr>
+<th>13</th>
+<td>South Australia</td>
+<td>Australia</td>
+<td>-34.9285</td>
+<td>138.601</td>
+<td>0</td>
+</tr>
+<tr>
+<th>14</th>
+<td>Tasmania</td>
+<td>Australia</td>
+<td>-42.8821</td>
+<td>147.327</td>
+<td>0</td>
+</tr>
+<tr>
+<th>15</th>
+<td>Victoria</td>
+<td>Australia</td>
+<td>-37.8136</td>
+<td>144.963</td>
+<td>0</td>
+</tr>
+<tr>
+<th>16</th>
+<td>Western Australia</td>
+<td>Australia</td>
+<td>-31.9505</td>
+<td>115.861</td>
+<td>0</td>
+</tr>
+<tr>
+<th>17</th>
+<td><em>missing</em></td>
+<td>Austria</td>
+<td>47.5162</td>
+<td>14.5501</td>
+<td>0</td>
+</tr>
+<tr>
+<th>18</th>
+<td><em>missing</em></td>
+<td>Azerbaijan</td>
+<td>40.1431</td>
+<td>47.5769</td>
+<td>0</td>
+</tr>
+<tr>
+<th>19</th>
+<td><em>missing</em></td>
+<td>Bahamas</td>
+<td>25.0259</td>
+<td>-78.0359</td>
+<td>0</td>
+</tr>
+<tr>
+<th>20</th>
+<td><em>missing</em></td>
+<td>Bahrain</td>
+<td>26.0275</td>
+<td>50.55</td>
+<td>0</td>
+</tr>
+<tr>
+<th>21</th>
+<td><em>missing</em></td>
+<td>Bangladesh</td>
+<td>23.685</td>
+<td>90.3563</td>
+<td>0</td>
+</tr>
+<tr>
+<th>22</th>
+<td><em>missing</em></td>
+<td>Barbados</td>
+<td>13.1939</td>
+<td>-59.5432</td>
+<td>0</td>
+</tr>
+<tr>
+<th>23</th>
+<td><em>missing</em></td>
+<td>Belarus</td>
+<td>53.7098</td>
+<td>27.9534</td>
+<td>0</td>
+</tr>
+<tr>
+<th>24</th>
+<td><em>missing</em></td>
+<td>Belgium</td>
+<td>50.8333</td>
+<td>4.46994</td>
+<td>0</td>
+</tr>
+<tr>
+<th>25</th>
+<td><em>missing</em></td>
+<td>Belize</td>
+<td>17.1899</td>
+<td>-88.4976</td>
+<td>0</td>
+</tr>
+<tr>
+<th>26</th>
+<td><em>missing</em></td>
+<td>Benin</td>
+<td>9.3077</td>
+<td>2.3158</td>
+<td>0</td>
+</tr>
+<tr>
+<th>27</th>
+<td><em>missing</em></td>
+<td>Bhutan</td>
+<td>27.5142</td>
+<td>90.4336</td>
+<td>0</td>
+</tr>
+<tr>
+<th>28</th>
+<td><em>missing</em></td>
+<td>Bolivia</td>
+<td>-16.2902</td>
+<td>-63.5887</td>
+<td>0</td>
+</tr>
+<tr>
+<th>29</th>
+<td><em>missing</em></td>
+<td>Bosnia and Herzegovina</td>
+<td>43.9159</td>
+<td>17.6791</td>
+<td>0</td>
+</tr>
+<tr>
+<th>30</th>
+<td><em>missing</em></td>
+<td>Botswana</td>
+<td>-22.3285</td>
+<td>24.6849</td>
+<td>0</td>
+</tr>
+<tr>
+<th>&amp;vellip;</th>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+<td>&amp;vellip;</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/chans_jupyter"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/chans_jupyter/julia/mit/2020/12/28/01-Exploring-data-on-COVID-19.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/chans_jupyter/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/chans_jupyter/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/chans_jupyter/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
