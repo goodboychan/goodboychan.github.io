@@ -13,6 +13,9 @@
 - [Additional Resources](#additional-resources)
 <!-- /TOC -->
 
+
+**For fastpages repos that are older than December 1st, 2020 the only way to upgrade is to create a brand-new fastpages repo and copy your blog post files into it.**  This is because of breaking changes that were made to GitHub Actions around that time.
+
 There are two ways to upgrade fastpages.  One is an automated way that assumes you have made no changes to the HTML of your site. Alternatively, you may [upgrade manually](#manual-upgrade) and determine which changes to accept or reject.  For most people we recommend upgrading fastpages automatically.
 
 ## Automated Upgrade
@@ -42,7 +45,7 @@ There are two ways to upgrade fastpages.  One is an automated way that assumes y
     It is possible that you might receive an error message instead of this command.  You can follow the instructions in the comment to troubleshoot the issue.  Common reasons for receiving an error are:
 
     - You are up to date, therefore no upgrade is possible.  You will see an error that there is "nothing to commit".
-    - You already have a PR from a prevoius upgrade open that you never merged.
+    - You already have a PR from a previous upgrade open that you never merged.
 
     Please [ask on the forums](https://forums.fast.ai/) if you have encounter another problem that is unclear.
 
