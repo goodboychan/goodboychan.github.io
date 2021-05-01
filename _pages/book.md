@@ -6,7 +6,7 @@ permalink: /book/
 
 ## 그로킹 심층 강화학습 (Grokking Deep Reinforcement Learning) - WIP
 
-![gdrl-bookcover]]({{site.baseurl}}/images/gdrl-bookcover.jpeg "Grokking Deep Reinforcement Learning" ) 
+![gdrl-bookcover]({{site.baseurl}}/images/gdrl-bookcover.jpeg "Grokking Deep Reinforcement Learning" ) 
 
 - 출판사: 한빛미디어
 - 저자: 미구엘 모랄레스 (Miguel Morales)
