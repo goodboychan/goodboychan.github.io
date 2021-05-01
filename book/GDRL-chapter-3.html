@@ -1,0 +1,2541 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Balancing immediate and long-term goals | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Balancing immediate and long-term goals" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="그로킹 심층 강화학습 중 3장 내용인 “순간 목표와 장기 목표간의 균형”에 대한 내용입니다." />
+<meta property="og:description" content="그로킹 심층 강화학습 중 3장 내용인 “순간 목표와 장기 목표간의 균형”에 대한 내용입니다." />
+<link rel="canonical" href="https://goodboychan.github.io/book/GDRL-chapter-3.html" />
+<meta property="og:url" content="https://goodboychan.github.io/book/GDRL-chapter-3.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-05-01T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"그로킹 심층 강화학습 중 3장 내용인 “순간 목표와 장기 목표간의 균형”에 대한 내용입니다.","url":"https://goodboychan.github.io/book/GDRL-chapter-3.html","@type":"BlogPosting","headline":"Balancing immediate and long-term goals","dateModified":"2021-05-01T00:00:00-05:00","datePublished":"2021-05-01T00:00:00-05:00","author":{"@type":"Person","name":"Chanseok Kang"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/book/GDRL-chapter-3.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-33905785-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-33905785-1');
+</script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+
+<script data-ad-client="ca-pub-6747875619665490" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script></head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Me</a><a class="page-link" href="/book/">Book</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Balancing immediate and long-term goals</h1><p class="page-description">그로킹 심층 강화학습 중 3장 내용인 "순간 목표와 장기 목표간의 균형"에 대한 내용입니다.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-05-01T00:00:00-05:00" itemprop="datePublished">
+        May 1, 2021
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      22 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Reinforcement_Learning">Reinforcement_Learning</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Grokking_Deep_Reinforcement_Learning">Grokking_Deep_Reinforcement_Learning</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/goodboychan.github.io/tree/main/_notebooks/2021-05-01-GDRL-chapter-3.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/goodboychan.github.io/main?filepath=_notebooks%2F2021-05-01-GDRL-chapter-3.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/goodboychan.github.io/blob/main/_notebooks/2021-05-01-GDRL-chapter-3.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#정책-반복법,-가치-반복법">정책 반복법, 가치 반복법 </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#출력을-위한-helper-function">출력을 위한 helper function </a></li>
+<li class="toc-entry toc-h3"><a href="#Slippery-Walk-Five-MDP-and-sample-policy">Slippery Walk Five MDP and sample policy </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#정책-평가법">정책 평가법 </a></li>
+<li class="toc-entry toc-h4"><a href="#정책-개선법">정책 개선법 </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#정책-반복법">정책 반복법 </a></li>
+<li class="toc-entry toc-h3"><a href="#Frozen-Lake-MDP-and-sample-policies">Frozen Lake MDP and sample policies </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#정책-평가법">정책 평가법 </a></li>
+<li class="toc-entry toc-h4"><a href="#정책-개선법">정책 개선법 </a></li>
+<li class="toc-entry toc-h4"><a href="#Alternating-between-evaluation-and-improvement">Alternating between evaluation and improvement </a></li>
+<li class="toc-entry toc-h4"><a href="#정책-반복법">정책 반복법 </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Slippery-Walk-Five">Slippery Walk Five </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#가치-반복법">가치 반복법 </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Frozen-Lake-MDP">Frozen Lake MDP </a></li>
+<li class="toc-entry toc-h3"><a href="#Changing-the-Frozen-Lake-environment-MDP">Changing the Frozen Lake environment MDP </a></li>
+<li class="toc-entry toc-h3"><a href="#Russell-&-Norvig's-Gridworld">Russell &amp; Norvig&#39;s Gridworld </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-05-01-GDRL-chapter-3.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p></p>
+<div class="flash">
+    <svg class="octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info octicon octicon-info" viewbox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"></path></svg>
+    <strong>Note: </strong>라이브러리 설치를 위해 아래의 패키지들을 설치해주기 바랍니다.
+</div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip install tqdm numpy scikit-learn pyglet setuptools <span class="o">&amp;&amp;</span> <span class="err">\</span>
+<span class="o">!</span>pip install gym asciinema pandas tabulate <span class="nv">tornado</span><span class="o">==</span><span class="m">5</span>.* PyBullet <span class="o">&amp;&amp;</span> <span class="err">\</span>
+<span class="o">!</span>pip install git+https://github.com/pybox2d/pybox2d#egg<span class="o">=</span>Box2D <span class="o">&amp;&amp;</span> <span class="err">\</span>
+<span class="o">!</span>pip install git+https://github.com/mimoralea/gym-bandits#egg<span class="o">=</span>gym-bandits <span class="o">&amp;&amp;</span> <span class="err">\</span>
+<span class="o">!</span>pip install git+https://github.com/mimoralea/gym-walk#egg<span class="o">=</span>gym-walk <span class="o">&amp;&amp;</span> <span class="err">\</span>
+<span class="o">!</span>pip install git+https://github.com/mimoralea/gym-aima#egg<span class="o">=</span>gym-aima <span class="o">&amp;&amp;</span> <span class="err">\</span>
+<span class="o">!</span>pip install gym<span class="o">[</span>atari<span class="o">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span><span class="o">,</span> <span class="nn">gym_walk</span><span class="o">,</span> <span class="nn">gym_aima</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="정책-반복법,-가치-반복법">
+<a class="anchor" href="#%EC%A0%95%EC%B1%85-%EB%B0%98%EB%B3%B5%EB%B2%95,-%EA%B0%80%EC%B9%98-%EB%B0%98%EB%B3%B5%EB%B2%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>정책 반복법, 가치 반복법<a class="anchor-link" href="#%EC%A0%95%EC%B1%85-%EB%B0%98%EB%B3%B5%EB%B2%95,-%EA%B0%80%EC%B9%98-%EB%B0%98%EB%B3%B5%EB%B2%95"> </a>
+</h2>
+<p><strong>참고</strong>: 해당 노트북에서 사용되는 환경에 대한 정보는 아래 링크를 참고하시기 바랍니다.</p>
+<ul>
+<li><a href="https://github.com/mimoralea/gym-walk">gym_walk</a></li>
+<li><a href="https://github.com/mimoralea/gym-aima">gym_aima</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span> <span class="p">;</span> <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">gym</span><span class="o">,</span> <span class="nn">gym_walk</span><span class="o">,</span> <span class="nn">gym_aima</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm_notebook</span> <span class="k">as</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">cycle</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="출력을-위한-helper-function">
+<a class="anchor" href="#%EC%B6%9C%EB%A0%A5%EC%9D%84-%EC%9C%84%ED%95%9C-helper-function" aria-hidden="true"><span class="octicon octicon-link"></span></a>출력을 위한 helper function<a class="anchor-link" href="#%EC%B6%9C%EB%A0%A5%EC%9D%84-%EC%9C%84%ED%95%9C-helper-function"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">print_policy</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">action_symbols</span><span class="o">=</span><span class="p">(</span><span class="s1">'&lt;'</span><span class="p">,</span> <span class="s1">'v'</span><span class="p">,</span> <span class="s1">'&gt;'</span><span class="p">,</span> <span class="s1">'^'</span><span class="p">),</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'정책:'</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">arrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">action_symbols</span><span class="p">)}</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">)):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">pi</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"| "</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="n">done</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">done</span> <span class="ow">in</span> <span class="n">action</span><span class="p">]):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">""</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">arrs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n_cols</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">print_state_value_function</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">'상태-가치 함수:'</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">)):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">V</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"| "</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="n">done</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">done</span> <span class="ow">in</span> <span class="n">action</span><span class="p">]):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">""</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">prec</span><span class="p">))</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n_cols</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"|"</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">print_action_value_function</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> 
+                                <span class="n">optimal_Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                                <span class="n">action_symbols</span><span class="o">=</span><span class="p">(</span><span class="s1">'&lt;'</span><span class="p">,</span> <span class="s1">'&gt;'</span><span class="p">),</span> 
+                                <span class="n">prec</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> 
+                                <span class="n">title</span><span class="o">=</span><span class="s1">'행동-가치 함수:'</span><span class="p">):</span>
+    <span class="n">vf_types</span><span class="o">=</span><span class="p">(</span><span class="s1">''</span><span class="p">,)</span> <span class="k">if</span> <span class="n">optimal_Q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="s1">'*'</span><span class="p">,</span> <span class="s1">'err'</span><span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s'</span><span class="p">,]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">vf_types</span><span class="p">,</span> <span class="n">action_symbols</span><span class="p">))]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Q</span><span class="p">))[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">states</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">prec</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">optimal_Q</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">optimal_Q</span><span class="p">,</span> <span class="n">prec</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">optimal_Q</span><span class="o">-</span><span class="n">Q</span><span class="p">,</span> <span class="n">prec</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">"fancy_grid"</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="p">,</span> <span class="n">n_episodes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="p">;</span> <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">):</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">steps</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(),</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span> <span class="ow">and</span> <span class="n">steps</span> <span class="o">&lt;</span> <span class="n">max_steps</span><span class="p">:</span>
+            <span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">pi</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
+            <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">goal_state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">n_episodes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="p">;</span> <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">):</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">steps</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(),</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span> <span class="ow">and</span> <span class="n">steps</span> <span class="o">&lt;</span> <span class="n">max_steps</span><span class="p">:</span>
+            <span class="n">state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">pi</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
+            <span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">reward</span>
+            <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Slippery-Walk-Five-MDP-and-sample-policy">
+<a class="anchor" href="#Slippery-Walk-Five-MDP-and-sample-policy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Slippery Walk Five MDP and sample policy<a class="anchor-link" href="#Slippery-Walk-Five-MDP-and-sample-policy"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'SlipperyWalkFive-v0'</span><span class="p">)</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">P</span>
+<span class="n">init_state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">goal_state</span> <span class="o">=</span> <span class="mi">6</span>
+
+<span class="n">LEFT</span><span class="p">,</span> <span class="n">RIGHT</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">pi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="n">LEFT</span>
+<span class="p">}[</span><span class="n">s</span><span class="p">]</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">action_symbols</span><span class="o">=</span><span class="p">(</span><span class="s1">'&lt;'</span><span class="p">,</span> <span class="s1">'&gt;'</span><span class="p">),</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+|           | 01      &lt; | 02      &lt; | 03      &lt; | 04      &lt; | 05      &lt; |           |
+Reaches goal 7.00%. Obtains an average undiscounted return of 0.0700.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="정책-평가법">
+<a class="anchor" href="#%EC%A0%95%EC%B1%85-%ED%8F%89%EA%B0%80%EB%B2%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>정책 평가법<a class="anchor-link" href="#%EC%A0%95%EC%B1%85-%ED%8F%89%EA%B0%80%EB%B2%95"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">policy_evaluation</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+    <span class="n">prev_V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">prob</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">pi</span><span class="p">(</span><span class="n">s</span><span class="p">)]:</span>
+                <span class="n">V</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">+=</span> <span class="n">prob</span> <span class="o">*</span> <span class="p">(</span><span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">prev_V</span><span class="p">[</span><span class="n">next_state</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="ow">not</span> <span class="n">done</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prev_V</span> <span class="o">-</span> <span class="n">V</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">theta</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">prev_V</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">V</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+|           | 01 0.00275 | 02 0.01099 | 03 0.03571 | 04 0.10989 | 05 0.33242 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="정책-개선법">
+<a class="anchor" href="#%EC%A0%95%EC%B1%85-%EA%B0%9C%EC%84%A0%EB%B2%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>정책 개선법<a class="anchor-link" href="#%EC%A0%95%EC%B1%85-%EA%B0%9C%EC%84%A0%EB%B2%95"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">policy_improvement</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">])):</span>
+            <span class="k">for</span> <span class="n">prob</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">]:</span>
+                <span class="n">Q</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">prob</span> <span class="o">*</span> <span class="p">(</span><span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="n">next_state</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="ow">not</span> <span class="n">done</span><span class="p">))</span>
+    <span class="n">new_pi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span><span class="n">a</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))}[</span><span class="n">s</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">new_pi</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">improved_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">improved_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">action_symbols</span><span class="o">=</span><span class="p">(</span><span class="s1">'&lt;'</span><span class="p">,</span> <span class="s1">'&gt;'</span><span class="p">),</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">improved_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">improved_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+|           | 01      &gt; | 02      &gt; | 03      &gt; | 04      &gt; | 05      &gt; |           |
+Reaches goal 93.00%. Obtains an average undiscounted return of 0.9300.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">improved_V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">improved_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">improved_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+|           | 01 0.66758 | 02 0.89011 | 03 0.96429 | 04 0.98901 | 05 0.99725 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">improved_improved_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">improved_V</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">improved_improved_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">action_symbols</span><span class="o">=</span><span class="p">(</span><span class="s1">'&lt;'</span><span class="p">,</span> <span class="s1">'&gt;'</span><span class="p">),</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">improved_improved_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">improved_improved_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+|           | 01      &gt; | 02      &gt; | 03      &gt; | 04      &gt; | 05      &gt; |           |
+Reaches goal 93.00%. Obtains an average undiscounted return of 0.9300.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># if we evaluate again, we can see there is nothing to improve </span>
+<span class="c1"># that also means we reached the optimal policy</span>
+<span class="n">improved_improved_V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">improved_improved_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">improved_improved_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+|           | 01 0.66758 | 02 0.89011 | 03 0.96429 | 04 0.98901 | 05 0.99725 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">improved_V</span> <span class="o">==</span> <span class="n">improved_improved_V</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="정책-반복법">
+<a class="anchor" href="#%EC%A0%95%EC%B1%85-%EB%B0%98%EB%B3%B5%EB%B2%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>정책 반복법<a class="anchor-link" href="#%EC%A0%95%EC%B1%85-%EB%B0%98%EB%B3%B5%EB%B2%95"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">policy_iteration</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+    <span class="n">random_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">))</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span><span class="n">a</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">random_actions</span><span class="p">)}[</span><span class="n">s</span><span class="p">]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">old_pi</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span><span class="n">pi</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">))}</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">old_pi</span> <span class="o">==</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span><span class="n">pi</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">))}:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">pi</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">optimal_V</span><span class="p">,</span> <span class="n">optimal_pi</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Optimal policy and state-value function (PI):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">optimal_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">action_symbols</span><span class="o">=</span><span class="p">(</span><span class="s1">'&lt;'</span><span class="p">,</span> <span class="s1">'&gt;'</span><span class="p">),</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">optimal_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">optimal_pi</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">optimal_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Optimal policy and state-value function (PI):
+정책:
+|           | 01      &gt; | 02      &gt; | 03      &gt; | 04      &gt; | 05      &gt; |           |
+Reaches goal 93.00%. Obtains an average undiscounted return of 0.9300.
+
+상태-가치 함수:
+|           | 01 0.66758 | 02 0.89011 | 03 0.96429 | 04 0.98901 | 05 0.99725 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">improved_V</span> <span class="o">==</span> <span class="n">optimal_V</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Frozen-Lake-MDP-and-sample-policies">
+<a class="anchor" href="#Frozen-Lake-MDP-and-sample-policies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Frozen Lake MDP and sample policies<a class="anchor-link" href="#Frozen-Lake-MDP-and-sample-policies"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'FrozenLake-v0'</span><span class="p">)</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">P</span>
+<span class="n">init_state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">goal_state</span> <span class="o">=</span> <span class="mi">15</span>
+
+<span class="n">LEFT</span><span class="p">,</span> <span class="n">DOWN</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">UP</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">random_pi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="n">DOWN</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span><span class="n">DOWN</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">12</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">13</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">14</span><span class="p">:</span><span class="n">DOWN</span><span class="p">,</span> <span class="mi">15</span><span class="p">:</span><span class="n">LEFT</span>
+<span class="p">}[</span><span class="n">s</span><span class="p">]</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">random_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">random_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">random_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &gt; | 01      &lt; | 02      v | 03      ^ |
+| 04      &lt; |           | 06      &gt; |           |
+| 08      ^ | 09      v | 10      ^ |           |
+|           | 13      &gt; | 14      v |           |
+Reaches goal 12.00%. Obtains an average undiscounted return of 0.1200.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">go_get_pi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="n">DOWN</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span><span class="n">DOWN</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="n">DOWN</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span><span class="n">DOWN</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">12</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">13</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">14</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">15</span><span class="p">:</span><span class="n">LEFT</span>
+<span class="p">}[</span><span class="n">s</span><span class="p">]</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">go_get_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">go_get_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">go_get_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &gt; | 01      &gt; | 02      v | 03      &lt; |
+| 04      v |           | 06      v |           |
+| 08      &gt; | 09      &gt; | 10      v |           |
+|           | 13      &gt; | 14      &gt; |           |
+Reaches goal 5.00%. Obtains an average undiscounted return of 0.0500.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">careful_pi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span><span class="n">DOWN</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">12</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">13</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">14</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">15</span><span class="p">:</span><span class="n">LEFT</span>
+<span class="p">}[</span><span class="n">s</span><span class="p">]</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">careful_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">careful_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">careful_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &lt; | 01      ^ | 02      ^ | 03      ^ |
+| 04      &lt; |           | 06      ^ |           |
+| 08      ^ | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      &gt; |           |
+Reaches goal 52.00%. Obtains an average undiscounted return of 0.5200.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="정책-평가법">
+<a class="anchor" href="#%EC%A0%95%EC%B1%85-%ED%8F%89%EA%B0%80%EB%B2%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>정책 평가법<a class="anchor-link" href="#%EC%A0%95%EC%B1%85-%ED%8F%89%EA%B0%80%EB%B2%95"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">careful_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00 0.4079 | 01 0.3754 | 02 0.3543 | 03 0.3438 |
+| 04 0.4203 |           | 06 0.1169 |           |
+| 08 0.4454 | 09  0.484 | 10 0.4328 |           |
+|           | 13 0.5884 | 14 0.7107 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="정책-개선법">
+<a class="anchor" href="#%EC%A0%95%EC%B1%85-%EA%B0%9C%EC%84%A0%EB%B2%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>정책 개선법<a class="anchor-link" href="#%EC%A0%95%EC%B1%85-%EA%B0%9C%EC%84%A0%EB%B2%95"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">careful_plus_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">careful_plus_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">careful_plus_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">careful_plus_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &lt; | 01      ^ | 02      ^ | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      ^ | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      v |           |
+Reaches goal 74.00%. Obtains an average undiscounted return of 0.7400.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">careful_plus_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">new_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00  0.542 | 01 0.4988 | 02 0.4707 | 03 0.4569 |
+| 04 0.5585 |           | 06 0.3583 |           |
+| 08 0.5918 | 09 0.6431 | 10 0.6152 |           |
+|           | 13 0.7417 | 14 0.8628 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">print_state_value_function</span><span class="p">(</span><span class="n">new_V</span> <span class="o">-</span> <span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00 0.1341 | 01 0.1234 | 02 0.1164 | 03  0.113 |
+| 04 0.1381 |           | 06 0.2414 |           |
+| 08 0.1464 | 09 0.1591 | 10 0.1824 |           |
+|           | 13 0.1533 | 14 0.1521 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Alternating-between-evaluation-and-improvement">
+<a class="anchor" href="#Alternating-between-evaluation-and-improvement" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alternating between evaluation and improvement<a class="anchor-link" href="#Alternating-between-evaluation-and-improvement"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">adversarial_pi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">12</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">13</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">14</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">15</span><span class="p">:</span><span class="n">LEFT</span>
+<span class="p">}[</span><span class="n">s</span><span class="p">]</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">adversarial_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">adversarial_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">adversarial_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      ^ | 01      ^ | 02      ^ | 03      ^ |
+| 04      ^ |           | 06      ^ |           |
+| 08      &lt; | 09      &lt; | 10      &lt; |           |
+|           | 13      &lt; | 14      &lt; |           |
+Reaches goal 0.00%. Obtains an average undiscounted return of 0.0000.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">adversarial_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00    0.0 | 01    0.0 | 02    0.0 | 03    0.0 |
+| 04    0.0 |           | 06    0.0 |           |
+| 08    0.0 | 09    0.0 | 10    0.0 |           |
+|           | 13    0.0 | 14    0.0 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">i_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">i_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">i_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">i_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &lt; | 01      &lt; | 02      &lt; | 03      &lt; |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      &lt; | 09      &lt; | 10      &lt; |           |
+|           | 13      &lt; | 14      v |           |
+Reaches goal 0.00%. Obtains an average undiscounted return of 0.0000.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">i_V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">i_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">i_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00    0.0 | 01    0.0 | 02   0.04 | 03   0.02 |
+| 04    0.0 |           | 06   0.07 |           |
+| 08    0.0 | 09    0.0 | 10   0.19 |           |
+|           | 13    0.0 | 14    0.5 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ii_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">i_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">ii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">ii_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">ii_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &lt; | 01      v | 02      &gt; | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      &lt; | 09      v | 10      &lt; |           |
+|           | 13      v | 14      &gt; |           |
+Reaches goal 0.00%. Obtains an average undiscounted return of 0.0000.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ii_V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">ii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">ii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00    0.0 | 01   0.05 | 02   0.16 | 03   0.15 |
+| 04    0.0 |           | 06   0.17 |           |
+| 08    0.0 | 09   0.22 | 10   0.35 |           |
+|           | 13   0.33 | 14   0.67 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iii_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">ii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">iii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iii_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iii_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      v | 01      &gt; | 02      &gt; | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      v | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      &gt; |           |
+Reaches goal 20.00%. Obtains an average undiscounted return of 0.2000.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iii_V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">iii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">iii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00   0.12 | 01   0.09 | 02   0.19 | 03   0.19 |
+| 04   0.15 |           | 06    0.2 |           |
+| 08   0.19 | 09   0.38 | 10   0.43 |           |
+|           | 13   0.53 | 14   0.71 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iiii_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">iii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">iiii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iiii_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iiii_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &lt; | 01      ^ | 02      &gt; | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      ^ | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      v |           |
+Reaches goal 73.00%. Obtains an average undiscounted return of 0.7300.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iiii_V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">iiii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">iiii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00   0.52 | 01   0.38 | 02   0.26 | 03   0.25 |
+| 04   0.54 |           | 06   0.28 |           |
+| 08   0.57 | 09   0.62 | 10   0.58 |           |
+|           | 13   0.72 | 14   0.85 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iiiii_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">iiii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">iiiii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iiiii_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iiiii_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &lt; | 01      ^ | 02      &lt; | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      ^ | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      v |           |
+Reaches goal 74.00%. Obtains an average undiscounted return of 0.7400.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iiiii_V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">iiiii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">iiiii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00   0.53 | 01   0.45 | 02   0.38 | 03   0.37 |
+| 04   0.55 |           | 06   0.32 |           |
+| 08   0.58 | 09   0.63 | 10    0.6 |           |
+|           | 13   0.73 | 14   0.86 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iiiiii_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">iiiii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">iiiiii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iiiiii_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iiiiii_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &lt; | 01      ^ | 02      ^ | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      ^ | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      v |           |
+Reaches goal 74.00%. Obtains an average undiscounted return of 0.7400.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iiiiii_V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">iiiiii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">iiiiii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00   0.54 | 01    0.5 | 02   0.47 | 03   0.46 |
+| 04   0.56 |           | 06   0.36 |           |
+| 08   0.59 | 09   0.64 | 10   0.62 |           |
+|           | 13   0.74 | 14   0.86 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">iiiiiii_pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">iiiiii_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">iiiiiii_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iiiiiii_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">iiiiiii_pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>정책:
+| 00      &lt; | 01      ^ | 02      ^ | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      ^ | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      v |           |
+Reaches goal 74.00%. Obtains an average undiscounted return of 0.7400.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="정책-반복법">
+<a class="anchor" href="#%EC%A0%95%EC%B1%85-%EB%B0%98%EB%B3%B5%EB%B2%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>정책 반복법<a class="anchor-link" href="#%EC%A0%95%EC%B1%85-%EB%B0%98%EB%B3%B5%EB%B2%95"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V_best_p</span><span class="p">,</span> <span class="n">pi_best_p</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V_best_p</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Optimal policy and state-value function (PI):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi_best_p</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best_p</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best_p</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>상태-가치 함수:
+| 00  0.542 | 01 0.4988 | 02 0.4707 | 03 0.4569 |
+| 04 0.5585 |           | 06 0.3583 |           |
+| 08 0.5918 | 09 0.6431 | 10 0.6152 |           |
+|           | 13 0.7417 | 14 0.8628 |           |
+
+Optimal policy and state-value function (PI):
+정책:
+| 00      &lt; | 01      ^ | 02      ^ | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      ^ | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      v |           |
+Reaches goal 74.00%. Obtains an average undiscounted return of 0.7400.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Slippery-Walk-Five">
+<a class="anchor" href="#Slippery-Walk-Five" aria-hidden="true"><span class="octicon octicon-link"></span></a>Slippery Walk Five<a class="anchor-link" href="#Slippery-Walk-Five"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'SlipperyWalkFive-v0'</span><span class="p">)</span>
+<span class="n">init_state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">goal_state</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">P</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="가치-반복법">
+<a class="anchor" href="#%EA%B0%80%EC%B9%98-%EB%B0%98%EB%B3%B5%EB%B2%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>가치 반복법<a class="anchor-link" href="#%EA%B0%80%EC%B9%98-%EB%B0%98%EB%B3%B5%EB%B2%95"> </a>
+</h4>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">value_iteration</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">])):</span>
+                <span class="k">for</span> <span class="n">prob</span><span class="p">,</span> <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">]:</span>
+                    <span class="n">Q</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">]</span> <span class="o">+=</span> <span class="n">prob</span> <span class="o">*</span> <span class="p">(</span><span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="n">next_state</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="ow">not</span> <span class="n">done</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span> <span class="o">&lt;</span> <span class="n">theta</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span><span class="n">a</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))}[</span><span class="n">s</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">pi</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">optimal_V</span><span class="p">,</span> <span class="n">optimal_pi</span> <span class="o">=</span> <span class="n">value_iteration</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Optimal policy and state-value function (PI):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">optimal_pi</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">action_symbols</span><span class="o">=</span><span class="p">(</span><span class="s1">'&lt;'</span><span class="p">,</span> <span class="s1">'&gt;'</span><span class="p">),</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">optimal_pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">optimal_pi</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">optimal_V</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">n_cols</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="c1"># |            | 01   0.668 | 02   0.890 | 03   0.964 | 04   0.989 | 05   0.997 |            |</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Optimal policy and state-value function (PI):
+정책:
+|           | 01      &gt; | 02      &gt; | 03      &gt; | 04      &gt; | 05      &gt; |           |
+Reaches goal 93.00%. Obtains an average undiscounted return of 0.9300.
+
+상태-가치 함수:
+|           | 01 0.66758 | 02 0.89011 | 03 0.96429 | 04 0.98901 | 05 0.99725 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Frozen-Lake-MDP">
+<a class="anchor" href="#Frozen-Lake-MDP" aria-hidden="true"><span class="octicon octicon-link"></span></a>Frozen Lake MDP<a class="anchor-link" href="#Frozen-Lake-MDP"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'FrozenLake-v0'</span><span class="p">)</span>
+<span class="n">init_state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">goal_state</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">P</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V_best_v</span><span class="p">,</span> <span class="n">pi_best_v</span> <span class="o">=</span> <span class="n">value_iteration</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Optimal policy and state-value function (VI):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi_best_v</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best_v</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best_v</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V_best_v</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Optimal policy and state-value function (VI):
+정책:
+| 00      &lt; | 01      ^ | 02      ^ | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      ^ | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      v |           |
+Reaches goal 74.00%. Obtains an average undiscounted return of 0.7400.
+
+상태-가치 함수:
+| 00  0.542 | 01 0.4988 | 02 0.4707 | 03 0.4569 |
+| 04 0.5585 |           | 06 0.3583 |           |
+| 08 0.5918 | 09 0.6431 | 10 0.6152 |           |
+|           | 13 0.7417 | 14 0.8628 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'For comparison, optimal policy and state-value function (PI):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi_best_p</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best_p</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best_p</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V_best_p</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>For comparison, optimal policy and state-value function (PI):
+정책:
+| 00      &lt; | 01      ^ | 02      ^ | 03      ^ |
+| 04      &lt; |           | 06      &lt; |           |
+| 08      ^ | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      v |           |
+Reaches goal 74.00%. Obtains an average undiscounted return of 0.7400.
+
+상태-가치 함수:
+| 00  0.542 | 01  0.499 | 02  0.471 | 03  0.457 |
+| 04  0.558 |           | 06  0.358 |           |
+| 08  0.592 | 09  0.643 | 10  0.615 |           |
+|           | 13  0.742 | 14  0.863 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Changing-the-Frozen-Lake-environment-MDP">
+<a class="anchor" href="#Changing-the-Frozen-Lake-environment-MDP" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changing the Frozen Lake environment MDP<a class="anchor-link" href="#Changing-the-Frozen-Lake-environment-MDP"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'FrozenLake-v0'</span><span class="p">)</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">P</span>
+
+<span class="c1"># change reward function</span>
+<span class="n">reward_goal</span><span class="p">,</span> <span class="n">reward_holes</span><span class="p">,</span> <span class="n">reward_others</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01</span>
+<span class="n">goal</span><span class="p">,</span> <span class="n">hole</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">])):</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">])):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">][</span><span class="n">t</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">goal</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">reward_goal</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">hole</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">reward_holes</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">reward_others</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">hole</span> <span class="ow">or</span> <span class="n">s</span> <span class="o">==</span> <span class="n">goal</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">][</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+<span class="c1"># change transition function</span>
+<span class="n">prob_action</span><span class="p">,</span> <span class="n">prob_drift_one</span><span class="p">,</span> <span class="n">prob_drift_two</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">])):</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">][</span><span class="n">t</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">][</span><span class="n">t</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob_drift_one</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob_action</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob_drift_two</span>
+            <span class="n">P</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="n">a</span><span class="p">][</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+<span class="n">env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">P</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V_best</span><span class="p">,</span> <span class="n">pi_best</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Optimal policy and state-value function (PI):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi_best</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V_best</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Optimal policy and state-value function (PI):
+정책:
+| 00      v | 01      ^ | 02      v | 03      ^ |
+| 04      &lt; |           | 06      v |           |
+| 08      &gt; | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      &gt; |           |
+Reaches goal 78.00%. Obtains an average undiscounted return of 0.3657.
+
+상태-가치 함수:
+| 00  0.433 | 01  0.353 | 02  0.409 | 03   0.28 |
+| 04  0.461 |           | 06   0.45 |           |
+| 08  0.636 | 09  0.884 | 10  0.831 |           |
+|           | 13  0.945 | 14  0.977 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V_best</span><span class="p">,</span> <span class="n">pi_best</span> <span class="o">=</span> <span class="n">value_iteration</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Optimal policy and state-value function (PI):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi_best</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V_best</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Optimal policy and state-value function (PI):
+정책:
+| 00      v | 01      ^ | 02      v | 03      ^ |
+| 04      &lt; |           | 06      v |           |
+| 08      &gt; | 09      v | 10      &lt; |           |
+|           | 13      &gt; | 14      &gt; |           |
+Reaches goal 78.00%. Obtains an average undiscounted return of 0.3657.
+
+상태-가치 함수:
+| 00  0.433 | 01  0.353 | 02  0.409 | 03   0.28 |
+| 04  0.461 |           | 06   0.45 |           |
+| 08  0.636 | 09  0.884 | 10  0.831 |           |
+|           | 13  0.945 | 14  0.977 |           |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Russell-&amp;-Norvig's-Gridworld">
+<a class="anchor" href="#Russell-&amp;-Norvig's-Gridworld" aria-hidden="true"><span class="octicon octicon-link"></span></a>Russell &amp; Norvig's Gridworld<a class="anchor-link" href="#Russell-&amp;-Norvig's-Gridworld"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'RussellNorvigGridworld-v0'</span><span class="p">)</span>
+<span class="n">init_state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">goal_state</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">P</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V_best_p</span><span class="p">,</span> <span class="n">pi_best</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Optimal policy and state-value function (PI):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi_best</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V_best_p</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Optimal policy and state-value function (PI):
+정책:
+| 00      &gt; | 01      &gt; | 02      &gt; |           |
+| 04      ^ |           | 06      ^ |           |
+| 08      ^ | 09      &lt; | 10      &lt; | 11      &lt; |
+Reaches goal 96.00%. Obtains an average undiscounted return of 0.6424.
+
+상태-가치 함수:
+| 00  0.812 | 01  0.868 | 02  0.918 |           |
+| 04  0.762 |           | 06   0.66 |           |
+| 08  0.705 | 09  0.655 | 10  0.611 | 11  0.388 |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V_best_v</span><span class="p">,</span> <span class="n">pi_best</span> <span class="o">=</span> <span class="n">value_iteration</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Optimal policy and state-value function (PI):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi_best</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi_best</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V_best_v</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Optimal policy and state-value function (PI):
+정책:
+| 00      &gt; | 01      &gt; | 02      &gt; |           |
+| 04      ^ |           | 06      ^ |           |
+| 08      ^ | 09      &lt; | 10      &lt; | 11      &lt; |
+Reaches goal 96.00%. Obtains an average undiscounted return of 0.6424.
+
+상태-가치 함수:
+| 00  0.812 | 01  0.868 | 02  0.918 |           |
+| 04  0.762 |           | 06   0.66 |           |
+| 08  0.705 | 09  0.655 | 10  0.611 | 11  0.388 |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">LEFT</span><span class="p">,</span> <span class="n">DOWN</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">UP</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">pi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="n">RIGHT</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">:</span><span class="n">UP</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span><span class="n">LEFT</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span><span class="n">LEFT</span>
+<span class="p">}[</span><span class="n">s</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Re-construct optimal policy:'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Reaches goal </span><span class="si">{:.2f}</span><span class="s1">%. Obtains an average undiscounted return of </span><span class="si">{:.4f}</span><span class="s1">.'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">probability_success</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">goal_state</span><span class="o">=</span><span class="n">goal_state</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> 
+    <span class="n">mean_return</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pi</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Re-construct optimal policy:
+정책:
+| 00      &gt; | 01      &gt; | 02      &gt; |           |
+| 04      ^ |           | 06      ^ |           |
+| 08      ^ | 09      &lt; | 10      &lt; | 11      &lt; |
+Reaches goal 96.00%. Obtains an average undiscounted return of 0.6424.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Evaluate optimal policy:'</span><span class="p">)</span>
+<span class="n">print_state_value_function</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Evaluate optimal policy:
+상태-가치 함수:
+| 00  0.812 | 01  0.868 | 02  0.918 |           |
+| 04  0.762 |           | 06   0.66 |           |
+| 08  0.705 | 09  0.655 | 10  0.611 | 11  0.388 |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pi</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Improve optimal policy (nothing to improve -- it is the same policy, because it is optimal):'</span><span class="p">)</span>
+<span class="n">print_policy</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Improve optimal policy (nothing to improve -- it is the same policy, because it is optimal):
+정책:
+| 00      &gt; | 01      &gt; | 02      &gt; |           |
+| 04      ^ |           | 06      ^ |           |
+| 08      ^ | 09      &lt; | 10      &lt; | 11      &lt; |
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'There are no differences, nothing to improve on the optimal policy and state-value function:'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V_best_p</span> <span class="o">-</span> <span class="n">V</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V_best_v</span> <span class="o">-</span> <span class="n">V</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>There are no differences, nothing to improve on the optimal policy and state-value function:
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/goodboychan.github.io"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/book/GDRL-chapter-3.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
