@@ -4,7 +4,7 @@ title: Book
 permalink: /book/
 ---
 
-# 그로킹 심층 강화학습 (Grokking Deep Reinforcement Learning) - WIP
+## 그로킹 심층 강화학습 (Grokking Deep Reinforcement Learning) - WIP
 
 ![gdrl-bookcover]]({{site.baseurl}}/images/gdrl-bookcover.jpeg "Grokking Deep Reinforcement Learning" ) 
 
