@@ -460,12 +460,15 @@ Number of actions:  4
         <span class="c1"># Obtain random minibatch of tuples from D</span>
         <span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">next_states</span><span class="p">,</span> <span class="n">dones</span> <span class="o">=</span> <span class="n">experiences</span>
 
-        <span class="c1">## TODO: compute and minimize the loss</span>
-        <span class="s2">"*** YOUR CODE HERE ***"</span>
+        <span class="c1">## Compute and minimize the loss</span>
+        <span class="c1">### Extract next maximum estimated value from target network</span>
         <span class="n">q_targets_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qnetwork_target</span><span class="p">(</span><span class="n">next_states</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1">### Calculate target value from bellman equation</span>
         <span class="n">q_targets</span> <span class="o">=</span> <span class="n">rewards</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">q_targets_next</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">dones</span><span class="p">)</span>
+        <span class="c1">### Calculate expected value from local network</span>
         <span class="n">q_expected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qnetwork_local</span><span class="p">(</span><span class="n">states</span><span class="p">)</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
-         
+        
+        <span class="c1">### Loss calculation (we used Mean squared error)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">q_expected</span><span class="p">,</span> <span class="n">q_targets</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
         <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
