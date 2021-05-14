@@ -19,10 +19,10 @@ permalink: /book/
   - 4장. [정보의 수집과 사용간의 균형](https://goodboychan.github.io/book/GDRL-chapter-4.html)
   - 5장. [에이전트의 행동 평가](https://goodboychan.github.io/book/GDRL-chapter-5.html)
   - 6장. [에이전트의 행동 개선](https://goodboychan.github.io/book/GDRL-chapter-6.html)
-  - 7장. [조금 더 효율적인 방법으로 목표에 도달하기]
-  - 8장. [심층 강화학습 개요]
-  - 9장. [조금 더 안정적인 가치기반의 학습 방법들]
-  - 10장. [샘플 효율적인 가치기반의 학습 방법들]
-  - 11장. [정책 경사법과 액터-크리틱 학습 방법들]
-  - 12장. [조금 더 발전된 액터-크리틱 학습 방법들]
+  - 7장. [조금 더 효율적인 방법으로 목표에 도달하기](https://goodboychan.github.io/book/GDRL-chapter-7.html)
+  - 8장. [심층 강화학습 개요](https://goodboychan.github.io/book/GDRL-chapter-8.html)
+  - 9장. [조금 더 안정적인 가치기반의 학습 방법들](https://goodboychan.github.io/book/GDRL-chapter-9.html)
+  - 10장. [샘플 효율적인 가치기반의 학습 방법들](https://goodboychan.github.io/book/GDRL-chapter-10.html)
+  - 11장. [정책 경사법과 액터-크리틱 학습 방법들](https://goodboychan.github.io/book/GDRL-chapter-11.html)
+  - 12장. [조금 더 발전된 액터-크리틱 학습 방법들](https://goodboychan.github.io/book/GDRL-chapter-12.html)
   - 13장. [범용 인공지능을 향한 길]
