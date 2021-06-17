@@ -5,7 +5,7 @@ title: Book
 permalink: /book/
 ---
 
-## 그로킹 심층 강화학습 (Grokking Deep Reinforcement Learning) - Work In Progress
+## 그로킹 심층 강화학습 (Grokking Deep Reinforcement Learning)
 
 ![gdrl-bookcover]({{site.baseurl}}/images/gdrl-bookcover.jpeg "Grokking Deep Reinforcement Learning" )
 
@@ -25,4 +25,4 @@ permalink: /book/
   - 10장. [샘플 효율적인 가치기반의 학습 방법들](https://goodboychan.github.io/book/GDRL-chapter-10.html)
   - 11장. [정책 경사법과 액터-크리틱 학습 방법들](https://goodboychan.github.io/book/GDRL-chapter-11.html)
   - 12장. [조금 더 발전된 액터-크리틱 학습 방법들](https://goodboychan.github.io/book/GDRL-chapter-12.html)
-  - 13장. [범용 인공지능을 향한 길]
+  - 13장. 범용 인공지능을 향한 길
