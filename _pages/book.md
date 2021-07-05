@@ -30,7 +30,7 @@ permalink: /book/
 
 ## 머신러닝을 활용한 텐서플로 (Machine Learning with Tensorflow - 1st edition)
 
-![mlwt-bookcover]({{site.baseurl}}/images/mlwt-bookcover.jpeg "Machine Learning with Tensorflow")
+![mlwt-bookcover]({{site.baseurl}}/images/mlwt-bookcover.jpg "Machine Learning with Tensorflow")
 
 - 출판사: 한빛미디어
 - 출간일: 2019.02.01
