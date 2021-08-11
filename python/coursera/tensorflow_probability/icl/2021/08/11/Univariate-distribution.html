@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Univariate Distribution | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Univariate Distribution" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, we will show the basic usage of tensorflow probability (tfp), and how to make univariate distribution. This is the summary of lecture “Probabilistic Deep Learning with Tensorflow 2” from Imperial College London" />
+<meta property="og:description" content="In this post, we will show the basic usage of tensorflow probability (tfp), and how to make univariate distribution. This is the summary of lecture “Probabilistic Deep Learning with Tensorflow 2” from Imperial College London" />
+<link rel="canonical" href="https://goodboychan.github.io/python/coursera/tensorflow_probability/icl/2021/08/11/Univariate-distribution.html" />
+<meta property="og:url" content="https://goodboychan.github.io/python/coursera/tensorflow_probability/icl/2021/08/11/Univariate-distribution.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/images/bernoulli.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-11T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"In this post, we will show the basic usage of tensorflow probability (tfp), and how to make univariate distribution. This is the summary of lecture “Probabilistic Deep Learning with Tensorflow 2” from Imperial College London","url":"https://goodboychan.github.io/python/coursera/tensorflow_probability/icl/2021/08/11/Univariate-distribution.html","@type":"BlogPosting","headline":"Univariate Distribution","dateModified":"2021-08-11T00:00:00-05:00","datePublished":"2021-08-11T00:00:00-05:00","author":{"@type":"Person","name":"Chanseok Kang"},"image":"https://goodboychan.github.io/images/bernoulli.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/python/coursera/tensorflow_probability/icl/2021/08/11/Univariate-distribution.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-33905785-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-33905785-1');
+</script>
+
+
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+
+<script data-ad-client="ca-pub-6747875619665490" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Me</a><a class="page-link" href="/book/">Book</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Univariate Distribution</h1><p class="page-description">In this post, we will show the basic usage of tensorflow probability (tfp), and how to make univariate distribution. This is the summary of lecture "Probabilistic Deep Learning with Tensorflow 2" from Imperial College London</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-08-11T00:00:00-05:00" itemprop="datePublished">
+        Aug 11, 2021
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      3 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Coursera">Coursera</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Tensorflow_probability">Tensorflow_probability</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#ICL">ICL</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/goodboychan.github.io/tree/main/_notebooks/2021-08-11-Univariate-distribution.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/goodboychan.github.io/main?filepath=_notebooks%2F2021-08-11-Univariate-distribution.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/goodboychan.github.io/blob/main/_notebooks/2021-08-11-Univariate-distribution.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Packages">Packages </a></li>
+<li class="toc-entry toc-h2"><a href="#Univariate-Distribution">Univariate Distribution </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Normal-Distribution">Normal Distribution </a></li>
+<li class="toc-entry toc-h3"><a href="#Exponential-distribution">Exponential distribution </a></li>
+<li class="toc-entry toc-h3"><a href="#Bernoulli-Distribution">Bernoulli Distribution </a></li>
+<li class="toc-entry toc-h3"><a href="#Batch-Distributions">Batch Distributions </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-08-11-Univariate-distribution.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="https://www.tensorflow.org/probability">Tensorflow Probability</a> (tfp for short) is a library for probabilistic reasoning and statistical analysis in Tensorflow. It is a part of wide ecosystem of Tensorflow, so it can easily combined with Tensorflow core.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Packages">
+<a class="anchor" href="#Packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Packages<a class="anchor-link" href="#Packages"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">tensorflow_probability</span> <span class="k">as</span> <span class="nn">tfp</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">tfd</span> <span class="o">=</span> <span class="n">tfp</span><span class="o">.</span><span class="n">distributions</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Tensorflow Version: "</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Tensorflow Probability Version: "</span><span class="p">,</span> <span class="n">tfp</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Tensorflow Version:  2.4.0
+Tensorflow Probability Version:  0.11.1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Univariate-Distribution">
+<a class="anchor" href="#Univariate-Distribution" aria-hidden="true"><span class="octicon octicon-link"></span></a>Univariate Distribution<a class="anchor-link" href="#Univariate-Distribution"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From wikipedia,</p>
+<blockquote>
+<p>In In statistics, a univariate distribution is a probability distribution of only one random variable. This is in contrast to a multivariate distribution, the probability distribution of a random vector (consisting of multiple random variables).</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Normal-Distribution">
+<a class="anchor" href="#Normal-Distribution" aria-hidden="true"><span class="octicon octicon-link"></span></a>Normal Distribution<a class="anchor-link" href="#Normal-Distribution"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One of simple univariate distributions is Normal Distribution (also known as Gaussian Distribution). We can create it with tensorflow probability.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normal</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">normal</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tfp.distributions.Normal 'Normal' batch_shape=[] event_shape=[] dtype=float32&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that <code>loc</code> stands for mean($\mu$) of distribution, and <code>scale</code> is standard distribution ($\sigma$) of distribution. After that, we create the normal distribution object. In order to generate the data from normal distribution, we need to <code>sample</code> from it.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normal</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(), dtype=float32, numpy=0.9464462&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Or it can generate multiple samples.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normal</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(5,), dtype=float32, numpy=
+array([-0.73940355,  0.79343444,  0.29724854,  0.6113488 ,  0.02649165],
+      dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If we generate 10000 samples and plot it, its shape will be bell-shaped.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you're familiar with statistics, the probability of each sample can be expressed.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normal</span><span class="o">.</span><span class="n">prob</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(), dtype=float32, numpy=0.3989423&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Or you can use log probability.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normal</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(), dtype=float32, numpy=-0.9189385&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Exponential-distribution">
+<a class="anchor" href="#Exponential-distribution" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exponential distribution<a class="anchor-link" href="#Exponential-distribution"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Another example of univariate distribution is exponential distribution. This distribution has controllable parameter called $\lambda$, and can be expressed like this,</p>
+<p>
+$$ f(x; \lambda) \begin{cases} \lambda e^{-\lambda x} &amp; x \ge 0, \\ 0 &amp; x &lt; 0 \end{cases} $$
+</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exponential</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Exponential</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exponential</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(5,), dtype=float32, numpy=
+array([0.23124246, 0.28650132, 0.10770323, 0.6426723 , 0.34070757],
+      dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">exponential</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Bernoulli-Distribution">
+<a class="anchor" href="#Bernoulli-Distribution" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bernoulli Distribution<a class="anchor-link" href="#Bernoulli-Distribution"> </a>
+</h3>
+<p>Bernoulli Distribution is also a family of univariate distribution. All we need to describe this distribution is the probabiltiy that 1 is occurred. Otherwise, 0 will be occurred.</p>
+<p>
+$$ f(x; p) = \begin{cases} p &amp; \text{if } k=1, \\ q = 1 - p &amp; \text{if } k = 0 \end{cases} $$
+</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bernoulli</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">probs</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bernoulli</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(5,), dtype=int32, numpy=array([1, 0, 1, 1, 1])&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This distribution generates only two data, 0 and 1.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Probability result </span><span class="si">{}</span><span class="s1"> for k = </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bernoulli</span><span class="o">.</span><span class="n">prob</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">k</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Probability result 0.20000000298023224 for k = 0
+Probability result 0.4000000059604645 for k = 0.5
+Probability result 0.800000011920929 for k = 1
+Probability result 0.05000000074505806 for k = -1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We already define the probability of 1 to 0.8, so the probability of 0 will be 0.2. You can see that the probability of unexpected data will be strange probability.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Batch-Distributions">
+<a class="anchor" href="#Batch-Distributions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Batch Distributions<a class="anchor-link" href="#Batch-Distributions"> </a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The advantage of tensorflow distribution is that it can easily make batch data from specific distribution.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bernoulli_batch</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">probs</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bernoulli_batch</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tfp.distributions.Bernoulli 'Bernoulli' batch_shape=[5] event_shape=[] dtype=int32&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bernoulli_batch</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(5, 5), dtype=int32, numpy=
+array([[0, 1, 1, 1, 1],
+       [0, 0, 0, 1, 1],
+       [0, 1, 1, 0, 1],
+       [0, 0, 1, 1, 1],
+       [0, 0, 1, 0, 1]])&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can make 2D batch samples using higher rank as probs.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">probs</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> 
+          <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> 
+          <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]]]</span>
+<span class="n">bernoulli_batch_2D</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">probs</span><span class="o">=</span><span class="n">probs</span><span class="p">)</span>
+<span class="n">bernoulli_batch_2D</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tfp.distributions.Bernoulli 'Bernoulli' batch_shape=[1, 3, 2] event_shape=[] dtype=int32&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bernoulli_batch_2D</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(5, 1, 3, 2), dtype=int32, numpy=
+array([[[[1, 1],
+         [1, 0],
+         [0, 1]]],
+
+
+       [[[1, 1],
+         [0, 1],
+         [0, 1]]],
+
+
+       [[[0, 1],
+         [1, 0],
+         [0, 0]]],
+
+
+       [[[1, 1],
+         [1, 0],
+         [0, 0]]],
+
+
+       [[[1, 0],
+         [1, 0],
+         [0, 1]]]])&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bernoulli_batch_2D</span><span class="o">.</span><span class="n">prob</span><span class="p">([[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+                         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
+                         <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(1, 3, 2), dtype=float32, numpy=
+array([[[0.5 , 0.5 ],
+        [0.2 , 0.7 ],
+        [0.25, 0.75]]], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/goodboychan.github.io"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/python/coursera/tensorflow_probability/icl/2021/08/11/Univariate-distribution.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
