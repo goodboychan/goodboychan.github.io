@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>The TransformedDistribution class | Chan`s Jupyter</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="The TransformedDistribution class" />
+<meta name="author" content="Chanseok Kang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this post, we are going to take a look at transform distribution objects as a module. This is the summary of lecture “Probabilistic Deep Learning with Tensorflow 2” from Imperial College London." />
+<meta property="og:description" content="In this post, we are going to take a look at transform distribution objects as a module. This is the summary of lecture “Probabilistic Deep Learning with Tensorflow 2” from Imperial College London." />
+<link rel="canonical" href="https://goodboychan.github.io/python/coursera/tensorflow_probability/icl/2021/09/07/01-the-transformedDistribution-class.html" />
+<meta property="og:url" content="https://goodboychan.github.io/python/coursera/tensorflow_probability/icl/2021/09/07/01-the-transformedDistribution-class.html" />
+<meta property="og:site_name" content="Chan`s Jupyter" />
+<meta property="og:image" content="https://goodboychan.github.io/images/transformed_dist.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-09-07T00:00:00-05:00" />
+<script type="application/ld+json">
+{"description":"In this post, we are going to take a look at transform distribution objects as a module. This is the summary of lecture “Probabilistic Deep Learning with Tensorflow 2” from Imperial College London.","url":"https://goodboychan.github.io/python/coursera/tensorflow_probability/icl/2021/09/07/01-the-transformedDistribution-class.html","@type":"BlogPosting","headline":"The TransformedDistribution class","dateModified":"2021-09-07T00:00:00-05:00","datePublished":"2021-09-07T00:00:00-05:00","author":{"@type":"Person","name":"Chanseok Kang"},"image":"https://goodboychan.github.io/images/transformed_dist.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://goodboychan.github.io/python/coursera/tensorflow_probability/icl/2021/09/07/01-the-transformedDistribution-class.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://goodboychan.github.io/feed.xml" title="Chan`s Jupyter" /><!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-33905785-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-33905785-1');
+</script>
+
+
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+
+<script data-ad-client="ca-pub-6747875619665490" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Chan`s Jupyter</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Me</a><a class="page-link" href="/book/">Book</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">The TransformedDistribution class</h1><p class="page-description">In this post, we are going to take a look at transform distribution objects as a module. This is the summary of lecture "Probabilistic Deep Learning with Tensorflow 2" from Imperial College London.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-09-07T00:00:00-05:00" itemprop="datePublished">
+        Sep 7, 2021
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Chanseok Kang</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      3 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/categories/#Python">Python</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Coursera">Coursera</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#Tensorflow_probability">Tensorflow_probability</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#ICL">ICL</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/goodboychan/goodboychan.github.io/tree/main/_notebooks/2021-09-07-01-the-transformedDistribution-class.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/goodboychan/goodboychan.github.io/main?filepath=_notebooks%2F2021-09-07-01-the-transformedDistribution-class.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/goodboychan/goodboychan.github.io/blob/main/_notebooks/2021-09-07-01-the-transformedDistribution-class.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Packages">Packages </a></li>
+<li class="toc-entry toc-h2"><a href="#Overview">Overview </a></li>
+<li class="toc-entry toc-h2"><a href="#Tutorial">Tutorial </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#TransformedDistribution">TransformedDistribution </a></li>
+<li class="toc-entry toc-h3"><a href="#Plots">Plots </a></li>
+<li class="toc-entry toc-h3"><a href="#Log-probability">Log probability </a></li>
+<li class="toc-entry toc-h3"><a href="#Event-shape-and-batch-shape">Event shape and batch shape </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-09-07-01-the-transformedDistribution-class.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Packages">
+<a class="anchor" href="#Packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Packages<a class="anchor-link" href="#Packages"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">tensorflow_probability</span> <span class="k">as</span> <span class="nn">tfp</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">tfd</span> <span class="o">=</span> <span class="n">tfp</span><span class="o">.</span><span class="n">distributions</span>
+<span class="n">tfpl</span> <span class="o">=</span> <span class="n">tfp</span><span class="o">.</span><span class="n">layers</span>
+<span class="n">tfb</span> <span class="o">=</span> <span class="n">tfp</span><span class="o">.</span><span class="n">bijectors</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Tensorflow Version: "</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Tensorflow Probability Version: "</span><span class="p">,</span> <span class="n">tfp</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Tensorflow Version:  2.5.0
+Tensorflow Probability Version:  0.13.0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Overview">
+<a class="anchor" href="#Overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview<a class="anchor-link" href="#Overview"> </a>
+</h2>
+<p>The transformedDistribution is sort of distribution that can be defined by another base distribution and a bijector object. Tensorflow Probability offers <a href="https://www.tensorflow.org/probability/api_docs/python/tfp/distributions/TransformedDistribution">transformed distribution</a> object with consistent API that can use same methods and properties of other distribution.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normal</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">normal</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">z</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(3,), dtype=float32, numpy=array([-2.270398  ,  0.18898423, -0.73362327], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scale_and_shift</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">Chain</span><span class="p">([</span><span class="n">tfb</span><span class="o">.</span><span class="n">Shift</span><span class="p">(</span><span class="mf">1.</span><span class="p">),</span> <span class="n">tfb</span><span class="o">.</span><span class="n">Scale</span><span class="p">(</span><span class="mf">2.</span><span class="p">)])</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">scale_and_shift</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="n">x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(3,), dtype=float32, numpy=array([-3.5407958 ,  1.3779684 , -0.46724653], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_prob_z</span> <span class="o">=</span> <span class="n">normal</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="n">log_prob_z</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(3,), dtype=float32, numpy=array([-3.4962916, -0.936796 , -1.18804  ], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_prob_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">log_prob_z</span> <span class="o">-</span> <span class="n">scale_and_shift</span><span class="o">.</span><span class="n">forward_log_det_jacobian</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">event_ndims</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">log_prob_x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(3,), dtype=float32, numpy=array([-4.189439 , -1.6299431, -1.8811872], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that, the <code>event_ndims</code> argument means the number of rightmost dimensions of z make up the event shape. So in the above case, the log of the jacobian determinant is calculated for each element of the tensor z.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Or we express it with the inverse of the bijective transformation.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_prob_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">log_prob_z</span> <span class="o">+</span> <span class="n">scale_and_shift</span><span class="o">.</span><span class="n">inverse_log_det_jacobian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">event_ndims</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">log_prob_x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(3,), dtype=float32, numpy=array([-4.189439 , -1.6299431, -1.8811872], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The result is the same as while using inverse of x.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_prob_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">normal</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">scale_and_shift</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">+</span> <span class="n">scale_and_shift</span><span class="o">.</span><span class="n">inverse_log_det_jacobian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">event_ndims</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">log_prob_x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(3,), dtype=float32, numpy=array([-4.189439 , -1.6299431, -1.8811872], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You may notice that log probability of x can be calculated with only using z or x. In practice, most of cases uses second expression. The reason is that the z is from base distriubtion. So in terms of analysis, it is the latent variable. But x is from the data distribution, and it is the output from transformed distribution. While using mentioned approach, we can express transform object with bijector or invertible, it can be learned with best parameters for maximum likelihood.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="highlight"><pre><span></span><span class="c1"># Base distribution                  Transformation                    Data distribution </span>
+<span class="c1"># z ~ P0                &lt;=&gt;               x = f(z)            &lt;=&gt;            x ~ P1</span>
+
+<span class="n">log_prob_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">base_dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">bijector</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">+</span> <span class="n">bijector</span><span class="o">.</span><span class="n">inverse_log_det_jacobian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">event_ndims</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="c1">### Training </span>
+
+<span class="n">x_sample</span> <span class="o">=</span> <span class="n">bijector</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">base_dist</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normal</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">normal</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">z</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(3,), dtype=float32, numpy=array([1.1660839 , 0.26298988, 0.80137837], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exp</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="n">x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(3,), dtype=float32, numpy=array([3.2093997, 1.3008136, 2.2286105], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_normal</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">TransformedDistribution</span><span class="p">(</span><span class="n">normal</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
+<span class="n">log_normal</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tfp.distributions.TransformedDistribution 'expNormal' batch_shape=[] event_shape=[] dtype=float32&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Above expression is same with like this,</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_normal</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">normal</span><span class="p">)</span>
+<span class="n">log_normal</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tfp.distributions.TransformedDistribution 'expNormal' batch_shape=[] event_shape=[] dtype=float32&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_normal</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(), dtype=float32, numpy=1.4088374&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_normal</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(3,), dtype=float32, numpy=array([-2.7648983, -1.2165103, -2.0414205], dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can also define specific <code>event_shape</code> and <code>batch_shape</code> for transformedDistribtion.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normal</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="n">scale_tril</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]]</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">ScaleMatvecTriL</span><span class="p">(</span><span class="n">scale_tril</span><span class="o">=</span><span class="n">scale_tril</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mvn</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">TransformedDistribution</span><span class="p">(</span><span class="n">tfd</span><span class="o">.</span><span class="n">Sample</span><span class="p">(</span><span class="n">normal</span><span class="p">,</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">scale</span><span class="p">)</span>
+<span class="n">mvn</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tfp.distributions.TransformedDistribution 'scale_matvec_trilSampleNormal' batch_shape=[] event_shape=[2] dtype=float32&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scale_tril</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]]]</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">ScaleMatvecTriL</span><span class="p">(</span><span class="n">scale_tril</span><span class="o">=</span><span class="n">scale_tril</span><span class="p">)</span>
+
+<span class="n">mvn</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">TransformedDistribution</span><span class="p">(</span><span class="n">tfd</span><span class="o">.</span><span class="n">Sample</span><span class="p">(</span><span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.</span><span class="p">),</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">),</span> <span class="n">scale</span><span class="p">)</span>
+<span class="n">mvn</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tfp.distributions.TransformedDistribution 'scale_matvec_trilSampleNormal' batch_shape=[2] event_shape=[2] dtype=float32&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tutorial">
+<a class="anchor" href="#Tutorial" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tutorial<a class="anchor-link" href="#Tutorial"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="TransformedDistribution">
+<a class="anchor" href="#TransformedDistribution" aria-hidden="true"><span class="octicon octicon-link"></span></a>TransformedDistribution<a class="anchor-link" href="#TransformedDistribution"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">loc</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="mf">0.5</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">normal</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'batch shape: '</span><span class="p">,</span> <span class="n">normal</span><span class="o">.</span><span class="n">batch_shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'event shape: '</span><span class="p">,</span> <span class="n">normal</span><span class="o">.</span><span class="n">event_shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>batch shape:  ()
+event shape:  ()
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">exp</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">Exp</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_normal_td</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">normal</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'batch shape: '</span><span class="p">,</span> <span class="n">log_normal_td</span><span class="o">.</span><span class="n">batch_shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'event shape: '</span><span class="p">,</span> <span class="n">log_normal_td</span><span class="o">.</span><span class="n">event_shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>batch shape:  ()
+event shape:  ()
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">normal</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Plots">
+<a class="anchor" href="#Plots" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plots<a class="anchor-link" href="#Plots"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">log_normal_td</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_normal</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">log_normal</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Log-probability">
+<a class="anchor" href="#Log-probability" aria-hidden="true"><span class="octicon octicon-link"></span></a>Log probability<a class="anchor-link" href="#Log-probability"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_prob</span> <span class="o">=</span> <span class="n">log_normal</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">log_prob_td</span> <span class="o">=</span> <span class="n">log_normal_td</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tf</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">log_prob</span> <span class="o">-</span> <span class="n">log_prob_td</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(), dtype=float32, numpy=0.0&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Event-shape-and-batch-shape">
+<a class="anchor" href="#Event-shape-and-batch-shape" aria-hidden="true"><span class="octicon octicon-link"></span></a>Event shape and batch shape<a class="anchor-link" href="#Event-shape-and-batch-shape"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tril</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">scale_low_tri</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinearOperatorLowerTriangular</span><span class="p">(</span><span class="n">tril</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scale_low_tri</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(2, 4, 4), dtype=float32, numpy=
+array([[[-0.71624756,  0.        ,  0.        ,  0.        ],
+        [ 0.5268538 , -1.0188125 ,  0.        ,  0.        ],
+        [ 0.76072276, -0.5344736 ,  0.4067452 ,  0.        ],
+        [ 0.43506932, -0.8857401 , -1.8538325 ,  1.9112511 ]],
+
+       [[-1.3100191 ,  0.        ,  0.        ,  0.        ],
+        [ 0.6303728 ,  0.42918292,  0.        ,  0.        ],
+        [ 1.1252751 , -0.66470486, -0.71725285,  0.        ],
+        [ 2.2047887 , -0.48715273, -0.694466  , -1.1677382 ]]],
+      dtype=float32)&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scale_lin_op</span> <span class="o">=</span> <span class="n">tfb</span><span class="o">.</span><span class="n">ScaleMatvecLinearOperator</span><span class="p">(</span><span class="n">scale_low_tri</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mvn</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">TransformedDistribution</span><span class="p">(</span><span class="n">tfd</span><span class="o">.</span><span class="n">Sample</span><span class="p">(</span><span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.</span><span class="p">),</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="n">scale_lin_op</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'batch shape: '</span><span class="p">,</span> <span class="n">mvn</span><span class="o">.</span><span class="n">batch_shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'event shape: '</span><span class="p">,</span> <span class="n">mvn</span><span class="o">.</span><span class="n">event_shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>batch shape:  (2,)
+event shape:  (4,)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y1</span> <span class="o">=</span> <span class="n">mvn</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">sample_shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(10000, 2, 4)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mvn2</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">MultivariateNormalLinearOperator</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale_low_tri</span><span class="p">)</span>
+<span class="n">mvn2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tfp.distributions.MultivariateNormalLinearOperator 'MultivariateNormalLinearOperator' batch_shape=[2] event_shape=[4] dtype=float32&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y2</span> <span class="o">=</span> <span class="n">mvn2</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">sample_shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="p">))</span>
+<span class="n">y2</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>TensorShape([10000, 2, 4])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">xn</span> <span class="o">=</span> <span class="n">normal</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mvn</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">xn</span><span class="p">)</span> <span class="o">-</span> <span class="n">mvn2</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">xn</span><span class="p">))</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mvn</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">xn</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;tf.Tensor: shape=(), dtype=float32, numpy=0.0&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="goodboychan/goodboychan.github.io"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/python/coursera/tensorflow_probability/icl/2021/09/07/01-the-transformedDistribution-class.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/goodboychan" title="goodboychan"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/chanseokk" title="chanseokk"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
