@@ -11,6 +11,17 @@ https://goodboychan.github.io/
 
 _powered by [fastpages](https://github.com/fastai/fastpages)_
 
+## Customized fastpages
+
+For those who want to fork this repo, this fastpage is customized in several points:
+
+- Enable Google Adsense
+
+- Use `main` branch name, not `master`
+
+- Use github page address directly (xxx.github.io)
+
+
 
 ## What To Do Next?
 
