@@ -1,7 +1,7 @@
 ---
 layout: page
+title: "Book"
 toc: true
-title: Book
 permalink: /book/
 ---
 
