@@ -10,8 +10,8 @@ permalink: /book/
 ![gdrl-bookcover]({{site.baseurl}}/images/gdrl-bookcover.jpeg "Grokking Deep Reinforcement Learning" )
 
 - 출판사: 한빛미디어
-- 출간일: 2021년 하반기 (예정)
-- 저자: 미구엘 모랄레스 (Miguel Morales)
+- 출간일: 2021년 10월 10일
+- 저자: 미겔 모랄레스 (Miguel Morales)
 - 역자: 강찬석 (Chanseok Kang)
 - 목차:
   - 1장. 심층 강화학습의 기초
