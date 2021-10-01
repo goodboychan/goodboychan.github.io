@@ -7,7 +7,7 @@ permalink: /book/
 
 ## 그로킹 심층 강화학습 (Grokking Deep Reinforcement Learning)
 
-![gdrl-bookcover]({{site.baseurl}}/images/gdrl-bookcover.jpeg "Grokking Deep Reinforcement Learning" )
+![gdrl-bookcover]({{site.baseurl}}/images/GDRL-bookcover.png "Grokking Deep Reinforcement Learning" )
 
 - 출판사: 한빛미디어
 - 출간일: 2021년 10월 10일
