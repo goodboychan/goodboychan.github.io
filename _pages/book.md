@@ -7,9 +7,11 @@ permalink: /book/
 
 ## 그로킹 심층 강화학습 (Grokking Deep Reinforcement Learning)
 
+**2022년 대한민국학술원 선정 우수학술도서** ([link](https://talkingaboutme.tistory.com/entry/Daily-Excellent-Academic-book))
+
 ![gdrl-bookcover]({{site.baseurl}}/images/GDRL-bookcover.png "Grokking Deep Reinforcement Learning" )
 
-- 출판사: 한빛미디어
+- 출판사: [한빛미디어](https://hanbit.co.kr/store/books/look.php?p_code=B8984169041)
 - 출간일: 2021년 10월 10일
 - 저자: 미겔 모랄레스 (Miguel Morales)
 - 역자: 강찬석 (Chanseok Kang)
