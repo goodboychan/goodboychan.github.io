@@ -7,6 +7,8 @@ source "https://rubygems.org"
 #
 # This will help ensure the proper Jekyll version is running.
 # Happy Jekylling!
+bundle update github-pages
+
 gem "jekyll", "~> 4.1.0"
 # This is the default theme for new Jekyll sites. You may change this to anything you like.
 gem "minima", :github => 'jekyll/minima'
